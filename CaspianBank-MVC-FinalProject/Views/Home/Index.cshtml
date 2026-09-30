@@ -1,8 +1,381 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model IEnumerable<HomeTickerUIVM>
+@{
+    Layout = "_HomeLayout";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<main id="main">
+    <div class="ticker" aria-hidden="true">
+        <div class="ticker-track">
+            @for (int i = 0; i < 2; i++)
+            {
+                <ul>
+                    @foreach (var ticker in Model)
+                    {
+                        <li>@ticker.Text.Trim() <span>✱</span></li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+    <p class="sr-only">Secure transfers, instant cashback, 24/7 support, trusted by thousands.</p>
+
+
+
+    <section class="about video-section" id="about">
+        <div class="section-intro split">
+            <div>
+                <p class="eyebrow"><span aria-hidden="true">✱ </span><span data-ui="aboutEyebrow">About the bank</span></p>
+                <h2 data-ui="aboutTitle">Banking services, stated plainly.</h2>
+            </div>
+            <p class="lede" data-ui="aboutLede">
+                Accounts, cards, and credit from one desk in Baku. The same record for a
+                payment and for a loan.
+            </p>
+        </div>
+        <div class="pillars">
+            <article>
+                <span class="pillar-icon" aria-hidden="true">
+                    <svg viewBox="0 0 32 32">
+                        <circle cx="16" cy="16" r="12" fill="none" stroke="currentColor" stroke-width="1.6" />
+                        <path d="M11 16.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                    </svg>
+                </span>
+                <h3>Custody</h3>
+                <p>Limits on each card, and a block that stops new payments the moment it is confirmed.</p>
+            </article>
+            <article>
+                <span class="pillar-icon" aria-hidden="true">
+                    <svg viewBox="0 0 32 32">
+                        <path d="M16 7v4M16 21v4M10 16H7M25 16h-3" stroke="currentColor" stroke-width="1.6"
+                              stroke-linecap="round" />
+                        <circle cx="16" cy="16" r="5" fill="none" stroke="currentColor" stroke-width="1.6" />
+                    </svg>
+                </span>
+                <h3>Clear movement</h3>
+                <p>Transfers, bills, and cashback post to the card that sent them, with the balance after.</p>
+            </article>
+            <article>
+                <span class="pillar-icon" aria-hidden="true">
+                    <svg viewBox="0 0 32 32">
+                        <circle cx="11" cy="13" r="3" fill="none" stroke="currentColor" stroke-width="1.6" />
+                        <circle cx="21" cy="13" r="3" fill="none" stroke="currentColor" stroke-width="1.6" />
+                        <path d="M6 24c1.2-3 3.2-4.5 5-4.5s3.8 1.5 5 4.5M16 24c1.2-3 3.2-4.5 5-4.5s3.8 1.5 5 4.5" fill="none"
+                              stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                    </svg>
+                </span>
+                <h3>A desk in Baku</h3>
+                <p>Head office on Nizami Street, and a message queue that stays open through the night.</p>
+            </article>
+        </div>
+        <div class="video-stage">
+            <div class="video-frame" id="video-frame">
+                <!-- TODO: set data-src to the brand film, for example assets/video/home.mp4 -->
+                <video id="brand-video" data-src="" muted playsinline loop preload="none"></video>
+                <button class="video-cursor" type="button" id="video-toggle">Play</button>
+            </div>
+        </div>
+    </section>
+    <section class="partners" aria-label="Partner institutions">
+        <!-- TODO: replace these wordmarks with licensed partner logos -->
+        <div class="logo-marquee" aria-hidden="true">
+            <div class="logo-track">
+                <ul>
+                    <li><i class="mark mark-a"></i>GlobalBank</li>
+                    <li><i class="mark mark-b"></i>Luminous</li>
+                    <li><i class="mark mark-c"></i>Alt+Shift</li>
+                    <li><i class="mark mark-d"></i>Boltshift</li>
+                    <li><i class="mark mark-e"></i>Command+R</li>
+                    <li><i class="mark mark-f"></i>Northwind</li>
+                    <li><i class="mark mark-g"></i>Harbor</li>
+                    <li><i class="mark mark-h"></i>Meridian</li>
+                </ul>
+                <ul>
+                    <li><i class="mark mark-a"></i>GlobalBank</li>
+                    <li><i class="mark mark-b"></i>Luminous</li>
+                    <li><i class="mark mark-c"></i>Alt+Shift</li>
+                    <li><i class="mark mark-d"></i>Boltshift</li>
+                    <li><i class="mark mark-e"></i>Command+R</li>
+                    <li><i class="mark mark-f"></i>Northwind</li>
+                    <li><i class="mark mark-g"></i>Harbor</li>
+                    <li><i class="mark mark-h"></i>Meridian</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+    <section class="hero">
+        <span class="spark spark-a" aria-hidden="true"></span>
+        <span class="spark spark-b" aria-hidden="true"></span>
+        <div class="hero-copy">
+            <p class="eyebrow"><span aria-hidden="true">✱ </span><span data-ui="heroEyebrow">Cards in manat</span></p>
+            <h1 data-ui="heroTitle">One account for the way Baku spends.</h1>
+            <p class="lede" data-ui="heroLede">
+                Debit, cashback, and a reserve card. Transfers and bills stay on the same
+                account.
+            </p>
+            <a class="btn btn-lime btn-go" id="hero-form" href="app.html">
+                <span class="btn-go-label"
+                      data-ui="heroButton">Get your card</span>
+            </a>
+        </div>
+        <div class="hero-visual">
+            <span class="spin-star" aria-hidden="true">✱</span>
+            <div class="fan" id="card-fan">
+                <article class="fan-card fan-regular">
+                    <span class="fan-art" aria-hidden="true"></span>
+                    <span class="fan-shine" aria-hidden="true"></span>
+                    <span class="fan-top">
+                        <span class="fan-brand">
+                            <span class="fan-mark" aria-hidden="true"></span><span class="fan-bank">Caspian</span>
+                        </span>
+                        <span class="fan-tier">Regular</span>
+                        <svg class="fan-wave" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                             stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+                            <path d="M8 8.2c1.6 1.5 1.6 6.1 0 7.6" />
+                            <path d="M11.2 5.6c2.6 2.4 2.6 10.4 0 12.8" />
+                            <path d="M14.4 3.2c3.6 3.4 3.6 14.2 0 17.6" />
+                        </svg>
+                    </span>
+                    <span class="fan-chip" aria-hidden="true"></span>
+                    <span class="fan-mask">•••• 4291</span>
+                    <span class="fan-issuer">Caspian Bank</span>
+                </article>
+                <article class="fan-card fan-silver">
+                    <span class="fan-art" aria-hidden="true"></span>
+                    <span class="fan-shine" aria-hidden="true"></span>
+                    <span class="fan-top">
+                        <span class="fan-brand">
+                            <span class="fan-mark" aria-hidden="true"></span><span class="fan-bank">Caspian</span>
+                        </span>
+                        <span class="fan-tier">Silver</span>
+                        <svg class="fan-wave" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                             stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+                            <path d="M8 8.2c1.6 1.5 1.6 6.1 0 7.6" />
+                            <path d="M11.2 5.6c2.6 2.4 2.6 10.4 0 12.8" />
+                            <path d="M14.4 3.2c3.6 3.4 3.6 14.2 0 17.6" />
+                        </svg>
+                    </span>
+                    <span class="fan-chip" aria-hidden="true"></span>
+                    <span class="fan-mask">•••• 8834</span>
+                    <span class="fan-issuer">Caspian Bank</span>
+                </article>
+                <article class="fan-card fan-gold">
+                    <span class="fan-art" aria-hidden="true"></span>
+                    <span class="fan-shine" aria-hidden="true"></span>
+                    <span class="fan-top">
+                        <span class="fan-brand">
+                            <span class="fan-mark" aria-hidden="true"></span><span class="fan-bank">Caspian</span>
+                        </span>
+                        <span class="fan-tier">Gold</span>
+                        <svg class="fan-wave" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                             stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+                            <path d="M8 8.2c1.6 1.5 1.6 6.1 0 7.6" />
+                            <path d="M11.2 5.6c2.6 2.4 2.6 10.4 0 12.8" />
+                            <path d="M14.4 3.2c3.6 3.4 3.6 14.2 0 17.6" />
+                        </svg>
+                    </span>
+                    <span class="fan-chip" aria-hidden="true"></span>
+                    <span class="fan-mask">•••• 1102</span>
+                    <span class="fan-issuer">Caspian Bank</span>
+                </article>
+            </div>
+        </div>
+    </section>
+    <section class="services" id="services">
+        <div class="section-intro split">
+            <div>
+                <p class="eyebrow"><span aria-hidden="true">✱ </span><span data-ui="servicesEyebrow">Services</span></p>
+                <h2 data-ui="servicesTitle">What the account actually does.</h2>
+            </div>
+            <p class="lede" data-ui="servicesLede">
+                Six things a Caspian account is built to do. The detail sits on the card,
+                not in a brochure.
+            </p>
+        </div>
+        <div class="service-grid">
+            <article class="service-card">
+                <span class="service-no" aria-hidden="true">01</span>
+                <svg class="service-icon" viewBox="0 0 32 32" aria-hidden="true">
+                    <rect x="4" y="8" width="24" height="16" rx="3" fill="none" stroke="currentColor" stroke-width="1.6" />
+                    <path d="M4 13h24" stroke="currentColor" stroke-width="1.6" />
+                </svg>
+                <h3>Cards</h3>
+                <!-- TODO: refine service copy -->
+                <p>Debit and cashback cards, each with its own limit and balance.</p>
+            </article>
+            <article class="service-card">
+                <span class="service-no" aria-hidden="true">02</span>
+                <svg class="service-icon" viewBox="0 0 32 32" aria-hidden="true">
+                    <path d="M6 16h16M16 10l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+                          stroke-linejoin="round" />
+                </svg>
+                <h3>Transfers</h3>
+                <p>Move funds between your cards, or to another Caspian customer.</p>
+            </article>
+            <article class="service-card">
+                <span class="service-no" aria-hidden="true">03</span>
+                <svg class="service-icon" viewBox="0 0 32 32" aria-hidden="true">
+                    <path d="M8 22V12m6 10V8m6 14v-6" fill="none" stroke="currentColor" stroke-width="1.6"
+                          stroke-linecap="round" />
+                </svg>
+                <h3>Loans</h3>
+                <p>A personal loan request, with the decision recorded on the account.</p>
+            </article>
+            <article class="service-card">
+                <span class="service-no" aria-hidden="true">04</span>
+                <svg class="service-icon" viewBox="0 0 32 32" aria-hidden="true">
+                    <path d="M16 6l2.2 6.2H25l-5.2 3.8 2 6.2L16 18.6 10.2 22.2l2-6.2L7 12.2h6.8z" fill="none"
+                          stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" />
+                </svg>
+                <h3>Cashback Rewards</h3>
+                <p>A set rate on eligible card spend, paid back to that card.</p>
+            </article>
+            <article class="service-card">
+                <span class="service-no" aria-hidden="true">05</span>
+                <svg class="service-icon" viewBox="0 0 32 32" aria-hidden="true">
+                    <path d="M8 8h16v16H8zM8 13h16" fill="none" stroke="currentColor" stroke-width="1.6" />
+                    <path d="M12 18h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                </svg>
+                <h3>Bill Payments</h3>
+                <p>Utilities and mobile, once or as a monthly instruction.</p>
+            </article>
+            <article class="service-card">
+                <span class="service-no" aria-hidden="true">06</span>
+                <svg class="service-icon" viewBox="0 0 32 32" aria-hidden="true">
+                    <circle cx="16" cy="16" r="8" fill="none" stroke="currentColor" stroke-width="1.6" />
+                    <path d="M16 12v4l3 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+                </svg>
+                <h3>24/7 Support</h3>
+                <p>A message to the team that looks after the account, any hour.</p>
+            </article>
+        </div>
+    </section>
+    <section class="benefits" aria-labelledby="benefits-title">
+        <div class="section-intro split benefits-head">
+            <div>
+                <p class="eyebrow"><span aria-hidden="true">✱ </span><span data-ui="benefitsEyebrow">For clients</span></p>
+                <h2 id="benefits-title" data-ui="benefitsTitle">Arrangements worth reading.</h2>
+            </div>
+            <p class="lede">Drag the row. Each card is a published arrangement, not a slogan.</p>
+            <div class="benefit-arrows">
+                <button type="button" id="benefit-prev" aria-label="Previous">←</button>
+                <button type="button" id="benefit-next" aria-label="Next">→</button>
+            </div>
+        </div>
+        <div class="benefit-viewport" id="benefit-viewport">
+            <div class="benefit-track" id="benefit-track">
+                <article class="benefit-card">
+                    <p class="eyebrow">Cards</p>
+                    <h3>20% cashback on travel</h3>
+                    <!-- TODO: replace with the published cashback terms -->
+                    <p>Eligible travel spend on the cashback card, credited back to that card.</p>
+                    <ul>
+                        <li>Posted after the transaction settles</li>
+                        <li>Capped per statement period</li>
+                        <li>AZN only</li>
+                    </ul>
+                    <a class="btn btn-lime btn-go" href="app.html"><span class="btn-go-label">Open an account</span></a>
+                </article>
+                <article class="benefit-card">
+                    <p class="eyebrow">Savings</p>
+                    <h3>Grow your portfolio</h3>
+                    <p>A separate balance for money you do not need this month.</p>
+                    <ul>
+                        <li>Visible beside everyday cards</li>
+                        <li>Transfers stay inside the bank</li>
+                        <li>No third-party marketplace</li>
+                    </ul>
+                    <a class="btn btn-lime btn-go" href="contact-us.html"><span class="btn-go-label">Talk to us</span></a>
+                </article>
+                <article class="benefit-card">
+                    <p class="eyebrow">Companies</p>
+                    <h3>Business solutions</h3>
+                    <p>Payroll cards and a single view of what left the company account.</p>
+                    <ul>
+                        <li>Named cardholders</li>
+                        <li>Statement export</li>
+                        <li>A relationship contact in Baku</li>
+                    </ul>
+                    <a class="btn btn-lime btn-go" href="#contact"><span class="btn-go-label">Contact the desk</span></a>
+                </article>
+                <article class="benefit-card">
+                    <p class="eyebrow">Households</p>
+                    <h3>One household, several cards</h3>
+                    <p>Each person holds their own card. Limits are set per card, not pooled by default.</p>
+                    <ul>
+                        <li>Separate balances</li>
+                        <li>Shared bill instructions</li>
+                        <li>Block a card without closing the account</li>
+                    </ul>
+                    <a class="btn btn-lime btn-go" href="app.html"><span class="btn-go-label">Get started</span></a>
+                </article>
+            </div>
+        </div>
+        <div class="drag-hint" id="drag-hint" aria-hidden="true">Drag</div>
+    </section>
+    <section class="stats" aria-labelledby="stats-title">
+        <div class="section-intro stats-intro split">
+            <div>
+                <p class="eyebrow"><span aria-hidden="true">✱ </span><span data-ui="statsEyebrow">Trust indicators</span></p>
+                <h2 id="stats-title" data-ui="statsTitle">Driving the future of digital finance</h2>
+            </div>
+            <p class="lede" data-ui="statsLede">
+                Our platform is built on transparency, high-velocity performance, and
+                institutional-grade security.
+            </p>
+        </div>
+        <div class="stat-row">
+            <!-- TODO: replace these placeholder figures with audited numbers -->
+            <article class="stat">
+                <div class="ring" data-percent="97" data-count="97" data-decimals="0" data-suffix="%">
+                    <svg viewBox="0 0 160 160" aria-hidden="true">
+                        <circle class="ring-face" cx="80" cy="80" r="52" />
+                        <g transform="rotate(-90 80 80)">
+                            <circle class="ring-track" cx="80" cy="80" r="64" />
+                            <circle class="ring-value" cx="80" cy="80" r="64" />
+                        </g>
+                        <g class="ring-orbit">
+                            <circle cx="80" cy="16" r="4" />
+                        </g>
+                    </svg>
+                    <p class="ring-figure"><span class="ring-num">0</span></p>
+                </div>
+                <h3>System availability</h3>
+                <p>Maintaining a 97% uptime record so banking services stay online.</p>
+            </article>
+            <article class="stat">
+                <div class="ring" data-percent="98" data-count="98" data-decimals="0" data-suffix="%">
+                    <svg viewBox="0 0 160 160" aria-hidden="true">
+                        <circle class="ring-face" cx="80" cy="80" r="52" />
+                        <g transform="rotate(-90 80 80)">
+                            <circle class="ring-track" cx="80" cy="80" r="64" />
+                            <circle class="ring-value" cx="80" cy="80" r="64" />
+                        </g>
+                        <g class="ring-orbit">
+                            <circle cx="80" cy="16" r="4" />
+                        </g>
+                    </svg>
+                    <p class="ring-figure"><span class="ring-num">0</span></p>
+                </div>
+                <h3>Customer retention</h3>
+                <p>Clear payments and a straightforward account keep clients with the bank.</p>
+            </article>
+            <article class="stat">
+                <div class="ring" data-percent="99" data-count="99" data-decimals="0" data-suffix="%">
+                    <svg viewBox="0 0 160 160" aria-hidden="true">
+                        <circle class="ring-face" cx="80" cy="80" r="52" />
+                        <g transform="rotate(-90 80 80)">
+                            <circle class="ring-track" cx="80" cy="80" r="64" />
+                            <circle class="ring-value" cx="80" cy="80" r="64" />
+                        </g>
+                        <g class="ring-orbit">
+                            <circle cx="80" cy="16" r="4" />
+                        </g>
+                    </svg>
+                    <p class="ring-figure"><span class="ring-num">0</span></p>
+                </div>
+                <h3>Automated AML/KYC</h3>
+                <p>Verification that shortens onboarding and keeps the same record on the account.</p>
+            </article>
+        </div>
+    </section>
+</main>

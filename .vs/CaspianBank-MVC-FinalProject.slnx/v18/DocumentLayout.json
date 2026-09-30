@@ -3,8 +3,32 @@
   "WorkspaceRootPath": "C:\\Users\\User\\Desktop\\CaspianBank-MVC-FinalProject\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{44C63258-67D6-CD5E-CF6C-DF1BED5371CC}|CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject.csproj|c:\\users\\user\\desktop\\caspianbank-mvc-finalproject\\caspianbank-mvc-finalproject\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{44C63258-67D6-CD5E-CF6C-DF1BED5371CC}|CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject.csproj|solutionrelative:caspianbank-mvc-finalproject\\views\\home\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{44C63258-67D6-CD5E-CF6C-DF1BED5371CC}|CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject.csproj|c:\\users\\user\\desktop\\caspianbank-mvc-finalproject\\caspianbank-mvc-finalproject\\viewmodels\\hometickers\\hometickeruivm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{44C63258-67D6-CD5E-CF6C-DF1BED5371CC}|CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject.csproj|solutionrelative:caspianbank-mvc-finalproject\\viewmodels\\hometickers\\hometickeruivm.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{44C63258-67D6-CD5E-CF6C-DF1BED5371CC}|CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject.csproj|c:\\users\\user\\desktop\\caspianbank-mvc-finalproject\\caspianbank-mvc-finalproject\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{44C63258-67D6-CD5E-CF6C-DF1BED5371CC}|CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject.csproj|solutionrelative:caspianbank-mvc-finalproject\\controllers\\homecontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{44C63258-67D6-CD5E-CF6C-DF1BED5371CC}|CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject.csproj|c:\\users\\user\\desktop\\caspianbank-mvc-finalproject\\caspianbank-mvc-finalproject\\views\\shared\\_homelayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{44C63258-67D6-CD5E-CF6C-DF1BED5371CC}|CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject.csproj|solutionrelative:caspianbank-mvc-finalproject\\views\\shared\\_homelayout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{44C63258-67D6-CD5E-CF6C-DF1BED5371CC}|CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject.csproj|c:\\users\\user\\desktop\\caspianbank-mvc-finalproject\\caspianbank-mvc-finalproject\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{44C63258-67D6-CD5E-CF6C-DF1BED5371CC}|CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject.csproj|solutionrelative:caspianbank-mvc-finalproject\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{44C63258-67D6-CD5E-CF6C-DF1BED5371CC}|CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject.csproj|c:\\users\\user\\desktop\\caspianbank-mvc-finalproject\\caspianbank-mvc-finalproject\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{44C63258-67D6-CD5E-CF6C-DF1BED5371CC}|CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject.csproj|solutionrelative:caspianbank-mvc-finalproject\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{44C63258-67D6-CD5E-CF6C-DF1BED5371CC}|CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject.csproj|c:\\users\\user\\desktop\\caspianbank-mvc-finalproject\\caspianbank-mvc-finalproject\\views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{44C63258-67D6-CD5E-CF6C-DF1BED5371CC}|CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject.csproj|solutionrelative:caspianbank-mvc-finalproject\\views\\_viewimports.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,21 +38,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 7,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "HomeController.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject\\Controllers\\HomeController.cs",
-              "RelativeDocumentMoniker": "CaspianBank-MVC-FinalProject\\Controllers\\HomeController.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject\\Controllers\\HomeController.cs",
-              "RelativeToolTip": "CaspianBank-MVC-FinalProject\\Controllers\\HomeController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-09-30T15:26:36.805Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
@@ -40,6 +51,94 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "HomeTickerUIVM.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject\\ViewModels\\HomeTickers\\HomeTickerUIVM.cs",
+              "RelativeDocumentMoniker": "CaspianBank-MVC-FinalProject\\ViewModels\\HomeTickers\\HomeTickerUIVM.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject\\ViewModels\\HomeTickers\\HomeTickerUIVM.cs",
+              "RelativeToolTip": "CaspianBank-MVC-FinalProject\\ViewModels\\HomeTickers\\HomeTickerUIVM.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-30T17:10:11.502Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject\\appsettings.json",
+              "RelativeDocumentMoniker": "CaspianBank-MVC-FinalProject\\appsettings.json",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject\\appsettings.json",
+              "RelativeToolTip": "CaspianBank-MVC-FinalProject\\appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-09-30T16:58:44.504Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "_ViewImports.cshtml",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject\\Views\\_ViewImports.cshtml",
+              "RelativeDocumentMoniker": "CaspianBank-MVC-FinalProject\\Views\\_ViewImports.cshtml",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject\\Views\\_ViewImports.cshtml",
+              "RelativeToolTip": "CaspianBank-MVC-FinalProject\\Views\\_ViewImports.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-09-30T15:36:38.465Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject\\Program.cs",
+              "RelativeDocumentMoniker": "CaspianBank-MVC-FinalProject\\Program.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject\\Program.cs",
+              "RelativeToolTip": "CaspianBank-MVC-FinalProject\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-30T15:34:06.481Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject\\Views\\Home\\Index.cshtml",
+              "RelativeDocumentMoniker": "CaspianBank-MVC-FinalProject\\Views\\Home\\Index.cshtml",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject\\Views\\Home\\Index.cshtml",
+              "RelativeToolTip": "CaspianBank-MVC-FinalProject\\Views\\Home\\Index.cshtml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-09-30T15:33:13.394Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "_HomeLayout.cshtml",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject\\Views\\Shared\\_HomeLayout.cshtml",
+              "RelativeDocumentMoniker": "CaspianBank-MVC-FinalProject\\Views\\Shared\\_HomeLayout.cshtml",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject\\Views\\Shared\\_HomeLayout.cshtml",
+              "RelativeToolTip": "CaspianBank-MVC-FinalProject\\Views\\Shared\\_HomeLayout.cshtml",
+              "ViewState": "AgIAACEAAAAAAAAAAAAcwKAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-09-30T15:33:10.54Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "HomeController.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject\\Controllers\\HomeController.cs",
+              "RelativeDocumentMoniker": "CaspianBank-MVC-FinalProject\\Controllers\\HomeController.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\CaspianBank-MVC-FinalProject\\CaspianBank-MVC-FinalProject\\Controllers\\HomeController.cs",
+              "RelativeToolTip": "CaspianBank-MVC-FinalProject\\Controllers\\HomeController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-09-30T15:26:36.805Z",
+              "EditorCaption": ""
             }
           ]
         }
