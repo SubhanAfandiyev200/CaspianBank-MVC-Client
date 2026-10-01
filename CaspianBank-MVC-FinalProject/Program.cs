@@ -8,11 +8,6 @@ builder.Services.AddHttpClient("CaspianApi", client =>
     client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]!);
 });
 
-builder.Services.AddHttpClient("CaspianApi", client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["ApiSettings:BaseUrl"]!);
-});
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

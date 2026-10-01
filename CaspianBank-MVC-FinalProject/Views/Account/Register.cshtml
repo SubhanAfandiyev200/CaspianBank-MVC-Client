@@ -1,0 +1,66 @@
+﻿@model CaspianBank_MVC_FinalProject.ViewModels.Account.RegisterVM
+@{
+    Layout = "_AuthLayout";
+}
+<main class="auth-shell">
+    <section class="auth-card auth-wide">
+        <a class="brand" asp-controller="Home" asp-action="Index">
+            <svg class="brand-mark" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+                <rect width="32" height="32" rx="8" fill="#1F8A4C" />
+                <path d="M22 11.2a7.2 7.2 0 1 0 0 9.6" fill="none" stroke="#E4D2A8" stroke-width="2.4" stroke-linecap="round" />
+            </svg>
+            <span>Caspian Bank</span>
+        </a>
+        <h1>Create your account</h1>
+        <p class="lede">A few details and you can open your first cards.</p>
+        <form id="register-form" class="form-stack mt-5" asp-controller="Account" asp-action="Register" method="post" novalidate>
+            <div asp-validation-summary="ModelOnly" class="field-error"></div>
+            <div class="field">
+                <label for="email">Email</label>
+                <input class="input" id="email" asp-for="Email" type="email" autocomplete="email" />
+            </div>
+            <div class="field">
+                <label for="phone">Phone number</label>
+                <div class="phone-wrap">
+                    <span class="phone-prefix">+994</span>
+                    <input class="phone-input" id="phone" asp-for="PhoneNumber" type="tel" inputmode="numeric" autocomplete="tel" data-phone placeholder="12 345 67 89" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="field">
+                    <label for="first-name">First name</label>
+                    <input class="input" id="first-name" asp-for="Name" autocomplete="given-name" />
+                </div>
+                <div class="field">
+                    <label for="last-name">Last name</label>
+                    <input class="input" id="last-name" asp-for="Surname" autocomplete="family-name" />
+                </div>
+            </div>
+            <div class="field">
+                <label for="dob">Date of birth</label>
+                <input class="input" id="dob" asp-for="BirthDay" type="date" autocomplete="bday" min="1920-01-01" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
+            </div>
+            <div class="field">
+                <label for="password">Password</label>
+                <input class="input" id="password" asp-for="Password" type="password" data-password autocomplete="new-password" />
+                <p class="field-hint">At least 6 characters, with upper and lower case letters, a number and a symbol.</p>
+            </div>
+            <div class="field">
+                <label for="confirm">Confirm password</label>
+                <input class="input" id="confirm" asp-for="ConfirmPassword" type="password" data-password autocomplete="new-password" />
+            </div>
+            <button class="btn btn-primary btn-block" type="submit">Create account</button>
+            <div class="auth-links auth-links-center">
+                <a asp-controller="Account" asp-action="Login" data-carry-email>Already have an account? Log in</a>
+            </div>
+        </form>
+        <p class="auth-foot">
+            <a asp-controller="Home" asp-action="Index" asp-fragment="contact">Contact us</a>
+            <span>Caspian Bank · Baku</span>
+        </p>
+    </section>
+</main>
+@section Scripts {
+    <script src="~/js/wheel-date.js"></script>
+    <script src="~/js/auth-fields.js"></script>
+}
