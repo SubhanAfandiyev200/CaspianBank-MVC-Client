@@ -1,4 +1,9 @@
 wwwroot\css\home.css
+wwwroot\css\style.css
+wwwroot\img\chatgpt.png
+wwwroot\img\claude.png
+wwwroot\img\cursor.png
+wwwroot\img\seabreeze.png
 wwwroot\img\trust-office.png
 wwwroot\js\add-card.js
 wwwroot\js\admin-audit.js
@@ -10,6 +15,7 @@ wwwroot\js\admin-tickets.js
 wwwroot\js\admin-user.js
 wwwroot\js\admin-users.js
 wwwroot\js\app.js
+wwwroot\js\auth-fields.js
 wwwroot\js\bills.js
 wwwroot\js\card-detail.js
 wwwroot\js\contact.js
@@ -83,5 +89,3 @@ wwwroot\lib\jquery\dist\jquery.js
 wwwroot\lib\jquery\dist\jquery.min.js
 wwwroot\lib\jquery\dist\jquery.min.map
 wwwroot\lib\jquery\LICENSE.txt
-wwwroot\css\style.css
-wwwroot\js\auth-fields.js

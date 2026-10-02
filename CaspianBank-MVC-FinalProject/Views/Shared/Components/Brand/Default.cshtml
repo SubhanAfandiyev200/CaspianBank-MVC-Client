@@ -1,0 +1,37 @@
+﻿@model IEnumerable<BrandUIVM>
+<section class="partners" aria-label="Partner institutions">
+    <!-- TODO: replace these wordmarks with licensed partner logos -->
+    <div class="logo-marquee" aria-hidden="true">
+        <div class="logo-track">
+            @for (int i = 0; i < 2; i++)
+            {
+                <ul>
+                    @foreach (var brand in Model)
+                    {
+                        <li><img class="brand-img" src="@brand.Image" alt="" />@brand.Name</li>
+                    }
+                </ul>
+            }
+            @* <ul>
+                <li><i class="mark mark-a"></i>GlobalBank</li>
+                <li><i class="mark mark-b"></i>Luminous</li>
+                <li><i class="mark mark-c"></i>Alt+Shift</li>
+                <li><i class="mark mark-d"></i>Boltshift</li>
+                <li><i class="mark mark-e"></i>Command+R</li>
+                <li><i class="mark mark-f"></i>Northwind</li>
+                <li><i class="mark mark-g"></i>Harbor</li>
+                <li><i class="mark mark-h"></i>Meridian</li>
+            </ul>
+            <ul>
+                <li><i class="mark mark-a"></i>GlobalBank</li>
+                <li><i class="mark mark-b"></i>Luminous</li>
+                <li><i class="mark mark-c"></i>Alt+Shift</li>
+                <li><i class="mark mark-d"></i>Boltshift</li>
+                <li><i class="mark mark-e"></i>Command+R</li>
+                <li><i class="mark mark-f"></i>Northwind</li>
+                <li><i class="mark mark-g"></i>Harbor</li>
+                <li><i class="mark mark-h"></i>Meridian</li>
+            </ul> *@
+        </div>
+    </div>
+</section>

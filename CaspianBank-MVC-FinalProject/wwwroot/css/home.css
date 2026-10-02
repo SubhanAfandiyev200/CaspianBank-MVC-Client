@@ -626,6 +626,14 @@ h2 {
   border-radius: 50%;
   flex: none;
 }
+.brand-img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  flex: none;
+}
+
+.logo-track li { gap: 14px; }
 .mark-a { background: conic-gradient(#1d4ed8, #93c5fd, #1d4ed8); }
 .mark-b { background: linear-gradient(135deg, #ef4444, #2563eb); clip-path: polygon(50% 0, 100% 100%, 0 100%); border-radius: 0; }
 .mark-c { background: repeating-conic-gradient(#111 0 12deg, transparent 0 24deg); }
@@ -952,7 +960,8 @@ h2 {
   background: #e8f3c4;
   color: #8aaa45;
 }
-.pillar-icon svg { width: 34px; height: 34px; }
+.pillar-icon svg,
+.pillar-icon img { width: 34px; height: 34px; object-fit: contain; }
 .about { padding-top: 36px; }
 
 .stats .lede { color: rgba(255, 255, 255, 0.78); font-size: 16px; max-width: 38ch; }

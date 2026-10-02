@@ -1,0 +1,29 @@
+@model AboutVideoVM
+
+<section class="about video-section" id="about">
+    <div class="section-intro split">
+        <div>
+            <p class="eyebrow"><span aria-hidden="true">✱ </span><span>@Model.About.Label</span></p>
+            <h2>@Model.About.Title</h2>
+        </div>
+        <p class="lede">@Model.About.Description</p>
+    </div>
+    <div class="pillars">
+        @foreach (var pillar in Model.AboutPillars)
+        {
+            <article>
+                <span class="pillar-icon" aria-hidden="true">
+                    <img src="@pillar.Image" alt="" />
+                </span>
+                <h3>@pillar.Title</h3>
+                <p>@pillar.Description</p>
+            </article>
+        }
+    </div>
+    <div class="video-stage">
+        <div class="video-frame" id="video-frame">
+            <video id="brand-video" data-src="@(string.IsNullOrEmpty(Model.About.VideoPath) ? "" : Model.About.VideoPath + "#t=0.5")" muted playsinline loop preload="metadata"></video>
+            <button class="video-cursor" type="button" id="video-toggle">Play</button>
+        </div>
+    </div>
+</section>
