@@ -1,4 +1,4 @@
-﻿@model CaspianBank_MVC_FinalProject.ViewModels.Account.RegisterVM
+﻿@model RegisterVM
 @{
     Layout = "_AuthLayout";
 }
@@ -14,10 +14,11 @@
         <h1>Create your account</h1>
         <p class="lede">A few details and you can open your first cards.</p>
         <form id="register-form" class="form-stack mt-5" asp-controller="Account" asp-action="Register" method="post" novalidate>
+            <input type="hidden" asp-for="VerificationToken" />
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
             <div class="field">
                 <label for="email">Email</label>
-                <input class="input" id="email" asp-for="Email" type="email" autocomplete="email" />
+                <input class="input" id="email" asp-for="Email" type="email" autocomplete="email" readonly />
             </div>
             <div class="field">
                 <label for="phone">Phone number</label>

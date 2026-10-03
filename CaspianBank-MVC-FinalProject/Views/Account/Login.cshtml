@@ -1,4 +1,5 @@
-﻿@{
+﻿@model LoginVM
+@{
     Layout = "_AuthLayout";
 }
 <main class="auth-shell">
@@ -12,18 +13,24 @@
         </a>
         <h1>Log in</h1>
         <p class="lede">Enter the password for your Caspian account.</p>
-        <form id="login-form" class="form-stack mt-5" novalidate>
+        <form id="login-form" class="form-stack mt-5" asp-controller="Account" asp-action="Login" method="post" novalidate>
+            <input type="hidden" asp-for="ReturnUrl" />
+            @if (TempData["Info"] is string info)
+            {
+                <p class="field-hint">@info</p>
+            }
+            <div asp-validation-summary="ModelOnly" class="field-error"></div>
             <div class="field">
                 <label for="email">Email</label>
-                <input class="input" id="email" type="email" autocomplete="username" />
+                <input class="input" id="email" asp-for="Email" type="email" autocomplete="username" />
             </div>
             <div class="field">
                 <label for="password">Password</label>
-                <input class="input" id="password" type="password" data-password autocomplete="current-password" />
+                <input class="input" id="password" asp-for="Password" type="password" data-password autocomplete="current-password" />
             </div>
             <button class="btn btn-primary btn-block" type="submit">Log in</button>
             <div class="auth-links">
-                <a href="#">Forgot password?</a>
+                <a asp-controller="Account" asp-action="ForgotPassword" data-carry-email>Forgot password?</a>
                 <a asp-controller="Account" asp-action="Register" data-carry-email>Create an account</a>
             </div>
         </form>
