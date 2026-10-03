@@ -1240,16 +1240,6 @@ h2 {
     border-color: rgba(15, 92, 63, 0.22);
     color: var(--green-deep);
   }
-  .site-header.is-open .header-user {
-    display: flex;
-    padding: 12px 0;
-    color: var(--text);
-  }
-  .site-header.is-open .header-user-icon {
-    background: rgba(15, 92, 63, 0.08);
-    border-color: rgba(15, 92, 63, 0.22);
-    color: var(--green-deep);
-  }
   .mega-inner,
   .service-grid,
   .stat-row,
