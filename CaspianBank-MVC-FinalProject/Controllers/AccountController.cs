@@ -76,6 +76,58 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             return View();
         }
 
+        [HttpGet]
+        public IActionResult VerifyOtp(string? email)
+        {
+            return View(new VerifyOtpVM { Email = email });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> VerifyOtp(VerifyOtpVM model)
+        {
+            var code = Regex.Replace(model.Code ?? string.Empty, @"\D", "");
+            model.Code = code;
+
+            if (code.Length != 6)
+            {
+                ModelState.AddModelError(string.Empty, "The code is incorrect.");
+                return View(model);
+            }
+
+            try
+            {
+                var client = _httpClientFactory.CreateClient("CaspianApi");
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(2));
+                var response = await client.PostAsJsonAsync("api/account/verify-otp", new
+                {
+                    email = model.Email?.Trim(),
+                    code
+                }, cts.Token);
+
+                if (response.IsSuccessStatusCode)
+                    return RedirectToAction(nameof(Register));
+            }
+            catch (HttpRequestException)
+            {
+                // API may be down in local UI work — still show the incorrect-code state.
+            }
+            catch (TaskCanceledException)
+            {
+                // Timed out talking to the API — still show the incorrect-code state.
+            }
+
+            ModelState.AddModelError(string.Empty, "The code is incorrect.");
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Logout()
+        {
+            return RedirectToAction("Index", "Home");
+        }
+
         private static async Task<RegisterResponseVM?> ReadResponseAsync(HttpResponseMessage response)
         {
             try
