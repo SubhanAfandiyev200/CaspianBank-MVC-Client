@@ -1,0 +1,27 @@
+@model ServiceVM
+
+<section class="services" id="services">
+    <div class="section-intro split">
+        <div>
+            <p class="eyebrow"><span aria-hidden="true">✱ </span><span>@Model.ServiceSection.Label</span></p>
+            <h2>@Model.ServiceSection.Title</h2>
+        </div>
+        <p class="lede">@Model.ServiceSection.Description</p>
+    </div>
+    <div class="service-grid">
+        @foreach (var item in Model.ServiceItems)
+        {
+            <article class="service-card">
+                <span class="service-no" aria-hidden="true">@item.Number.ToString("00")</span>
+                <span class="service-icon" aria-hidden="true">
+                    @if (!string.IsNullOrEmpty(item.IconSvg))
+                    {
+                        @Html.Raw(item.IconSvg)
+                    }
+                </span>
+                <h3>@item.Title</h3>
+                <p>@item.Description</p>
+            </article>
+        }
+    </div>
+</section>

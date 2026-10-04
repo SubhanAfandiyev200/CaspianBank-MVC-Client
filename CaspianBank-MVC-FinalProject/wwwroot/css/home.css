@@ -685,10 +685,17 @@ h2 {
 }
 
 .service-icon {
+  display: block;
   width: 32px;
   height: 32px;
   color: var(--green-deep);
   transition: color 0.3s ease;
+}
+
+.service-icon svg {
+  display: block;
+  width: 32px;
+  height: 32px;
 }
 
 .service-card h3 {
@@ -855,9 +862,13 @@ h2 {
   position: relative;
   color: #f7faf6;
   padding: 108px 0 96px;
-  background:
+  background-color: #0c4632;
+  background-image:
     linear-gradient(90deg, rgba(10, 52, 38, 0.78) 0%, rgba(16, 92, 64, 0.62) 55%, rgba(12, 70, 50, 0.7) 100%),
-    url("assets/img/trust-office.png") center 42% / cover no-repeat;
+    url("../img/trust-office.png");
+  background-position: center 42%;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
 
 .stats h2 {
