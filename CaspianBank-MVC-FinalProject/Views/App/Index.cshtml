@@ -1,0 +1,24 @@
+@{
+    Layout = "_AppLayout";
+
+    // Ad claim-də tam adla saxlanılır (Name Surname): salamlama üçün ilk söz
+    var fullName = User.Identity?.Name ?? string.Empty;
+    var firstName = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "there";
+    var hour = DateTime.Now.Hour;
+    var hello = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+}
+<main id="content" class="page">
+    <header class="page-head">
+        <p class="eyebrow">Cards</p>
+        <h1 id="dash-title">@hello, @firstName</h1>
+    </header>
+
+    @* TODO: Card API hazır olanda kartı olan müştəri üçün kart siyahısı və Recent activity burada göstəriləcək *@
+    <div id="dash">
+        <div class="empty">
+            <h3>Add your first cards</h3>
+            <p>Your account includes a Main card and a Cashback card.</p>
+            <a class="btn btn-primary" href="@NavLinks.AddCard">Create new card</a>
+        </div>
+    </div>
+</main>

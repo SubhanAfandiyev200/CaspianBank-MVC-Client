@@ -1,0 +1,93 @@
+@model SiteSettingsVM
+@{
+    var signedIn = User.Identity?.IsAuthenticated == true;
+}
+    <header class="site-header" id="top">
+        <div class="header-bar">
+            <a class="logo" asp-controller="Home" asp-action="Index">
+                @if (!string.IsNullOrEmpty(Model.Logo))
+                {
+                    <img src="@Model.Logo" width="32" height="32" alt="" />
+                }
+                else
+                {
+                    @* Settings-də Logo yoxdursa köhnə SVG loqo *@
+                    <svg viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+                        <rect width="32" height="32" rx="8" fill="#C5D86D" />
+                        <path d="M22 11.2a7.2 7.2 0 1 0 0 9.6" fill="none" stroke="#0F5C3F" stroke-width="2.4"
+                              stroke-linecap="round" />
+                    </svg>
+                }
+                <span>@Model.CompanyName</span>
+            </a>
+            <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-nav">Menu</button>
+            <nav class="site-nav" id="site-nav" aria-label="Primary">
+                <div class="nav-home">
+                    <a href="#top" aria-haspopup="true">Home <span aria-hidden="true">▾</span></a>
+                </div>
+                <a href="#about">About Us</a>
+                <a href="#services">Services</a>
+                <a href="@NavLinks.SupportLink(signedIn)">Contact Us</a>
+            </nav>
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <form class="header-auth" asp-controller="Account" asp-action="Logout" method="post">
+                    <span class="header-user">
+                        <span class="header-user-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" width="18" height="18">
+                                <circle cx="12" cy="8.2" r="3.4" fill="none" stroke="currentColor" stroke-width="1.7" />
+                                <path d="M5.4 19.2c.9-3.5 3.4-5.2 6.6-5.2s5.7 1.7 6.6 5.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+                            </svg>
+                        </span>
+                        <a class="header-user-name" href="@NavLinks.App">@User.Identity.Name</a>
+                    </span>
+                    <button class="btn-logout" type="submit">
+                        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                            <path d="M10 7V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+                            <path d="M4 12h11M12 8.5 15.5 12 12 15.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <span class="btn-logout-label">Log out</span>
+                    </button>
+                </form>
+            }
+            else
+            {
+                <a class="btn btn-lime btn-go" href="@NavLinks.OpenAccount(signedIn)"><span class="btn-go-label">Open account</span></a>
+            }
+        </div>
+        <div class="mega" id="mega">
+            <div class="mega-inner">
+                @if (signedIn)
+                {
+                    <a class="mega-card" href="@NavLinks.App">
+                        <span class="mega-swatch mega-swatch-a" aria-hidden="true"></span>
+                        <strong>Go to my app</strong>
+                        <span>Your cards, transfers and history in one place.</span>
+                    </a>
+                }
+                else
+                {
+                    <a class="mega-card" href="@NavLinks.Welcome">
+                        <span class="mega-swatch mega-swatch-a" aria-hidden="true"></span>
+                        <strong>Open an account</strong>
+                        <span>Current accounts for personal and salary clients.</span>
+                    </a>
+                }
+                <a class="mega-card" href="@NavLinks.Page(signedIn, NavLinks.App)">
+                    <span class="mega-swatch mega-swatch-b" aria-hidden="true"></span>
+                    <strong>Cards</strong>
+                    <span>Debit and cashback cards, issued in AZN.</span>
+                </a>
+                <a class="mega-card" href="@NavLinks.Page(signedIn, NavLinks.Transfer)">
+                    <span class="mega-swatch mega-swatch-c" aria-hidden="true"></span>
+                    <strong>Payments</strong>
+                    <span>Transfers between cards and utility bills.</span>
+                </a>
+                <a class="mega-card" href="@NavLinks.Page(signedIn, NavLinks.Loan)">
+                    <span class="mega-swatch mega-swatch-d" aria-hidden="true"></span>
+                    <strong>Credit</strong>
+                    <span>Personal loans, reviewed by the bank.</span>
+                </a>
+            </div>
+        </div>
+    </header>

@@ -2634,3 +2634,46 @@ body.body-admin .site-footer-inner {
   .pw-eye .eye-slash { transition: none; }
   .pw-eye svg.is-blinking { animation: none; }
 }
+
+/* Giriş edən istifadəçi (app header): hesab ikonu + ad + Log out. Home header ilə eyni görünüş */
+.header-auth { display: flex; align-items: center; gap: 12px; margin: 0; }
+.header-user { display: inline-flex; align-items: center; gap: 8px; color: #f7faf6; font-weight: 500; font-size: 14px; min-width: 0; }
+.header-user-icon {
+  display: grid; place-items: center; width: 34px; height: 34px; flex: none; border-radius: 50%;
+  background: rgba(197, 216, 109, 0.16); border: 1px solid rgba(197, 216, 109, 0.5); color: var(--color-lime);
+}
+.header-user-name { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.btn-logout {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 38px; padding: 0 14px 0 12px;
+  border-radius: 999px; border: 1px solid rgba(197, 216, 109, 0.55); background: rgba(197, 216, 109, 0.12);
+  color: #f4f7e8; font: inherit; font-weight: 600; font-size: 13px; cursor: pointer;
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+.btn-logout svg { flex: none; }
+.btn-logout:hover { background: var(--color-lime); color: #0f5c3f; border-color: var(--color-lime); }
+.btn-logout:focus-visible { outline: 2px solid var(--color-lime); outline-offset: 2px; }
+
+/* Log out: digər düymələr kimi dairə soldan dolur, amma qırmızı rəngə */
+.btn-logout { position: relative; overflow: hidden; isolation: isolate; }
+.btn-logout::before {
+  content: "";
+  position: absolute;
+  z-index: 0;
+  left: -15%;
+  top: -90%;
+  width: 130%;
+  height: 280%;
+  border-radius: 50%;
+  background: #d94a4a;
+  transform: scale(0);
+  transform-origin: 0% 50%;
+  transition: transform 0.5s cubic-bezier(0.45, 0.02, 0.2, 1);
+}
+.btn-logout > * { position: relative; z-index: 1; }
+.btn-logout:hover {
+  background: rgba(197, 216, 109, 0.12);
+  color: #fff;
+  border-color: #d94a4a;
+}
+.btn-logout:hover::before { transform: scale(1); }
+.btn-logout:focus-visible { outline-color: #d94a4a; }

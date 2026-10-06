@@ -39,4 +39,13 @@ C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-Fi
 C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\63697d9e-1401-4afa-a422-2a7a74f812c8\scratchpad\mvc\CaspianBank-MVC-FinalProject.runtimeconfig.json
 C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\63697d9e-1401-4afa-a422-2a7a74f812c8\scratchpad\mvc\CaspianBank-MVC-FinalProject.dll
 C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\63697d9e-1401-4afa-a422-2a7a74f812c8\scratchpad\mvc\CaspianBank-MVC-FinalProject.pdb
+C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\adb6b84b-0bb7-4555-889a-f856856f99f7\scratchpad\mvc\appsettings.Development.json
+C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\adb6b84b-0bb7-4555-889a-f856856f99f7\scratchpad\mvc\appsettings.json
+C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\adb6b84b-0bb7-4555-889a-f856856f99f7\scratchpad\mvc\CaspianBank-MVC-FinalProject.staticwebassets.runtime.json
+C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\adb6b84b-0bb7-4555-889a-f856856f99f7\scratchpad\mvc\CaspianBank-MVC-FinalProject.staticwebassets.endpoints.json
+C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\adb6b84b-0bb7-4555-889a-f856856f99f7\scratchpad\mvc\CaspianBank-MVC-FinalProject.exe
+C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\adb6b84b-0bb7-4555-889a-f856856f99f7\scratchpad\mvc\CaspianBank-MVC-FinalProject.deps.json
+C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\adb6b84b-0bb7-4555-889a-f856856f99f7\scratchpad\mvc\CaspianBank-MVC-FinalProject.runtimeconfig.json
+C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\adb6b84b-0bb7-4555-889a-f856856f99f7\scratchpad\mvc\CaspianBank-MVC-FinalProject.dll
+C:\Users\User\AppData\Local\Temp\claude\C--Users-User-Desktop-CaspianBank-API-FinalProject\adb6b84b-0bb7-4555-889a-f856856f99f7\scratchpad\mvc\CaspianBank-MVC-FinalProject.pdb
 C:\Users\User\Desktop\CaspianBank-MVC-FinalProject\CaspianBank-MVC-FinalProject\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

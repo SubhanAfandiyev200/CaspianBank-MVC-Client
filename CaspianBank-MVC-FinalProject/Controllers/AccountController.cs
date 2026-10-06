@@ -22,7 +22,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
         public IActionResult Welcome()
         {
             if (User.Identity?.IsAuthenticated == true)
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "App");
 
             return View(new WelcomeVM());
         }
@@ -182,7 +182,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
         public IActionResult ForgotPassword()
         {
             if (User.Identity?.IsAuthenticated == true)
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "App");
 
             return View(new ForgotPasswordVM { Email = TempData.Peek("AuthEmail") as string ?? string.Empty });
         }
@@ -376,7 +376,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
         public IActionResult Login(string? returnUrl = null)
         {
             if (User.Identity?.IsAuthenticated == true)
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "App");
 
             return View(new LoginVM { ReturnUrl = returnUrl, Email = TempData["AuthEmail"] as string ?? string.Empty });
         }
@@ -425,11 +425,11 @@ namespace CaspianBank_MVC_FinalProject.Controllers
 
                 await SignInAsync(result);
 
-                // TODO: App və Admin səhifələri yazılanda rola görə yönləndir (Customer → App, Admin rolları → Admin)
+                // TODO: Admin səhifələri yazılanda rola görə yönləndir (Customer → App, Admin rolları → Admin)
                 if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     return LocalRedirect(model.ReturnUrl);
 
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Index", "App");
             }
             catch (HttpRequestException)
             {

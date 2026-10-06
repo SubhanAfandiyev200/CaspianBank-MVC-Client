@@ -1,0 +1,80 @@
+@model CardHeroVM
+@{
+    // Mətn bazadan gəlmirsə (sətir yoxdur / API işləmir) əvvəlki statik mətn göstərilir
+    var label = Model.CardHero?.Label ?? "Cards in manat";
+    var title = Model.CardHero?.Title ?? "One account for the way Baku spends.";
+    var description = Model.CardHero?.Description ?? "Debit, cashback, and a reserve card. Transfers and bills stay on the same account.";
+
+    // Kartların üzərindəki rəqəmlər nümunədir (statik), real kart nömrəsi deyil
+    var masks = new[] { "4291", "8834", "1102" };
+}
+
+<section class="hero">
+    <span class="spark spark-a" aria-hidden="true"></span>
+    <span class="spark spark-b" aria-hidden="true"></span>
+    <div class="hero-copy">
+        <p class="eyebrow"><span aria-hidden="true">✱ </span><span>@label</span></p>
+        <h1>@title</h1>
+        <p class="lede">@description</p>
+        <a class="btn btn-lime btn-go" id="hero-form" href="@NavLinks.OpenAccount(User.Identity?.IsAuthenticated == true)">
+            <span class="btn-go-label">Get your card</span>
+        </a>
+    </div>
+    <div class="hero-visual">
+        <span class="spin-star" aria-hidden="true">✱</span>
+        <div class="fan" id="card-fan">
+            @if (Model.CardDesigns.Count > 0)
+            {
+                @for (var i = 0; i < Model.CardDesigns.Count; i++)
+                {
+                    var design = Model.CardDesigns[i];
+                    <article class="fan-card fan-image" style="background-image: url('@design.Image')">
+                        <span class="fan-art" aria-hidden="true"></span>
+                        <span class="fan-shine" aria-hidden="true"></span>
+                        <span class="fan-top">
+                            <span class="fan-brand">
+                                <span class="fan-mark" aria-hidden="true"></span><span class="fan-bank">Caspian</span>
+                            </span>
+                            <span class="fan-tier">@design.Title</span>
+                            <svg class="fan-wave" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                 stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+                                <path d="M8 8.2c1.6 1.5 1.6 6.1 0 7.6" />
+                                <path d="M11.2 5.6c2.6 2.4 2.6 10.4 0 12.8" />
+                                <path d="M14.4 3.2c3.6 3.4 3.6 14.2 0 17.6" />
+                            </svg>
+                        </span>
+                        <span class="fan-chip" aria-hidden="true"></span>
+                        <span class="fan-mask">•••• @masks[i % masks.Length]</span>
+                        <span class="fan-issuer">Caspian Bank</span>
+                    </article>
+                }
+            }
+            else
+            {
+                @* Ehtiyat: API işləmir və ya heç bir dizayn göstərilmir: əvvəlki CSS ilə çəkilmiş 3 kart *@
+                foreach (var (theme, tier, mask) in new[] { ("regular", "Regular", "4291"), ("silver", "Silver", "8834"), ("gold", "Gold", "1102") })
+                {
+                    <article class="fan-card fan-@theme">
+                        <span class="fan-art" aria-hidden="true"></span>
+                        <span class="fan-shine" aria-hidden="true"></span>
+                        <span class="fan-top">
+                            <span class="fan-brand">
+                                <span class="fan-mark" aria-hidden="true"></span><span class="fan-bank">Caspian</span>
+                            </span>
+                            <span class="fan-tier">@tier</span>
+                            <svg class="fan-wave" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                                 stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+                                <path d="M8 8.2c1.6 1.5 1.6 6.1 0 7.6" />
+                                <path d="M11.2 5.6c2.6 2.4 2.6 10.4 0 12.8" />
+                                <path d="M14.4 3.2c3.6 3.4 3.6 14.2 0 17.6" />
+                            </svg>
+                        </span>
+                        <span class="fan-chip" aria-hidden="true"></span>
+                        <span class="fan-mask">•••• @mask</span>
+                        <span class="fan-issuer">Caspian Bank</span>
+                    </article>
+                }
+            }
+        </div>
+    </div>
+</section>

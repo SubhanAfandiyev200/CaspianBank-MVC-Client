@@ -34,7 +34,7 @@ builder.Services.AddHttpClient("CaspianApi", client =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
-        options.LoginPath = "/Account/Login";
+        options.LoginPath = "/Account/Welcome"; // giriş tələb edən səhifə: əvvəl email (Welcome), mövcuddursa Login
         options.AccessDeniedPath = "/";
         options.Cookie.Name = "Caspian.Auth";
         options.Cookie.HttpOnly = true;
