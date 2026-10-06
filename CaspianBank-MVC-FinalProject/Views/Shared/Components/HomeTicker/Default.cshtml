@@ -1,0 +1,15 @@
+﻿@model IEnumerable<HomeTickerUIVM>
+
+<div class="ticker" aria-hidden="true">
+    <div class="ticker-track">
+        @for (int i = 0; i < 2; i++)
+        {
+            <ul>
+                @foreach (var ticker in Model)
+                {
+                    <li>@ticker.Text.Trim() <span>✱</span></li>
+                }
+            </ul>
+        }
+    </div>
+</div>

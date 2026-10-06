@@ -1,8 +1,164 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    Layout = "_HomeLayout";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<main id="main">
+    
+    @await Component.InvokeAsync("HomeTicker")
+
+    <p class="sr-only">Secure transfers, instant cashback, 24/7 support, trusted by thousands.</p>
+
+    @await Component.InvokeAsync("AboutVideo")
+
+    @await Component.InvokeAsync("Brand")
+
+    <section class="hero">
+        <span class="spark spark-a" aria-hidden="true"></span>
+        <span class="spark spark-b" aria-hidden="true"></span>
+        <div class="hero-copy">
+            <p class="eyebrow"><span aria-hidden="true">✱ </span><span data-ui="heroEyebrow">Cards in manat</span></p>
+            <h1 data-ui="heroTitle">One account for the way Baku spends.</h1>
+            <p class="lede" data-ui="heroLede">
+                Debit, cashback, and a reserve card. Transfers and bills stay on the same
+                account.
+            </p>
+            <a class="btn btn-lime btn-go" id="hero-form" href="app.html">
+                <span class="btn-go-label"
+                      data-ui="heroButton">Get your card</span>
+            </a>
+        </div>
+        <div class="hero-visual">
+            <span class="spin-star" aria-hidden="true">✱</span>
+            <div class="fan" id="card-fan">
+                <article class="fan-card fan-regular">
+                    <span class="fan-art" aria-hidden="true"></span>
+                    <span class="fan-shine" aria-hidden="true"></span>
+                    <span class="fan-top">
+                        <span class="fan-brand">
+                            <span class="fan-mark" aria-hidden="true"></span><span class="fan-bank">Caspian</span>
+                        </span>
+                        <span class="fan-tier">Regular</span>
+                        <svg class="fan-wave" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                             stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+                            <path d="M8 8.2c1.6 1.5 1.6 6.1 0 7.6" />
+                            <path d="M11.2 5.6c2.6 2.4 2.6 10.4 0 12.8" />
+                            <path d="M14.4 3.2c3.6 3.4 3.6 14.2 0 17.6" />
+                        </svg>
+                    </span>
+                    <span class="fan-chip" aria-hidden="true"></span>
+                    <span class="fan-mask">•••• 4291</span>
+                    <span class="fan-issuer">Caspian Bank</span>
+                </article>
+                <article class="fan-card fan-silver">
+                    <span class="fan-art" aria-hidden="true"></span>
+                    <span class="fan-shine" aria-hidden="true"></span>
+                    <span class="fan-top">
+                        <span class="fan-brand">
+                            <span class="fan-mark" aria-hidden="true"></span><span class="fan-bank">Caspian</span>
+                        </span>
+                        <span class="fan-tier">Silver</span>
+                        <svg class="fan-wave" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                             stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+                            <path d="M8 8.2c1.6 1.5 1.6 6.1 0 7.6" />
+                            <path d="M11.2 5.6c2.6 2.4 2.6 10.4 0 12.8" />
+                            <path d="M14.4 3.2c3.6 3.4 3.6 14.2 0 17.6" />
+                        </svg>
+                    </span>
+                    <span class="fan-chip" aria-hidden="true"></span>
+                    <span class="fan-mask">•••• 8834</span>
+                    <span class="fan-issuer">Caspian Bank</span>
+                </article>
+                <article class="fan-card fan-gold">
+                    <span class="fan-art" aria-hidden="true"></span>
+                    <span class="fan-shine" aria-hidden="true"></span>
+                    <span class="fan-top">
+                        <span class="fan-brand">
+                            <span class="fan-mark" aria-hidden="true"></span><span class="fan-bank">Caspian</span>
+                        </span>
+                        <span class="fan-tier">Gold</span>
+                        <svg class="fan-wave" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+                             stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
+                            <path d="M8 8.2c1.6 1.5 1.6 6.1 0 7.6" />
+                            <path d="M11.2 5.6c2.6 2.4 2.6 10.4 0 12.8" />
+                            <path d="M14.4 3.2c3.6 3.4 3.6 14.2 0 17.6" />
+                        </svg>
+                    </span>
+                    <span class="fan-chip" aria-hidden="true"></span>
+                    <span class="fan-mask">•••• 1102</span>
+                    <span class="fan-issuer">Caspian Bank</span>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    @await Component.InvokeAsync("Service")
+
+    @await Component.InvokeAsync("Benefit")
+
+    <section class="stats" aria-labelledby="stats-title">
+        <div class="section-intro stats-intro split">
+            <div>
+                <p class="eyebrow"><span aria-hidden="true">✱ </span><span data-ui="statsEyebrow">Trust indicators</span></p>
+                <h2 id="stats-title" data-ui="statsTitle">Driving the future of digital finance</h2>
+            </div>
+            <p class="lede" data-ui="statsLede">
+                Our platform is built on transparency, high-velocity performance, and
+                institutional-grade security.
+            </p>
+        </div>
+        <div class="stat-row">
+            <!-- TODO: replace these placeholder figures with audited numbers -->
+            <article class="stat">
+                <div class="ring" data-percent="97" data-count="97" data-decimals="0" data-suffix="%">
+                    <svg viewBox="0 0 160 160" aria-hidden="true">
+                        <circle class="ring-face" cx="80" cy="80" r="52" />
+                        <g transform="rotate(-90 80 80)">
+                            <circle class="ring-track" cx="80" cy="80" r="64" />
+                            <circle class="ring-value" cx="80" cy="80" r="64" />
+                        </g>
+                        <g class="ring-orbit">
+                            <circle cx="80" cy="16" r="4" />
+                        </g>
+                    </svg>
+                    <p class="ring-figure"><span class="ring-num">0</span></p>
+                </div>
+                <h3>System availability</h3>
+                <p>Maintaining a 97% uptime record so banking services stay online.</p>
+            </article>
+            <article class="stat">
+                <div class="ring" data-percent="98" data-count="98" data-decimals="0" data-suffix="%">
+                    <svg viewBox="0 0 160 160" aria-hidden="true">
+                        <circle class="ring-face" cx="80" cy="80" r="52" />
+                        <g transform="rotate(-90 80 80)">
+                            <circle class="ring-track" cx="80" cy="80" r="64" />
+                            <circle class="ring-value" cx="80" cy="80" r="64" />
+                        </g>
+                        <g class="ring-orbit">
+                            <circle cx="80" cy="16" r="4" />
+                        </g>
+                    </svg>
+                    <p class="ring-figure"><span class="ring-num">0</span></p>
+                </div>
+                <h3>Customer retention</h3>
+                <p>Clear payments and a straightforward account keep clients with the bank.</p>
+            </article>
+            <article class="stat">
+                <div class="ring" data-percent="99" data-count="99" data-decimals="0" data-suffix="%">
+                    <svg viewBox="0 0 160 160" aria-hidden="true">
+                        <circle class="ring-face" cx="80" cy="80" r="52" />
+                        <g transform="rotate(-90 80 80)">
+                            <circle class="ring-track" cx="80" cy="80" r="64" />
+                            <circle class="ring-value" cx="80" cy="80" r="64" />
+                        </g>
+                        <g class="ring-orbit">
+                            <circle cx="80" cy="16" r="4" />
+                        </g>
+                    </svg>
+                    <p class="ring-figure"><span class="ring-num">0</span></p>
+                </div>
+                <h3>Automated AML/KYC</h3>
+                <p>Verification that shortens onboarding and keeps the same record on the account.</p>
+            </article>
+        </div>
+    </section>
+</main>

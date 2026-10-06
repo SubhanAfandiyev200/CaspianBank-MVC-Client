@@ -1,0 +1,29 @@
+@model WelcomeVM
+@{
+    Layout = "_AuthLayout";
+}
+<main class="auth-shell">
+    <section class="auth-card">
+        <a class="brand" asp-controller="Home" asp-action="Index">
+            <svg class="brand-mark" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+                <rect width="32" height="32" rx="8" fill="#1F8A4C" />
+                <path d="M22 11.2a7.2 7.2 0 1 0 0 9.6" fill="none" stroke="#E4D2A8" stroke-width="2.4" stroke-linecap="round" />
+            </svg>
+            <span>Caspian Bank</span>
+        </a>
+        <h1>Welcome</h1>
+        <p class="lede">Enter your email to sign in or open an account.</p>
+        <form id="welcome-form" class="form-stack mt-5" asp-controller="Account" asp-action="Welcome" method="post" novalidate>
+            <div asp-validation-summary="ModelOnly" class="field-error"></div>
+            <div class="field">
+                <label for="email">Email</label>
+                <input class="input" id="email" asp-for="Email" type="email" autocomplete="username" inputmode="email" placeholder="name@email.com" required />
+            </div>
+            <button class="btn btn-primary btn-block" type="submit">Continue</button>
+        </form>
+        <p class="auth-foot">
+            <a asp-controller="Home" asp-action="Index" asp-fragment="contact">Contact us</a>
+            <span>Caspian Bank · Baku</span>
+        </p>
+    </section>
+</main>

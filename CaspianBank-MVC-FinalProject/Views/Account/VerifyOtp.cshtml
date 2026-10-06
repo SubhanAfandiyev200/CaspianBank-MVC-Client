@@ -1,0 +1,53 @@
+@model VerifyOtpVM
+@{
+    Layout = "_AuthLayout";
+}
+<main class="auth-shell">
+    <section class="auth-card">
+        <a class="brand" asp-controller="Home" asp-action="Index">
+            <svg class="brand-mark" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+                <rect width="32" height="32" rx="8" fill="#1F8A4C" />
+                <path d="M22 11.2a7.2 7.2 0 1 0 0 9.6" fill="none" stroke="#E4D2A8" stroke-width="2.4" stroke-linecap="round" />
+            </svg>
+            <span>Caspian Bank</span>
+        </a>
+        <h1>Verify your email</h1>
+        <p class="lede">We sent a code to @Model.MaskedEmail.</p>
+        @if (!string.IsNullOrEmpty(Model.DevCode))
+        {
+            <p class="field-hint"><strong>Demo mode (email is not configured):</strong> your code is <strong>@Model.DevCode</strong></p>
+        }
+        @if (TempData["Info"] is string info)
+        {
+            <p class="field-hint">@info</p>
+        }
+        <form id="otp-form" class="form-stack mt-5" asp-controller="Account" asp-action="VerifyOtp" method="post" novalidate>
+            <input type="hidden" asp-for="Email" />
+            <input type="hidden" asp-for="Code" id="otp-code" />
+            <div asp-validation-summary="ModelOnly" class="field-error"></div>
+            <div class="field">
+                <label for="otp-1">6-digit code</label>
+                <div class="otp@(ViewData.ModelState.ErrorCount > 0 ? " is-invalid" : "")" data-otp>
+                    <input class="otp-input" id="otp-1" inputmode="numeric" autocomplete="one-time-code" maxlength="1" aria-label="Digit 1" />
+                    <input class="otp-input" inputmode="numeric" maxlength="1" aria-label="Digit 2" />
+                    <input class="otp-input" inputmode="numeric" maxlength="1" aria-label="Digit 3" />
+                    <input class="otp-input" inputmode="numeric" maxlength="1" aria-label="Digit 4" />
+                    <input class="otp-input" inputmode="numeric" maxlength="1" aria-label="Digit 5" />
+                    <input class="otp-input" inputmode="numeric" maxlength="1" aria-label="Digit 6" />
+                </div>
+            </div>
+            <button class="btn btn-primary btn-block" id="otp-submit" type="submit">Verify</button>
+        </form>
+        <form class="hint mt-5" asp-controller="Account" asp-action="ResendOtp" method="post">
+            <input type="hidden" name="email" value="@Model.Email" />
+            <button class="btn-link" type="submit" id="resend" data-wait="60" disabled>Resend code</button>
+        </form>
+        <p class="auth-foot">
+            <a asp-controller="Home" asp-action="Index" asp-fragment="contact">Contact us</a>
+            <span>Caspian Bank · Baku</span>
+        </p>
+    </section>
+</main>
+@section Scripts {
+    <script src="~/js/otp-input.js" asp-append-version="true"></script>
+}
