@@ -1,0 +1,187 @@
+@model TransferFormVM
+@using System.Globalization
+@{
+    Layout = "_AppLayout";
+    var inv = CultureInfo.InvariantCulture;
+    var active = Model.Cards.Where(c => !c.IsBlocked).ToList();
+    var mode = Model.Mode == "other" ? "other" : "own";
+
+    // Cashback kartına köçürmə olmur: öz kartlarım siyahısında göstərilmir
+    var ownTargets = active.Where(c => !c.Tier.Equals("Cashback", StringComparison.OrdinalIgnoreCase)).ToList();
+
+    string Money(decimal value) { return value.ToString("N2", inv) + " AZN"; }
+
+    // Hər kartın növünün qaydaları (komissiyasız limit və faiz) canlı hesab üçün seçimlərə yazılır
+    (decimal Limit, decimal Percent) Rule(string tier)
+    {
+        var rule = Model.Tiers.FirstOrDefault(t => t.Tier.Equals(tier, StringComparison.OrdinalIgnoreCase));
+        return rule is null ? (0m, 0m) : (rule.TransferLimit, rule.CommissionPercent);
+    }
+
+    var firstTier = active.FirstOrDefault(c => c.Id == Model.FromCardId) ?? active.FirstOrDefault();
+}
+<main id="content" class="page pay-page">
+    <a class="back" asp-controller="App" asp-action="Index">Back to cards</a>
+
+    <header class="pay-top">
+        <div>
+            <p class="eyebrow">Payments</p>
+            <h1>Transfer money</h1>
+            <p class="lede">Send money between your cards or to another Caspian customer.</p>
+        </div>
+        <span class="secure-pill">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+            Secure transfer
+        </span>
+    </header>
+
+    <partial name="_TransferSteps" model="1" />
+
+    @if (Model.ApiUnavailable)
+    {
+        <div class="empty">
+            <h3>We can't load your cards</h3>
+            <p>The service is unavailable right now. Please try again in a moment.</p>
+            <a class="btn btn-secondary" asp-action="Index">Try again</a>
+        </div>
+    }
+    else if (active.Count == 0)
+    {
+        <div class="empty">
+            <h3>No card available</h3>
+            <p>Add an active card before sending money.</p>
+            <a class="btn btn-primary" href="@NavLinks.AddCard">Add a card</a>
+        </div>
+    }
+    else
+    {
+        <div class="pay-stage">
+            <aside class="pay-preview" aria-hidden="true">
+                <p class="pay-kicker"><span class="pay-mark"></span> Live preview</p>
+                <div class="pay-scene">
+                    <div class="plastic plastic-@(firstTier?.Tier.ToLowerInvariant())" id="pay-card">
+                        <span class="plastic-art" aria-hidden="true"></span>
+                        <span class="plastic-shine" aria-hidden="true"></span>
+                        <div class="plastic-top">
+                            <span class="plastic-brand"><span class="plastic-mark" aria-hidden="true"></span><span class="plastic-bank">Caspian</span></span>
+                            <span class="plastic-tier" id="live-tier">@firstTier?.Tier</span>
+                        </div>
+                        <div class="plastic-mid"><span class="plastic-chip" aria-hidden="true"></span></div>
+                        <p class="plastic-number" id="live-number"></p>
+                        <div class="plastic-bottom">
+                            <div>
+                                <span class="plastic-k">To</span>
+                                <span class="plastic-v" id="live-holder">Recipient</span>
+                            </div>
+                            <div>
+                                <span class="plastic-k">Amount</span>
+                                <span class="plastic-v num" id="live-amount">0.00 AZN</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <dl class="pay-order">
+                    <div><dt>From</dt><dd id="live-from">—</dd></div>
+                    <div><dt>Amount</dt><dd id="live-order-amount">0.00 AZN</dd></div>
+                    <div><dt>Commission</dt><dd id="live-fee">0.00 AZN</dd></div>
+                    <div class="pay-total"><dt>Total debit</dt><dd id="live-total">0.00 AZN</dd></div>
+                </dl>
+
+                <div class="limit-meter" aria-hidden="true">
+                    <div class="limit-meter-bar"><span id="meter-fill"></span></div>
+                    <p id="meter-text">Commission-free up to 0.00 AZN</p>
+                </div>
+            </aside>
+
+            <div class="pay-details">
+                <form asp-controller="Transfer" asp-action="Review" method="post" id="transfer-form" class="pay-form" novalidate data-mode="@mode">
+                    <h2>Transfer details</h2>
+                    <p class="lede">Fill in the details. You will review everything before the money moves.</p>
+
+                    @if (!string.IsNullOrEmpty(Model.Error))
+                    {
+                        <p class="flash flash-error" role="alert">@Model.Error</p>
+                    }
+
+                    <input type="hidden" name="RequestId" value="@Model.RequestId" />
+                    <input type="hidden" name="Mode" id="mode-input" value="@mode" />
+
+                    <div class="field">
+                        <label for="from-card">From</label>
+                        <select class="select" id="from-card" name="FromCardId" data-card-pick>
+                            @foreach (var card in active)
+                            {
+                                var rule = Rule(card.Tier);
+                                <option value="@card.Id" selected="@(card.Id == Model.FromCardId)"
+                                        data-tier="@card.Tier" data-last4="@card.Last4" data-money="@Money(card.Balance)"
+                                        data-balance="@card.Balance.ToString(inv)" data-design="@card.DesignImage"
+                                        data-limit="@rule.Limit.ToString(inv)" data-pct="@rule.Percent.ToString(inv)">@card.Tier · •••• @card.Last4 · @Money(card.Balance)</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <span id="to-label">To</span>
+                        <div class="segment" role="group" aria-labelledby="to-label">
+                            <button type="button" id="to-own" class="@(mode == "own" ? "is-active" : "")">My own card</button>
+                            <button type="button" id="to-other" class="@(mode == "other" ? "is-active" : "")">Another customer</button>
+                        </div>
+                        <p class="hint" id="cashback-hint" hidden>The Cashback card can only send money to your own cards.</p>
+                    </div>
+
+                    <div class="field" id="own-field" @(mode == "other" ? "hidden" : null)>
+                        <label for="to-card">Destination card</label>
+                        <select class="select" id="to-card" name="ToCardId" data-card-pick data-selected="@Model.ToCardId">
+                            @foreach (var card in ownTargets)
+                            {
+                                <option value="@card.Id"
+                                        data-tier="@card.Tier" data-last4="@card.Last4" data-money="@Money(card.Balance)"
+                                        data-design="@card.DesignImage">@card.Tier · •••• @card.Last4 · @Money(card.Balance)</option>
+                            }
+                        </select>
+                        <p class="hint" id="own-empty" hidden>You have no other card to transfer to. <a href="@NavLinks.AddCard">Add a card</a> or send to another customer.</p>
+                    </div>
+
+                    <div class="field" id="other-field" @(mode == "own" ? "hidden" : null)>
+                        <label for="to-number">Recipient card number</label>
+                        <div class="input-group">
+                            <input class="input" id="to-number" name="ToCardNumber" inputmode="numeric" placeholder="4532 1234 5678 9012"
+                                   maxlength="19" autocomplete="off" value="@Model.ToCardNumber" />
+                        </div>
+                        <p class="hint">The 16-digit number of a Caspian card. You will see the recipient's name before you confirm.</p>
+                    </div>
+
+                    <div class="field">
+                        <label for="amount">Amount</label>
+                        <div class="input-group has-suffix">
+                            <input class="input input-amount" id="amount" name="Amount" inputmode="decimal" placeholder="0.00" autocomplete="off" value="@Model.Amount" />
+                            <span class="input-suffix">AZN</span>
+                        </div>
+                        <div class="chips chips-tight" role="group" aria-label="Quick amounts">
+                            <button type="button" class="chip" data-quick="50">50</button>
+                            <button type="button" class="chip" data-quick="100">100</button>
+                            <button type="button" class="chip" data-quick="250">250</button>
+                            <button type="button" class="chip" data-quick="500">500</button>
+                            <button type="button" class="chip chip-max" id="amount-max">Max</button>
+                        </div>
+                        <p class="hint" id="limit-hint"></p>
+                    </div>
+
+                    <div class="field">
+                        <label for="note">Note <span class="optional">(optional)</span></label>
+                        <input class="input" id="note" name="Note" maxlength="140" placeholder="What's this for?" autocomplete="off" value="@Model.Note" />
+                    </div>
+
+                    <button class="btn btn-primary btn-block btn-lg" type="submit" id="review-btn">Review transfer</button>
+
+                    <ul class="pay-trust">
+                        <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>Nothing is sent until you confirm</li>
+                        <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>Commission is shown before you pay</li>
+                        <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>You get a receipt and it is kept in your card activity</li>
+                    </ul>
+                </form>
+            </div>
+        </div>
+    }
+</main>

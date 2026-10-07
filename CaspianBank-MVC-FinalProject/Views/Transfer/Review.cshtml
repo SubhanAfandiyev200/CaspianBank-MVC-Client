@@ -1,0 +1,79 @@
+@model TransferReviewVM
+@using System.Globalization
+@{
+    Layout = "_AppLayout";
+    var inv = CultureInfo.InvariantCulture;
+    var p = Model.Preview;
+    string Money(decimal value) { return value.ToString("N2", inv) + " AZN"; }
+
+    var recipient = p.ToHolder is null ? p.ToLabel : p.ToLabel + " · " + p.ToHolder;
+    var confirmText = "You are about to send " + Money(p.Amount) + " to " + recipient + "."
+        + (p.Commission > 0 ? " A commission of " + Money(p.Commission) + " will be charged." : string.Empty)
+        + " This can't be undone.";
+}
+<main id="content" class="page pay-page">
+    <header class="pay-top">
+        <div>
+            <p class="eyebrow">Payments</p>
+            <h1>Review transfer</h1>
+            <p class="lede">Check the details. The money moves only when you confirm.</p>
+        </div>
+        <span class="secure-pill">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="9" rx="2" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+            Secure transfer
+        </span>
+    </header>
+
+    <partial name="_TransferSteps" model="2" />
+
+    <section class="rv">
+        <div class="rv-hero">
+            <span class="rv-label">You are sending</span>
+            <strong class="rv-amount num">@p.Amount.ToString("N2", inv)<small>AZN</small></strong>
+        </div>
+
+        <div class="rv-route">
+            <div class="rv-party">
+                <span class="rv-label">From</span>
+                <strong>@p.FromLabel</strong>
+                <span class="rv-sub">Balance @Money(p.FromBalance)</span>
+            </div>
+            <span class="rv-arrow" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+            </span>
+            <div class="rv-party">
+                <span class="rv-label">To</span>
+                <strong>@(p.ToHolder ?? p.ToLabel)</strong>
+                <span class="rv-sub">@(p.ToHolder is null ? "Your own card" : p.ToLabel)</span>
+            </div>
+        </div>
+
+        <dl class="rv-list">
+            <div><dt>Amount</dt><dd class="num">@Money(p.Amount)</dd></div>
+            <div><dt>Commission</dt><dd class="num @(p.Commission > 0 ? "" : "is-free")">@(p.Commission > 0 ? Money(p.Commission) : "Free")</dd></div>
+            @if (!string.IsNullOrEmpty(p.Note))
+            {
+                <div><dt>Note</dt><dd>@p.Note</dd></div>
+            }
+            <div class="rv-total"><dt>Total debit</dt><dd class="num">@Money(p.Total)</dd></div>
+        </dl>
+
+        @* Hər iki düymə eyni gizli sahələri göndərir: təsdiq pulu köçürür, "Back" formaya qaytarır *@
+        <form method="post" class="rv-actions" id="confirm-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="FromCardId" value="@Model.Form.FromCardId" />
+            <input type="hidden" name="Mode" value="@Model.Form.Mode" />
+            <input type="hidden" name="ToCardId" value="@Model.Form.ToCardId" />
+            <input type="hidden" name="ToCardNumber" value="@Model.Form.ToCardNumber" />
+            <input type="hidden" name="Amount" value="@Model.Form.Amount" />
+            <input type="hidden" name="Note" value="@Model.Form.Note" />
+            <input type="hidden" name="RequestId" value="@Model.Form.RequestId" />
+            <button class="btn btn-secondary btn-cancel" type="submit" formaction="@Url.Action("Edit", "Transfer")">Back</button>
+            <button class="btn btn-primary btn-lg" type="submit" formaction="@Url.Action("Confirm", "Transfer")" data-once
+                    data-confirm-title="Are you sure?"
+                    data-confirm-text="@confirmText"
+                    data-confirm-yes="Yes, send it"
+                    data-confirm-no="Cancel">Confirm transfer</button>
+        </form>
+    </section>
+</main>

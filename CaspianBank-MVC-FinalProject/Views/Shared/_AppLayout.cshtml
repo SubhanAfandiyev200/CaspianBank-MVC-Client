@@ -21,12 +21,12 @@
                 </svg>
                 <span>Caspian Bank</span>
             </a>
-            <button class="nav-toggle" type="button" aria-label="Open menu"><span></span><span></span><span></span></button>
+            <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Open menu"><span></span><span></span><span></span></button>
             <div class="topnav-panel">
                 <nav class="main-nav" aria-label="Primary">
                     <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
-                    <a class="nav-link is-active" href="app.html">Cards</a>
-                    <a class="nav-link" href="transfer.html">Transfers</a>
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "App" ? "is-active" : "")" asp-controller="App" asp-action="Index">Cards</a>
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Transfer" ? "is-active" : "")" asp-controller="Transfer" asp-action="Index">Transfers</a>
                     <a class="nav-link" href="transaction-history.html">History</a>
                     <a class="nav-link" href="loan-application.html">Loans</a>
                     <a class="nav-link" href="bill-payment.html">Bill Payments</a>
@@ -62,6 +62,6 @@
             <span>Personal banking</span>
         </div>
     </footer>
-    <script src="~/js/app.js"></script>
+    <script src="~/js/app-cards.js" asp-append-version="true"></script>
 </body>
 </html>

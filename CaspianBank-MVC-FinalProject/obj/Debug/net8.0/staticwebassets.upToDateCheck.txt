@@ -1,3 +1,5 @@
+wwwroot\css\style.css
+wwwroot\js\app-cards.js
 wwwroot\img\chatgpt.png
 wwwroot\img\claude.png
 wwwroot\img\cursor.png
@@ -18,6 +20,7 @@ wwwroot\js\admin-ticket.js
 wwwroot\js\admin-tickets.js
 wwwroot\js\admin-user.js
 wwwroot\js\admin-users.js
+wwwroot\css\home.css
 wwwroot\js\app.js
 wwwroot\js\auth-fields.js
 wwwroot\js\bills.js
@@ -94,5 +97,3 @@ wwwroot\lib\jquery\dist\jquery.js
 wwwroot\lib\jquery\dist\jquery.min.js
 wwwroot\lib\jquery\dist\jquery.min.map
 wwwroot\lib\jquery\LICENSE.txt
-wwwroot\css\home.css
-wwwroot\css\style.css

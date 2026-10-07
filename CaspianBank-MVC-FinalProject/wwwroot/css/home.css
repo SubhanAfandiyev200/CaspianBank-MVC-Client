@@ -1331,3 +1331,7 @@ a.header-user-name:hover { text-decoration: underline; }
 }
 .btn-logout:hover::before { transform: scale(1); }
 .btn-logout:focus-visible { outline-color: #d94a4a; }
+
+/* Menyu kartlarının şəkilləri */
+.mega-swatch { display: grid; place-items: center; overflow: hidden; }
+.mega-swatch svg { display: block; height: 100%; width: auto; max-width: 100%; }

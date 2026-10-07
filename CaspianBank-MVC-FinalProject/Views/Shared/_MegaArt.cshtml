@@ -1,0 +1,43 @@
+@model string
+@* Home menyusundakı kartların şəkilləri (kiçik illüstrasiyalar): account, cards, payments, credit *@
+@switch (Model)
+{
+    case "cards":
+        <svg viewBox="0 0 120 84" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="26" y="14" width="56" height="36" rx="6" fill="#0f5c3f" transform="rotate(-16 54 32)" />
+            <rect x="32" y="18" width="56" height="36" rx="6" fill="#c5d86d" transform="rotate(-6 60 36)" />
+            <rect x="38" y="26" width="58" height="38" rx="6" fill="#fff" stroke="#0f5c3f" stroke-width="2" />
+            <rect x="45" y="34" width="11" height="8" rx="2" fill="#d7b15a" />
+            <path d="M45 54h22M72 54h10" stroke="#0f5c3f" stroke-width="2.4" />
+        </svg>
+        break;
+    case "payments":
+        <svg viewBox="0 0 120 84" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="32" cy="42" r="18" fill="#fff" stroke="#0f5c3f" stroke-width="2" />
+            <circle cx="88" cy="42" r="18" fill="#0f5c3f" />
+            <path d="M24 42h16M36 36l6 6-6 6" stroke="#0f5c3f" stroke-width="2.4" />
+            <path d="M96 42H80M84 36l-6 6 6 6" stroke="#c5d86d" stroke-width="2.4" />
+            <path d="M48 36h24M66 30l6 6-6 6" stroke="#0f5c3f" stroke-width="2.4" />
+            <path d="M72 52H48M54 46l-6 6 6 6" stroke="#0f5c3f" stroke-width="2.4" opacity=".55" />
+        </svg>
+        break;
+    case "credit":
+        <svg viewBox="0 0 120 84" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="26" y="48" width="16" height="22" rx="3" fill="#c5d86d" />
+            <rect x="52" y="36" width="16" height="34" rx="3" fill="#c5d86d" opacity=".8" />
+            <rect x="78" y="22" width="16" height="48" rx="3" fill="#c5d86d" opacity=".6" />
+            <path d="M24 36l22-12 20 8 30-18" stroke="#fff" stroke-width="2.4" />
+            <path d="M90 14h6v6" stroke="#fff" stroke-width="2.4" />
+        </svg>
+        break;
+    default:
+        <svg viewBox="0 0 120 84" fill="none" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="22" y="16" width="76" height="52" rx="8" fill="#fff" stroke="#0f5c3f" stroke-width="2" />
+            <circle cx="46" cy="38" r="7" fill="#d7e7cf" stroke="#0f5c3f" stroke-width="2" />
+            <path d="M34 58c2-7 7-10 12-10s10 3 12 10" stroke="#0f5c3f" stroke-width="2" />
+            <path d="M68 34h20M68 44h14" stroke="#0f5c3f" stroke-width="2.4" />
+            <circle cx="98" cy="18" r="11" fill="#c5d86d" stroke="#0f5c3f" stroke-width="2" />
+            <path d="M98 13v10M93 18h10" stroke="#0f5c3f" stroke-width="2.2" />
+        </svg>
+        break;
+}

@@ -60,7 +60,7 @@
                 @if (signedIn)
                 {
                     <a class="mega-card" href="@NavLinks.App">
-                        <span class="mega-swatch mega-swatch-a" aria-hidden="true"></span>
+                        <span class="mega-swatch mega-swatch-a" aria-hidden="true"><partial name="_MegaArt" model='"account"' /></span>
                         <strong>Go to my app</strong>
                         <span>Your cards, transfers and history in one place.</span>
                     </a>
@@ -68,23 +68,23 @@
                 else
                 {
                     <a class="mega-card" href="@NavLinks.Welcome">
-                        <span class="mega-swatch mega-swatch-a" aria-hidden="true"></span>
+                        <span class="mega-swatch mega-swatch-a" aria-hidden="true"><partial name="_MegaArt" model='"account"' /></span>
                         <strong>Open an account</strong>
                         <span>Current accounts for personal and salary clients.</span>
                     </a>
                 }
                 <a class="mega-card" href="@NavLinks.Page(signedIn, NavLinks.App)">
-                    <span class="mega-swatch mega-swatch-b" aria-hidden="true"></span>
+                    <span class="mega-swatch mega-swatch-b" aria-hidden="true"><partial name="_MegaArt" model='"cards"' /></span>
                     <strong>Cards</strong>
                     <span>Debit and cashback cards, issued in AZN.</span>
                 </a>
                 <a class="mega-card" href="@NavLinks.Page(signedIn, NavLinks.Transfer)">
-                    <span class="mega-swatch mega-swatch-c" aria-hidden="true"></span>
+                    <span class="mega-swatch mega-swatch-c" aria-hidden="true"><partial name="_MegaArt" model='"payments"' /></span>
                     <strong>Payments</strong>
                     <span>Transfers between cards and utility bills.</span>
                 </a>
                 <a class="mega-card" href="@NavLinks.Page(signedIn, NavLinks.Loan)">
-                    <span class="mega-swatch mega-swatch-d" aria-hidden="true"></span>
+                    <span class="mega-swatch mega-swatch-d" aria-hidden="true"><partial name="_MegaArt" model='"credit"' /></span>
                     <strong>Credit</strong>
                     <span>Personal loans, reviewed by the bank.</span>
                 </a>

@@ -9,10 +9,10 @@ namespace CaspianBank_MVC_FinalProject.Helpers
         public const string Welcome = "/Account/Welcome";
         public const string Contact = "/#contact";
 
-        // TODO: səhifələr yazılanda ünvanları dəyiş (məs. AddCard = "/App/AddCard")
+        // TODO: səhifələr yazılanda ünvanları dəyiş (AddCard artıq hazırdır)
         public const string App = "/App";
-        public const string AddCard = "/App";
-        public const string Transfer = "/App";
+        public const string AddCard = "/App/AddCard";
+        public const string Transfer = "/App/Transfer";
         public const string Loan = "/App";
         public const string Bills = "/App";
         public const string Support = "/App";

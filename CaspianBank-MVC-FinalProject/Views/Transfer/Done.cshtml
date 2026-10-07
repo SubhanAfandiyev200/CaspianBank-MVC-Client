@@ -1,0 +1,61 @@
+@model TransferReceiptUIVM
+@using System.Globalization
+@{
+    Layout = "_AppLayout";
+    var inv = CultureInfo.InvariantCulture;
+    var local = Model.CreatedAt.ToLocalTime();
+    var isOwn = Model.ToHolder is null;
+    string Money(decimal value) { return value.ToString("N2", inv) + " AZN"; }
+
+    // "Share" / "Copy" üçün qısa mətn
+    var shareText = "Caspian Bank transfer " + Model.Reference + ": " + Money(Model.Amount) + " to "
+        + (Model.ToHolder ?? Model.ToLabel) + " on " + local.ToString("dd MMM yyyy, HH:mm", inv);
+}
+<main id="content" class="page pay-page">
+    <div class="no-print">
+        <partial name="_TransferSteps" model="3" />
+    </div>
+
+    <section class="rc" aria-labelledby="rc-title">
+        <div class="rc-top">
+            <span class="rc-check" aria-hidden="true">
+                <svg viewBox="0 0 52 52" width="56" height="56" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle class="rc-ring" cx="26" cy="26" r="22" /><path class="rc-tick" d="m16 27 7 7 14-16" /></svg>
+            </span>
+            <h1 id="rc-title">Transfer successful</h1>
+            <strong class="rc-amount num">@Model.Amount.ToString("N2", inv)<small>AZN</small></strong>
+            <span class="rc-date">@local.ToString("dd MMM yyyy, HH:mm", inv)</span>
+        </div>
+
+        <div class="rc-tear" aria-hidden="true"></div>
+
+        <dl class="rc-list">
+            <div><dt>Status</dt><dd><span class="badge-pill is-ok">Completed</span></dd></div>
+            <div><dt>Type</dt><dd>@(isOwn ? "Between your cards" : "To another customer")</dd></div>
+            <div><dt>From</dt><dd>@Model.FromLabel</dd></div>
+            <div><dt>To</dt><dd>@Model.ToLabel@(isOwn ? "" : " · " + Model.ToHolder)</dd></div>
+            @if (!string.IsNullOrEmpty(Model.Note))
+            {
+                <div><dt>Note</dt><dd>@Model.Note</dd></div>
+            }
+            <div><dt>Amount</dt><dd class="num">@Money(Model.Amount)</dd></div>
+            <div><dt>Commission</dt><dd class="num">@(Model.Commission > 0 ? Money(Model.Commission) : "Free")</dd></div>
+            <div class="rc-total"><dt>Total debit</dt><dd class="num">@Money(Model.Total)</dd></div>
+            <div><dt>Balance after</dt><dd class="num">@Money(Model.FromBalanceAfter)</dd></div>
+            <div>
+                <dt>Reference</dt>
+                <dd class="num">@Model.Reference <button type="button" class="btn-copy no-print" data-copy="@Model.Reference" data-copy-label="Reference">Copy</button></dd>
+            </div>
+        </dl>
+
+        <div class="rc-zigzag" aria-hidden="true"></div>
+
+        <p class="rc-foot">Caspian Bank · 28 Nizami Street, Baku<br />Keep this receipt for your records.</p>
+    </section>
+
+    <div class="rc-actions no-print">
+        <button type="button" class="btn btn-secondary" id="rc-print">Save as PDF</button>
+        <button type="button" class="btn btn-secondary" id="rc-share" data-share="@shareText">Share</button>
+        <a class="btn btn-secondary" asp-controller="App" asp-action="Index">Back to cards</a>
+        <a class="btn btn-primary" asp-controller="Transfer" asp-action="Index">New transfer</a>
+    </div>
+</main>
