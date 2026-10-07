@@ -1,0 +1,83 @@
+@{
+    ViewData["Title"] = "Audit log";
+}
+<main id="content" class="page">
+    <header class="page-head">
+        <p class="eyebrow">Controls</p>
+        <h1>Audit log</h1>
+        <p class="lede">A record of sign-ins, money movement, decisions, and account changes.</p>
+    </header>
+
+    @* Hələlik statik dizayn (nümunə sətirlər) *@
+    <section class="surface surface-tight">
+        <div class="toolbar filters">
+            <div class="field grow">
+                <label for="q">Search</label>
+                <input class="input" id="q" type="search" placeholder="User, action, or detail" />
+            </div>
+            <div class="field">
+                <label for="action">Action</label>
+                <select class="select" id="action">
+                    <option value="all">All actions</option>
+                    <option>Account restricted</option>
+                    <option>Loan decision</option>
+                    <option>Sign-in</option>
+                    <option>Transfer</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="from">From</label>
+                <input class="input" id="from" type="date" />
+            </div>
+            <div class="field">
+                <label for="to">To</label>
+                <input class="input" id="to" type="date" />
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>User</th>
+                        <th>Action</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>07 Oct 2026, 18:25</td>
+                        <td>Leyla Mammadova</td>
+                        <td>Sign-in</td>
+                        <td>Web banking session opened</td>
+                    </tr>
+                    <tr>
+                        <td>07 Oct 2026, 18:24</td>
+                        <td>Leyla Mammadova</td>
+                        <td>Transfer</td>
+                        <td>1,000.00 AZN to Silver •••• 2977</td>
+                    </tr>
+                    <tr>
+                        <td>06 Oct 2026, 16:20</td>
+                        <td>Nigar Aliyeva</td>
+                        <td>Support reply</td>
+                        <td>Replied to “Cashback for August”</td>
+                    </tr>
+                    <tr>
+                        <td>03 Oct 2026, 15:00</td>
+                        <td>Nigar Aliyeva</td>
+                        <td>Loan decision</td>
+                        <td>Approved 20,000.00 AZN for Tural Ismayilov</td>
+                    </tr>
+                    <tr>
+                        <td>01 Oct 2026, 13:05</td>
+                        <td>Nigar Aliyeva</td>
+                        <td>Account restricted</td>
+                        <td>Elvin Qasimov restricted after report TX-198332</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>

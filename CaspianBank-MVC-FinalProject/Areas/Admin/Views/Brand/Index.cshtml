@@ -1,0 +1,54 @@
+
+@{
+    ViewData["Title"] = "Brands";
+}
+@model IEnumerable<BrandVM>
+<main id="content" class="page">
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">UI · Home page</p>
+            <h1>Brands</h1>
+            <p class="lede">The partner logos in the moving strip under the Home headline.</p>
+        </div>
+        <a class="btn btn-primary" href="#">Create</a>
+    </header>
+
+    <section class="surface surface-tight">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th class="num">Id</th>
+                        <th>Logo</th>
+                        <th>Name</th>
+                        <th>Image path</th>
+                        <th class="actions">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var item in Model)
+                    {
+                        <tr>
+                            <td class="num">@item.Id</td>
+                            <td><img src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], item.Image)" alt="@item.Name"style="display:block;height:32px;width:auto;max-width:120px;object-fit:contain" /></td>
+                            <td>@item.Name</td>
+                            <td>@item.Image</td>
+                            <td class="actions">
+                                <span class="row-actions">
+                                    <a class="btn btn-secondary btn-sm" href="#">Detail</a>
+                                    <a class="btn btn-secondary btn-sm" href="#">Edit</a>
+                                    <button type="button" class="btn btn-danger btn-sm"
+                                            data-confirm-title="Delete this brand?"
+                                            data-confirm-text="The logo will disappear from the Home page."
+                                            data-confirm-yes="Delete" data-confirm-danger="true">
+                                        Delete
+                                    </button>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>

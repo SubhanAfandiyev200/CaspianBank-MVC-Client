@@ -1,0 +1,146 @@
+@using System.Security.Claims
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
+    // İki bölmə: UI (saytın görünüşü) və Bank (maliyyə və əməliyyatlar). Yeni UI controller əlavə edəndə adını bura yaz.
+    var uiControllers = new[] { "UiDashboard", "Brand", "CardDesign" };
+    var isUi = uiControllers.Contains(controller);
+
+    var name = User.Identity?.Name ?? "Admin";
+    var initials = string.Concat(name.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(part => char.ToUpperInvariant(part[0])));
+
+    // Profil düyməsində görünən rol adı
+    var roles = User.FindAll(ClaimTypes.Role).Select(claim => claim.Value).ToList();
+    var roleLabels = new Dictionary<string, string>
+    {
+        { AppRoles.SuperAdmin, "Super admin" },
+        { AppRoles.Admin, "Administrator" },
+        { AppRoles.Accountant, "Accountant" },
+        { AppRoles.WebDesigner, "Web designer" },
+        { AppRoles.CustomerSupport, "Customer support" },
+        { AppRoles.Security, "Security" }
+    };
+    var roleLabel = roles.Where(role => roleLabels.ContainsKey(role)).Select(role => roleLabels[role]).FirstOrDefault() ?? "Staff";
+
+    string On(string controllerName)
+    {
+        return controller == controllerName ? "is-on" : string.Empty;
+    }
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0F5C3F" />
+    <title>@(ViewData["Title"] ?? "Admin") · Caspian Bank</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+</head>
+<body class="body-admin">
+    <a class="skip" href="#content">Skip to content</a>
+    <header class="topnav">
+        <div class="topnav-inner">
+            <a class="brand" asp-area="Admin" asp-controller="BankDashboard" asp-action="Index">
+                <svg class="brand-mark" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+                    <rect width="32" height="32" rx="8" fill="#1F8A4C" />
+                    <path d="M22 11.2a7.2 7.2 0 1 0 0 9.6" fill="none" stroke="#E4D2A8" stroke-width="2.4" stroke-linecap="round" />
+                </svg>
+                <span>Caspian Bank</span>
+            </a>
+            <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Open menu"><span></span><span></span><span></span></button>
+            <div class="topnav-panel">
+                <nav class="main-nav admin-areas" aria-label="Administration">
+                    <a class="nav-link @(isUi ? "is-active" : "")" asp-area="Admin" asp-controller="UiDashboard" asp-action="Index">UI</a>
+                    <a class="nav-link @(isUi ? "" : "is-active")" asp-area="Admin" asp-controller="BankDashboard" asp-action="Index">Bank</a>
+                </nav>
+                <div class="nav-tools">
+                    @* Bildiriş zəngi: hələlik statik nümunə. Notification modeli yazılanda siyahı oradan gələcək. *@
+                    <div class="dropdown" data-dropdown>
+                        <button class="icon-btn" type="button" data-dropdown-toggle aria-haspopup="true" aria-expanded="false" aria-label="Notifications">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17h12l-1.5-2V11a4.5 4.5 0 0 0-9 0v4z" /><path d="M10 20a2 2 0 0 0 4 0" /></svg>
+                            <span class="notif-count">3</span>
+                        </button>
+                        <div class="dropdown-panel notes-panel">
+                            <div class="panel-head"><strong>Needs attention</strong></div>
+                            <div class="note-list">
+                                <a class="note is-unread" asp-area="Admin" asp-controller="Loans" asp-action="Index">
+                                    <span class="note-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10l8-6 8 6" /><path d="M6 10v8h12v-8" /><path d="M10 18v-4h4v4" /></svg></span>
+                                    <span>
+                                        <span class="spread"><span class="note-title">Loan waiting</span><time>05 Oct, 18:20</time></span>
+                                        <span class="note-body">Rashad Huseynov · 8,000.00 AZN</span>
+                                    </span>
+                                </a>
+                                <a class="note is-unread" asp-area="Admin" asp-controller="Reports" asp-action="Index">
+                                    <span class="note-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 16H3z" /><path d="M12 9v4" /><path d="M12 16h.01" /></svg></span>
+                                    <span>
+                                        <span class="spread"><span class="note-title">Suspicious report</span><time>05 Oct, 09:41</time></span>
+                                        <span class="note-body">Aysel Karimova · TX-204918</span>
+                                    </span>
+                                </a>
+                                <a class="note is-unread" asp-area="Admin" asp-controller="Tickets" asp-action="Index">
+                                    <span class="note-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16v10H7l-3 3z" /></svg></span>
+                                    <span>
+                                        <span class="spread"><span class="note-title">Ticket waiting</span><time>05 Oct, 07:12</time></span>
+                                        <span class="note-body">Leyla Mammadova · SWIFT transfer timing</span>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="profile-btn" title="@string.Join(", ", roles)">
+                        <span class="avatar">@initials</span>
+                        <span>
+                            <span class="profile-name">@name</span>
+                            <span class="profile-role">@roleLabel</span>
+                        </span>
+                    </span>
+                    <form class="header-auth" asp-area="" asp-controller="Account" asp-action="Logout" method="post">
+                        <button class="btn-logout" type="submit" aria-label="Log out">
+                            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                                <path d="M10 7V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
+                                <path d="M4 12h11M12 8.5 15.5 12 12 15.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            <span class="btn-logout-label">Log out</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <aside class="admin-side" aria-label="Sections">
+        @if (isUi)
+        {
+            @* UI bölməsi: modellər üzrə (hamısını qoymaq lazım deyil, yeni modelin səhifəsini yazanda bura bir sətir əlavə et) *@
+            <p class="eyebrow">UI</p>
+            <a class="@On("UiDashboard")" asp-area="Admin" asp-controller="UiDashboard" asp-action="Index">Dashboard</a>
+            <a class="@On("Brand")" asp-area="Admin" asp-controller="Brand" asp-action="Index">Brands</a>
+            <a class="@On("CardDesign")" asp-area="Admin" asp-controller="CardDesign" asp-action="Index">Card designs</a>
+        }
+        else
+        {
+            <p class="eyebrow">Bank</p>
+            <a class="@On("BankDashboard")" asp-area="Admin" asp-controller="BankDashboard" asp-action="Index">Dashboard</a>
+            <a class="@On("Users")" asp-area="Admin" asp-controller="Users" asp-action="Index">Users</a>
+            <a class="@On("Loans")" asp-area="Admin" asp-controller="Loans" asp-action="Index">Loans</a>
+            <a class="@On("Reports")" asp-area="Admin" asp-controller="Reports" asp-action="Index">Reports</a>
+            <a class="@On("Tickets")" asp-area="Admin" asp-controller="Tickets" asp-action="Index">Contact Tickets</a>
+            <a class="@On("Audit")" asp-area="Admin" asp-controller="Audit" asp-action="Index">Audit Log</a>
+        }
+    </aside>
+
+    @RenderBody()
+
+    <footer class="site-footer">
+        <div class="site-footer-inner">
+            <span>Caspian Bank · Operations</span>
+            <span>Internal use</span>
+        </div>
+    </footer>
+
+    <script src="~/js/confirm-dialog.js" asp-append-version="true"></script>
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+</body>
+</html>

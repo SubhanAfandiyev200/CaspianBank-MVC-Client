@@ -79,6 +79,11 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Admin Area: /Admin -> BankDashboard/Index, /Admin/Users/Details/u1 və s. (default route-dan ƏVVƏL olmalıdır)
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=BankDashboard}/{action=Index}/{id?}");
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

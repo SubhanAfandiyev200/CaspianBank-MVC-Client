@@ -1,0 +1,142 @@
+@{
+    ViewData["Title"] = "Bank dashboard";
+}
+<main id="content" class="page">
+    <header class="page-head">
+        <p class="eyebrow">Bank</p>
+        <h1>Bank dashboard</h1>
+        <p class="lede">Customers, income, expenses, taxes and the bank's own funds. The numbers below are sample figures for one month.</p>
+    </header>
+
+    @* ===== Müştərilər və pul ===== *@
+    <div class="stat-grid cols-3">
+        <article class="stat">
+            <p class="stat-label">Total users</p>
+            <p class="stat-value">1,248</p>
+            <p class="stat-delta">+32 this month</p>
+            <a asp-area="Admin" asp-controller="Users" asp-action="Index">View users</a>
+        </article>
+        <article class="stat">
+            <p class="stat-label">Customer deposits</p>
+            <p class="stat-value">4,860,200.00 AZN</p>
+            <p class="hint">Money held on customer cards</p>
+        </article>
+        <article class="stat">
+            <p class="stat-label">Loans outstanding</p>
+            <p class="stat-value">1,950,000.00 AZN</p>
+            <p class="hint">Issued and not yet repaid</p>
+            <a asp-area="Admin" asp-controller="Loans" asp-action="Index">View loans</a>
+        </article>
+    </div>
+
+    @* ===== Aylıq nəticə: gəlir, xərc, mənfəət ===== *@
+    <div class="stat-grid cols-3">
+        <article class="stat">
+            <p class="stat-label">Total income</p>
+            <p class="stat-value">128,450.00 AZN</p>
+            <p class="stat-delta">+8.4% vs last month</p>
+        </article>
+        <article class="stat">
+            <p class="stat-label">Total expenses</p>
+            <p class="stat-value">66,810.00 AZN</p>
+            <p class="stat-delta is-down">+3.1% vs last month</p>
+            <p class="hint">Operations, cashback and taxes</p>
+        </article>
+        <article class="stat is-strong">
+            <p class="stat-label">Net profit</p>
+            <p class="stat-value">61,640.00 AZN</p>
+            <p class="hint">After tax</p>
+        </article>
+    </div>
+
+    <div class="fin-grid">
+        @* ===== Bankın gəlirləri (komissiyalar, haqlar, faiz) ===== *@
+        <section class="fin-card">
+            <h2>Bank income</h2>
+            <p class="hint">Where the money comes from</p>
+
+            <div class="fin-row">
+                <div class="fin-row-top"><span>Transfer commissions</span><span>38,200.00 AZN</span></div>
+                <div class="fin-bar"><span style="width:29.7%"></span></div>
+            </div>
+            <div class="fin-row">
+                <div class="fin-row-top"><span>Card opening fees</span><span>12,650.00 AZN</span></div>
+                <div class="fin-bar"><span style="width:9.8%"></span></div>
+            </div>
+            <div class="fin-row">
+                <div class="fin-row-top"><span>Loan interest</span><span>71,400.00 AZN</span></div>
+                <div class="fin-bar"><span style="width:55.6%"></span></div>
+            </div>
+            <div class="fin-row">
+                <div class="fin-row-top"><span>Other fees</span><span>6,200.00 AZN</span></div>
+                <div class="fin-bar"><span style="width:4.8%"></span></div>
+            </div>
+            <div class="fin-total"><span>Total income</span><span>128,450.00 AZN</span></div>
+            <p class="sample-note">Commissions come from transfers above each card's free limit; opening fees from Silver, Gold and extra cards.</p>
+        </section>
+
+        @* ===== Xərclər (cashback, əməliyyat, vergi) ===== *@
+        <section class="fin-card">
+            <h2>Expenses</h2>
+            <p class="hint">Where the money goes</p>
+
+            <div class="fin-row">
+                <div class="fin-row-top"><span>Cashback paid to customers</span><span>14,900.00 AZN</span></div>
+                <div class="fin-bar is-out"><span style="width:22.3%"></span></div>
+            </div>
+            <div class="fin-row">
+                <div class="fin-row-top"><span>Salaries and operations</span><span>31,200.00 AZN</span></div>
+                <div class="fin-bar is-out"><span style="width:46.7%"></span></div>
+            </div>
+            <div class="fin-row">
+                <div class="fin-row-top"><span>Card production and infrastructure</span><span>5,300.00 AZN</span></div>
+                <div class="fin-bar is-out"><span style="width:7.9%"></span></div>
+            </div>
+            <div class="fin-row">
+                <div class="fin-row-top"><span>Profit tax (20%)</span><span>15,410.00 AZN</span></div>
+                <div class="fin-bar is-out"><span style="width:23.1%"></span></div>
+            </div>
+            <div class="fin-total"><span>Total expenses</span><span>66,810.00 AZN</span></div>
+            <p class="sample-note">Income 128,450.00 − operating costs 51,400.00 = profit before tax 77,050.00; tax 20% = 15,410.00.</p>
+        </section>
+
+        @* ===== Vergi və ehtiyat: bankın vergini ödəməyə vəsaiti varmı ===== *@
+        <section class="fin-card">
+            <h2>Taxes and reserve</h2>
+            <p class="hint">Can the bank pay what it owes?</p>
+
+            <dl class="reserve-list">
+                <div><dt>Tax accrued this month</dt><dd>15,410.00 AZN</dd></div>
+                <div><dt>Tax due this quarter</dt><dd>46,230.00 AZN</dd></div>
+                <div><dt>Required reserve (10% of deposits)</dt><dd>486,020.00 AZN</dd></div>
+                <div><dt>Bank reserve (own funds)</dt><dd>2,400,000.00 AZN</dd></div>
+                <div><dt>Reserve after paying the quarter's tax</dt><dd>2,353,770.00 AZN</dd></div>
+            </dl>
+
+            <div class="reserve-meter">
+                <div class="fin-bar"><span style="width:100%"></span></div>
+                <p>Reserve covers the required reserve plus this quarter's tax <strong>4.5×</strong> <span class="badge badge-success">Healthy</span></p>
+            </div>
+            <p class="sample-note">If the reserve fell below the required reserve plus the tax due, this card would turn red and warn the finance team.</p>
+        </section>
+
+        @* ===== Gözləyən işlər ===== *@
+        <section class="fin-card">
+            <h2>Needs attention</h2>
+            <p class="hint">Queues waiting on the bank</p>
+
+            <div class="fin-row">
+                <div class="fin-row-top"><span><a asp-area="Admin" asp-controller="Loans" asp-action="Index">Loans waiting for a decision</a></span><span>2</span></div>
+            </div>
+            <div class="fin-row">
+                <div class="fin-row-top"><span><a asp-area="Admin" asp-controller="Reports" asp-action="Index">Suspicious transaction reports</a></span><span>1</span></div>
+            </div>
+            <div class="fin-row">
+                <div class="fin-row-top"><span><a asp-area="Admin" asp-controller="Tickets" asp-action="Index">Contact tickets</a></span><span>2</span></div>
+            </div>
+            <div class="fin-row">
+                <div class="fin-row-top"><span><a asp-area="Admin" asp-controller="Users" asp-action="Index">Restricted accounts</a></span><span>2</span></div>
+            </div>
+        </section>
+    </div>
+</main>

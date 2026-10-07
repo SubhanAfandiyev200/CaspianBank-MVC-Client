@@ -1,0 +1,36 @@
+@{
+    ViewData["Title"] = "SWIFT transfer timing";
+}
+<main id="content" class="page">
+    <a class="back" asp-area="Admin" asp-controller="Tickets" asp-action="Index">All tickets</a>
+
+    @* Hələlik statik dizayn: mesaj və cavab API hazır olanda gələcək *@
+    <header class="page-head">
+        <p class="eyebrow">Support</p>
+        <h1>SWIFT transfer timing</h1>
+        <p class="lede">Leyla Mammadova · leyla.mammadova@gmail.com · 06 Oct 2026, 09:00</p>
+    </header>
+
+    <div class="narrow stack-lg">
+        <article class="surface">
+            <div class="spread"><h2>Original message</h2><span class="badge badge-pending">Pending</span></div>
+            <div class="bubble mt-5">
+                <p class="meta">Leyla Mammadova · 06 Oct 2026, 09:00</p>
+                <p>How long does an incoming SWIFT transfer take to appear?</p>
+            </div>
+            <div class="bubble bubble-staff mt-5">
+                <p class="meta">Caspian Support · 06 Oct 2026, 16:20</p>
+                <p>Incoming SWIFT transfers usually appear within 1 to 3 business days.</p>
+            </div>
+        </article>
+
+        <div class="surface form-stack">
+            <h2>Reply</h2>
+            <div class="field">
+                <label for="reply">Message</label>
+                <textarea class="textarea" id="reply" maxlength="1000"></textarea>
+            </div>
+            <button class="btn btn-primary" type="button">Send reply</button>
+        </div>
+    </div>
+</main>

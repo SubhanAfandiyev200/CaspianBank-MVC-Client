@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using CaspianBank_MVC_FinalProject.Helpers;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Text.RegularExpressions;
@@ -22,7 +23,9 @@ namespace CaspianBank_MVC_FinalProject.Controllers
         public IActionResult Welcome()
         {
             if (User.Identity?.IsAuthenticated == true)
-                return RedirectToAction("Index", "App");
+            {
+                return LocalRedirect(RoleRedirect.HomeUrl(User.FindAll(ClaimTypes.Role).Select(claim => claim.Value)));
+            }
 
             return View(new WelcomeVM());
         }
@@ -182,7 +185,9 @@ namespace CaspianBank_MVC_FinalProject.Controllers
         public IActionResult ForgotPassword()
         {
             if (User.Identity?.IsAuthenticated == true)
-                return RedirectToAction("Index", "App");
+            {
+                return LocalRedirect(RoleRedirect.HomeUrl(User.FindAll(ClaimTypes.Role).Select(claim => claim.Value)));
+            }
 
             return View(new ForgotPasswordVM { Email = TempData.Peek("AuthEmail") as string ?? string.Empty });
         }
@@ -376,7 +381,9 @@ namespace CaspianBank_MVC_FinalProject.Controllers
         public IActionResult Login(string? returnUrl = null)
         {
             if (User.Identity?.IsAuthenticated == true)
-                return RedirectToAction("Index", "App");
+            {
+                return LocalRedirect(RoleRedirect.HomeUrl(User.FindAll(ClaimTypes.Role).Select(claim => claim.Value)));
+            }
 
             return View(new LoginVM { ReturnUrl = returnUrl, Email = TempData["AuthEmail"] as string ?? string.Empty });
         }
@@ -425,11 +432,13 @@ namespace CaspianBank_MVC_FinalProject.Controllers
 
                 await SignInAsync(result);
 
-                // TODO: Admin səhifələri yazılanda rola görə yönləndir (Customer → App, Admin rolları → Admin)
+                // Əvvəl getmək istədiyi yerə (ReturnUrl), yoxdursa rola görə: işçi admin panelinə, müştəri kartlarına
                 if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                {
                     return LocalRedirect(model.ReturnUrl);
+                }
 
-                return RedirectToAction("Index", "App");
+                return LocalRedirect(RoleRedirect.HomeUrl(result.Roles));
             }
             catch (HttpRequestException)
             {

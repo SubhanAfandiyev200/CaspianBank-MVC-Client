@@ -1,6 +1,7 @@
 @model SiteSettingsVM
 @{
     var signedIn = User.Identity?.IsAuthenticated == true;
+    var isStaff = signedIn && AppRoles.IsStaff(User);
 }
     <header class="site-header" id="top">
         <div class="header-bar">
@@ -39,7 +40,7 @@
                                 <path d="M5.4 19.2c.9-3.5 3.4-5.2 6.6-5.2s5.7 1.7 6.6 5.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
                             </svg>
                         </span>
-                        <a class="header-user-name" href="@NavLinks.App">@User.Identity.Name</a>
+                        <a class="header-user-name" href="@NavLinks.AppHome(isStaff)">@User.Identity.Name</a>
                     </span>
                     <button class="btn-logout" type="submit">
                         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
@@ -59,10 +60,10 @@
             <div class="mega-inner">
                 @if (signedIn)
                 {
-                    <a class="mega-card" href="@NavLinks.App">
+                    <a class="mega-card" href="@NavLinks.AppHome(isStaff)">
                         <span class="mega-swatch mega-swatch-a" aria-hidden="true"><partial name="_MegaArt" model='"account"' /></span>
-                        <strong>Go to my app</strong>
-                        <span>Your cards, transfers and history in one place.</span>
+                        <strong>@(isStaff ? "Go to admin panel" : "Go to my app")</strong>
+                        <span>@(isStaff ? "Manage the bank from the admin panel." : "Your cards, transfers and history in one place.")</span>
                     </a>
                 }
                 else

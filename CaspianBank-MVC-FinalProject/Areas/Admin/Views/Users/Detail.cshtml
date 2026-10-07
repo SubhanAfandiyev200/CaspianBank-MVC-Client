@@ -1,0 +1,84 @@
+@{
+    ViewData["Title"] = "Leyla Mammadova";
+}
+<main id="content" class="page">
+    <a class="back" asp-area="Admin" asp-controller="Users" asp-action="Index">All users</a>
+
+    @* Hələlik statik dizayn: istifadəçi məlumatı və kartlar API hazır olanda gələcək *@
+    <header class="page-head spread">
+        <div>
+            <p class="eyebrow">Customer</p>
+            <h1>Leyla Mammadova</h1>
+            <p class="lede">leyla.mammadova@gmail.com · +994 50 312 44 18</p>
+        </div>
+        <button type="button" class="btn btn-danger"
+                data-confirm-title="Restrict this account?"
+                data-confirm-text="Leyla Mammadova will be unable to move money until the account is restored."
+                data-confirm-yes="Restrict account" data-confirm-danger="true">Restrict account</button>
+    </header>
+
+    <div class="stack-lg">
+        <div class="meta-grid">
+            <div class="meta-item"><span>Status</span><strong>Active</strong></div>
+            <div class="meta-item"><span>Registered</span><strong>18 Apr 2023</strong></div>
+            <div class="meta-item"><span>Total sent</span><strong>18,420.00 AZN</strong></div>
+            <div class="meta-item"><span>Total spent</span><strong>16,340.00 AZN</strong></div>
+        </div>
+
+        <div class="plastic-grid">
+            <div class="plastic plastic-standard">
+                <span class="plastic-art" aria-hidden="true"></span>
+                <span class="plastic-shine" aria-hidden="true"></span>
+                <div class="plastic-top">
+                    <span class="plastic-brand"><span class="plastic-mark" aria-hidden="true"></span><span class="plastic-bank">Caspian</span></span>
+                    <span class="plastic-tier">Standard</span>
+                </div>
+                <div class="plastic-mid"><span class="plastic-chip" aria-hidden="true"></span></div>
+                <p class="plastic-number">•••• 4291</p>
+                <div class="plastic-bottom">
+                    <span class="plastic-issuer">Caspian Bank</span>
+                    <div><span class="plastic-k">Valid</span><span class="plastic-v">11/28</span></div>
+                    <div><span class="plastic-k">Balance</span><span class="plastic-v num">2,480.00 AZN</span></div>
+                </div>
+            </div>
+            <div class="plastic plastic-cashback">
+                <span class="plastic-art" aria-hidden="true"></span>
+                <span class="plastic-shine" aria-hidden="true"></span>
+                <div class="plastic-top">
+                    <span class="plastic-brand"><span class="plastic-mark" aria-hidden="true"></span><span class="plastic-bank">Caspian</span></span>
+                    <span class="plastic-tier">Cashback</span>
+                </div>
+                <div class="plastic-mid"><span class="plastic-chip" aria-hidden="true"></span></div>
+                <p class="plastic-number">•••• 8834</p>
+                <div class="plastic-bottom">
+                    <span class="plastic-issuer">Caspian Bank</span>
+                    <div><span class="plastic-k">Valid</span><span class="plastic-v">06/29</span></div>
+                    <div><span class="plastic-k">Balance</span><span class="plastic-v num">240.00 AZN</span></div>
+                </div>
+            </div>
+        </div>
+
+        <section class="surface surface-tight">
+            <div class="toolbar"><h2>Recent activity</h2></div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead><tr><th>Date</th><th>Description</th><th>Card</th><th class="num">Amount</th></tr></thead>
+                    <tbody>
+                        <tr>
+                            <td>05 Oct 2026, 13:20</td>
+                            <td>Bravo Hypermarket</td>
+                            <td>Standard</td>
+                            <td class="num"><span class="amount-out">−36.40 AZN</span></td>
+                        </tr>
+                        <tr>
+                            <td>04 Oct 2026, 09:00</td>
+                            <td>Salary payment</td>
+                            <td>Cashback</td>
+                            <td class="num"><span class="amount-in">+1,500.00 AZN</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>

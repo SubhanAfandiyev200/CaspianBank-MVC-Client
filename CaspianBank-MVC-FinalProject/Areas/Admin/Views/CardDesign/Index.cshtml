@@ -1,0 +1,60 @@
+@{
+    ViewData["Title"] = "Card designs";
+}
+<main id="content" class="page">
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">UI · Cards</p>
+            <h1>Card designs</h1>
+            <p class="lede">The faces of the cards: the fan on Home and the cards customers hold.</p>
+        </div>
+        <a class="btn btn-primary" href="#">Create</a>
+    </header>
+
+    @* Hələlik statik dizayn: şəkillər əvəzinə rəngli nümunə. API hazır olanda bazadakı dizaynlar gələcək *@
+    <section class="surface surface-tight">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Design</th>
+                        <th>Title</th>
+                        <th class="num">Order</th>
+                        <th>On Home</th>
+                        <th class="actions">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span style="display:block;width:96px;height:60px;border-radius:8px;background:linear-gradient(155deg,#1f8a50,#0f5c38 50%,#083222)"></span></td>
+                        <td>Regular</td>
+                        <td class="num">1</td>
+                        <td><span class="badge badge-success">Shown</span></td>
+                        <td class="actions"><span class="row-actions"><a class="btn btn-secondary btn-sm" href="#">Edit</a><button type="button" class="btn btn-danger btn-sm" data-confirm-title="Delete this design?" data-confirm-text="Cards using it must be switched to another design first." data-confirm-yes="Delete" data-confirm-danger="true">Delete</button></span></td>
+                    </tr>
+                    <tr>
+                        <td><span style="display:block;width:96px;height:60px;border-radius:8px;background:linear-gradient(155deg,#5a6368,#2c3338 48%,#14181b)"></span></td>
+                        <td>Silver</td>
+                        <td class="num">2</td>
+                        <td><span class="badge badge-success">Shown</span></td>
+                        <td class="actions"><span class="row-actions"><a class="btn btn-secondary btn-sm" href="#">Edit</a><button type="button" class="btn btn-danger btn-sm" data-confirm-title="Delete this design?" data-confirm-text="Cards using it must be switched to another design first." data-confirm-yes="Delete" data-confirm-danger="true">Delete</button></span></td>
+                    </tr>
+                    <tr>
+                        <td><span style="display:block;width:96px;height:60px;border-radius:8px;background:linear-gradient(155deg,#4a3418,#24180e 46%,#0e0b08)"></span></td>
+                        <td>Gold</td>
+                        <td class="num">3</td>
+                        <td><span class="badge badge-success">Shown</span></td>
+                        <td class="actions"><span class="row-actions"><a class="btn btn-secondary btn-sm" href="#">Edit</a><button type="button" class="btn btn-danger btn-sm" data-confirm-title="Delete this design?" data-confirm-text="Cards using it must be switched to another design first." data-confirm-yes="Delete" data-confirm-danger="true">Delete</button></span></td>
+                    </tr>
+                    <tr>
+                        <td><span style="display:block;width:96px;height:60px;border-radius:8px;background:linear-gradient(160deg,#f7fbe0,#d7e86a 42%,#b4cc48)"></span></td>
+                        <td>Cashback</td>
+                        <td class="num">4</td>
+                        <td><span class="badge badge-neutral">Hidden</span></td>
+                        <td class="actions"><span class="row-actions"><a class="btn btn-secondary btn-sm" href="#">Edit</a><button type="button" class="btn btn-danger btn-sm" data-confirm-title="Delete this design?" data-confirm-text="Cards using it must be switched to another design first." data-confirm-yes="Delete" data-confirm-danger="true">Delete</button></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>

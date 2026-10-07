@@ -1,0 +1,44 @@
+@{
+    ViewData["Title"] = "UI dashboard";
+}
+<main id="content" class="page">
+    <header class="page-head">
+        <p class="eyebrow">UI</p>
+        <h1>The desk behind the glass.</h1>
+        <p class="lede">This dashboard belongs to the interface. It is the home page a person sees from the street, and the cards they hold once they are inside. Pick a block on the left or below to change what people read and see.</p>
+    </header>
+
+    @* Hər model üçün bir blok. Yeni model səhifəsi yazanda onu burada və yan menyuda (layout) göstər. *@
+    <div class="ui-board">
+        <article class="surface">
+            <p class="eyebrow">Home page</p>
+            <h2>Brands</h2>
+            <p>The partner logos in the moving strip under the headline.</p>
+            <a class="btn btn-secondary mt-4" asp-area="Admin" asp-controller="Brand" asp-action="Index">Open Brands</a>
+        </article>
+        <article class="surface">
+            <p class="eyebrow">Cards</p>
+            <h2>Card designs</h2>
+            <p>The faces of the cards: the fan on Home and the cards customers hold.</p>
+            <a class="btn btn-secondary mt-4" asp-area="Admin" asp-controller="CardDesign" asp-action="Index">Open card designs</a>
+        </article>
+        <article class="surface">
+            <p class="eyebrow">Home page</p>
+            <h2>Ticker, Hero</h2>
+            <p>The moving line and the headline above the cards.</p>
+            <span class="badge badge-neutral">Coming soon</span>
+        </article>
+        <article class="surface">
+            <p class="eyebrow">Home page</p>
+            <h2>Services, Benefits</h2>
+            <p>The six service cards and the draggable benefit cards.</p>
+            <span class="badge badge-neutral">Coming soon</span>
+        </article>
+        <article class="surface">
+            <p class="eyebrow">Site</p>
+            <h2>Settings</h2>
+            <p>Logo, company name, address, email, phone and the footer text.</p>
+            <span class="badge badge-neutral">Coming soon</span>
+        </article>
+    </div>
+</main>
