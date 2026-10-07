@@ -1,0 +1,9 @@
+@* Əməliyyatdan sonra gələn qısa mesajlar (TempData): uğur yaşıl, xəta qırmızı *@
+@if (TempData["Success"] is string success)
+{
+    <p class="flash flash-ok" role="status">@success</p>
+}
+@if (TempData["CardError"] is string error)
+{
+    <p class="flash flash-error" role="alert">@error</p>
+}

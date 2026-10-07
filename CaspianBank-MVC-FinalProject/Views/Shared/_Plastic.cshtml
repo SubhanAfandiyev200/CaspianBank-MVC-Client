@@ -1,0 +1,59 @@
+@model CardUIVM
+@*
+    Kartın üzü. ViewData["Large"] = true: tam nömrə və sahibin adı; ViewData["Link"] = false: kartın üzərinə basanda səhifəyə getməsin.
+    Fon şəkli bazadakı CardDesign-dandır (admin dəyişə bilər); mətn rəngləri növün (plastic-{tier}) sinfindən gəlir.
+*@
+@{
+    var large = (ViewData["Large"] as bool?) == true;
+    var link = (ViewData["Link"] as bool?) != false;
+    var detail = Model as CardDetailUIVM;
+
+    var classes = "plastic plastic-" + Model.Tier.ToLowerInvariant() + (large ? " plastic-lg" : "") + (Model.IsBlocked ? " is-blocked" : "");
+    var style = string.IsNullOrEmpty(Model.DesignImage)
+        ? string.Empty
+        : $"background-image:url('{Model.DesignImage}');background-size:cover;background-position:center;";
+
+    var number = large && detail is not null && detail.CardNumber.Length == 16
+        ? string.Join(" ", Enumerable.Range(0, 4).Select(i => detail.CardNumber.Substring(i * 4, 4)))
+        : null;
+
+    void Face()
+    {
+        <span class="plastic-art" aria-hidden="true"></span>
+        <span class="plastic-shine" aria-hidden="true"></span>
+        <div class="plastic-top">
+            <span class="plastic-brand"><span class="plastic-mark" aria-hidden="true"></span><span class="plastic-bank">Caspian</span></span>
+            <span class="plastic-tier">@Model.Tier</span>
+            <svg class="plastic-wave" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M8 8.2c1.6 1.5 1.6 6.1 0 7.6" /><path d="M11.2 5.6c2.6 2.4 2.6 10.4 0 12.8" /><path d="M14.4 3.2c3.6 3.4 3.6 14.2 0 17.6" /></svg>
+        </div>
+        <div class="plastic-mid"><span class="plastic-chip" aria-hidden="true"></span></div>
+        @if (number is not null)
+        {
+            <p class="plastic-number"><span class="plastic-pan-full">@number</span></p>
+        }
+        else
+        {
+            <p class="plastic-number">•••• @Model.Last4</p>
+        }
+        <div class="plastic-bottom">
+            @if (large)
+            {
+                <div><span class="plastic-k">Cardholder</span><span class="plastic-v">@Model.HolderName</span></div>
+            }
+            else
+            {
+                <span class="plastic-issuer">Caspian Bank</span>
+            }
+            <div><span class="plastic-k">Valid</span><span class="plastic-v">@Model.Expiry</span></div>
+            <div><span class="plastic-k">Balance</span><span class="plastic-v num">@Model.Balance.ToString("N2", System.Globalization.CultureInfo.InvariantCulture) AZN</span></div>
+        </div>
+    }
+}
+@if (link)
+{
+    <a class="@classes" style="@style" data-card-id="@Model.Id" asp-controller="App" asp-action="Card" asp-route-id="@Model.Id">@{ Face(); }</a>
+}
+else
+{
+    <div class="@classes" style="@style" data-card-id="@Model.Id">@{ Face(); }</div>
+}

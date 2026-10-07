@@ -11,7 +11,7 @@
     <div class="service-grid">
         @foreach (var item in Model.ServiceItems)
         {
-            <article class="service-card">
+            <a class="service-card" href="@NavLinks.ForService(item.Number, User.Identity?.IsAuthenticated == true)">
                 <span class="service-no" aria-hidden="true">@item.Number.ToString("00")</span>
                 <span class="service-icon" aria-hidden="true">
                     @if (!string.IsNullOrEmpty(item.IconSvg))
@@ -21,7 +21,7 @@
                 </span>
                 <h3>@item.Title</h3>
                 <p>@item.Description</p>
-            </article>
+            </a>
         }
     </div>
 </section>

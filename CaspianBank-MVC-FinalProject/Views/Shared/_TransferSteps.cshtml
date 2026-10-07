@@ -1,0 +1,25 @@
+@model int
+@* Köçürmənin 3 addımı: 1 Details, 2 Review, 3 Done. Model: cari addım *@
+@{
+    var steps = new[] { "Details", "Review", "Receipt" };
+}
+<ol class="steps3" aria-label="Transfer progress">
+    @for (var i = 0; i < steps.Length; i++)
+    {
+        var number = i + 1;
+        var state = number < Model ? "is-done" : number == Model ? "is-current" : "";
+        <li class="@state" @(number == Model ? "aria-current=step" : null)>
+            <span class="steps3-dot">
+                @if (number < Model)
+                {
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>
+                }
+                else
+                {
+                    @number
+                }
+            </span>
+            <span class="steps3-label">@steps[i]</span>
+        </li>
+    }
+</ol>

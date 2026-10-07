@@ -25,7 +25,7 @@
                         <li>@item.Text2</li>
                         <li>@item.Text3</li>
                     </ul>
-                    <a class="btn btn-lime btn-go" href="@item.ButtonUrl"><span class="btn-go-label">@item.ButtonText</span></a>
+                    <a class="btn btn-lime btn-go" href="@NavLinks.FromDb(item.ButtonUrl, User.Identity?.IsAuthenticated == true)"><span class="btn-go-label">@item.ButtonText</span></a>
                 </article>
             }
         </div>
