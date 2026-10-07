@@ -35,7 +35,7 @@
                             <td>@item.Image</td>
                             <td class="actions">
                                 <span class="row-actions">
-                                    <a class="btn btn-secondary btn-sm" href="#">Detail</a>
+                                    <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Brand" asp-action="Detail" asp-route-id="@item.Id">Detail</a>
                                     <a class="btn btn-secondary btn-sm" href="#">Edit</a>
                                     <button type="button" class="btn btn-danger btn-sm"
                                             data-confirm-title="Delete this brand?"

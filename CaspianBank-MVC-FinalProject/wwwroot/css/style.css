@@ -3003,3 +3003,49 @@ body.body-admin .site-footer-inner {
   .fin-grid { grid-template-columns: 1fr; }
   .detail-list div { grid-template-columns: 1fr; gap: 2px; }
 }
+
+/* Detail səhifəsinə aparan düymə: sarı. Üzərinə gələndə tünd kəhrəbaya dolur */
+.btn-detail,
+.btn-back {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition: color 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+}
+.btn-detail::before,
+.btn-back::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: -15%;
+  top: -90%;
+  width: 130%;
+  height: 280%;
+  border-radius: 50%;
+  transform: scale(0);
+  transform-origin: 0% 50%;
+  pointer-events: none;
+  transition: transform 0.5s cubic-bezier(0.45, 0.02, 0.2, 1);
+}
+.btn-detail { background: #f4cf5a; border-color: #e3b92f; color: #3d2f05; }
+.btn-detail::before { background: #a96f08; }
+.btn-detail:hover,
+.btn-detail:active {
+  color: #fff8e6;
+  border-color: #a96f08;
+  box-shadow: 0 10px 24px rgba(120, 80, 5, 0.28);
+}
+.btn-detail:hover::before,
+.btn-detail:active::before { transform: scale(1); }
+
+/* Go Back düyməsi: sakit boz-mavi, üzərinə gələndə tünd şiferə dolur */
+.btn-back { background: #e8edf0; border-color: #c5cfd6; color: #2f3e46; }
+.btn-back::before { background: #2f3e46; }
+.btn-back:hover,
+.btn-back:active {
+  color: #fff;
+  border-color: #2f3e46;
+  box-shadow: 0 10px 24px rgba(30, 45, 55, 0.25);
+}
+.btn-back:hover::before,
+.btn-back:active::before { transform: scale(1); }
