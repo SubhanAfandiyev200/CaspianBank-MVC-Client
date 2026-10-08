@@ -27,7 +27,8 @@ namespace CaspianBank_MVC_FinalProject.Controllers
                 return LocalRedirect(RoleRedirect.HomeUrl(User.FindAll(ClaimTypes.Role).Select(claim => claim.Value)));
             }
 
-            return View(new WelcomeVM());
+            // Geri düyməsi ilə qayıdanda yazılan email yenidən dolu gəlsin
+            return View(new WelcomeVM { Email = TempData.Peek("AuthEmail") as string ?? string.Empty });
         }
 
         [HttpPost]
@@ -81,6 +82,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
 
                 TempData["Info"] = otp.Info;
                 SetDevCode(otp.DevCode);
+                MarkResendAvailable(otp.WaitSeconds);
                 return RedirectToAction(nameof(VerifyOtp));
             }
             catch (HttpRequestException)
@@ -101,7 +103,8 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             {
                 Email = email,
                 MaskedEmail = MaskEmail(email),
-                DevCode = TempData.Peek("DevCode") as string
+                DevCode = TempData.Peek("DevCode") as string,
+                ResendWaitSeconds = RemainingResendSeconds()
             });
         }
 
@@ -111,6 +114,8 @@ namespace CaspianBank_MVC_FinalProject.Controllers
         {
             model.MaskedEmail = MaskEmail(model.Email);
             model.DevCode = TempData.Peek("DevCode") as string;
+            // Səhv kod yazılanda səhifə yenidən açılır: geri sayım sıfırdan yox, qalan vaxtdan davam etsin
+            model.ResendWaitSeconds = RemainingResendSeconds();
             var code = model.Code ?? string.Empty;
 
             if (!Regex.IsMatch(code, @"^\d{6}$"))
@@ -172,6 +177,11 @@ namespace CaspianBank_MVC_FinalProject.Controllers
                 var otp = await SendOtpAsync(client, email);
                 TempData["Info"] = otp.Error ?? otp.Info;
                 SetDevCode(otp.DevCode);
+                // Yeni kod göndərildisə geri sayım 60 saniyədən başlayır; cooldown səbəbilə göndərilməyibsə API-nin dediyi qalan vaxtdan davam edir
+                if (otp.Error is null)
+                {
+                    MarkResendAvailable(otp.WaitSeconds);
+                }
             }
             catch (HttpRequestException)
             {
@@ -455,23 +465,45 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        // API-yə OTP göndərmə sorğusu. Error: istifadəçiyə göstəriləcək xəta, Info: məlumat mesajı
-        private static async Task<(string? Error, string? Info, string? DevCode)> SendOtpAsync(HttpClient client, string email)
+        // API-yə OTP göndərmə sorğusu. Error: istifadəçiyə göstəriləcək xəta, Info: məlumat mesajı,
+        // WaitSeconds: "Resend code" düyməsinin açılmasına qalan saniyə (yeni kod göndərilibsə 60, cooldown-dursa API-nin dediyi qalan vaxt)
+        private static async Task<(string? Error, string? Info, string? DevCode, int WaitSeconds)> SendOtpAsync(HttpClient client, string email)
         {
             var response = await client.PostAsJsonAsync("api/account/send-otp", new { email });
             var result = await ReadJsonAsync<SendOtpResponseVM>(response);
 
             if (response.IsSuccessStatusCode)
-                return (null, "We sent a code to your email.", result?.DevCode);
+                return (null, "We sent a code to your email.", result?.DevCode, ResendWaitTotalSeconds);
 
             // Eyni email-ə az əvvəl kod göndərilib (gözləmə müddəti): əvvəlki kod hələ etibarlıdır
             if (response.StatusCode == HttpStatusCode.TooManyRequests && result?.RetryAfterSeconds > 0)
-                return (null, $"A code was sent a moment ago. You can request a new one in {result.RetryAfterSeconds} seconds.", null);
+                return (null, $"A code was sent a moment ago. You can request a new one in {result.RetryAfterSeconds} seconds.", null, result.RetryAfterSeconds);
 
             if (response.StatusCode == HttpStatusCode.TooManyRequests)
-                return ("Too many attempts. Please wait a minute and try again.", null, null);
+                return ("Too many attempts. Please wait a minute and try again.", null, null, 0);
 
-            return (result?.Errors is { Length: > 0 } ? result.Errors[0] : "We could not send the code. Please try again.", null, null);
+            return (result?.Errors is { Length: > 0 } ? result.Errors[0] : "We could not send the code. Please try again.", null, null, 0);
+        }
+
+        // "Resend code" üçün gözləmə müddəti (API-nin cooldown-u ilə eyni, saniyə)
+        private const int ResendWaitTotalSeconds = 60;
+
+        // Düymənin nə vaxt açılacağı yadda saxlanır ki, səhv kod yazılıb səhifə yenilənəndə geri sayım sıfırlanmasın
+        private void MarkResendAvailable(int waitSeconds)
+        {
+            TempData["OtpResendAt"] = DateTime.UtcNow.AddSeconds(waitSeconds).Ticks.ToString();
+        }
+
+        // Peek: oxunmuş sayılmır, ona görə səhv kod yazılıb səhifə yenidən açılanda da qalır
+        private int RemainingResendSeconds()
+        {
+            if (TempData.Peek("OtpResendAt") is string stored && long.TryParse(stored, out var ticks))
+            {
+                var left = (int)Math.Ceiling((new DateTime(ticks, DateTimeKind.Utc) - DateTime.UtcNow).TotalSeconds);
+                return Math.Clamp(left, 0, ResendWaitTotalSeconds);
+            }
+
+            return ResendWaitTotalSeconds;
         }
 
         // API-də SMTP qurulmayıbsa (Development) kod ekranda göstərilir; yoxdursa köhnə kod silinir
