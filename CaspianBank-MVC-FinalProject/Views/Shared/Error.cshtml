@@ -1,0 +1,27 @@
+@model ErrorVM
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = Model.Title;
+}
+<main class="auth-shell">
+    <section class="auth-card error-card">
+        <a class="brand" asp-controller="Home" asp-action="Index">
+            <svg class="brand-mark" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+                <rect width="32" height="32" rx="8" fill="#1F8A4C" />
+                <path d="M22 11.2a7.2 7.2 0 1 0 0 9.6" fill="none" stroke="#E4D2A8" stroke-width="2.4" stroke-linecap="round" />
+            </svg>
+            <span>Caspian Bank</span>
+        </a>
+        <p class="error-code">@Model.Status</p>
+        <h1>@Model.Title</h1>
+        <p class="lede">@Model.Message</p>
+        <div class="form-stack mt-5">
+            <a class="btn btn-primary btn-block" asp-area="" asp-controller="Home" asp-action="Index">Go to home</a>
+            <a class="btn btn-secondary btn-block" href="#" onclick="history.back(); return false;">Go back</a>
+        </div>
+        <p class="auth-foot">
+            <a asp-area="" asp-controller="Home" asp-action="Index" asp-fragment="contact">Contact us</a>
+            <span>Caspian Bank · Baku</span>
+        </p>
+    </section>
+</main>
