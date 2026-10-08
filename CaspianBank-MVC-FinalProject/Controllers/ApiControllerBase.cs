@@ -90,30 +90,6 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
         }
 
-        // PUT (JSON): fayl olmayan formaların yenilənməsi üçün. Uğurlu olarsa cavabın gövdəsi Data-da qayıdır
-        protected async Task<(T? Data, string[] Errors, HttpStatusCode? Status)> PutAsync<T>(string url, object body) where T : class
-        {
-            try
-            {
-                var response = await Api.PutAsJsonAsync(url, body);
-                if (response.IsSuccessStatusCode)
-                {
-                    var data = await response.Content.ReadFromJsonAsync<T>();
-                    return (data, Array.Empty<string>(), response.StatusCode);
-                }
-
-                return (null, await ReadErrorsAsync(response), response.StatusCode);
-            }
-            catch (HttpRequestException)
-            {
-                return (null, new[] { UnavailableMessage }, null);
-            }
-            catch (JsonException)
-            {
-                return (null, new[] { "Something went wrong. Please try again." }, null);
-            }
-        }
-
         // PUT (JSON), cavab gövdəsi yoxdur: API yeniləmədən sonra boş cavab (204) qaytarır
         protected async Task<(bool Success, string[] Errors, HttpStatusCode? Status)> PutAsync(string url, object body)
         {
@@ -171,55 +147,6 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             catch (HttpRequestException)
             {
                 return (false, new[] { UnavailableMessage }, null);
-            }
-        }
-
-        // POST (multipart/form-data): fayl yükləyən formalar üçün. Uğurlu olarsa cavabın gövdəsi Data-da qayıdır,
-        // olmazsa istifadəçiyə göstəriləcək xətalar (API-nin { isSuccess, errors } cavabından)
-        protected async Task<(T? Data, string[] Errors, HttpStatusCode? Status)> PostFormAsync<T>(string url, MultipartFormDataContent content) where T : class
-        {
-            try
-            {
-                var response = await Api.PostAsync(url, content);
-                if (response.IsSuccessStatusCode)
-                {
-                    var data = await response.Content.ReadFromJsonAsync<T>();
-                    return (data, Array.Empty<string>(), response.StatusCode);
-                }
-
-                return (null, await ReadErrorsAsync(response), response.StatusCode);
-            }
-            catch (HttpRequestException)
-            {
-                return (null, new[] { UnavailableMessage }, null);
-            }
-            catch (JsonException)
-            {
-                return (null, new[] { "Something went wrong. Please try again." }, null);
-            }
-        }
-
-        // PUT (multipart/form-data): PostFormAsync ilə eyni, yeniləmə üçün
-        protected async Task<(T? Data, string[] Errors, HttpStatusCode? Status)> PutFormAsync<T>(string url, MultipartFormDataContent content) where T : class
-        {
-            try
-            {
-                var response = await Api.PutAsync(url, content);
-                if (response.IsSuccessStatusCode)
-                {
-                    var data = await response.Content.ReadFromJsonAsync<T>();
-                    return (data, Array.Empty<string>(), response.StatusCode);
-                }
-
-                return (null, await ReadErrorsAsync(response), response.StatusCode);
-            }
-            catch (HttpRequestException)
-            {
-                return (null, new[] { UnavailableMessage }, null);
-            }
-            catch (JsonException)
-            {
-                return (null, new[] { "Something went wrong. Please try again." }, null);
             }
         }
 
