@@ -1,0 +1,45 @@
+@model BrandCreateVM
+@{
+    ViewData["Title"] = "Brand · Create";
+}
+<main id="content" class="page">
+    <a class="back" asp-area="Admin" asp-controller="Brand" asp-action="Index">All brands</a>
+
+    <header class="page-head">
+        <p class="eyebrow">UI · Home page</p>
+        <h1>Create brand</h1>
+        <p class="lede">A partner logo for the moving strip under the Home headline.</p>
+    </header>
+
+    <form method="post" asp-area="Admin" asp-controller="Brand" asp-action="Create" enctype="multipart/form-data" class="narrow stack-lg" novalidate>
+        <section class="surface form-stack">
+            <div asp-validation-summary="ModelOnly" class="field-error"></div>
+            <div class="field">
+                <label asp-for="Name">Name</label>
+                <input class="input" asp-for="Name" maxlength="100" placeholder="Brand name" autocomplete="off" />
+                <span asp-validation-for="Name" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Image">Logo</label>
+                <div class="file-drop" data-file-drop>
+                    <input class="file-drop-input" asp-for="Image" type="file" accept="image/png,image/jpeg,image/webp" />
+                    <div class="file-drop-box">
+                        <span class="file-drop-preview" data-file-preview>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m0 0 4 4m-4-4L8 8"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+                        </span>
+                        <span class="file-drop-text">
+                            <strong data-file-title>Choose a logo</strong>
+                            <span data-file-hint>Click here or drag it in. PNG, JPEG or WebP, up to 2 MB.</span>
+                        </span>
+                    </div>
+                </div>
+                <span asp-validation-for="Image" class="field-error"></span>
+            </div>
+        </section>
+
+        <div class="rv-actions">
+            <a class="btn btn-secondary btn-cancel" asp-area="Admin" asp-controller="Brand" asp-action="Index">Cancel</a>
+            <button class="btn btn-primary" type="submit">Create</button>
+        </div>
+    </form>
+</main>

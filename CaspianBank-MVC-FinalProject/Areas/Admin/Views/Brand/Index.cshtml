@@ -10,8 +10,17 @@
             <h1>Brands</h1>
             <p class="lede">The partner logos in the moving strip under the Home headline.</p>
         </div>
-        <a class="btn btn-primary" href="#">Create</a>
+        <a class="btn btn-primary" asp-area="Admin" asp-controller="Brand" asp-action="Create">Create</a>
     </header>
+
+    @if (TempData["Success"] is string success)
+    {
+        <p class="flash flash-ok" role="status">@success</p>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <p class="flash flash-error" role="alert">@error</p>
+    }
 
     <section class="surface surface-tight">
         <div class="table-wrap">
@@ -36,13 +45,15 @@
                             <td class="actions">
                                 <span class="row-actions">
                                     <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Brand" asp-action="Detail" asp-route-id="@item.Id">Detail</a>
-                                    <a class="btn btn-secondary btn-sm" href="#">Edit</a>
-                                    <button type="button" class="btn btn-danger btn-sm"
-                                            data-confirm-title="Delete this brand?"
-                                            data-confirm-text="The logo will disappear from the Home page."
-                                            data-confirm-yes="Delete" data-confirm-danger="true">
-                                        Delete
-                                    </button>
+                                    <a class="btn btn-secondary btn-sm" asp-area="Admin" asp-controller="Brand" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                    <form method="post" asp-area="Admin" asp-controller="Brand" asp-action="Delete" asp-route-id="@item.Id">
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                data-confirm-title="Delete this brand?"
+                                                data-confirm-text="The logo will disappear from the Home page."
+                                                data-confirm-yes="Delete" data-confirm-danger="true">
+                                            Delete
+                                        </button>
+                                    </form>
                                 </span>
                             </td>
                         </tr>

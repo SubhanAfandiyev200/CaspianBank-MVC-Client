@@ -12,12 +12,14 @@
             <p class="lede">One partner logo from the moving strip on the Home page.</p>
         </div>
         <span class="row-actions">
-            <a class="btn btn-secondary" href="#">Edit</a>
+            <a class="btn btn-secondary" asp-area="Admin" asp-controller="Brand" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
             <a class="btn btn-back" asp-area="Admin" asp-controller="Brand" asp-action="Index">Go Back</a>
-            <button type="button" class="btn btn-danger"
-                    data-confirm-title="Delete this brand?"
-                    data-confirm-text="The logo will disappear from the Home page."
-                    data-confirm-yes="Delete" data-confirm-danger="true">Delete</button>
+            <form method="post" asp-area="Admin" asp-controller="Brand" asp-action="Delete" asp-route-id="@Model.Id">
+                <button type="submit" class="btn btn-danger"
+                        data-confirm-title="Delete this brand?"
+                        data-confirm-text="The logo will disappear from the Home page."
+                        data-confirm-yes="Delete" data-confirm-danger="true">Delete</button>
+            </form>
         </span>
     </header>
 

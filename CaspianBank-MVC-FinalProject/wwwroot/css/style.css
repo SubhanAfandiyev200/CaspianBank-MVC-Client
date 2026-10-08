@@ -3035,3 +3035,34 @@ body.body-admin .site-footer-inner {
   .btn:not(:disabled):hover,
   .btn:not(:disabled):active { transform: none; }
 }
+
+/* Şəkil seçmə sahəsi: önizləmə + sürüklə-burax (admin formaları) */
+.file-drop { position: relative; }
+.file-drop-input {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: 0; cursor: pointer; z-index: 2;
+}
+.file-drop-box {
+  display: flex; align-items: center; gap: 16px;
+  padding: 16px 18px;
+  border: 2px dashed var(--color-border-strong);
+  border-radius: 14px;
+  background: #fafbf7;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.file-drop:hover .file-drop-box,
+.file-drop:focus-within .file-drop-box { border-color: var(--color-primary); background: #f3f8ee; }
+.file-drop.is-over .file-drop-box { border-color: var(--color-primary); background: #e8f3e3; box-shadow: 0 0 0 4px rgba(15, 92, 63, 0.12); }
+.file-drop.has-file .file-drop-box { border-style: solid; border-color: var(--color-primary); background: #f3f8ee; }
+.file-drop.is-error .file-drop-box { border-color: #d94a4a; background: #fdf3f3; }
+.file-drop-preview {
+  flex: none; width: 72px; height: 72px; border-radius: 12px;
+  display: grid; place-items: center; overflow: hidden;
+  background: #fff; border: 1px solid var(--color-border); color: var(--color-primary);
+}
+.file-drop-preview img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
+.file-drop-preview svg { width: 30px; height: 30px; }
+.file-drop-text { display: grid; gap: 2px; min-width: 0; }
+.file-drop-text strong { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.file-drop-text span { font-size: 13px; color: var(--color-text-secondary); }
+.file-drop.is-error .file-drop-text span { color: #8a1f1f; }
