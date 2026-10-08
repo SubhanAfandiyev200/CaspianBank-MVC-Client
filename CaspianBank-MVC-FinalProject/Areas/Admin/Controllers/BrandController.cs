@@ -67,8 +67,8 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
             file.Headers.ContentType = new MediaTypeHeaderValue(contentType);
             content.Add(file, "Image", model.Image.FileName);
 
-            var (brand, errors, status) = await PostFormAsync<BrandVM>("api/admin/brands", content);
-            if (brand is null)
+            var (success, errors, status) = await PostFormAsync("api/admin/brands", content);
+            if (!success)
             {
                 if (status == HttpStatusCode.Unauthorized)
                 {
@@ -82,7 +82,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
                 return View(model);
             }
 
-            TempData["Success"] = $"{brand.Name} was added.";
+            TempData["Success"] = $"{model.Name.Trim()} was added.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -131,8 +131,8 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
 
             using (stream)
             {
-                var (brand, errors, status) = await PutFormAsync<BrandVM>($"api/admin/brands/{id}", content);
-                if (brand is null)
+                var (success, errors, status) = await PutFormAsync($"api/admin/brands/{id}", content);
+                if (!success)
                 {
                     if (status == HttpStatusCode.Unauthorized)
                     {
@@ -152,7 +152,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
                     return await EditViewAsync(model);
                 }
 
-                TempData["Success"] = $"{brand.Name} was updated.";
+                TempData["Success"] = $"{model.Name.Trim()} was updated.";
                 return RedirectToAction(nameof(Index));
             }
         }

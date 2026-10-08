@@ -47,8 +47,8 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
                 return View(model);
             }
 
-            var (ticker, errors, status) = await PostAsync<HomeTickerVM>("api/admin/tickers", new { text = model.Text.Trim() });
-            if (ticker is null)
+            var (success, errors, status) = await PostAsync("api/admin/tickers", new { text = model.Text.Trim() });
+            if (!success)
             {
                 if (status == HttpStatusCode.Unauthorized)
                 {
@@ -88,8 +88,8 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
                 return View(model);
             }
 
-            var (ticker, errors, status) = await PutAsync<HomeTickerVM>($"api/admin/tickers/{id}", new { text = model.Text.Trim() });
-            if (ticker is null)
+            var (success, errors, status) = await PutAsync($"api/admin/tickers/{id}", new { text = model.Text.Trim() });
+            if (!success)
             {
                 if (status == HttpStatusCode.Unauthorized)
                 {

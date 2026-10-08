@@ -114,6 +114,51 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
         }
 
+        // PUT (JSON), cavab gövdəsi yoxdur: API yeniləmədən sonra boş cavab (204) qaytarır
+        protected async Task<(bool Success, string[] Errors, HttpStatusCode? Status)> PutAsync(string url, object body)
+        {
+            try
+            {
+                var response = await Api.PutAsJsonAsync(url, body);
+                if (response.IsSuccessStatusCode) return (true, Array.Empty<string>(), response.StatusCode);
+                return (false, await ReadErrorsAsync(response), response.StatusCode);
+            }
+            catch (HttpRequestException)
+            {
+                return (false, new[] { UnavailableMessage }, null);
+            }
+        }
+
+        // POST (multipart/form-data), cavab gövdəsi yoxdur: fayl yükləyən formalar üçün
+        protected async Task<(bool Success, string[] Errors, HttpStatusCode? Status)> PostFormAsync(string url, MultipartFormDataContent content)
+        {
+            try
+            {
+                var response = await Api.PostAsync(url, content);
+                if (response.IsSuccessStatusCode) return (true, Array.Empty<string>(), response.StatusCode);
+                return (false, await ReadErrorsAsync(response), response.StatusCode);
+            }
+            catch (HttpRequestException)
+            {
+                return (false, new[] { UnavailableMessage }, null);
+            }
+        }
+
+        // PUT (multipart/form-data), cavab gövdəsi yoxdur
+        protected async Task<(bool Success, string[] Errors, HttpStatusCode? Status)> PutFormAsync(string url, MultipartFormDataContent content)
+        {
+            try
+            {
+                var response = await Api.PutAsync(url, content);
+                if (response.IsSuccessStatusCode) return (true, Array.Empty<string>(), response.StatusCode);
+                return (false, await ReadErrorsAsync(response), response.StatusCode);
+            }
+            catch (HttpRequestException)
+            {
+                return (false, new[] { UnavailableMessage }, null);
+            }
+        }
+
         // DELETE: uğurlu olarsa Success = true, olmazsa istifadəçiyə göstəriləcək xətalar (404-də API gövdə qaytarmaya bilər)
         protected async Task<(bool Success, string[] Errors, HttpStatusCode? Status)> DeleteAsync(string url)
         {
