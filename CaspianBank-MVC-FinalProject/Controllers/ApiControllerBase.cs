@@ -90,6 +90,30 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
         }
 
+        // PUT (JSON): fayl olmayan formaların yenilənməsi üçün. Uğurlu olarsa cavabın gövdəsi Data-da qayıdır
+        protected async Task<(T? Data, string[] Errors, HttpStatusCode? Status)> PutAsync<T>(string url, object body) where T : class
+        {
+            try
+            {
+                var response = await Api.PutAsJsonAsync(url, body);
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadFromJsonAsync<T>();
+                    return (data, Array.Empty<string>(), response.StatusCode);
+                }
+
+                return (null, await ReadErrorsAsync(response), response.StatusCode);
+            }
+            catch (HttpRequestException)
+            {
+                return (null, new[] { UnavailableMessage }, null);
+            }
+            catch (JsonException)
+            {
+                return (null, new[] { "Something went wrong. Please try again." }, null);
+            }
+        }
+
         // DELETE: uğurlu olarsa Success = true, olmazsa istifadəçiyə göstəriləcək xətalar (404-də API gövdə qaytarmaya bilər)
         protected async Task<(bool Success, string[] Errors, HttpStatusCode? Status)> DeleteAsync(string url)
         {
