@@ -1,0 +1,68 @@
+@model IEnumerable<AboutPillarVM>
+@{
+    ViewData["Title"] = "About pillars";
+}
+<main id="content" class="page">
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">UI · Home page</p>
+            <h1>About pillars</h1>
+            <p class="lede">The columns under the About text on the Home page. The newest is shown first. The text above them is in <a asp-area="Admin" asp-controller="About" asp-action="Detail">About text</a>.</p>
+        </div>
+        <a class="btn btn-primary" asp-area="Admin" asp-controller="AboutPillar" asp-action="Create">Create</a>
+    </header>
+
+    @if (TempData["Success"] is string success)
+    {
+        <p class="flash flash-ok" role="status">@success</p>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <p class="flash flash-error" role="alert">@error</p>
+    }
+
+    <section class="surface surface-tight">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th class="num">Id</th>
+                        <th>Image</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th class="actions">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="num">@item.Id</td>
+                            <td><img src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], item.Image)" alt="@item.Title" style="display:block;height:40px;width:auto;max-width:80px;object-fit:contain" /></td>
+                            <td>@item.Title</td>
+                            <td>@item.Description</td>
+                            <td class="actions">
+                                <span class="row-actions">
+                                    <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="AboutPillar" asp-action="Detail" asp-route-id="@item.Id">Detail</a>
+                                    <a class="btn btn-secondary btn-sm" asp-area="Admin" asp-controller="AboutPillar" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                    <form method="post" asp-area="Admin" asp-controller="AboutPillar" asp-action="Delete" asp-route-id="@item.Id">
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                data-confirm-title="Delete this pillar?"
+                                                data-confirm-text="It will disappear from the About block on the Home page."
+                                                data-confirm-yes="Delete" data-confirm-danger="true">Delete</button>
+                                    </form>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5">No pillars yet. Create the first one.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
