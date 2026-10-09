@@ -13,7 +13,9 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
     public class BenefitItemController : ApiControllerBase
     {
         public BenefitItemController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
-            : base(httpClientFactory, configuration) { }
+            : base(httpClientFactory, configuration)
+        {
+        }
 
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -34,9 +36,13 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View(new BenefitItemCreateVM { ButtonUrl = "/Account/Welcome" });
+            return View(new BenefitItemCreateVM
+            {
+                ButtonUrl = "/Account/Welcome",
+                Destinations = await LoadDestinationsAsync()
+            });
         }
 
         [HttpPost]
@@ -45,6 +51,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
+                model.Destinations = await LoadDestinationsAsync();
                 return View(model);
             }
 
@@ -61,6 +68,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
                 {
                     ModelState.AddModelError(string.Empty, error);
                 }
+                model.Destinations = await LoadDestinationsAsync();
                 return View(model);
             }
 
@@ -87,7 +95,8 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
                 ButtonUrl = item.ButtonUrl,
                 Text1 = item.Text1,
                 Text2 = item.Text2,
-                Text3 = item.Text3
+                Text3 = item.Text3,
+                Destinations = await LoadDestinationsAsync()
             });
         }
 
@@ -98,6 +107,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
             model.Id = id;
             if (!ModelState.IsValid)
             {
+                model.Destinations = await LoadDestinationsAsync();
                 return View(model);
             }
 
@@ -120,6 +130,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
                 {
                     ModelState.AddModelError(string.Empty, error);
                 }
+                model.Destinations = await LoadDestinationsAsync();
                 return View(model);
             }
 
@@ -146,6 +157,13 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
 
             TempData["Success"] = "The card was deleted.";
             return RedirectToAction(nameof(Index));
+        }
+
+        // "Düymə hara aparsın" siyahısı API-dən alınır (yerlər API-də saxlanılır, doğrulama da orada edilir)
+        private async Task<List<ButtonDestinationVM>> LoadDestinationsAsync()
+        {
+            var (destinations, status) = await GetAsync<List<ButtonDestinationVM>>("api/admin/benefit-items/destinations");
+            return destinations ?? new List<ButtonDestinationVM>();
         }
 
         // API-yə gedən JSON gövdəsi (kənar boşluqlar silinir, ünvan API-də yenidən yoxlanılır)

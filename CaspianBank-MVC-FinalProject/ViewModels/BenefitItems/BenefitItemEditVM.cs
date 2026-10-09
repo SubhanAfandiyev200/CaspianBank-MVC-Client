@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel.DataAnnotations;
 
 namespace CaspianBank_MVC_FinalProject.ViewModels.BenefitItems
@@ -22,11 +23,13 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.BenefitItems
         [StringLength(100, ErrorMessage = "The button text can be at most 100 characters.")]
         public string ButtonText { get; set; } = string.Empty;
 
-        // Yalnız bu saytın yolu: "/" ilə başlayır, "//", ":" və "\" olmur (API-dəki CleanUrl ilə eyni qayda)
-        [Required(ErrorMessage = "Enter the button link.")]
-        [StringLength(300, ErrorMessage = "The link can be at most 300 characters.")]
-        [RegularExpression(@"^/(?!/)[^:\\]*$", ErrorMessage = "The link must be a path on this site, for example /App/Transfer.")]
+        // Düymənin yeri hazır siyahıdan seçilir (link əl ilə yazılmır)
+        [Required(ErrorMessage = "Choose where the button goes.")]
         public string ButtonUrl { get; set; } = string.Empty;
+
+        // Yalnız göstərmək üçündür, formadan oxunmur: seçim siyahısı API-dən alınır
+        [BindNever]
+        public List<ButtonDestinationVM> Destinations { get; set; } = new List<ButtonDestinationVM>();
 
         [Required(ErrorMessage = "Enter the first line.")]
         [StringLength(200, ErrorMessage = "The first line can be at most 200 characters.")]
