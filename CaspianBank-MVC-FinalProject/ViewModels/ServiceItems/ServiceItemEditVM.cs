@@ -15,11 +15,14 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.ServiceItems
         [StringLength(300, ErrorMessage = "The description can be at most 300 characters.")]
         public string Description { get; set; } = string.Empty;
 
-        // Yalnız göstərmək üçündür, formadan oxunmur: nömrə kartın hansı səhifəyə getdiyini, ikon isə görünüşünü müəyyən edir
+        // İstəyə bağlıdır: seçilməsə köhnə ikon qalır
+        public IFormFile? Icon { get; set; }
+
+        // Yalnız göstərmək üçündür, formadan oxunmur: nömrə kartın hansı səhifəyə getdiyini müəyyən edir, ikonun yolu isə API-dən alınır
         [BindNever]
         public int Number { get; set; }
 
         [BindNever]
-        public string Icon { get; set; } = string.Empty;
+        public string CurrentIcon { get; set; } = string.Empty;
     }
 }

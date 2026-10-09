@@ -698,6 +698,13 @@ h2 {
   height: 32px;
 }
 
+.service-icon img {
+  display: block;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
 .service-card h3 {
   margin-top: 18px;
   font-size: 20px;

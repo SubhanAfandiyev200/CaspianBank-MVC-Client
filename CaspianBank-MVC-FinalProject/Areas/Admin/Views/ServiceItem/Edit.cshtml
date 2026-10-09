@@ -8,15 +8,15 @@
     <header class="page-head">
         <p class="eyebrow">UI · Home page</p>
         <h1>Edit card</h1>
-        <p class="lede">Change the title or the description. The number and the icon stay the same, because the card opens a fixed part of the app.</p>
+        <p class="lede">Change the title, the description or the icon. Leave the icon as it is to keep the current one. The number stays the same, because the card opens a fixed part of the app.</p>
     </header>
 
-    <form method="post" asp-area="Admin" asp-controller="ServiceItem" asp-action="Edit" asp-route-id="@Model.Id" class="narrow stack-lg" novalidate>
+    <form method="post" asp-area="Admin" asp-controller="ServiceItem" asp-action="Edit" asp-route-id="@Model.Id" enctype="multipart/form-data" class="narrow stack-lg" novalidate>
         <section class="surface form-stack">
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
             <div class="field">
-                <label>Card</label>
-                <p class="hint">No. @Model.Number · <img src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], Model.Icon)" alt="" style="display:inline-block;vertical-align:middle;width:22px;height:22px;object-fit:contain" /></p>
+                <label>Card number</label>
+                <p class="hint">No. @Model.Number</p>
             </div>
             <div class="field">
                 <label asp-for="Title">Title</label>
@@ -27,6 +27,29 @@
                 <label asp-for="Description">Description</label>
                 <textarea class="textarea" asp-for="Description" maxlength="300" rows="3" placeholder="One or two sentences."></textarea>
                 <span asp-validation-for="Description" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Icon">Icon</label>
+                <div class="file-drop" data-file-drop>
+                    <input class="file-drop-input" asp-for="Icon" type="file" accept="image/png,image/jpeg,image/webp" />
+                    <div class="file-drop-box">
+                        <span class="file-drop-preview" data-file-preview>
+                            @if (!string.IsNullOrEmpty(Model.CurrentIcon))
+                            {
+                                <img src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], Model.CurrentIcon)" alt="Current icon" />
+                            }
+                            else
+                            {
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m0 0 4 4m-4-4L8 8"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+                            }
+                        </span>
+                        <span class="file-drop-text">
+                            <strong data-file-title>Current icon</strong>
+                            <span data-file-hint>Click here or drag a new one in. A square PNG with a transparent background looks best. PNG, JPEG or WebP, up to 2 MB.</span>
+                        </span>
+                    </div>
+                </div>
+                <span asp-validation-for="Icon" class="field-error"></span>
             </div>
         </section>
 
