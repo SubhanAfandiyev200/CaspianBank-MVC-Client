@@ -3061,6 +3061,7 @@ body.body-admin .site-footer-inner {
   background: #fff; border: 1px solid var(--color-border); color: var(--color-primary);
 }
 .file-drop-preview img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
+.file-drop-preview video { width: 100%; height: 100%; object-fit: cover; }
 .file-drop-preview svg { width: 30px; height: 30px; }
 .file-drop-text { display: grid; gap: 2px; min-width: 0; }
 .file-drop-text strong { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -3080,3 +3081,87 @@ body.body-admin .site-footer-inner {
 
 /* Hələ hazır olmayan menyu bəndləri: link deyil, solğun yazı */
 .nav-link.is-soon { opacity: 0.55; cursor: default; pointer-events: none; }
+
+/* =========================================================
+   Köçürmə formasının səliqəsi: etiket, bölgü düymələri, boş vəziyyət, məbləğ və kart nömrəsi sahəsi
+   ========================================================= */
+
+.pay-form { gap: 22px; }
+.field-label { font-size: var(--fs-sm); font-weight: 600; }
+
+/* "Öz kartım / Başqa müştəri": iki bərabər düymə */
+.segment-full { display: grid; grid-template-columns: 1fr 1fr; width: 100%; }
+.segment-full button { padding: 11px 12px; text-align: center; transition: background 0.2s ease, color 0.2s ease; }
+.segment-full button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* Göndərmək üçün başqa kart yoxdur: boş açılan siyahı əvəzinə izah və iki yol */
+.empty-inline {
+  display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px;
+  border: 1px dashed var(--color-border-strong); border-radius: 14px; background: #fafbf7;
+}
+.empty-inline[hidden] { display: none; }
+.empty-inline-icon {
+  flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px;
+  background: #eef6d8; color: var(--color-primary);
+}
+.empty-inline-copy strong { display: block; font-size: 15px; }
+.empty-inline-copy p { margin: 4px 0 12px; font-size: 13px; line-height: 1.5; color: var(--color-text-secondary); }
+.empty-inline-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 16px; }
+.link-btn {
+  border: 0; background: none; padding: 0; font: inherit; font-size: 13px; font-weight: 600;
+  color: var(--color-primary); text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+}
+.link-btn:hover { color: #0c3f2c; }
+.link-btn[hidden] { display: none; }
+
+/* Məbləğ: böyük rəqəm sahəsi, valyuta nişanı, xəta vəziyyəti */
+.amount-box {
+  display: flex; align-items: center; gap: 12px; padding: 0 18px;
+  border: 1px solid var(--color-border-strong); border-radius: 14px; background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.amount-box:focus-within { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(15, 92, 63, 0.12); }
+.amount-box.is-error { border-color: #d94a4a; box-shadow: 0 0 0 3px rgba(217, 74, 74, 0.12); }
+.amount-input {
+  flex: 1; width: 100%; min-width: 0; height: 66px; padding: 0; border: 0; outline: 0; background: transparent;
+  font: inherit; font-size: 30px; font-weight: 700; letter-spacing: -0.02em; font-variant-numeric: tabular-nums;
+  color: var(--color-text);
+}
+.amount-input::placeholder { color: #b8c0bb; }
+.amount-cur {
+  flex: none; padding: 6px 12px; border-radius: 999px; background: #eef6d8; color: var(--color-primary);
+  font-size: 13px; font-weight: 700; letter-spacing: 0.08em;
+}
+
+/* Kart nömrəsi: kart nişanı, qruplanmış rəqəmlər, 16 rəqəm tamam olanda yaşıl işarə */
+.input-group.has-prefix .input { padding-left: 46px; }
+.input-prefix {
+  position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+  display: flex; color: var(--color-text-tertiary); pointer-events: none;
+}
+.input-number {
+  height: 56px; font-size: 18px; font-weight: 600; letter-spacing: 0.1em; font-variant-numeric: tabular-nums;
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+.input-number::placeholder { font-weight: 400; letter-spacing: 0.1em; color: #b8c0bb; }
+.input-group.has-status .input { padding-right: 50px; }
+.input-status {
+  position: absolute; right: 14px; top: 50%; display: grid; place-items: center; width: 26px; height: 26px;
+  border-radius: 50%; background: var(--color-primary); color: #fff; pointer-events: none;
+  opacity: 0; transform: translateY(-50%) scale(0.6); transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.input-group.is-complete .input-status { opacity: 1; transform: translateY(-50%) scale(1); }
+.input-group.is-complete .input { border-color: var(--color-primary); }
+
+.field-counter { justify-self: end; font-size: 12px; color: var(--color-text-tertiary); font-variant-numeric: tabular-nums; }
+
+/* Göndər düyməsi və nəyin çatışmadığını deyən sətir */
+.review-action { display: grid; gap: 10px; }
+.review-hint { margin: 0; min-height: 1.3em; text-align: center; font-size: 13px; color: var(--color-text-secondary); }
+.pay-form-head h2 { margin: 0 0 6px; }
+.pay-form-head .lede { margin: 0; }
+@media (max-width: 480px) {
+  .input-number { font-size: 16px; letter-spacing: 0.04em; }
+  .input-number::placeholder { letter-spacing: 0.04em; }
+  .amount-input { font-size: 26px; }
+}

@@ -96,8 +96,10 @@
 
             <div class="pay-details">
                 <form asp-controller="Transfer" asp-action="Review" method="post" id="transfer-form" class="pay-form" novalidate data-mode="@mode">
-                    <h2>Transfer details</h2>
-                    <p class="lede">Fill in the details. You will review everything before the money moves.</p>
+                    <div class="pay-form-head">
+                        <h2>Transfer details</h2>
+                        <p class="lede">Fill in the details. You will review everything before the money moves.</p>
+                    </div>
 
                     @if (!string.IsNullOrEmpty(Model.Error))
                     {
@@ -122,8 +124,8 @@
                     </div>
 
                     <div class="field">
-                        <span id="to-label">To</span>
-                        <div class="segment" role="group" aria-labelledby="to-label">
+                        <span class="field-label" id="to-label">To</span>
+                        <div class="segment segment-full" role="group" aria-labelledby="to-label">
                             <button type="button" id="to-own" class="@(mode == "own" ? "is-active" : "")">My own card</button>
                             <button type="button" id="to-other" class="@(mode == "other" ? "is-active" : "")">Another customer</button>
                         </div>
@@ -131,33 +133,56 @@
                     </div>
 
                     <div class="field" id="own-field" @(mode == "other" ? "hidden" : null)>
-                        <label for="to-card">Destination card</label>
-                        <select class="select" id="to-card" name="ToCardId" data-card-pick data-selected="@Model.ToCardId">
-                            @foreach (var card in ownTargets)
-                            {
-                                <option value="@card.Id"
-                                        data-tier="@card.Tier" data-last4="@card.Last4" data-money="@Money(card.Balance)"
-                                        data-design="@card.DesignImage">@card.Tier · •••• @card.Last4 · @Money(card.Balance)</option>
-                            }
-                        </select>
-                        <p class="hint" id="own-empty" hidden>You have no other card to transfer to. <a href="@NavLinks.AddCard">Add a card</a> or send to another customer.</p>
+                        <div class="field" id="own-pick">
+                            <label for="to-card">Destination card</label>
+                            <select class="select" id="to-card" name="ToCardId" data-card-pick data-selected="@Model.ToCardId">
+                                @foreach (var card in ownTargets)
+                                {
+                                    <option value="@card.Id"
+                                            data-tier="@card.Tier" data-last4="@card.Last4" data-money="@Money(card.Balance)"
+                                            data-design="@card.DesignImage">@card.Tier · •••• @card.Last4 · @Money(card.Balance)</option>
+                                }
+                            </select>
+                        </div>
+
+                        @* Başqa kart yoxdursa boş açılan siyahı əvəzinə izah və iki yol göstərilir (JS göndərən karta görə açır) *@
+                        <div class="empty-inline" id="own-empty" hidden>
+                            <span class="empty-inline-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2.5" /><path d="M3 10.5h18M7 15h3" /></svg>
+                            </span>
+                            <div class="empty-inline-copy">
+                                <strong>You have no other card to send to</strong>
+                                <p>Money moves between two different cards of yours. Add another card, or send to another customer.</p>
+                                <div class="empty-inline-actions">
+                                    <a class="btn btn-secondary btn-sm" href="@NavLinks.AddCard">Add a card</a>
+                                    <button type="button" class="link-btn" id="own-empty-other">Send to another customer</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="field" id="other-field" @(mode == "own" ? "hidden" : null)>
                         <label for="to-number">Recipient card number</label>
-                        <div class="input-group">
-                            <input class="input" id="to-number" name="ToCardNumber" inputmode="numeric" placeholder="4532 1234 5678 9012"
+                        <div class="input-group has-prefix has-status" id="number-group">
+                            <span class="input-prefix" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2.5" /><path d="M3 10.5h18M7 15h3" /></svg>
+                            </span>
+                            <input class="input input-number" id="to-number" name="ToCardNumber" inputmode="numeric" placeholder="0000 0000 0000 0000"
                                    maxlength="19" autocomplete="off" value="@Model.ToCardNumber" />
+                            <span class="input-status" id="number-status" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10" /></svg>
+                            </span>
                         </div>
                         <p class="hint">The 16-digit number of a Caspian card. You will see the recipient's name before you confirm.</p>
                     </div>
 
                     <div class="field">
                         <label for="amount">Amount</label>
-                        <div class="input-group has-suffix">
-                            <input class="input input-amount" id="amount" name="Amount" inputmode="decimal" placeholder="0.00" autocomplete="off" value="@Model.Amount" />
-                            <span class="input-suffix">AZN</span>
+                        <div class="amount-box" id="amount-box">
+                            <input class="amount-input" id="amount" name="Amount" inputmode="decimal" placeholder="0.00" maxlength="12" autocomplete="off" aria-describedby="limit-hint amount-error" value="@Model.Amount" />
+                            <span class="amount-cur">AZN</span>
                         </div>
+                        <p class="field-error" id="amount-error" role="alert" hidden></p>
                         <div class="chips chips-tight" role="group" aria-label="Quick amounts">
                             <button type="button" class="chip" data-quick="50">50</button>
                             <button type="button" class="chip" data-quick="100">100</button>
@@ -171,9 +196,13 @@
                     <div class="field">
                         <label for="note">Note <span class="optional">(optional)</span></label>
                         <input class="input" id="note" name="Note" maxlength="140" placeholder="What's this for?" autocomplete="off" value="@Model.Note" />
+                        <span class="field-counter" id="note-count" aria-hidden="true">0 / 140</span>
                     </div>
 
-                    <button class="btn btn-primary btn-block btn-lg" type="submit" id="review-btn">Review transfer</button>
+                    <div class="review-action">
+                        <button class="btn btn-primary btn-block btn-lg" type="submit" id="review-btn">Review transfer</button>
+                        <p class="review-hint" id="review-hint" role="status"></p>
+                    </div>
 
                     <ul class="pay-trust">
                         <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>Nothing is sent until you confirm</li>

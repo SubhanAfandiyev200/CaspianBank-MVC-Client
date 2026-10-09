@@ -393,6 +393,14 @@
     const cashbackHint = byId("cashback-hint");
     const ownEmpty = byId("own-empty");
     const reviewBtn = byId("review-btn");
+    const reviewHint = byId("review-hint");
+    const ownPick = byId("own-pick");
+    const ownEmptyOther = byId("own-empty-other");
+    const amountBox = byId("amount-box");
+    const amountError = byId("amount-error");
+    const numberGroup = byId("number-group");
+    const noteInput = byId("note");
+    const noteCount = byId("note-count");
     const payCard = byId("pay-card");
     const meterFill = byId("meter-fill");
     const meterText = byId("meter-text");
@@ -488,10 +496,11 @@
       paintNumber(digits);
       byId("live-holder").textContent = holder;
 
-      // Öz kartlarım rejimində başqa kart yoxdursa izah və düymənin söndürülməsi
+      // Öz kartlarım rejimində başqa kart yoxdursa boş açılan siyahı əvəzinə izah göstərilir
       const noTarget = mode === "own" && ownTargets === 0;
-      ownEmpty.hidden = !(mode === "own" && ownTargets === 0);
-      reviewBtn.disabled = noTarget;
+      ownEmpty.hidden = !noTarget;
+      ownPick.hidden = noTarget;
+      if (ownEmptyOther) ownEmptyOther.hidden = isCashback();
 
       const fee = amount === null ? 0 : commissionFor(amount, limit, pct);
       const shown = amount === null ? 0 : amount;
@@ -518,13 +527,57 @@
       hint.textContent = !from ? "" : limit > 0
         ? "Commission-free up to " + money(limit) + ". " + String(pct) + "% applies to the part above that. Available: " + money(balance) + "."
         : "No commission on " + tier + " transfers. Available: " + money(balance) + ".";
+
+      // Məbləğ balansa (komissiya ilə) sığmırsa sahədə xəta çıxır. Server də eyni yoxlayır, bu yalnız rahatlıq üçündür
+      const max = from ? maxAmount(balance, limit, pct) : 0;
+      let amountProblem = "";
+      if (amount !== null && amount > 100000) {
+        amountProblem = "The most you can send at once is " + money(100000) + ".";
+      } else if (amount !== null && from && round2(amount + fee) > balance) {
+        amountProblem = max > 0 ? "Not enough balance. The most you can send from this card is " + money(max) + "." : "This card has no balance to send.";
+      }
+      amountError.hidden = !amountProblem;
+      amountError.textContent = amountProblem;
+      amountBox.classList.toggle("is-error", !!amountProblem);
+
+      // Düymə hazır olana qədər söndürülür, nəyin çatışmadığı düymənin altında yazılır
+      let waiting = "";
+      if (noTarget) waiting = isCashback() ? "Add another card to continue." : "Add another card or send to another customer to continue.";
+      else if (mode === "other" && digits.length !== 16) waiting = "Enter the recipient's 16-digit card number.";
+      else if (amount === null) waiting = "Enter an amount to continue.";
+      else if (amountProblem) waiting = "Fix the amount to continue.";
+      reviewBtn.disabled = waiting !== "";
+      reviewHint.textContent = waiting;
+
+      numberGroup.classList.toggle("is-complete", mode === "other" && digits.length === 16);
+      transferForm.querySelectorAll("[data-quick]").forEach((chip) => {
+        chip.classList.toggle("is-active", amount !== null && Number(chip.getAttribute("data-quick")) === amount);
+      });
+    }
+
+    // Məbləğ sahəsi: yalnız rəqəm və bir ayırıcı, ayırıcıdan sonra ən çox 2 rəqəm ("12,5" və "12.5" ikisi də olar)
+    function cleanAmount() {
+      let value = amountInput.value.replace(/[^0-9.,]/g, "");
+      const sep = value.search(/[.,]/);
+      if (sep !== -1) {
+        value = value.slice(0, sep + 1) + value.slice(sep + 1).replace(/[.,]/g, "").slice(0, 2);
+      }
+      value = value.replace(/^0+(?=\d)/, "");
+      if (value.startsWith(".") || value.startsWith(",")) value = "0" + value;
+      if (value !== amountInput.value) amountInput.value = value;
+    }
+
+    function countNote() {
+      noteCount.textContent = noteInput.value.length + " / 140";
     }
 
     fromSel.addEventListener("change", () => { rebuildDestinations(); setMode(mode); });
     toSel.addEventListener("change", paint);
     ownBtn.addEventListener("click", () => setMode("own"));
     otherBtn.addEventListener("click", () => setMode("other"));
-    amountInput.addEventListener("input", paint);
+    ownEmptyOther?.addEventListener("click", () => setMode("other"));
+    amountInput.addEventListener("input", () => { cleanAmount(); paint(); });
+    noteInput.addEventListener("input", countNote);
     numberInput.addEventListener("input", () => {
       numberInput.value = numberInput.value.replace(/\D/g, "").slice(0, 16).replace(/(\d{4})(?=\d)/g, "$1 ").trim();
       paint();
@@ -545,6 +598,8 @@
       paint();
     });
 
+    cleanAmount();
+    countNote();
     rebuildDestinations();
     setMode(mode);
   }
