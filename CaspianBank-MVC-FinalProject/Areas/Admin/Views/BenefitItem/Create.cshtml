@@ -8,28 +8,13 @@
     <header class="page-head">
         <p class="eyebrow">UI · Home page</p>
         <h1>Create card</h1>
-        <p class="lede">A sliding card for the Benefits block. Pick the section it belongs to.</p>
+        <p class="lede">A sliding card for the Benefits block.</p>
     </header>
 
-    @if (!Model.Sections.Any())
-    {
-        <p class="flash flash-error" role="alert">There is no section yet. <a asp-area="Admin" asp-controller="BenefitSection" asp-action="Create">Create a section</a> first.</p>
-    }
 
     <form method="post" asp-area="Admin" asp-controller="BenefitItem" asp-action="Create" class="narrow stack-lg" novalidate>
         <section class="surface form-stack">
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
-            <div class="field">
-                <label asp-for="BenefitSectionId">Section</label>
-                <select class="select" asp-for="BenefitSectionId">
-                    <option value="0">Choose a section</option>
-                    @foreach (var parent in Model.Sections)
-                    {
-                        <option value="@parent.Id" selected="@(parent.Id == Model.BenefitSectionId)">@parent.Title</option>
-                    }
-                </select>
-                <span asp-validation-for="BenefitSectionId" class="field-error"></span>
-            </div>
             <div class="field">
                 <label asp-for="Label">Label</label>
                 <input class="input" asp-for="Label" maxlength="100" placeholder="Small text above the title" autocomplete="off" />

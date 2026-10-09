@@ -1,4 +1,4 @@
-@model BenefitItemVM
+@model BenefitItemDetailVM
 @{
     ViewData["Title"] = "Benefit item · Detail";
 }
@@ -27,10 +27,6 @@
         <section class="surface">
             <dl class="detail-list">
                 <div><dt>Id</dt><dd>@Model.Id</dd></div>
-                <div>
-                    <dt>Section</dt>
-                    <dd><a asp-area="Admin" asp-controller="BenefitSection" asp-action="Detail" asp-route-id="@Model.BenefitSectionId">@ViewBag.SectionTitle</a></dd>
-                </div>
                 <div><dt>Label</dt><dd>@Model.Label</dd></div>
                 <div><dt>Title</dt><dd>@Model.Title</dd></div>
                 <div><dt>Description</dt><dd>@Model.Description</dd></div>

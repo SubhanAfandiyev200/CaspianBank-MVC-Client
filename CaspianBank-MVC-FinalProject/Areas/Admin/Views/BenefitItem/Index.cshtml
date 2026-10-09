@@ -1,14 +1,13 @@
 @model IEnumerable<BenefitItemVM>
 @{
     ViewData["Title"] = "Benefit items";
-    var sectionTitles = (Dictionary<int, string>)ViewBag.SectionTitles;
 }
 <main id="content" class="page">
     <header class="page-head crud-head">
         <div>
             <p class="eyebrow">UI · Home page</p>
             <h1>Benefit items</h1>
-            <p class="lede">The sliding cards of the Benefits block on the Home page. Each card belongs to a section.</p>
+            <p class="lede">The sliding cards of the Benefits block on the Home page.</p>
         </div>
         <a class="btn btn-primary" asp-area="Admin" asp-controller="BenefitItem" asp-action="Create">Create</a>
     </header>
@@ -28,7 +27,6 @@
                 <thead>
                     <tr>
                         <th class="num">Id</th>
-                        <th>Section</th>
                         <th>Label</th>
                         <th>Title</th>
                         <th>Button</th>
@@ -40,7 +38,6 @@
                     {
                         <tr>
                             <td class="num">@item.Id</td>
-                            <td>@(sectionTitles.TryGetValue(item.BenefitSectionId, out var sectionTitle) ? sectionTitle : "Unknown")</td>
                             <td>@item.Label</td>
                             <td>@item.Title</td>
                             <td>@item.ButtonText <span class="hint">→ @item.ButtonUrl</span></td>
@@ -61,7 +58,7 @@
                     @if (!Model.Any())
                     {
                         <tr>
-                            <td colspan="6">No cards yet. Create the first one.</td>
+                            <td colspan="5">No cards yet. Create the first one.</td>
                         </tr>
                     }
                 </tbody>

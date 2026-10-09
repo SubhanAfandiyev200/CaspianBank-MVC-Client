@@ -7,8 +7,8 @@ using System.Net;
 
 namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
 {
-    // UI bölməsi: Home-dakı "Benefits" blokunun başlıq hissəsi (label, title, description). Kartları BenefitItemController idarə edir.
-    // API: api/admin/benefit-sections
+    // UI bölməsi: Home-dakı "Benefits" blokunun başlıq yazısı (label, title, description). Tək yazıdır: yalnız görünür (Detail) və dəyişdirilir (Edit).
+    // Kartları BenefitItemController idarə edir. API: api/admin/benefit-section
     [Area("Admin")]
     [Authorize(Roles = "Admin,SuperAdmin,WebDesigner")]
     public class BenefitSectionController : ApiControllerBase
@@ -16,71 +16,32 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
         public BenefitSectionController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
             : base(httpClientFactory, configuration) { }
 
+        // Tək yazı olduğu üçün siyahı yoxdur: birbaşa Detail açılır
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var (sections, status) = await GetAsync<List<BenefitSectionVM>>("api/admin/benefit-sections");
-            return View(sections ?? new List<BenefitSectionVM>());
+            return RedirectToAction(nameof(Detail));
         }
 
         [HttpGet]
-        public async Task<IActionResult> Detail(int id)
+        public async Task<IActionResult> Detail()
         {
-            var (section, status) = await GetAsync<BenefitSectionVM>($"api/admin/benefit-sections/{id}");
+            var (section, status) = await GetAsync<BenefitSectionDetailVM>("api/admin/benefit-section");
             if (section is null)
             {
                 return NotFound();
             }
 
-            // Bu bölməyə aid kartlar (silməzdən əvvəl nələrin silinəcəyi görünsün)
+            // Başlığın altında göstərilən kartlar (hamısı bu bölməyə aiddir)
             var (items, itemsStatus) = await GetAsync<List<BenefitItemVM>>("api/admin/benefit-items");
-            ViewBag.Items = (items ?? new List<BenefitItemVM>()).Where(item => item.BenefitSectionId == id).ToList();
+            section.Items = items ?? new List<BenefitItemVM>();
             return View(section);
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Edit()
         {
-            return View(new BenefitSectionCreateVM());
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(BenefitSectionCreateVM model)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
-
-            var (success, errors, status) = await PostAsync("api/admin/benefit-sections", new
-            {
-                label = model.Label.Trim(),
-                title = model.Title.Trim(),
-                description = model.Description.Trim()
-            });
-            if (!success)
-            {
-                if (status == HttpStatusCode.Unauthorized)
-                {
-                    return await SessionExpiredAsync();
-                }
-
-                foreach (var error in errors)
-                {
-                    ModelState.AddModelError(string.Empty, error);
-                }
-                return View(model);
-            }
-
-            TempData["Success"] = "The section was added.";
-            return RedirectToAction(nameof(Index));
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> Edit(int id)
-        {
-            var (section, status) = await GetAsync<BenefitSectionVM>($"api/admin/benefit-sections/{id}");
+            var (section, status) = await GetAsync<BenefitSectionDetailVM>("api/admin/benefit-section");
             if (section is null)
             {
                 return NotFound();
@@ -105,7 +66,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
                 return View(model);
             }
 
-            var (success, errors, status) = await PutAsync($"api/admin/benefit-sections/{id}", new
+            var (success, errors, status) = await PutAsync($"api/admin/benefit-section/{id}", new
             {
                 label = model.Label.Trim(),
                 title = model.Title.Trim(),
@@ -120,8 +81,8 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
 
                 if (status == HttpStatusCode.NotFound)
                 {
-                    TempData["Error"] = "This section no longer exists.";
-                    return RedirectToAction(nameof(Index));
+                    TempData["Error"] = "The benefits heading was not found. Open it again.";
+                    return RedirectToAction(nameof(Detail));
                 }
 
                 foreach (var error in errors)
@@ -131,29 +92,8 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
                 return View(model);
             }
 
-            TempData["Success"] = "The section was updated.";
-            return RedirectToAction(nameof(Index));
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var (success, errors, status) = await DeleteAsync($"api/admin/benefit-sections/{id}");
-            if (!success)
-            {
-                if (status == HttpStatusCode.Unauthorized)
-                {
-                    return await SessionExpiredAsync();
-                }
-
-                // Artıq silinibsə (başqa tabda) sadəcə siyahıya qayıdırıq
-                TempData["Error"] = status == HttpStatusCode.NotFound ? "This section no longer exists." : errors.FirstOrDefault();
-                return RedirectToAction(nameof(Index));
-            }
-
-            TempData["Success"] = "The section and its cards were deleted.";
-            return RedirectToAction(nameof(Index));
+            TempData["Success"] = "The benefits heading was updated.";
+            return RedirectToAction(nameof(Detail));
         }
     }
 }

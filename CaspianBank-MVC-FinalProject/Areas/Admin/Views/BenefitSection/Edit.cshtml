@@ -3,11 +3,11 @@
     ViewData["Title"] = "Benefit section · Edit";
 }
 <main id="content" class="page">
-    <a class="back" asp-area="Admin" asp-controller="BenefitSection" asp-action="Index">All sections</a>
+    <a class="back" asp-area="Admin" asp-controller="BenefitSection" asp-action="Detail">Benefits heading</a>
 
     <header class="page-head">
         <p class="eyebrow">UI · Home page</p>
-        <h1>Edit section</h1>
+        <h1>Edit benefits heading</h1>
         <p class="lede">Change the label, title or description of the block.</p>
     </header>
 
@@ -21,7 +21,7 @@
             </div>
             <div class="field">
                 <label asp-for="Title">Title</label>
-                <input class="input" asp-for="Title" maxlength="200" placeholder="Section title" autocomplete="off" />
+                <input class="input" asp-for="Title" maxlength="200" placeholder="Heading title" autocomplete="off" />
                 <span asp-validation-for="Title" class="field-error"></span>
             </div>
             <div class="field">
@@ -32,7 +32,7 @@
         </section>
 
         <div class="rv-actions">
-            <a class="btn btn-secondary btn-cancel" asp-area="Admin" asp-controller="BenefitSection" asp-action="Index">Cancel</a>
+            <a class="btn btn-secondary btn-cancel" asp-area="Admin" asp-controller="BenefitSection" asp-action="Detail">Cancel</a>
             <button class="btn btn-primary" type="submit">Save changes</button>
         </div>
     </form>

@@ -1,5 +1,3 @@
-using CaspianBank_MVC_FinalProject.ViewModels.BenefitSections;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel.DataAnnotations;
 
 namespace CaspianBank_MVC_FinalProject.ViewModels.BenefitItems
@@ -7,9 +5,6 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.BenefitItems
     public class BenefitItemEditVM
     {
         public int Id { get; set; }
-
-        [Range(1, int.MaxValue, ErrorMessage = "Choose a section.")]
-        public int BenefitSectionId { get; set; }
 
         [Required(ErrorMessage = "Enter the label.")]
         [StringLength(100, ErrorMessage = "The label can be at most 100 characters.")]
@@ -44,9 +39,5 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.BenefitItems
         [Required(ErrorMessage = "Enter the third line.")]
         [StringLength(200, ErrorMessage = "The third line can be at most 200 characters.")]
         public string Text3 { get; set; } = string.Empty;
-
-        // Bölmə seçimi üçün siyahı (formadan oxunmur, controller dolduracaq)
-        [BindNever]
-        public List<BenefitSectionVM> Sections { get; set; } = new List<BenefitSectionVM>();
     }
 }

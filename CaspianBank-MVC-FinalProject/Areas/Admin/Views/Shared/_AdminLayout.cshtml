@@ -2,7 +2,7 @@
 @{
     var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
     // İki bölmə: UI (saytın görünüşü) və Bank (maliyyə və əməliyyatlar). Yeni UI controller əlavə edəndə adını bura yaz.
-    var uiControllers = new[] { "UiDashboard", "Brand", "Ticker", "BenefitSection", "BenefitItem", "CardDesign" };
+    var uiControllers = new[] { "UiDashboard", "CardHero", "Brand", "Ticker", "BenefitSection", "BenefitItem", "CardDesign" };
     var isUi = uiControllers.Contains(controller);
 
     var name = User.Identity?.Name ?? "Admin";
@@ -116,9 +116,10 @@
             @* UI bölməsi: modellər üzrə (hamısını qoymaq lazım deyil, yeni modelin səhifəsini yazanda bura bir sətir əlavə et) *@
             <p class="eyebrow">UI</p>
             <a class="@On("UiDashboard")" asp-area="Admin" asp-controller="UiDashboard" asp-action="Index">Dashboard</a>
+            <a class="@On("CardHero")" asp-area="Admin" asp-controller="CardHero" asp-action="Detail">Hero text</a>
             <a class="@On("Brand")" asp-area="Admin" asp-controller="Brand" asp-action="Index">Brands</a>
             <a class="@On("Ticker")" asp-area="Admin" asp-controller="Ticker" asp-action="Index">Ticker</a>
-            <a class="@On("BenefitSection")" asp-area="Admin" asp-controller="BenefitSection" asp-action="Index">Benefit sections</a>
+            <a class="@On("BenefitSection")" asp-area="Admin" asp-controller="BenefitSection" asp-action="Detail">Benefits heading</a>
             <a class="@On("BenefitItem")" asp-area="Admin" asp-controller="BenefitItem" asp-action="Index">Benefit items</a>
             <a class="@On("CardDesign")" asp-area="Admin" asp-controller="CardDesign" asp-action="Index">Card designs</a>
         }

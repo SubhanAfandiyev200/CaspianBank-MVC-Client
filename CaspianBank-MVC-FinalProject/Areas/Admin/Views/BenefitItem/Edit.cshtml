@@ -8,23 +8,12 @@
     <header class="page-head">
         <p class="eyebrow">UI · Home page</p>
         <h1>Edit card</h1>
-        <p class="lede">Change the text, the button or the section of this card.</p>
+        <p class="lede">Change the text or the button of this card.</p>
     </header>
 
     <form method="post" asp-area="Admin" asp-controller="BenefitItem" asp-action="Edit" asp-route-id="@Model.Id" class="narrow stack-lg" novalidate>
         <section class="surface form-stack">
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
-            <div class="field">
-                <label asp-for="BenefitSectionId">Section</label>
-                <select class="select" asp-for="BenefitSectionId">
-                    <option value="0">Choose a section</option>
-                    @foreach (var parent in Model.Sections)
-                    {
-                        <option value="@parent.Id" selected="@(parent.Id == Model.BenefitSectionId)">@parent.Title</option>
-                    }
-                </select>
-                <span asp-validation-for="BenefitSectionId" class="field-error"></span>
-            </div>
             <div class="field">
                 <label asp-for="Label">Label</label>
                 <input class="input" asp-for="Label" maxlength="100" placeholder="Small text above the title" autocomplete="off" />
