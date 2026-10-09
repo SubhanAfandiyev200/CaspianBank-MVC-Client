@@ -2,7 +2,7 @@
 @{
     var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
     // İki bölmə: UI (saytın görünüşü) və Bank (maliyyə və əməliyyatlar). Yeni UI controller əlavə edəndə adını bura yaz.
-    var uiControllers = new[] { "UiDashboard", "CardHero", "Brand", "Ticker", "BenefitSection", "BenefitItem", "ServiceSection", "ServiceItem", "About", "AboutPillar", "CardDesign", "CardTier" };
+    var uiControllers = new[] { "UiDashboard", "CardHero", "Brand", "Ticker", "BenefitSection", "BenefitItem", "ServiceSection", "ServiceItem", "About", "AboutPillar", "CardDesign", "CardTier", "Setting" };
     var isUi = uiControllers.Contains(controller);
 
     var name = User.Identity?.Name ?? "Admin";
@@ -127,6 +127,7 @@
             <a class="@On("AboutPillar")" asp-area="Admin" asp-controller="AboutPillar" asp-action="Index">About pillars</a>
             <a class="@On("CardDesign")" asp-area="Admin" asp-controller="CardDesign" asp-action="Index">Card designs</a>
             <a class="@On("CardTier")" asp-area="Admin" asp-controller="CardTier" asp-action="Index">Card types</a>
+            <a class="@On("Setting")" asp-area="Admin" asp-controller="Setting" asp-action="Index">Settings</a>
         }
         else
         {

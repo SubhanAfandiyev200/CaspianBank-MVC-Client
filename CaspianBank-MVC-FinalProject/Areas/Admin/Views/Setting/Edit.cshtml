@@ -1,0 +1,76 @@
+@model SettingEditVM
+@{
+    ViewData["Title"] = "Setting · Edit";
+    var isLogo = SettingLabels.IsLogo(Model.Key);
+}
+<main id="content" class="page">
+    <a class="back" asp-area="Admin" asp-controller="Setting" asp-action="Index">All settings</a>
+
+    <header class="page-head">
+        <p class="eyebrow">UI · Site</p>
+        <h1>Edit @SettingLabels.For(Model.Key).ToLowerInvariant()</h1>
+        <p class="lede">@SettingLabels.Hint(Model.Key)</p>
+    </header>
+
+    @if (isLogo)
+    {
+        <form method="post" asp-area="Admin" asp-controller="Setting" asp-action="EditLogo" asp-route-id="@Model.Id" enctype="multipart/form-data" class="narrow stack-lg" novalidate>
+            <section class="surface form-stack">
+                <div asp-validation-summary="ModelOnly" class="field-error"></div>
+                <div class="field">
+                    <label asp-for="Image">Logo</label>
+                    <div class="file-drop" data-file-drop>
+                        <input class="file-drop-input" asp-for="Image" type="file" accept="image/png,image/jpeg,image/webp" />
+                        <div class="file-drop-box">
+                            <span class="file-drop-preview" data-file-preview>
+                                @if (!string.IsNullOrEmpty(Model.CurrentImage))
+                                {
+                                    <img src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], Model.CurrentImage)" alt="Current logo" />
+                                }
+                                else
+                                {
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m0 0 4 4m-4-4L8 8"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+                                }
+                            </span>
+                            <span class="file-drop-text">
+                                <strong data-file-title>Current logo</strong>
+                                <span data-file-hint>Click here or drag a new one in. PNG, JPEG or WebP, up to 2 MB.</span>
+                            </span>
+                        </div>
+                    </div>
+                    <span asp-validation-for="Image" class="field-error"></span>
+                </div>
+            </section>
+
+            <div class="rv-actions">
+                <a class="btn btn-secondary btn-cancel" asp-area="Admin" asp-controller="Setting" asp-action="Index">Cancel</a>
+                <button class="btn btn-primary" type="submit">Save changes</button>
+            </div>
+        </form>
+    }
+    else
+    {
+        <form method="post" asp-area="Admin" asp-controller="Setting" asp-action="Edit" asp-route-id="@Model.Id" class="narrow stack-lg" novalidate>
+            <section class="surface form-stack">
+                <div asp-validation-summary="ModelOnly" class="field-error"></div>
+                <div class="field">
+                    <label asp-for="Value">@SettingLabels.For(Model.Key)</label>
+                    @if (SettingLabels.IsLong(Model.Key))
+                    {
+                        <textarea class="textarea" asp-for="Value" maxlength="500" rows="4"></textarea>
+                    }
+                    else
+                    {
+                        <input class="input" asp-for="Value" maxlength="500" autocomplete="off" />
+                    }
+                    <span asp-validation-for="Value" class="field-error"></span>
+                </div>
+            </section>
+
+            <div class="rv-actions">
+                <a class="btn btn-secondary btn-cancel" asp-area="Admin" asp-controller="Setting" asp-action="Index">Cancel</a>
+                <button class="btn btn-primary" type="submit">Save changes</button>
+            </div>
+        </form>
+    }
+</main>

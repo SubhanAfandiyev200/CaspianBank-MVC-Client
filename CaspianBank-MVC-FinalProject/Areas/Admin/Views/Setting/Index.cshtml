@@ -1,0 +1,68 @@
+@model IEnumerable<SettingVM>
+@{
+    ViewData["Title"] = "Settings";
+}
+<main id="content" class="page">
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">UI · Site</p>
+            <h1>Settings</h1>
+            <p class="lede">The logo, the company name, the contact details and the footer texts. They appear in the header and the footer of every page. The list is fixed, only the values change.</p>
+        </div>
+    </header>
+
+    @if (TempData["Success"] is string success)
+    {
+        <p class="flash flash-ok" role="status">@success</p>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <p class="flash flash-error" role="alert">@error</p>
+    }
+
+    <section class="surface surface-tight">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th class="num">Id</th>
+                        <th>Setting</th>
+                        <th>Value</th>
+                        <th class="actions">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="num">@item.Id</td>
+                            <td>@SettingLabels.For(item.Key)</td>
+                            <td>
+                                @if (SettingLabels.IsLogo(item.Key))
+                                {
+                                    <img src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], item.Value)" alt="Logo" style="display:block;height:32px;width:auto;max-width:120px;object-fit:contain" />
+                                }
+                                else
+                                {
+                                    @item.Value
+                                }
+                            </td>
+                            <td class="actions">
+                                <span class="row-actions">
+                                    <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Setting" asp-action="Detail" asp-route-id="@item.Id">Detail</a>
+                                    <a class="btn btn-secondary btn-sm" asp-area="Admin" asp-controller="Setting" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="4">No settings found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>
