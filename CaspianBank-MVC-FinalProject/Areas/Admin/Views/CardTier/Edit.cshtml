@@ -1,0 +1,71 @@
+@model CardTierEditVM
+@{
+    ViewData["Title"] = "Card type · Edit";
+}
+<main id="content" class="page">
+    <a class="back" asp-area="Admin" asp-controller="CardTier" asp-action="Index">All card types</a>
+
+    <header class="page-head">
+        <p class="eyebrow">UI · Cards</p>
+        <h1>Edit @Model.Tier</h1>
+        <p class="lede">Change the fee, the cashback, the transfer rules or the design. The type itself stays the same, because the app finds its rules by the type.</p>
+    </header>
+
+    <form method="post" asp-area="Admin" asp-controller="CardTier" asp-action="Edit" asp-route-id="@Model.Id" class="narrow stack-lg" novalidate>
+        <section class="surface form-stack">
+            <div asp-validation-summary="ModelOnly" class="field-error"></div>
+
+            <div class="field">
+                <label asp-for="IssueFee">Issue fee</label>
+                <div class="input-group has-suffix">
+                    <input class="input" asp-for="IssueFee" type="text" inputmode="decimal" maxlength="12" autocomplete="off" />
+                    <span class="input-suffix">AZN</span>
+                </div>
+                <p class="hint">Charged once when this card is added. The first Standard and Cashback pair is always free.</p>
+                <span asp-validation-for="IssueFee" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="CashbackPercent">Cashback</label>
+                <div class="input-group has-suffix">
+                    <input class="input" asp-for="CashbackPercent" type="text" inputmode="decimal" maxlength="12" autocomplete="off" />
+                    <span class="input-suffix">%</span>
+                </div>
+                <p class="hint">The share of a payment that comes back to the customer.</p>
+                <span asp-validation-for="CashbackPercent" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="TransferLimit">Free transfer limit</label>
+                <div class="input-group has-suffix">
+                    <input class="input" asp-for="TransferLimit" type="text" inputmode="decimal" maxlength="12" autocomplete="off" />
+                    <span class="input-suffix">AZN</span>
+                </div>
+                <p class="hint">A transfer up to this amount has no commission.</p>
+                <span asp-validation-for="TransferLimit" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="CommissionPercent">Commission</label>
+                <div class="input-group has-suffix">
+                    <input class="input" asp-for="CommissionPercent" type="text" inputmode="decimal" maxlength="12" autocomplete="off" />
+                    <span class="input-suffix">%</span>
+                </div>
+                <p class="hint">Charged on the part of a transfer above the free limit.</p>
+                <span asp-validation-for="CommissionPercent" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="CardDesignId">Design</label>
+                <select class="input" asp-for="CardDesignId">
+                    @foreach (var design in Model.Designs)
+                    {
+                        <option value="@design.Id" selected="@(design.Id == Model.CardDesignId)">@design.Title</option>
+                    }
+                </select>
+                <span asp-validation-for="CardDesignId" class="field-error"></span>
+            </div>
+        </section>
+
+        <div class="rv-actions">
+            <a class="btn btn-secondary btn-cancel" asp-area="Admin" asp-controller="CardTier" asp-action="Index">Cancel</a>
+            <button class="btn btn-primary" type="submit">Save changes</button>
+        </div>
+    </form>
+</main>

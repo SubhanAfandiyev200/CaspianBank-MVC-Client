@@ -1,0 +1,47 @@
+@model CardTierDetailVM
+@{
+    ViewData["Title"] = "Card type · Detail";
+    var inv = System.Globalization.CultureInfo.InvariantCulture;
+}
+<main id="content" class="page">
+    <a class="back" asp-area="Admin" asp-controller="CardTier" asp-action="Index">All card types</a>
+
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">UI · Cards</p>
+            <h1>@Model.Tier</h1>
+            <p class="lede">The rules and the design of this card type.</p>
+        </div>
+        <span class="row-actions">
+            <a class="btn btn-secondary" asp-area="Admin" asp-controller="CardTier" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+            <a class="btn btn-back" asp-area="Admin" asp-controller="CardTier" asp-action="Index">Go Back</a>
+        </span>
+    </header>
+
+    @if (TempData["Success"] is string success)
+    {
+        <p class="flash flash-ok" role="status">@success</p>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <p class="flash flash-error" role="alert">@error</p>
+    }
+
+    <div class="narrow stack-lg">
+        <section class="surface">
+            <p class="hint">How the card looks (sample data)</p>
+            <partial name="_CardPreview" model="new CardDesignPreviewVM { Title = Model.Tier, Image = Model.DesignImage, Large = true }" />
+        </section>
+
+        <section class="surface">
+            <dl class="detail-list">
+                <div><dt>Type</dt><dd>@Model.Tier</dd></div>
+                <div><dt>Issue fee</dt><dd>@Model.IssueFee.ToString("N2", inv) AZN, charged once when the card is added</dd></div>
+                <div><dt>Cashback</dt><dd>@Model.CashbackPercent.ToString("0.##", inv)% of payments</dd></div>
+                <div><dt>Free transfer limit</dt><dd>@Model.TransferLimit.ToString("N2", inv) AZN</dd></div>
+                <div><dt>Commission</dt><dd>@Model.CommissionPercent.ToString("0.##", inv)% on the part above the limit</dd></div>
+                <div><dt>Design</dt><dd>@Model.DesignTitle (<a asp-area="Admin" asp-controller="CardDesign" asp-action="Detail" asp-route-id="@Model.CardDesignId">open</a>)</dd></div>
+            </dl>
+        </section>
+    </div>
+</main>
