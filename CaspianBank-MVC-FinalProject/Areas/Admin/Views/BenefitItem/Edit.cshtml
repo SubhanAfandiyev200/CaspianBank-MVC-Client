@@ -1,0 +1,76 @@
+@model BenefitItemEditVM
+@{
+    ViewData["Title"] = "Benefit item · Edit";
+}
+<main id="content" class="page">
+    <a class="back" asp-area="Admin" asp-controller="BenefitItem" asp-action="Index">All cards</a>
+
+    <header class="page-head">
+        <p class="eyebrow">UI · Home page</p>
+        <h1>Edit card</h1>
+        <p class="lede">Change the text, the button or the section of this card.</p>
+    </header>
+
+    <form method="post" asp-area="Admin" asp-controller="BenefitItem" asp-action="Edit" asp-route-id="@Model.Id" class="narrow stack-lg" novalidate>
+        <section class="surface form-stack">
+            <div asp-validation-summary="ModelOnly" class="field-error"></div>
+            <div class="field">
+                <label asp-for="BenefitSectionId">Section</label>
+                <select class="select" asp-for="BenefitSectionId">
+                    <option value="0">Choose a section</option>
+                    @foreach (var parent in Model.Sections)
+                    {
+                        <option value="@parent.Id" selected="@(parent.Id == Model.BenefitSectionId)">@parent.Title</option>
+                    }
+                </select>
+                <span asp-validation-for="BenefitSectionId" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Label">Label</label>
+                <input class="input" asp-for="Label" maxlength="100" placeholder="Small text above the title" autocomplete="off" />
+                <span asp-validation-for="Label" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Title">Title</label>
+                <input class="input" asp-for="Title" maxlength="200" placeholder="Card title" autocomplete="off" />
+                <span asp-validation-for="Title" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Description">Description</label>
+                <textarea class="textarea" asp-for="Description" maxlength="300" rows="3" placeholder="One or two sentences."></textarea>
+                <span asp-validation-for="Description" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Text1">First line</label>
+                <input class="input" asp-for="Text1" maxlength="200" autocomplete="off" />
+                <span asp-validation-for="Text1" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Text2">Second line</label>
+                <input class="input" asp-for="Text2" maxlength="200" autocomplete="off" />
+                <span asp-validation-for="Text2" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Text3">Third line</label>
+                <input class="input" asp-for="Text3" maxlength="200" autocomplete="off" />
+                <span asp-validation-for="Text3" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="ButtonText">Button text</label>
+                <input class="input" asp-for="ButtonText" maxlength="100" placeholder="Open an account" autocomplete="off" />
+                <span asp-validation-for="ButtonText" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="ButtonUrl">Button link</label>
+                <input class="input" asp-for="ButtonUrl" maxlength="300" placeholder="/App/Transfer" autocomplete="off" />
+                <p class="hint">A page of this site. Starts with /, for example /App/Transfer.</p>
+                <span asp-validation-for="ButtonUrl" class="field-error"></span>
+            </div>
+        </section>
+
+        <div class="rv-actions">
+            <a class="btn btn-secondary btn-cancel" asp-area="Admin" asp-controller="BenefitItem" asp-action="Index">Cancel</a>
+            <button class="btn btn-primary" type="submit">Save changes</button>
+        </div>
+    </form>
+</main>

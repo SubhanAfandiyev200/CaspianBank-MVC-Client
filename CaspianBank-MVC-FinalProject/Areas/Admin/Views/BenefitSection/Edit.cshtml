@@ -1,0 +1,39 @@
+@model BenefitSectionEditVM
+@{
+    ViewData["Title"] = "Benefit section · Edit";
+}
+<main id="content" class="page">
+    <a class="back" asp-area="Admin" asp-controller="BenefitSection" asp-action="Index">All sections</a>
+
+    <header class="page-head">
+        <p class="eyebrow">UI · Home page</p>
+        <h1>Edit section</h1>
+        <p class="lede">Change the label, title or description of the block.</p>
+    </header>
+
+    <form method="post" asp-area="Admin" asp-controller="BenefitSection" asp-action="Edit" asp-route-id="@Model.Id" class="narrow stack-lg" novalidate>
+        <section class="surface form-stack">
+            <div asp-validation-summary="ModelOnly" class="field-error"></div>
+            <div class="field">
+                <label asp-for="Label">Label</label>
+                <input class="input" asp-for="Label" maxlength="100" placeholder="Small text above the title" autocomplete="off" />
+                <span asp-validation-for="Label" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Title">Title</label>
+                <input class="input" asp-for="Title" maxlength="200" placeholder="Section title" autocomplete="off" />
+                <span asp-validation-for="Title" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Description">Description</label>
+                <textarea class="textarea" asp-for="Description" maxlength="500" rows="3" placeholder="One or two sentences."></textarea>
+                <span asp-validation-for="Description" class="field-error"></span>
+            </div>
+        </section>
+
+        <div class="rv-actions">
+            <a class="btn btn-secondary btn-cancel" asp-area="Admin" asp-controller="BenefitSection" asp-action="Index">Cancel</a>
+            <button class="btn btn-primary" type="submit">Save changes</button>
+        </div>
+    </form>
+</main>

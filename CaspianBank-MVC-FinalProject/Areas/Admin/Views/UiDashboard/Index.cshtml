@@ -36,8 +36,17 @@
         </article>
         <article class="surface">
             <p class="eyebrow">Home page</p>
-            <h2>Services, Benefits</h2>
-            <p>The six service cards and the draggable benefit cards.</p>
+            <h2>Benefits</h2>
+            <p>The heading block and the draggable benefit cards. Every card belongs to a section.</p>
+            <span class="row-actions mt-4">
+                <a class="btn btn-secondary" asp-area="Admin" asp-controller="BenefitSection" asp-action="Index">Open sections</a>
+                <a class="btn btn-secondary" asp-area="Admin" asp-controller="BenefitItem" asp-action="Index">Open cards</a>
+            </span>
+        </article>
+        <article class="surface">
+            <p class="eyebrow">Home page</p>
+            <h2>Services</h2>
+            <p>The six service cards.</p>
             <span class="badge badge-neutral">Coming soon</span>
         </article>
         <article class="surface">
