@@ -1,0 +1,61 @@
+@model IEnumerable<ServiceItemVM>
+@{
+    ViewData["Title"] = "Service cards";
+}
+<main id="content" class="page">
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">UI · Home page</p>
+            <h1>Service cards</h1>
+            <p class="lede">The six cards of the Services block. Each card opens a part of the app, so only its text can be changed. The heading is in <a asp-area="Admin" asp-controller="ServiceSection" asp-action="Detail">Services heading</a>.</p>
+        </div>
+    </header>
+
+    @if (TempData["Success"] is string success)
+    {
+        <p class="flash flash-ok" role="status">@success</p>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <p class="flash flash-error" role="alert">@error</p>
+    }
+
+    <section class="surface surface-tight">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th class="num">No</th>
+                        <th>Icon</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th class="actions">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="num">@item.Number</td>
+                            <td><img src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], item.Icon)" alt="" style="display:block;width:28px;height:28px;object-fit:contain" /></td>
+                            <td>@item.Title</td>
+                            <td>@item.Description</td>
+                            <td class="actions">
+                                <span class="row-actions">
+                                    <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="ServiceItem" asp-action="Detail" asp-route-id="@item.Id">Detail</a>
+                                    <a class="btn btn-secondary btn-sm" asp-area="Admin" asp-controller="ServiceItem" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5">No cards yet.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>

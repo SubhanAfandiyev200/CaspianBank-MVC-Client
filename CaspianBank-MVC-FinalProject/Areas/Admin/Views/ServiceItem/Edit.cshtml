@@ -1,0 +1,38 @@
+@model ServiceItemEditVM
+@{
+    ViewData["Title"] = "Service card · Edit";
+}
+<main id="content" class="page">
+    <a class="back" asp-area="Admin" asp-controller="ServiceItem" asp-action="Index">All cards</a>
+
+    <header class="page-head">
+        <p class="eyebrow">UI · Home page</p>
+        <h1>Edit card</h1>
+        <p class="lede">Change the title or the description. The number and the icon stay the same, because the card opens a fixed part of the app.</p>
+    </header>
+
+    <form method="post" asp-area="Admin" asp-controller="ServiceItem" asp-action="Edit" asp-route-id="@Model.Id" class="narrow stack-lg" novalidate>
+        <section class="surface form-stack">
+            <div asp-validation-summary="ModelOnly" class="field-error"></div>
+            <div class="field">
+                <label>Card</label>
+                <p class="hint">No. @Model.Number · <img src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], Model.Icon)" alt="" style="display:inline-block;vertical-align:middle;width:22px;height:22px;object-fit:contain" /></p>
+            </div>
+            <div class="field">
+                <label asp-for="Title">Title</label>
+                <input class="input" asp-for="Title" maxlength="100" placeholder="Card title" autocomplete="off" />
+                <span asp-validation-for="Title" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Description">Description</label>
+                <textarea class="textarea" asp-for="Description" maxlength="300" rows="3" placeholder="One or two sentences."></textarea>
+                <span asp-validation-for="Description" class="field-error"></span>
+            </div>
+        </section>
+
+        <div class="rv-actions">
+            <a class="btn btn-secondary btn-cancel" asp-area="Admin" asp-controller="ServiceItem" asp-action="Index">Cancel</a>
+            <button class="btn btn-primary" type="submit">Save changes</button>
+        </div>
+    </form>
+</main>

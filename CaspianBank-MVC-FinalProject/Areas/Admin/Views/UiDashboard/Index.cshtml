@@ -46,8 +46,11 @@
         <article class="surface">
             <p class="eyebrow">Home page</p>
             <h2>Services</h2>
-            <p>The six service cards.</p>
-            <span class="badge badge-neutral">Coming soon</span>
+            <p>The heading block and the six service cards.</p>
+            <span class="row-actions mt-4">
+                <a class="btn btn-secondary" asp-area="Admin" asp-controller="ServiceSection" asp-action="Detail">Open heading</a>
+                <a class="btn btn-secondary" asp-area="Admin" asp-controller="ServiceItem" asp-action="Index">Open cards</a>
+            </span>
         </article>
         <article class="surface">
             <p class="eyebrow">Site</p>
