@@ -10,7 +10,10 @@
             <h1>About text</h1>
             <p class="lede">The heading text of the About block and its video. The three columns under it are managed in <a asp-area="Admin" asp-controller="AboutPillar" asp-action="Index">About pillars</a>.</p>
         </div>
-        <a class="btn btn-secondary" asp-area="Admin" asp-controller="About" asp-action="Edit">Edit</a>
+        <span class="row-actions">
+            <a class="btn btn-secondary" asp-area="Admin" asp-controller="About" asp-action="Edit">Edit text</a>
+            <a class="btn btn-secondary" asp-area="Admin" asp-controller="About" asp-action="EditVideo">Change video</a>
+        </span>
     </header>
 
     @if (TempData["Success"] is string success)
