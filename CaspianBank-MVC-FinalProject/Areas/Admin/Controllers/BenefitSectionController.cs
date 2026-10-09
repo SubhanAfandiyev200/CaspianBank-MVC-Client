@@ -14,7 +14,9 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
     public class BenefitSectionController : ApiControllerBase
     {
         public BenefitSectionController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
-            : base(httpClientFactory, configuration) { }
+            : base(httpClientFactory, configuration)
+        {
+        }
 
         // Tək yazı olduğu üçün siyahı yoxdur: birbaşa Detail açılır
         [HttpGet]

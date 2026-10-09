@@ -13,7 +13,9 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
     public class CardHeroController : ApiControllerBase
     {
         public CardHeroController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
-            : base(httpClientFactory, configuration) { }
+            : base(httpClientFactory, configuration)
+        {
+        }
 
         // Tək yazı olduğu üçün siyahı yoxdur: birbaşa Detail açılır
         [HttpGet]

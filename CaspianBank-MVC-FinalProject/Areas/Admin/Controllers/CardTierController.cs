@@ -15,7 +15,9 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
     public class CardTierController : ApiControllerBase
     {
         public CardTierController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
-            : base(httpClientFactory, configuration) { }
+            : base(httpClientFactory, configuration)
+        {
+        }
 
         [HttpGet]
         public async Task<IActionResult> Index()

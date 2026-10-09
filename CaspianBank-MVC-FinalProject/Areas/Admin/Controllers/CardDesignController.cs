@@ -16,7 +16,9 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
         private const int MaxImageBytes = 2 * 1024 * 1024;
 
         public CardDesignController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
-            : base(httpClientFactory, configuration) { }
+            : base(httpClientFactory, configuration)
+        {
+        }
 
         [HttpGet]
         public async Task<IActionResult> Index()

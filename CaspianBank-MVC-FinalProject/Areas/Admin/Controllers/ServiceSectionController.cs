@@ -14,7 +14,9 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
     public class ServiceSectionController : ApiControllerBase
     {
         public ServiceSectionController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
-            : base(httpClientFactory, configuration) { }
+            : base(httpClientFactory, configuration)
+        {
+        }
 
         // Tək yazı olduğu üçün siyahı yoxdur: birbaşa Detail açılır
         [HttpGet]

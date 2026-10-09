@@ -16,7 +16,9 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
         private const int MaxImageBytes = 2 * 1024 * 1024;
 
         public BrandController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
-            : base(httpClientFactory, configuration) { }
+            : base(httpClientFactory, configuration)
+        {
+        }
 
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -95,7 +97,12 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            return View(new BrandEditVM { Id = brand.Id, Name = brand.Name, CurrentImage = brand.Image });
+            return View(new BrandEditVM
+            {
+                Id = brand.Id,
+                Name = brand.Name,
+                CurrentImage = brand.Image
+            });
         }
 
         [HttpPost]

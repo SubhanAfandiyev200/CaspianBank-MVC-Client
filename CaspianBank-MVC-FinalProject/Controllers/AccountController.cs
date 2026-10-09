@@ -28,7 +28,10 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
 
             // Geri düyməsi ilə qayıdanda yazılan email yenidən dolu gəlsin
-            return View(new WelcomeVM { Email = TempData.Peek("AuthEmail") as string ?? string.Empty });
+            return View(new WelcomeVM
+            {
+                Email = TempData.Peek("AuthEmail") as string ?? string.Empty
+            });
         }
 
         [HttpPost]
@@ -199,7 +202,10 @@ namespace CaspianBank_MVC_FinalProject.Controllers
                 return LocalRedirect(RoleRedirect.HomeUrl(User.FindAll(ClaimTypes.Role).Select(claim => claim.Value)));
             }
 
-            return View(new ForgotPasswordVM { Email = TempData.Peek("AuthEmail") as string ?? string.Empty });
+            return View(new ForgotPasswordVM
+            {
+                Email = TempData.Peek("AuthEmail") as string ?? string.Empty
+            });
         }
 
         [HttpPost]
@@ -260,7 +266,11 @@ namespace CaspianBank_MVC_FinalProject.Controllers
                 return RedirectToAction(nameof(ForgotPassword));
             }
 
-            return View(new ResetPasswordVM { Email = email, Token = token });
+            return View(new ResetPasswordVM
+            {
+                Email = email,
+                Token = token
+            });
         }
 
         [HttpPost]
@@ -327,7 +337,11 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
                 return RedirectToAction(nameof(Welcome));
 
-            return View(new RegisterVM { Email = email, VerificationToken = token });
+            return View(new RegisterVM
+            {
+                Email = email,
+                VerificationToken = token
+            });
         }
 
         [HttpPost]
@@ -395,7 +409,11 @@ namespace CaspianBank_MVC_FinalProject.Controllers
                 return LocalRedirect(RoleRedirect.HomeUrl(User.FindAll(ClaimTypes.Role).Select(claim => claim.Value)));
             }
 
-            return View(new LoginVM { ReturnUrl = returnUrl, Email = TempData["AuthEmail"] as string ?? string.Empty });
+            return View(new LoginVM
+            {
+                ReturnUrl = returnUrl,
+                Email = TempData["AuthEmail"] as string ?? string.Empty
+            });
         }
 
         [HttpPost]
@@ -542,7 +560,11 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             // JWT cookie-nin içində (şifrələnmiş) saxlanır; BearerTokenHandler onu oradan oxuyur
             properties.StoreTokens(new[]
             {
-                new AuthenticationToken { Name = "access_token", Value = login.Token! }
+                new AuthenticationToken
+                {
+                    Name = "access_token",
+                    Value = login.Token!
+                }
             });
 
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal, properties);

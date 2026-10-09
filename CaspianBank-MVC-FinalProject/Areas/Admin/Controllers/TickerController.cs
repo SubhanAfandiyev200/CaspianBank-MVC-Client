@@ -12,7 +12,9 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
     public class TickerController : ApiControllerBase
     {
         public TickerController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
-            : base(httpClientFactory, configuration) { }
+            : base(httpClientFactory, configuration)
+        {
+        }
 
         [HttpGet]
         public async Task<IActionResult> Index()
@@ -75,7 +77,11 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            return View(new HomeTickerEditVM { Id = ticker.Id, Text = ticker.Text.Trim() });
+            return View(new HomeTickerEditVM
+            {
+                Id = ticker.Id,
+                Text = ticker.Text.Trim()
+            });
         }
 
         [HttpPost]
