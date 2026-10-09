@@ -28,7 +28,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Detail(int id)
         {
-            var (brand, status) = await GetAsync<BrandVM>($"api/admin/brands/{id}");
+            var (brand, status) = await GetAsync<BrandDetailVM>($"api/admin/brands/{id}");
             if (brand is null)
             {
                 return NotFound();

@@ -24,7 +24,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Detail(int id)
         {
-            var (ticker, status) = await GetAsync<HomeTickerVM>($"api/admin/tickers/{id}");
+            var (ticker, status) = await GetAsync<HomeTickerDetailVM>($"api/admin/tickers/{id}");
             if (ticker is null)
             {
                 return NotFound();
