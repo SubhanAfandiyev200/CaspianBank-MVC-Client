@@ -1,0 +1,95 @@
+@*
+    Kredit müraciəti: dizayn CaspianBank-Frontend/loan-application.html-dir.
+    Hələlik statik görünüşdür: forma işləmir (düymə söndürülüb), aylıq ödəniş hesablanmır, cədvəl boşdur.
+    Dizayndan fərq: "Purpose" sərbəst mətn yox, siyahıdır (Other seçilərsə izah məcburi olacaq) və hədəf kart seçimi funksionallıqla birlikdə əlavə olunacaq.
+*@
+@{
+    Layout = "_AppLayout";
+    ViewData["Title"] = "Loan application";
+}
+<main id="content" class="page page-activity">
+    <header class="page-head">
+        <p class="eyebrow">Credit</p>
+        <h1>Loan application</h1>
+        <p class="lede">Request a personal loan. A decision appears here once the bank has reviewed it.</p>
+    </header>
+
+    <p class="demo-note"><span>Preview: loan applications open soon.</span></p>
+
+    <div class="pulse-row">
+        <article class="pulse"><span>Applications</span><strong>0</strong></article>
+        <article class="pulse"><span>Requested</span><strong>0.00 AZN</strong></article>
+        <article class="pulse"><span>Pending</span><strong>0</strong></article>
+    </div>
+
+    <div class="layout-2">
+        <form class="surface form-stack form-card" novalidate>
+            <h2>New application</h2>
+            <div class="field">
+                <label for="amount">Requested amount</label>
+                <input class="input" id="amount" inputmode="decimal" placeholder="0.00" autocomplete="off" />
+            </div>
+            <div class="field">
+                <label for="purpose">Purpose</label>
+                <select class="select" id="purpose" data-select>
+                    <option value="Consumer" selected>Consumer</option>
+                    <option value="Car">Car</option>
+                    <option value="Mortgage">Mortgage</option>
+                    <option value="Education">Education</option>
+                    <option value="Medical">Medical</option>
+                    <option value="Repair">Repair</option>
+                    <option value="Business">Business</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="purpose-note">Details <span class="muted">(required if Other)</span></label>
+                <input class="input" id="purpose-note" maxlength="200" autocomplete="off" />
+            </div>
+            <div class="field">
+                <label for="term">Term</label>
+                <select class="select" id="term" data-select>
+                    <option value="6">6 months</option>
+                    <option value="12">12 months</option>
+                    <option value="18">18 months</option>
+                    <option value="24" selected>24 months</option>
+                    <option value="36">36 months</option>
+                    <option value="48">48 months</option>
+                </select>
+            </div>
+            <div class="loan-quote">
+                <span>About each month</span>
+                <strong>—</strong>
+                <small>Enter an amount to see the monthly payment.</small>
+            </div>
+            <button class="btn btn-primary" type="button" disabled>Submit application</button>
+        </form>
+
+        <section class="surface surface-tight form-card">
+            <div class="toolbar"><h2>Your applications</h2></div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Submitted</th>
+                            <th class="num">Amount</th>
+                            <th>Purpose</th>
+                            <th>Term</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="empty-row">
+                            <td colspan="5">
+                                <div class="empty">
+                                    <h3>No applications</h3>
+                                    <p>When you apply, the status will appear here.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>

@@ -1,0 +1,58 @@
+@model SiteSettingsVM
+@*
+    Contact us: dizayn CaspianBank-Frontend/contact-us.html-dir.
+    Hələlik statik görünüşdür: mesaj göndərmə işləmir (düymə söndürülüb), mesajlar siyahısı boşdur.
+    Ad, ünvan və telefon footer ilə eyni yerdən (Settings) gəlir; iş saatı hələlik sabit mətndir.
+*@
+@{
+    Layout = "_AppLayout";
+    ViewData["Title"] = "Contact us";
+}
+<main id="content" class="page">
+    <header class="page-head">
+        <p class="eyebrow">Support</p>
+        <h1>Contact us</h1>
+        <p class="lede">Head office in Baku, or a message to the team that looks after your account.</p>
+    </header>
+
+    <p class="demo-note"><span>Preview: messages to support open soon.</span></p>
+
+    <div class="layout-2">
+        <section class="surface stack">
+            <h2>Head office</h2>
+            <div class="address-list">
+                <strong>@Model.CompanyName</strong>
+                <span>@Model.Address</span>
+                <span>Tel @Model.PhoneNumber</span>
+                <span>Mon–Fri, 09:00–18:00</span>
+            </div>
+            <div class="map-wrap">
+                <iframe title="Map showing Caspian Bank head office on Nizami Street, Baku" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=40.3730,49.8370&amp;z=16&amp;output=embed"></iframe>
+            </div>
+        </section>
+
+        <section class="surface">
+            <h2>Send a message</h2>
+            <p class="lede">Sending as @User.Identity?.Name.</p>
+            <form class="form-stack mt-5" novalidate>
+                <div class="field">
+                    <label for="subject">Subject</label>
+                    <input class="input" id="subject" maxlength="120" autocomplete="off" />
+                </div>
+                <div class="field">
+                    <label for="message">Message</label>
+                    <textarea class="textarea" id="message" maxlength="1000"></textarea>
+                </div>
+                <button class="btn btn-primary" type="button" disabled>Send message</button>
+            </form>
+        </section>
+    </div>
+
+    <section class="surface stack mt-5">
+        <h2>Your messages</h2>
+        <div class="empty">
+            <h3>No messages yet</h3>
+            <p>When you write to us, the thread will stay here.</p>
+        </div>
+    </section>
+</main>
