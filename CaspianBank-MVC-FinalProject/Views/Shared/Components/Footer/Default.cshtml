@@ -58,7 +58,7 @@
                     <a href="#about">About Us</a>
                     <a href="#services">Services</a>
                     <a href="@NavLinks.SupportLink(signedIn)">Contact</a>
-                    <a href="@NavLinks.OpenAccount(signedIn)">@(signedIn ? "Add a card" : "Get Started")</a>
+                    <a href="@(signedIn ? NavLinks.Support : NavLinks.Welcome)">@(signedIn ? "Support" : "Get Started")</a>
                 </div>
                 <div class="footer-col">
                     <p class="footer-label">Account</p>

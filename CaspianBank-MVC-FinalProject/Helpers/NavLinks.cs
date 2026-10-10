@@ -13,9 +13,9 @@ namespace CaspianBank_MVC_FinalProject.Helpers
         public const string App = "/App";
         public const string AddCard = "/App/AddCard";
         public const string Transfer = "/App/Transfer";
-        public const string Loan = "/App";
-        public const string Bills = "/App";
-        public const string Support = "/App";
+        public const string Loan = "/App/Loans";
+        public const string Bills = "/App/Bills";
+        public const string Support = "/App/Support";
 
         // "Mənim hesabım" düyməsi: müştəri üçün kartlar, işçi üçün admin paneli
         public static string AppHome(bool isStaff)
