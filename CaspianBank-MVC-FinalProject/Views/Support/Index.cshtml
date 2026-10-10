@@ -1,23 +1,54 @@
 @model SiteSettingsVM
 @*
-    Contact us: dizayn CaspianBank-Frontend/contact-us.html-dir.
-    Hələlik statik görünüşdür: mesaj göndərmə işləmir (düymə söndürülüb), mesajlar siyahısı boşdur.
-    Ad, ünvan və telefon footer ilə eyni yerdən (Settings) gəlir; iş saatı hələlik sabit mətndir.
+    Contact us: söhbət pəncərəsi (AI tipli köməkçi) Contact formasının əvəzidir. Dizayn əsası: CaspianBank-Frontend/contact-us.html (başlıq və Head office hissəsi).
+    Hələlik statik görünüşdür: yazı sahəsi və düymələr söndürülüb, cavab verən yoxdur. Aşağıdakı söhbət nümunədir.
+    Köməkçi bank və bu sayt haqqında suallara cavab verəcək. Ad, ünvan və telefon footer ilə eyni yerdən (Settings) gəlir.
 *@
 @{
     Layout = "_AppLayout";
     ViewData["Title"] = "Contact us";
+    var firstName = (User.Identity?.Name ?? string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "there";
 }
 <main id="content" class="page">
     <header class="page-head">
         <p class="eyebrow">Support</p>
         <h1>Contact us</h1>
-        <p class="lede">Head office in Baku, or a message to the team that looks after your account.</p>
+        <p class="lede">Ask the Caspian assistant about the bank and this app, or visit the head office in Baku.</p>
     </header>
 
-    <p class="demo-note"><span>Preview: messages to support open soon.</span></p>
+    <p class="demo-note"><span>Preview: the assistant opens soon. The conversation below is a sample.</span></p>
 
     <div class="layout-2">
+        <section class="surface chat" aria-label="Chat with the Caspian assistant">
+            <header class="chat-head">
+                <span class="chat-avatar" aria-hidden="true">C</span>
+                <div>
+                    <strong>Caspian assistant</strong>
+                    <small>Ask about cards, transfers, loans and how this app works</small>
+                </div>
+            </header>
+            <div class="chat-log" role="log" aria-live="polite">
+                <div class="chat-msg">
+                    <div class="chat-bubble">Hi @firstName! I can answer questions about Caspian Bank and this app: cards, transfers, fees, loans. What would you like to know?</div>
+                </div>
+                <div class="chat-msg is-user">
+                    <div class="chat-bubble">How do I block a card?</div>
+                </div>
+                <div class="chat-msg">
+                    <div class="chat-bubble">Open the card on the Cards page and press Block card. We email a 6-digit code to your account address, and the card is blocked once you enter it. You can unblock it the same way.</div>
+                </div>
+            </div>
+            <div class="chips chat-suggest" aria-label="Suggested questions">
+                <button type="button" class="chip" disabled>What are the transfer fees?</button>
+                <button type="button" class="chip" disabled>How does a loan work?</button>
+                <button type="button" class="chip" disabled>How do I top up my card?</button>
+            </div>
+            <form class="chat-composer" novalidate>
+                <input class="input" placeholder="Ask a question…" aria-label="Your question" maxlength="500" disabled />
+                <button class="btn btn-primary" type="button" disabled>Send</button>
+            </form>
+        </section>
+
         <section class="surface stack">
             <h2>Head office</h2>
             <div class="address-list">
@@ -30,29 +61,5 @@
                 <iframe title="Map showing Caspian Bank head office on Nizami Street, Baku" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=40.3730,49.8370&amp;z=16&amp;output=embed"></iframe>
             </div>
         </section>
-
-        <section class="surface">
-            <h2>Send a message</h2>
-            <p class="lede">Sending as @User.Identity?.Name.</p>
-            <form class="form-stack mt-5" novalidate>
-                <div class="field">
-                    <label for="subject">Subject</label>
-                    <input class="input" id="subject" maxlength="120" autocomplete="off" />
-                </div>
-                <div class="field">
-                    <label for="message">Message</label>
-                    <textarea class="textarea" id="message" maxlength="1000"></textarea>
-                </div>
-                <button class="btn btn-primary" type="button" disabled>Send message</button>
-            </form>
-        </section>
     </div>
-
-    <section class="surface stack mt-5">
-        <h2>Your messages</h2>
-        <div class="empty">
-            <h3>No messages yet</h3>
-            <p>When you write to us, the thread will stay here.</p>
-        </div>
-    </section>
 </main>
