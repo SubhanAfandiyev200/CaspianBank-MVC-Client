@@ -10,7 +10,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
 {
     // UI bölməsi: kart dizaynları (Home-dakı yelpazə və müştərilərin kartları). API: api/admin/card-designs
     [Area("Admin")]
-    [Authorize(Roles = "Admin,SuperAdmin,WebDesigner")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class CardDesignController : ApiControllerBase
     {
         private const int MaxImageBytes = 2 * 1024 * 1024;

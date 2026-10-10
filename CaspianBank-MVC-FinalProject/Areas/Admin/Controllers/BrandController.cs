@@ -10,7 +10,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
 {
     // UI bölməsi: Home-dakı brend logoları. Hələlik yalnız statik GetAll görünüşü, API-yə qoşulanda burada dolacaq.
     [Area("Admin")]
-    [Authorize(Roles = "Admin,SuperAdmin,WebDesigner")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class BrandController : ApiControllerBase
     {
         private const int MaxImageBytes = 2 * 1024 * 1024;

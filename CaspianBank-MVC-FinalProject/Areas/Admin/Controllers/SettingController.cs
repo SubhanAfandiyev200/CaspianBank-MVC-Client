@@ -11,7 +11,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
     // UI bölməsi: saytın ümumi ayarları (loqo, şirkət adı, ünvan, email, telefon, footer mətnləri).
     // Açarlar sabitdir: yalnız görünür və dəyərləri dəyişdirilir (əlavə/silmə yoxdur). Loqo şəkildir və ayrıca yüklənir. API: api/admin/settings
     [Area("Admin")]
-    [Authorize(Roles = "Admin,SuperAdmin,WebDesigner")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class SettingController : ApiControllerBase
     {
         private const int MaxImageBytes = 2 * 1024 * 1024;

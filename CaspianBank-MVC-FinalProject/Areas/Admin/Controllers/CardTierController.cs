@@ -9,7 +9,7 @@ using System.Net;
 namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
 {
     // UI bölməsi: kart növlərinin qaydaları (açılış haqqı, cashback, limit, komissiya, dizayn). Dörd növ kodda sabitdir: yalnız görünür və dəyişdirilir (əlavə/silmə yoxdur).
-    // Pul qaydaları olduğu üçün WebDesigner yox, Accountant, Admin və SuperAdmin dəyişə bilər. API: api/admin/card-tiers
+    // Pul qaydalarını Accountant, Admin və SuperAdmin dəyişə bilər. API: api/admin/card-tiers
     [Area("Admin")]
     [Authorize(Roles = "Admin,SuperAdmin,Accountant")]
     public class CardTierController : ApiControllerBase

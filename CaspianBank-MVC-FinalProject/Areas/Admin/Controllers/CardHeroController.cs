@@ -9,7 +9,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
     // UI bölməsi: Home-un yuxarı hissəsindəki sol mətn. Tək yazıdır: yalnız görünür (Detail) və dəyişdirilir (Edit).
     // Sağdakı kartlar Card designs səhifəsindədir. API: api/admin/card-hero
     [Area("Admin")]
-    [Authorize(Roles = "Admin,SuperAdmin,WebDesigner")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class CardHeroController : ApiControllerBase
     {
         public CardHeroController(IHttpClientFactory httpClientFactory, IConfiguration configuration)

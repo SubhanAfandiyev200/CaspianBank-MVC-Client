@@ -8,7 +8,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
 {
     // UI bölməsi: Home-dakı hərəkət edən zolaq (ticker). API: api/admin/tickers
     [Area("Admin")]
-    [Authorize(Roles = "Admin,SuperAdmin,WebDesigner")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class TickerController : ApiControllerBase
     {
         public TickerController(IHttpClientFactory httpClientFactory, IConfiguration configuration)

@@ -10,7 +10,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
     // UI bölməsi: Home-dakı About blokunun altındakı sütunlar (şəkil, başlıq, açıqlama). Mətn blokunu AboutController idarə edir.
     // API: api/admin/about-pillars
     [Area("Admin")]
-    [Authorize(Roles = "Admin,SuperAdmin,WebDesigner")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class AboutPillarController : ApiControllerBase
     {
         private const int MaxImageBytes = 2 * 1024 * 1024;

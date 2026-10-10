@@ -18,13 +18,13 @@ namespace CaspianBank_MVC_FinalProject.Helpers
             {
                 Title = "Home content",
                 Description = "Ticker, brands, about, services, benefits, hero, site settings",
-                Roles = new[] { AppRoles.WebDesigner, AppRoles.Admin, AppRoles.SuperAdmin }
+                Roles = new[] { AppRoles.Admin, AppRoles.SuperAdmin }
             },
             new AdminSection
             {
                 Title = "Card designs",
                 Description = "Card face images shown on Home and on customer cards",
-                Roles = new[] { AppRoles.WebDesigner, AppRoles.Admin, AppRoles.SuperAdmin }
+                Roles = new[] { AppRoles.Admin, AppRoles.SuperAdmin }
             },
             new AdminSection
             {

@@ -10,7 +10,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
     // UI bölməsi: Home-dakı "Services" blokunun başlıq yazısı (label, title, description). Tək yazıdır: yalnız görünür (Detail) və dəyişdirilir (Edit).
     // Kartları ServiceItemController idarə edir. API: api/admin/service-section
     [Area("Admin")]
-    [Authorize(Roles = "Admin,SuperAdmin,WebDesigner")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class ServiceSectionController : ApiControllerBase
     {
         public ServiceSectionController(IHttpClientFactory httpClientFactory, IConfiguration configuration)

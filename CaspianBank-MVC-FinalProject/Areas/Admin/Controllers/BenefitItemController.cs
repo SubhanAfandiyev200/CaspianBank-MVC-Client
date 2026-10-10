@@ -9,7 +9,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
     // UI bölməsi: Home-dakı "Benefits" blokunun sürüşən kartları. Hamısı tək başlıq bölməsinə aiddir (BenefitSectionController).
     // API: api/admin/benefit-items
     [Area("Admin")]
-    [Authorize(Roles = "Admin,SuperAdmin,WebDesigner")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class BenefitItemController : ApiControllerBase
     {
         public BenefitItemController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
