@@ -5,6 +5,11 @@
     var inv = CultureInfo.InvariantCulture;
     var card = Model.Card;
     var blockError = TempData["BlockError"] as string;
+    var blockSentTo = TempData["BlockSentTo"] as string;
+    var blockDevCode = TempData.Peek("BlockDevCode") as string;   // Peek: səhv kod yazılıb səhifə yenilənəndə demo kod itməsin
+    var unblockError = TempData["UnblockError"] as string;
+    var unblockSentTo = TempData["UnblockSentTo"] as string;
+    var unblockDevCode = TempData.Peek("UnblockDevCode") as string;
     var topUpError = TempData["TopUpError"] as string;
     var isCashback = card is not null && card.Tier.Equals("Cashback", StringComparison.OrdinalIgnoreCase);
     var canTopUp = card is not null && !card.IsBlocked && !isCashback;
@@ -53,7 +58,7 @@
                     }
                     else
                     {
-                        <button class="btn btn-danger" type="button" disabled>Card is blocked</button>
+                        <button class="btn btn-primary" type="button" data-open-modal="unblock-modal">Unblock card</button>
                     }
                 </div>
             </section>
@@ -175,33 +180,40 @@
             </div>
         }
 
+        @* Bloklamaq / blokdan çıxarmaq emailə gələn 6 rəqəmli kodla təsdiqlənir (iki addımlı pəncərə) *@
         @if (!card.IsBlocked)
         {
-            <div class="modal" id="block-modal" hidden data-open-on-load="@(blockError is null ? "false" : "true")">
-                <div class="modal-backdrop" data-close-modal></div>
-                <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="block-title">
-                    <h2 id="block-title">Block this card?</h2>
-                    <p class="lede">New purchases and transfers stop immediately. Confirm with the email and password on this account.</p>
-                    <form asp-action="BlockCard" asp-route-id="@card.Id" method="post" class="form-stack" novalidate>
-                        @if (blockError is not null)
-                        {
-                            <p class="flash flash-error" role="alert">@blockError</p>
-                        }
-                        <div class="field">
-                            <label for="block-email">Email</label>
-                            <input class="input" id="block-email" name="email" type="email" autocomplete="username" />
-                        </div>
-                        <div class="field">
-                            <label for="block-password">Password</label>
-                            <input class="input" id="block-password" name="password" type="password" autocomplete="current-password" />
-                        </div>
-                        <div class="modal-actions">
-                            <button class="btn btn-secondary" type="button" data-close-modal>Cancel</button>
-                            <button class="btn btn-danger" type="submit">Block card</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            <partial name="_CardCodeModal" model='new CardCodeModalVM
+            {
+                Id = "block-modal",
+                CardId = card.Id,
+                Title = "Block this card?",
+                Lede = "New purchases and transfers stop immediately. We email a 6-digit code to confirm it is you.",
+                SendAction = "SendBlockCode",
+                ConfirmAction = "BlockCard",
+                ConfirmLabel = "Block card",
+                ConfirmClass = "btn-danger",
+                SentTo = blockSentTo,
+                DevCode = blockDevCode,
+                Error = blockError
+            }' />
+        }
+        else
+        {
+            <partial name="_CardCodeModal" model='new CardCodeModalVM
+            {
+                Id = "unblock-modal",
+                CardId = card.Id,
+                Title = "Unblock this card?",
+                Lede = "The card works again for top-ups and transfers. We email a 6-digit code to confirm it is you.",
+                SendAction = "SendUnblockCode",
+                ConfirmAction = "UnblockCard",
+                ConfirmLabel = "Unblock card",
+                ConfirmClass = "btn-primary",
+                SentTo = unblockSentTo,
+                DevCode = unblockDevCode,
+                Error = unblockError
+            }' />
         }
     }
 </main>
