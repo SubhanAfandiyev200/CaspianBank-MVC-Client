@@ -29,7 +29,7 @@
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Transfer" ? "is-active" : "")" asp-controller="Transfer" asp-action="Index">Transfers</a>
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "History" ? "is-active" : "")" asp-controller="History" asp-action="Index">History</a>
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Loans" ? "is-active" : "")" asp-controller="Loans" asp-action="Index">Loans</a>
-                    <span class="nav-link is-soon" aria-disabled="true" title="Coming soon">Bill Payments</span>
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Bills" ? "is-active" : "")" asp-controller="Bills" asp-action="Index">Bill Payments</a>
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Support" ? "is-active" : "")" asp-controller="Support" asp-action="Index">Contact</a>
                 </nav>
                 <div class="nav-tools">

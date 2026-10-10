@@ -1,0 +1,88 @@
+@*
+    Kommunal ödənişlər: dizayn CaspianBank-Frontend/bill-payment.html-dir.
+    Hələlik statik görünüşdür: təchizatçı seçimi və forma işləmir (Pay now söndürülüb), kartlar siyahısı boşdur, təkrarlanan ödənişlər cədvəli boşdur.
+    Sonra: borc axtarışı, ödəniş, təkrarlanan ödənişlər (ayın 1-i), Cashback və aylıq kredit ödənişi (Recurring payments cədvəlində).
+*@
+@{
+    Layout = "_AppLayout";
+    ViewData["Title"] = "Bill payments";
+}
+<main id="content" class="page page-activity">
+    <header class="page-head">
+        <p class="eyebrow">Kontur</p>
+        <h1>Bill payments</h1>
+        <p class="lede">Pay a utility once, or keep it as a monthly instruction.</p>
+    </header>
+
+    <p class="demo-note"><span>Preview: bill payments open soon.</span></p>
+
+    <div class="pulse-row">
+        <article class="pulse"><span>Recurring</span><strong>0</strong></article>
+        <article class="pulse"><span>Every month</span><strong>0.00 AZN</strong></article>
+        <article class="pulse"><span>Paid this month</span><strong>0.00 AZN</strong></article>
+    </div>
+
+    <div class="layout-2">
+        <form class="surface form-stack form-card" novalidate>
+            <h2>Pay a bill</h2>
+            <div class="field">
+                <label id="provider-label">Provider</label>
+                <div class="provider-grid" role="group" aria-labelledby="provider-label">
+                    <button type="button" class="is-active"><span class="provider-mark">İş</span>Azərişıq</button>
+                    <button type="button"><span class="provider-mark tone-2">Su</span>Azərsu</button>
+                    <button type="button"><span class="provider-mark tone-3">Q</span>Azəriqaz</button>
+                    <button type="button"><span class="provider-mark tone-4">Is</span>Azeristilik</button>
+                    <button type="button"><span class="provider-mark tone-5">Ac</span>Azercell</button>
+                    <button type="button"><span class="provider-mark tone-6">Bc</span>Bakcell</button>
+                    <button type="button"><span class="provider-mark tone-7">Cn</span>CityNet</button>
+                </div>
+            </div>
+            <div class="field">
+                <label for="reference">Subscriber or meter number</label>
+                <input class="input" id="reference" autocomplete="off" />
+            </div>
+            <div class="field">
+                <label for="from-card">Pay from</label>
+                <select class="select" id="from-card" disabled>
+                    <option>Your cards appear here</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="amount">Amount</label>
+                <input class="input" id="amount" inputmode="decimal" placeholder="0.00" autocomplete="off" />
+            </div>
+            <label class="check">
+                <input type="checkbox" id="recurring" />
+                <span>Make this a recurring monthly payment. It runs on the 1st, from the card you selected.</span>
+            </label>
+            <button class="btn btn-primary" type="button" disabled>Pay now</button>
+        </form>
+
+        <section class="surface surface-tight form-card">
+            <div class="toolbar"><h2>Recurring payments</h2></div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Reference</th>
+                            <th class="num">Amount</th>
+                            <th>Status</th>
+                            <th class="actions"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="empty-row">
+                            <td colspan="5">
+                                <div class="empty">
+                                    <h3>No recurring payments</h3>
+                                    <p>Tick the box when you pay a bill to repeat it every month.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>
