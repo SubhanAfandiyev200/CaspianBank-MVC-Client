@@ -105,6 +105,7 @@
         <section class="surface cd-activity" aria-labelledby="activity-title">
             <div class="spread">
                 <h2 id="activity-title">Recent activity</h2>
+                <a class="link-btn" asp-controller="History" asp-action="Index" asp-route-cardId="@card.Id">View all</a>
             </div>
 
             @if (Model.Transactions.Count == 0)

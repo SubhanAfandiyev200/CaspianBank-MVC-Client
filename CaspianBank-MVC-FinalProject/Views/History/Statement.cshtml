@@ -1,0 +1,88 @@
+@model StatementUIVM
+@using System.Globalization
+@{
+    Layout = "_AppLayout";
+    ViewData["Title"] = "Statement";
+    var inv = CultureInfo.InvariantCulture;
+
+    string Money(decimal value) { return value.ToString("N2", inv) + " AZN"; }
+    string Day(DateTime value) { return value.ToString("dd MMM yyyy", inv); }
+}
+<main id="content" class="page">
+    <a class="back no-print" asp-controller="History" asp-action="Index" asp-route-cardId="@Model.CardId">Back to history</a>
+
+    <section class="st" aria-labelledby="st-title">
+        <header class="st-head">
+            <div>
+                <strong class="st-bank">@Model.CompanyName</strong>
+                @if (!string.IsNullOrEmpty(Model.Address))
+                {
+                    <span class="st-sub">@Model.Address</span>
+                }
+            </div>
+            <div class="st-title-block">
+                <h1 id="st-title">Account statement</h1>
+                <span class="st-sub">Created @DateTime.Now.ToString("dd MMM yyyy, HH:mm", inv)</span>
+            </div>
+        </header>
+
+        <dl class="st-meta">
+            <div><dt>Card</dt><dd>@Model.CardLabel</dd></div>
+            <div><dt>Holder</dt><dd>@Model.HolderName</dd></div>
+            <div><dt>Period</dt><dd>@Day(Model.From) – @Day(Model.To)</dd></div>
+        </dl>
+
+        <div class="st-summary">
+            <div><span>Opening balance</span><strong class="num">@Money(Model.OpeningBalance)</strong></div>
+            <div><span>Money in</span><strong class="num amount-in">+@Money(Model.TotalIn)</strong></div>
+            <div><span>Money out</span><strong class="num amount-out">−@Money(Model.TotalOut)</strong></div>
+            <div><span>Closing balance</span><strong class="num">@Money(Model.ClosingBalance)</strong></div>
+        </div>
+
+        @if (Model.Rows.Count == 0)
+        {
+            <p class="st-empty">There are no transactions on this card in this period.</p>
+        }
+        else
+        {
+            <div class="table-wrap">
+                <table class="st-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Reference</th>
+                            <th class="num">Amount</th>
+                            <th class="num">Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in Model.Rows)
+                        {
+                            <tr>
+                                <td>@t.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)</td>
+                                <td>
+                                    @t.Description
+                                    @if (!string.IsNullOrEmpty(t.Note))
+                                    {
+                                        <span class="st-note">“@t.Note”</span>
+                                    }
+                                </td>
+                                <td class="num">@t.Reference</td>
+                                <td class="num @(t.IsIncome ? "amount-in" : "amount-out")">@(t.IsIncome ? "+" : "−")@t.Amount.ToString("N2", inv)</td>
+                                <td class="num">@t.BalanceAfter.ToString("N2", inv)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+
+        <p class="st-foot">@Model.Rows.Count transaction(s). Amounts are in AZN. Keep this statement for your records.</p>
+    </section>
+
+    <div class="rc-actions no-print">
+        <button type="button" class="btn btn-primary" id="rc-print">Save as PDF</button>
+        <a class="btn btn-secondary" asp-controller="History" asp-action="Index" asp-route-cardId="@Model.CardId">Back to history</a>
+    </div>
+</main>

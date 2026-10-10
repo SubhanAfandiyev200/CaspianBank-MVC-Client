@@ -790,7 +790,7 @@ a { color: var(--color-primary-ink); }
 
 .wheel-pop {
   position: fixed;
-  z-index: 80;
+  z-index: 90;
   width: 300px;
   padding: 8px 8px 12px;
   border: 1px solid var(--color-border);
@@ -3165,3 +3165,116 @@ body.body-admin .site-footer-inner {
   .input-number::placeholder { letter-spacing: 0.04em; }
   .amount-input { font-size: 26px; }
 }
+
+/* =========================================================
+   Tarixçə (History) və çıxarış (Statement)
+   ========================================================= */
+
+.pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; margin: 20px 0 8px; }
+.pager-link {
+  min-width: 38px; padding: 8px 12px; text-align: center; border: 1px solid var(--color-border-strong); border-radius: 10px;
+  background: #fff; color: var(--color-text); font-size: 14px; font-weight: 600; text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.pager-link:hover { background: #eef6d8; border-color: var(--color-primary); }
+.pager-link.is-current { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+.pager-gap { color: var(--color-text-tertiary); padding: 0 2px; }
+
+/* Çıxarış səhifəsi (çap üçün) */
+.st { max-width: 860px; margin: 0 auto; padding: 28px 30px; background: #fff; border: 1px solid var(--color-border); border-radius: 18px; box-shadow: 0 20px 50px rgba(20, 40, 30, 0.08); }
+.st-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; padding-bottom: 18px; border-bottom: 2px solid var(--color-primary); }
+.st-bank { display: block; font-size: 20px; letter-spacing: -0.02em; color: var(--color-primary); }
+.st-sub { display: block; font-size: 13px; color: var(--color-text-secondary); }
+.st-title-block { text-align: right; }
+.st-title-block h1 { margin: 0 0 2px; font-size: 22px; }
+.st-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 18px 0; }
+.st-meta dt { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); }
+.st-meta dd { margin: 2px 0 0; font-weight: 600; }
+.st-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 18px; }
+.st-summary > div { display: grid; gap: 4px; padding: 12px 14px; border: 1px solid var(--color-border); border-radius: 12px; background: #fafbf7; }
+.st-summary span { font-size: 12px; color: var(--color-text-secondary); }
+.st-summary strong { font-size: 17px; font-variant-numeric: tabular-nums; }
+.st-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.st-table th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-tertiary); padding: 8px 10px; border-bottom: 1px solid var(--color-border-strong); }
+.st-table td { padding: 10px; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+.st-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.st-note { display: block; font-size: 12px; color: var(--color-text-tertiary); }
+.st-empty { padding: 28px 0; text-align: center; color: var(--color-text-secondary); }
+.st-foot { margin: 18px 0 0; font-size: 12px; color: var(--color-text-tertiary); }
+
+@media (max-width: 640px) {
+  .st { padding: 20px 16px; }
+  .st-title-block { text-align: left; }
+}
+
+@media print {
+  .st { box-shadow: none; border: 0; padding: 0; max-width: none; }
+  .st-summary > div { break-inside: avoid; }
+  .st-table tr { break-inside: avoid; }
+}
+
+/* Tarixçə: cədvəl, səhifələmə və filtr sətri (səhifə dizaynı transaction-history.html-dəkidir) */
+.filters .field.is-wide { width: min(260px, 100%); }
+.hist-reset { align-self: flex-end; margin-bottom: 10px; }
+.page-activity .data-table .tx-card span:last-child { white-space: nowrap; }
+.page-activity .data-table td:first-child, .page-activity .data-table td.num { white-space: nowrap; }
+
+/* Seçim qutusu (checkbox): saytın rəngləri ilə */
+.check { cursor: pointer; align-items: center; }
+.check input[type="checkbox"] {
+  appearance: none; -webkit-appearance: none; flex: none; display: grid; place-items: center;
+  width: 20px; height: 20px; margin: 0; border: 1.5px solid var(--color-border-strong); border-radius: 6px; background: #fff;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease; cursor: pointer;
+}
+.check input[type="checkbox"]::after {
+  content: ""; width: 5px; height: 10px; margin-top: -2px; border: solid #fff; border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0); transition: transform 0.15s ease;
+}
+.check input[type="checkbox"]:checked { background: var(--color-primary); border-color: var(--color-primary); }
+.check input[type="checkbox"]:checked::after { transform: rotate(45deg) scale(1); }
+.check input[type="checkbox"]:hover { border-color: var(--color-primary); }
+.check input[type="checkbox"]:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(15, 92, 63, 0.18); }
+
+/* Pəncərədəki kart seçimi açılanda siyahı pəncərənin içində kəsilməsin */
+.modal-dialog:has(.card-pick.is-open) { overflow: visible; }
+
+/* Tarixçənin filtr zolağı: sahələr üst-üstə düşmür, etiketlər eyni xəttdədir, kart seçimi kompaktdır */
+.page-activity .filters { align-items: flex-start; gap: 14px 16px; }
+.page-activity .filters .field.grow { flex: 0 0 auto; width: auto; min-width: max-content; }
+.page-activity .filters .field { width: 190px; }
+.page-activity .filters .field.is-wide { width: min(260px, 100%); }
+.page-activity .filters .field:has(.card-pick) { width: min(300px, 100%); }
+.page-activity .filters .segment { height: 44px; align-items: center; }
+.page-activity .filters .hist-reset { align-self: flex-end; margin-bottom: 4px; }
+.filters .card-pick-btn { min-height: 44px; padding: 4px 10px; }
+.filters .card-pick .card-thumb-frame { width: 56px; height: 35px; border-radius: 5px; }
+.filters .card-pick .card-thumb-scale.plastic { transform: scale(0.2); }
+.filters .card-pick .card-thumb-all span { width: 28px; height: 16px; left: 8px; top: 6px; }
+.filters .card-pick .card-thumb-all span:last-child { left: 16px; top: 12px; }
+
+/* Sadə seçim siyahısı (select[data-select]): kart seçimi ilə eyni üslub, brauzerin göy siyahısı yoxdur */
+.pick { position: relative; }
+.pick.is-open { z-index: 30; }
+.pick-native { position: absolute; width: 1px; height: 1px; margin: 0; padding: 0; opacity: 0; pointer-events: none; }
+.pick-btn { display: flex; align-items: center; justify-content: space-between; gap: 10px; text-align: left; cursor: pointer; font: inherit; }
+.pick-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pick-chevron { flex: none; color: var(--color-text-tertiary); transition: transform 0.2s ease; }
+.pick.is-open .pick-btn { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(15, 92, 63, 0.12); }
+.pick.is-open .pick-chevron { transform: rotate(180deg); }
+.pick-menu {
+  position: absolute; z-index: 40; left: 0; right: 0; top: calc(100% + 6px);
+  display: grid; gap: 2px; max-height: 280px; overflow: auto; padding: 6px;
+  border: 1px solid var(--color-border); border-radius: 14px; background: #fff; box-shadow: var(--shadow-md);
+}
+.pick-option {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%;
+  padding: 10px 12px; border: 0; border-radius: 10px; background: transparent; text-align: left;
+  font: inherit; font-size: 14px; color: var(--color-text); cursor: pointer;
+}
+.pick-option:hover, .pick-option:focus-visible { background: #f4f7ef; outline: none; }
+.pick-option.is-selected { background: #eef6d8; font-weight: 600; color: var(--color-primary); }
+.pick-option.is-selected::after {
+  content: ""; width: 5px; height: 10px; margin-right: 4px; border: solid var(--color-primary); border-width: 0 2px 2px 0; transform: rotate(45deg);
+}
+.surface-tight:has(.pick.is-open) { overflow: visible; }
+.modal-dialog:has(.pick.is-open) { overflow: visible; }

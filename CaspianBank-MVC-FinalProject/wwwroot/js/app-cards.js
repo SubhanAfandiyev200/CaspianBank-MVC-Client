@@ -147,6 +147,10 @@
 
   // Kiçik kart: şəkil bazadakı dizayndan, mətn rəngləri növün sinfindən (CSS)
   function thumb(option) {
+    // "All cards" seçimi: kart yox, iki üst-üstə kart nişanı (CSS: .card-thumb-all)
+    if (option.hasAttribute("data-all")) {
+      return '<span class="card-thumb-frame card-thumb-all" aria-hidden="true"><span></span><span></span></span>';
+    }
     const tier = option.getAttribute("data-tier") || "standard";
     const design = option.getAttribute("data-design") || "";
     const last4 = option.getAttribute("data-last4") || "";
@@ -233,6 +237,92 @@
   }
 
   mountCardPicks();
+
+  // ---------- sadə seçim siyahısı (select[data-select]): brauzerin standart siyahısı əvəzinə saytın dizaynı ----------
+  function mountSelects() {
+    const chevron = '<svg class="pick-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 6l4 4 4-4"/></svg>';
+
+    document.querySelectorAll("select[data-select]").forEach((select) => {
+      const wrap = document.createElement("div");
+      wrap.className = "pick";
+      select.parentNode.insertBefore(wrap, select);
+      wrap.appendChild(select);
+      select.classList.add("pick-native");
+      select.tabIndex = -1;
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "input pick-btn";
+      button.setAttribute("aria-haspopup", "listbox");
+      button.setAttribute("aria-expanded", "false");
+      const menu = document.createElement("div");
+      menu.className = "pick-menu";
+      menu.hidden = true;
+      menu.setAttribute("role", "listbox");
+      wrap.append(button, menu);
+
+      function sync() {
+        const current = select.options[select.selectedIndex] || null;
+        button.innerHTML = '<span class="pick-label">' + esc(current ? current.text : "") + "</span>" + chevron;
+        menu.innerHTML = [...select.options].map((option) =>
+          '<button type="button" class="pick-option' + (option === current ? " is-selected" : "") + '" data-value="' + esc(option.value) + '" role="option" aria-selected="' + (option === current) + '">' + esc(option.text) + "</button>"
+        ).join("");
+      }
+
+      function close() {
+        wrap.classList.remove("is-open");
+        menu.hidden = true;
+        button.setAttribute("aria-expanded", "false");
+      }
+
+      function open() {
+        document.querySelectorAll(".pick.is-open, .card-pick.is-open").forEach((other) => {
+          if (other !== wrap) other.querySelector(".pick-btn, .card-pick-btn")?.click();
+        });
+        wrap.classList.add("is-open");
+        menu.hidden = false;
+        button.setAttribute("aria-expanded", "true");
+      }
+
+      button.addEventListener("click", () => {
+        if (wrap.classList.contains("is-open")) close();
+        else open();
+      });
+
+      menu.addEventListener("click", (event) => {
+        const choice = event.target.closest("[data-value]");
+        if (!choice) return;
+        select.value = choice.getAttribute("data-value");
+        select.dispatchEvent(new Event("change", { bubbles: true }));
+        close();
+        sync();
+        button.focus();
+      });
+
+      // Klaviatura: oxlar siyahıda gəzir, Enter seçir, Escape bağlayır
+      wrap.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          close();
+          button.focus();
+          return;
+        }
+        if (event.key !== "ArrowDown" && event.key !== "ArrowUp") return;
+        event.preventDefault();
+        if (!wrap.classList.contains("is-open")) {
+          open();
+        }
+        const items = [...menu.querySelectorAll(".pick-option")];
+        const index = items.indexOf(document.activeElement);
+        const next = event.key === "ArrowDown" ? Math.min(items.length - 1, index + 1) : Math.max(0, index - 1);
+        (items[index === -1 ? 0 : next] || items[0])?.focus();
+      });
+
+      document.addEventListener("click", (event) => { if (!wrap.contains(event.target)) close(); });
+      sync();
+    });
+  }
+
+  mountSelects();
 
   // ---------- add-card: növ seçimi ----------
   const tiers = document.getElementById("tiers");
@@ -602,6 +692,38 @@
     countNote();
     rebuildDestinations();
     setMode(mode);
+  }
+
+  // ---------- tarixçə: dövr düymələri və filtrin avtomatik tətbiqi ----------
+  const historyForm = document.getElementById("history-form");
+  if (historyForm) {
+    const fromInput = historyForm.querySelector("[name=From]");
+    const toInput = historyForm.querySelector("[name=To]");
+    const iso = (date) => date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
+
+    // Dövrlər: Day = bu gün, Week = son 7 gün, Month = bu ayın əvvəlindən, Year = bu ilin əvvəlindən, All = tarix filtri yoxdur
+    function periodBounds(period) {
+      const today = new Date();
+      if (period === "day") return { from: iso(today), to: iso(today) };
+      if (period === "week") return { from: iso(new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6)), to: iso(today) };
+      if (period === "month") return { from: iso(new Date(today.getFullYear(), today.getMonth(), 1)), to: iso(today) };
+      if (period === "year") return { from: iso(new Date(today.getFullYear(), 0, 1)), to: iso(today) };
+      return { from: "", to: "" };
+    }
+
+    historyForm.querySelectorAll("[data-period]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const bounds = periodBounds(button.getAttribute("data-period"));
+        fromInput.value = bounds.from;
+        toInput.value = bounds.to;
+        historyForm.requestSubmit();
+      });
+    });
+
+    // Seçim və tarix dəyişəndə filtr dərhal tətbiq olunur (axtarış isə Enter ilə)
+    historyForm.addEventListener("change", (event) => {
+      if (event.target.name !== "Search") historyForm.requestSubmit();
+    });
   }
 
   // ---------- qəbz: PDF kimi saxla (çap pəncərəsi) və paylaş ----------

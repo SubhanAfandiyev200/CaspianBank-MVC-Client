@@ -27,7 +27,7 @@
                     <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "App" ? "is-active" : "")" asp-controller="App" asp-action="Index">Cards</a>
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Transfer" ? "is-active" : "")" asp-controller="Transfer" asp-action="Index">Transfers</a>
-                    <span class="nav-link is-soon" aria-disabled="true" title="Coming soon">History</span>
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "History" ? "is-active" : "")" asp-controller="History" asp-action="Index">History</a>
                     <span class="nav-link is-soon" aria-disabled="true" title="Coming soon">Loans</span>
                     <span class="nav-link is-soon" aria-disabled="true" title="Coming soon">Bill Payments</span>
                     <span class="nav-link is-soon" aria-disabled="true" title="Coming soon">Contact</span>
@@ -64,5 +64,6 @@
     </footer>
     <script src="~/js/confirm-dialog.js" asp-append-version="true"></script>
     <script src="~/js/app-cards.js" asp-append-version="true"></script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>
