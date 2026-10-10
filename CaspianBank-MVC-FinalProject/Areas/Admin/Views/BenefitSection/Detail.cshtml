@@ -1,0 +1,58 @@
+@model BenefitSectionDetailVM
+@{
+    ViewData["Title"] = "Benefits heading";
+    var cards = Model.Items;
+}
+<main id="content" class="page">
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">UI · Home page</p>
+            <h1>Benefits heading</h1>
+            <p class="lede">The heading text above the sliding cards of the Benefits block. The cards are managed in <a asp-area="Admin" asp-controller="BenefitItem" asp-action="Index">Benefit items</a>.</p>
+        </div>
+        <a class="btn btn-secondary" asp-area="Admin" asp-controller="BenefitSection" asp-action="Edit">Edit</a>
+    </header>
+
+    @if (TempData["Success"] is string success)
+    {
+        <p class="flash flash-ok" role="status">@success</p>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <p class="flash flash-error" role="alert">@error</p>
+    }
+
+    <div class="narrow stack-lg">
+        <section class="surface">
+            <dl class="detail-list">
+                <div><dt>Label</dt><dd>@Model.Label</dd></div>
+                <div><dt>Title</dt><dd>@Model.Title</dd></div>
+                <div><dt>Description</dt><dd>@Model.Description</dd></div>
+            </dl>
+        </section>
+
+        <section class="surface surface-tight">
+            <div class="toolbar"><h2>Cards (@cards.Count)</h2></div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead><tr><th class="num">Id</th><th>Label</th><th>Title</th><th class="actions">Operations</th></tr></thead>
+                    <tbody>
+                        @foreach (var card in cards)
+                        {
+                            <tr>
+                                <td class="num">@card.Id</td>
+                                <td>@card.Label</td>
+                                <td>@card.Title</td>
+                                <td class="actions"><a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="BenefitItem" asp-action="Detail" asp-route-id="@card.Id">Detail</a></td>
+                            </tr>
+                        }
+                        @if (cards.Count == 0)
+                        {
+                            <tr><td colspan="4">No cards yet.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+</main>

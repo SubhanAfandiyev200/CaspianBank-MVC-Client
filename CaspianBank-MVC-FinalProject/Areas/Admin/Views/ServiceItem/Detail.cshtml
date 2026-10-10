@@ -1,0 +1,34 @@
+@model ServiceItemDetailVM
+@{
+    ViewData["Title"] = "Service card · Detail";
+}
+<main id="content" class="page">
+    <a class="back" asp-area="Admin" asp-controller="ServiceItem" asp-action="Index">All cards</a>
+
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">UI · Home page</p>
+            <h1>@Model.Title</h1>
+            <p class="lede">One card of the Services block.</p>
+        </div>
+        <span class="row-actions">
+            <a class="btn btn-secondary" asp-area="Admin" asp-controller="ServiceItem" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+            <a class="btn btn-back" asp-area="Admin" asp-controller="ServiceItem" asp-action="Index">Go Back</a>
+        </span>
+    </header>
+
+    <div class="narrow stack-lg">
+        <section class="surface">
+            <dl class="detail-list">
+                <div><dt>No</dt><dd>@Model.Number</dd></div>
+                <div><dt>Title</dt><dd>@Model.Title</dd></div>
+                <div><dt>Description</dt><dd>@Model.Description</dd></div>
+                <div><dt>Icon path</dt><dd>@Model.Icon</dd></div>
+                <div>
+                    <dt>Icon</dt>
+                    <dd><img src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], Model.Icon)" alt="" style="display:block;width:40px;height:40px;object-fit:contain" /></dd>
+                </div>
+            </dl>
+        </section>
+    </div>
+</main>

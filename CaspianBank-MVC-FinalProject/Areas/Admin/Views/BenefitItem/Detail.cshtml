@@ -1,0 +1,41 @@
+@model BenefitItemDetailVM
+@{
+    ViewData["Title"] = "Benefit item · Detail";
+}
+<main id="content" class="page">
+    <a class="back" asp-area="Admin" asp-controller="BenefitItem" asp-action="Index">All cards</a>
+
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">UI · Home page</p>
+            <h1>@Model.Title</h1>
+            <p class="lede">One sliding card of the Benefits block.</p>
+        </div>
+        <span class="row-actions">
+            <a class="btn btn-secondary" asp-area="Admin" asp-controller="BenefitItem" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+            <a class="btn btn-back" asp-area="Admin" asp-controller="BenefitItem" asp-action="Index">Go Back</a>
+            <form method="post" asp-area="Admin" asp-controller="BenefitItem" asp-action="Delete" asp-route-id="@Model.Id">
+                <button type="submit" class="btn btn-danger"
+                        data-confirm-title="Delete this card?"
+                        data-confirm-text="It will disappear from the Benefits block on the Home page."
+                        data-confirm-yes="Delete" data-confirm-danger="true">Delete</button>
+            </form>
+        </span>
+    </header>
+
+    <div class="narrow stack-lg">
+        <section class="surface">
+            <dl class="detail-list">
+                <div><dt>Id</dt><dd>@Model.Id</dd></div>
+                <div><dt>Label</dt><dd>@Model.Label</dd></div>
+                <div><dt>Title</dt><dd>@Model.Title</dd></div>
+                <div><dt>Description</dt><dd>@Model.Description</dd></div>
+                <div><dt>Button</dt><dd>@Model.ButtonText</dd></div>
+                <div><dt>Button link</dt><dd>@Model.ButtonUrl</dd></div>
+                <div><dt>First line</dt><dd>@Model.Text1</dd></div>
+                <div><dt>Second line</dt><dd>@Model.Text2</dd></div>
+                <div><dt>Third line</dt><dd>@Model.Text3</dd></div>
+            </dl>
+        </section>
+    </div>
+</main>

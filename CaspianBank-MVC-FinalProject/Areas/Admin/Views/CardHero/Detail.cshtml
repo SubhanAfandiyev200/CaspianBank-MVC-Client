@@ -1,0 +1,33 @@
+@model CardHeroDetailVM
+@{
+    ViewData["Title"] = "Hero";
+}
+<main id="content" class="page">
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">UI · Home page</p>
+            <h1>Hero text</h1>
+            <p class="lede">The text on the left of the top block of the Home page. The cards on the right are managed in <a asp-area="Admin" asp-controller="CardDesign" asp-action="Index">Card designs</a>.</p>
+        </div>
+        <a class="btn btn-secondary" asp-area="Admin" asp-controller="CardHero" asp-action="Edit">Edit</a>
+    </header>
+
+    @if (TempData["Success"] is string success)
+    {
+        <p class="flash flash-ok" role="status">@success</p>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <p class="flash flash-error" role="alert">@error</p>
+    }
+
+    <div class="narrow stack-lg">
+        <section class="surface">
+            <dl class="detail-list">
+                <div><dt>Label</dt><dd>@Model.Label</dd></div>
+                <div><dt>Title</dt><dd>@Model.Title</dd></div>
+                <div><dt>Description</dt><dd>@Model.Description</dd></div>
+            </dl>
+        </section>
+    </div>
+</main>

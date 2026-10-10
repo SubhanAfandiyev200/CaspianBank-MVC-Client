@@ -1,0 +1,50 @@
+@model AboutPillarCreateVM
+@{
+    ViewData["Title"] = "About pillar · Create";
+}
+<main id="content" class="page">
+    <a class="back" asp-area="Admin" asp-controller="AboutPillar" asp-action="Index">All pillars</a>
+
+    <header class="page-head">
+        <p class="eyebrow">UI · Home page</p>
+        <h1>Create pillar</h1>
+        <p class="lede">A new column for the About block: a small image, a title and a short text.</p>
+    </header>
+
+    <form method="post" asp-area="Admin" asp-controller="AboutPillar" asp-action="Create" enctype="multipart/form-data" class="narrow stack-lg" novalidate>
+        <section class="surface form-stack">
+            <div asp-validation-summary="ModelOnly" class="field-error"></div>
+            <div class="field">
+                <label asp-for="Title">Title</label>
+                <input class="input" asp-for="Title" maxlength="100" placeholder="Pillar title" autocomplete="off" />
+                <span asp-validation-for="Title" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Description">Description</label>
+                <textarea class="textarea" asp-for="Description" maxlength="300" rows="3" placeholder="One or two sentences."></textarea>
+                <span asp-validation-for="Description" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="Image">Image</label>
+                <div class="file-drop" data-file-drop>
+                    <input class="file-drop-input" asp-for="Image" type="file" accept="image/png,image/jpeg,image/webp" />
+                    <div class="file-drop-box">
+                        <span class="file-drop-preview" data-file-preview>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m0 0 4 4m-4-4L8 8"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+                        </span>
+                        <span class="file-drop-text">
+                            <strong data-file-title>Choose an image</strong>
+                            <span data-file-hint>Click here or drag it in. PNG, JPEG or WebP, up to 2 MB.</span>
+                        </span>
+                    </div>
+                </div>
+                <span asp-validation-for="Image" class="field-error"></span>
+            </div>
+        </section>
+
+        <div class="rv-actions">
+            <a class="btn btn-secondary btn-cancel" asp-area="Admin" asp-controller="AboutPillar" asp-action="Index">Cancel</a>
+            <button class="btn btn-primary" type="submit">Create</button>
+        </div>
+    </form>
+</main>

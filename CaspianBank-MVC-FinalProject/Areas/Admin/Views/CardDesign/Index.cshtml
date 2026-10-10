@@ -1,0 +1,79 @@
+@model IEnumerable<CardDesignVM>
+@{
+    ViewData["Title"] = "Card designs";
+}
+<main id="content" class="page">
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">UI · Cards</p>
+            <h1>Card designs</h1>
+            <p class="lede">The faces of the cards: the fan on Home and the cards customers hold. Up to 3 designs can be shown on Home.</p>
+        </div>
+        <a class="btn btn-primary" asp-area="Admin" asp-controller="CardDesign" asp-action="Create">Create</a>
+    </header>
+
+    @if (TempData["Success"] is string success)
+    {
+        <p class="flash flash-ok" role="status">@success</p>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <p class="flash flash-error" role="alert">@error</p>
+    }
+
+    <section class="surface surface-tight">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th class="num">Id</th>
+                        <th>Design</th>
+                        <th>Title</th>
+                        <th class="num">Order</th>
+                        <th>On Home</th>
+                        <th class="actions">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="num">@item.Id</td>
+                            <td><div style="width:96px;height:60px;overflow:hidden;border-radius:6px"><div style="width:280px;height:176px;transform:scale(0.343);transform-origin:0 0;pointer-events:none"><partial name="_CardPreview" model="new CardDesignPreviewVM { Title = item.Title, Image = item.Image }" /></div></div></td>
+                            <td>@item.Title</td>
+                            <td class="num">@item.DisplayOrder</td>
+                            <td>
+                                @if (item.ShowOnHome)
+                                {
+                                    <span class="badge badge-success">Shown</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-neutral">Hidden</span>
+                                }
+                            </td>
+                            <td class="actions">
+                                <span class="row-actions">
+                                    <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="CardDesign" asp-action="Detail" asp-route-id="@item.Id">Detail</a>
+                                    <a class="btn btn-secondary btn-sm" asp-area="Admin" asp-controller="CardDesign" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                    <form method="post" asp-area="Admin" asp-controller="CardDesign" asp-action="Delete" asp-route-id="@item.Id">
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                data-confirm-title="Delete this design?"
+                                                data-confirm-text="A design used by a card type or by customer cards cannot be deleted."
+                                                data-confirm-yes="Delete" data-confirm-danger="true">Delete</button>
+                                    </form>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6">No designs yet. Create the first one.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>

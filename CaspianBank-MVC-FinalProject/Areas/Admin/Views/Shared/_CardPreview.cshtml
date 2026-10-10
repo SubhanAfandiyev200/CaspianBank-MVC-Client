@@ -1,0 +1,38 @@
+@model CardDesignPreviewVM
+@*
+    Dizaynın real kart üzərində necə görünəcəyi (App-dakı _Plastic ilə eyni üz): şəkil yalnız fondur,
+    loqo, çip, nömrə və yazılar kartın üstünə çəkilir. Nümunə məlumatlarla göstərilir.
+    Model.Large = true: böyük kart. Yazı rəngləri real kartda növdən (plastic-{tier}) gəlir; burada ada görə seçilir:
+    "Cashback" açıq fonlu, "Silver" və "Gold" öz rənglərində, qalan hər şey standart (tünd fon, açıq yazı).
+*@
+@{
+    var large = Model.Large;
+    var name = (Model.Title ?? string.Empty).ToLowerInvariant();
+    var tier = name.Contains("cashback") ? "cashback" : name.Contains("silver") ? "silver" : name.Contains("gold") ? "gold" : "standard";
+    var style = string.IsNullOrEmpty(Model.Image)
+        ? string.Empty
+        : $"background-image:url('{ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], Model.Image)}');background-size:cover;background-position:center;";
+}
+<div class="plastic plastic-@tier@(large ? " plastic-lg" : "")" style="@style" role="img" aria-label="Preview of the @Model.Title card">
+    <span class="plastic-art" aria-hidden="true"></span>
+    <span class="plastic-shine" aria-hidden="true"></span>
+    <div class="plastic-top">
+        <span class="plastic-brand"><span class="plastic-mark" aria-hidden="true"></span><span class="plastic-bank">Caspian</span></span>
+        <span class="plastic-tier">@Model.Title</span>
+        <svg class="plastic-wave" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><path d="M8 8.2c1.6 1.5 1.6 6.1 0 7.6" /><path d="M11.2 5.6c2.6 2.4 2.6 10.4 0 12.8" /><path d="M14.4 3.2c3.6 3.4 3.6 14.2 0 17.6" /></svg>
+    </div>
+    <div class="plastic-mid"><span class="plastic-chip" aria-hidden="true"></span></div>
+    <p class="plastic-number">@(large ? "4169 7300 1234 4242" : "•••• 4242")</p>
+    <div class="plastic-bottom">
+        @if (large)
+        {
+            <div><span class="plastic-k">Cardholder</span><span class="plastic-v">Your Name</span></div>
+        }
+        else
+        {
+            <span class="plastic-issuer">Caspian Bank</span>
+        }
+        <div><span class="plastic-k">Valid</span><span class="plastic-v">12/29</span></div>
+        <div><span class="plastic-k">Balance</span><span class="plastic-v num">1,250.00 AZN</span></div>
+    </div>
+</div>

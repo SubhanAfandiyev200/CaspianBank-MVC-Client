@@ -1,0 +1,77 @@
+@{
+    ViewData["Title"] = "UI dashboard";
+}
+<main id="content" class="page">
+    <header class="page-head">
+        <p class="eyebrow">UI</p>
+        <h1>The desk behind the glass.</h1>
+        <p class="lede">This dashboard belongs to the interface. It is the home page a person sees from the street, and the cards they hold once they are inside. Pick a block on the left or below to change what people read and see.</p>
+    </header>
+
+    @* Hər model üçün bir blok. Yeni model səhifəsi yazanda onu burada və yan menyuda (layout) göstər. *@
+    <div class="ui-board">
+        <article class="surface">
+            <p class="eyebrow">Home page</p>
+            <h2>Brands</h2>
+            <p>The partner logos in the moving strip under the headline.</p>
+            <a class="btn btn-secondary mt-4" asp-area="Admin" asp-controller="Brand" asp-action="Index">Open Brands</a>
+        </article>
+        <article class="surface">
+            <p class="eyebrow">Cards</p>
+            <h2>Card designs</h2>
+            <p>The faces of the cards: the fan on Home and the cards customers hold.</p>
+            <a class="btn btn-secondary mt-4" asp-area="Admin" asp-controller="CardDesign" asp-action="Index">Open card designs</a>
+        </article>
+        <article class="surface">
+            <p class="eyebrow">Cards</p>
+            <h2>Card types</h2>
+            <p>The fee, cashback, transfer limit, commission and design of each card type.</p>
+            <a class="btn btn-secondary mt-4" asp-area="Admin" asp-controller="CardTier" asp-action="Index">Open card types</a>
+        </article>
+        <article class="surface">
+            <p class="eyebrow">Home page</p>
+            <h2>Ticker</h2>
+            <p>The short phrases that move across the line under the headline.</p>
+            <a class="btn btn-secondary mt-4" asp-area="Admin" asp-controller="Ticker" asp-action="Index">Open Ticker</a>
+        </article>
+        <article class="surface">
+            <p class="eyebrow">Home page</p>
+            <h2>Hero text</h2>
+            <p>The label, headline and description on the left of the top block.</p>
+            <a class="btn btn-secondary mt-4" asp-area="Admin" asp-controller="CardHero" asp-action="Detail">Open Hero text</a>
+        </article>
+        <article class="surface">
+            <p class="eyebrow">Home page</p>
+            <h2>Benefits</h2>
+            <p>The heading block and the draggable benefit cards. </p>
+            <span class="row-actions mt-4">
+                <a class="btn btn-secondary" asp-area="Admin" asp-controller="BenefitSection" asp-action="Detail">Open heading</a>
+                <a class="btn btn-secondary" asp-area="Admin" asp-controller="BenefitItem" asp-action="Index">Open cards</a>
+            </span>
+        </article>
+        <article class="surface">
+            <p class="eyebrow">Home page</p>
+            <h2>Services</h2>
+            <p>The heading block and the six service cards.</p>
+            <span class="row-actions mt-4">
+                <a class="btn btn-secondary" asp-area="Admin" asp-controller="ServiceSection" asp-action="Detail">Open heading</a>
+                <a class="btn btn-secondary" asp-area="Admin" asp-controller="ServiceItem" asp-action="Index">Open cards</a>
+            </span>
+        </article>
+        <article class="surface">
+            <p class="eyebrow">Home page</p>
+            <h2>About</h2>
+            <p>The About text with its video and the pillars under it.</p>
+            <span class="row-actions mt-4">
+                <a class="btn btn-secondary" asp-area="Admin" asp-controller="About" asp-action="Detail">Open text</a>
+                <a class="btn btn-secondary" asp-area="Admin" asp-controller="AboutPillar" asp-action="Index">Open pillars</a>
+            </span>
+        </article>
+        <article class="surface">
+            <p class="eyebrow">Site</p>
+            <h2>Settings</h2>
+            <p>Logo, company name, address, email, phone and the footer text.</p>
+            <a class="btn btn-secondary mt-4" asp-area="Admin" asp-controller="Setting" asp-action="Index">Open Settings</a>
+        </article>
+    </div>
+</main>

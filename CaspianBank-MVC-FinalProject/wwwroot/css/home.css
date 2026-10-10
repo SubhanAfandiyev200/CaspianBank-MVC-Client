@@ -698,6 +698,13 @@ h2 {
   height: 32px;
 }
 
+.service-icon img {
+  display: block;
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
 .service-card h3 {
   margin-top: 18px;
   font-size: 20px;
@@ -1335,3 +1342,35 @@ a.header-user-name:hover { text-decoration: underline; }
 /* Menyu kartlarının şəkilləri */
 .mega-swatch { display: grid; place-items: center; overflow: hidden; }
 .mega-swatch svg { display: block; height: 100%; width: auto; max-width: 100%; }
+
+/* Təsdiq pəncərəsi (SweetAlert tipli, "Log out?"). Eyni pəncərə style.css-də də var; Home səhifəsi yalnız bu faylı yüklədiyi üçün burada da lazımdır */
+body.modal-open { overflow: hidden; }
+.swal-backdrop {
+  position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 20px;
+  background: rgba(14, 24, 19, 0.55); backdrop-filter: blur(3px); animation: swal-fade 0.18s ease;
+}
+.swal-backdrop.is-closing { opacity: 0; transition: opacity 0.16s ease; }
+.swal {
+  width: min(420px, 100%); padding: 32px 28px 24px; text-align: center; background: #fff; border-radius: 20px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.32); animation: swal-pop 0.26s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+.swal-icon {
+  display: grid; place-items: center; width: 76px; height: 76px; margin: 0 auto 18px; border-radius: 50%;
+  border: 4px solid #f3d38e; color: #d99a2b; font-size: 40px; font-weight: 600; line-height: 1;
+}
+.swal h2 { margin: 0 0 8px; font-size: 24px; letter-spacing: -0.02em; }
+.swal p { margin: 0 0 22px; color: var(--muted); font-size: 15px; line-height: 1.5; }
+.swal-actions { display: flex; justify-content: center; gap: 10px; }
+.swal-btn {
+  min-width: 120px; min-height: 46px; padding: 0 22px; border-radius: 10px; font: inherit; font-size: 15px; font-weight: 700;
+  cursor: pointer; border: 1px solid transparent; transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+}
+.swal-btn:active { transform: scale(0.98); }
+.swal-confirm { background: var(--lime); color: #10281e; }
+.swal-confirm:hover, .swal-confirm:focus-visible { background: #0c3f2c; color: #f4f7e8; outline: none; }
+.swal-cancel { background: #fff; border-color: #cdd4cf; color: var(--text); }
+.swal-cancel:hover, .swal-cancel:focus-visible { background: #d94a4a; border-color: #d94a4a; color: #fff; outline: none; }
+.swal-confirm.swal-danger { background: #d94a4a; color: #fff; }
+.swal-confirm.swal-danger:hover, .swal-confirm.swal-danger:focus-visible { background: #a93232; color: #fff; }
+@keyframes swal-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes swal-pop { from { opacity: 0; transform: scale(0.8); } to { opacity: 1; transform: scale(1); } }

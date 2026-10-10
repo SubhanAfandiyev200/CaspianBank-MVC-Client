@@ -17,6 +17,12 @@ namespace CaspianBank_MVC_FinalProject.Helpers
         public const string Bills = "/App";
         public const string Support = "/App";
 
+        // "Mənim hesabım" düyməsi: müştəri üçün kartlar, işçi üçün admin paneli
+        public static string AppHome(bool isStaff)
+        {
+            return isStaff ? RoleRedirect.AdminHome : App;
+        }
+
         // Qeydiyyatdan keçmək / kart açmaq düymələri
         public static string OpenAccount(bool signedIn) => signedIn ? AddCard : Welcome;
 

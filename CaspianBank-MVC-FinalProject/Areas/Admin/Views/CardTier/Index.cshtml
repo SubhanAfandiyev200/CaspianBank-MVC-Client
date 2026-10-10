@@ -1,0 +1,65 @@
+@model IEnumerable<CardTierVM>
+@{
+    ViewData["Title"] = "Card types";
+}
+<main id="content" class="page">
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">UI · Cards</p>
+            <h1>Card types</h1>
+            <p class="lede">The rules of the four card types: the fee to open a card, cashback, the free transfer limit, the commission above it and the design. The types themselves are fixed, only their values change.</p>
+        </div>
+    </header>
+
+    @if (TempData["Success"] is string success)
+    {
+        <p class="flash flash-ok" role="status">@success</p>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <p class="flash flash-error" role="alert">@error</p>
+    }
+
+    <section class="surface surface-tight">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Card</th>
+                        <th>Type</th>
+                        <th class="num">Issue fee</th>
+                        <th class="num">Cashback</th>
+                        <th class="num">Free limit</th>
+                        <th class="num">Commission</th>
+                        <th class="actions">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td><div style="width:96px;height:60px;overflow:hidden;border-radius:6px"><div style="width:280px;height:176px;transform:scale(0.343);transform-origin:0 0;pointer-events:none"><partial name="_CardPreview" model="new CardDesignPreviewVM { Title = item.Tier, Image = item.DesignImage }" /></div></div></td>
+                            <td>@item.Tier</td>
+                            <td class="num">@item.IssueFee.ToString("N2", System.Globalization.CultureInfo.InvariantCulture) AZN</td>
+                            <td class="num">@item.CashbackPercent.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%</td>
+                            <td class="num">@item.TransferLimit.ToString("N2", System.Globalization.CultureInfo.InvariantCulture) AZN</td>
+                            <td class="num">@item.CommissionPercent.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%</td>
+                            <td class="actions">
+                                <span class="row-actions">
+                                    <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="CardTier" asp-action="Detail" asp-route-id="@item.Id">Detail</a>
+                                    <a class="btn btn-secondary btn-sm" asp-area="Admin" asp-controller="CardTier" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="7">No card types found.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>

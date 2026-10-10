@@ -27,10 +27,10 @@
                     <a class="nav-link" asp-controller="Home" asp-action="Index">Home</a>
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "App" ? "is-active" : "")" asp-controller="App" asp-action="Index">Cards</a>
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Transfer" ? "is-active" : "")" asp-controller="Transfer" asp-action="Index">Transfers</a>
-                    <a class="nav-link" href="transaction-history.html">History</a>
-                    <a class="nav-link" href="loan-application.html">Loans</a>
-                    <a class="nav-link" href="bill-payment.html">Bill Payments</a>
-                    <a class="nav-link" href="contact-us.html">Contact</a>
+                    <span class="nav-link is-soon" aria-disabled="true" title="Coming soon">History</span>
+                    <span class="nav-link is-soon" aria-disabled="true" title="Coming soon">Loans</span>
+                    <span class="nav-link is-soon" aria-disabled="true" title="Coming soon">Bill Payments</span>
+                    <span class="nav-link is-soon" aria-disabled="true" title="Coming soon">Contact</span>
                 </nav>
                 <div class="nav-tools">
                     <form class="header-auth" asp-controller="Account" asp-action="Logout" method="post">
@@ -43,7 +43,7 @@
                             </span>
                             <span class="header-user-name">@User.Identity?.Name</span>
                         </span>
-                        <button class="btn-logout" type="submit">
+                        <button class="btn-logout" type="submit" data-confirm-title="Log out?" data-confirm-text="You will need to log in again to open your account." data-confirm-yes="Log out">
                             <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
                                 <path d="M10 7V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
                                 <path d="M4 12h11M12 8.5 15.5 12 12 15.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
@@ -62,6 +62,7 @@
             <span>Personal banking</span>
         </div>
     </footer>
+    <script src="~/js/confirm-dialog.js" asp-append-version="true"></script>
     <script src="~/js/app-cards.js" asp-append-version="true"></script>
 </body>
 </html>

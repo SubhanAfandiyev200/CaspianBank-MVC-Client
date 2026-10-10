@@ -1,0 +1,76 @@
+@{
+    ViewData["Title"] = "Reports";
+}
+<main id="content" class="page">
+    <header class="page-head">
+        <p class="eyebrow">Fraud</p>
+        <h1>Suspicious transaction reports</h1>
+        <p class="lede">Review what customers flagged. Taking action restricts the linked account.</p>
+    </header>
+
+    @* Hələlik statik dizayn (nümunə sətirlər) *@
+    <section class="surface surface-tight">
+        <div class="toolbar filters">
+            <div class="field">
+                <label for="status">Status</label>
+                <select class="select" id="status">
+                    <option value="all">All</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Action Taken">Action taken</option>
+                    <option value="Dismissed">Dismissed</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Reporter</th>
+                        <th>Transaction</th>
+                        <th>Reason</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th class="actions"><span class="sr-only">Actions</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Aysel Karimova</td>
+                        <td>TX-204918</td>
+                        <td>POS charge in Ganja while the card was with me in Baku.</td>
+                        <td>06 Oct 2026, 09:41</td>
+                        <td><span class="badge badge-pending">Pending</span></td>
+                        <td class="actions">
+                            <button type="button" class="btn btn-secondary btn-sm">Mark reviewed</button>
+                            <button type="button" class="btn btn-danger btn-sm"
+                                    data-confirm-title="Restrict the linked account?"
+                                    data-confirm-text="Taking action restricts Aysel Karimova account. Reference TX-204918."
+                                    data-confirm-yes="Take action" data-confirm-danger="true">Take action</button>
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                    data-confirm-title="Dismiss this report?"
+                                    data-confirm-text="The report will be closed with no change to the account."
+                                    data-confirm-yes="Dismiss">Dismiss</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Elvin Qasimov</td>
+                        <td>TX-198332</td>
+                        <td>Three contactless payments I do not recognise.</td>
+                        <td>01 Oct 2026, 13:05</td>
+                        <td><span class="badge badge-info">Action Taken</span></td>
+                        <td class="actions"></td>
+                    </tr>
+                    <tr>
+                        <td>Nigar Aliyeva</td>
+                        <td>TX-188104</td>
+                        <td>Duplicate supermarket charge on the same afternoon.</td>
+                        <td>25 Sep 2026, 09:12</td>
+                        <td><span class="badge badge-neutral">Dismissed</span></td>
+                        <td class="actions"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>

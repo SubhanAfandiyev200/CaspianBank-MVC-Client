@@ -23,7 +23,10 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             var (cards, status) = await GetAsync<List<CardUIVM>>("api/cards");
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
-            var model = new AppIndexVM { ApiUnavailable = cards is null };
+            var model = new AppIndexVM
+            {
+                ApiUnavailable = cards is null
+            };
             if (cards is not null) model.Cards = Absolutize(cards);
             return View(model);
         }
@@ -36,7 +39,10 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             var (cards, status) = await GetAsync<List<CardUIVM>>("api/cards");
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
-            var model = new AddCardPageVM { ApiUnavailable = cards is null };
+            var model = new AddCardPageVM
+            {
+                ApiUnavailable = cards is null
+            };
             if (cards is null) return View(model);
 
             model.Cards = Absolutize(cards);
@@ -106,7 +112,11 @@ namespace CaspianBank_MVC_FinalProject.Controllers
                 return await SessionExpiredAsync();
             }
 
-            var model = new CardPageVM { Card = card, Unavailable = card is null && status is null };
+            var model = new CardPageVM
+            {
+                Card = card,
+                Unavailable = card is null && status is null
+            };
             if (card is null)
             {
                 return View(model);
@@ -130,7 +140,10 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             if (!decimal.TryParse(normalized, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out var value))
             {
                 TempData["TopUpError"] = "Enter a valid amount.";
-                return RedirectToAction(nameof(Card), new { id });
+                return RedirectToAction(nameof(Card), new
+                {
+                    id
+                });
             }
 
             var (success, errors, status) = await PostAsync($"api/cards/{id}/top-up", new
@@ -147,7 +160,10 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             else
                 TempData["TopUpError"] = string.Join(" ", errors);   // pəncərə xəta ilə yenidən açılır
 
-            return RedirectToAction(nameof(Card), new { id });
+            return RedirectToAction(nameof(Card), new
+            {
+                id
+            });
         }
 
         [HttpPost]
@@ -155,7 +171,11 @@ namespace CaspianBank_MVC_FinalProject.Controllers
         public async Task<IActionResult> BlockCard(int id, string? email, string? password)
         {
             var (success, errors, status) = await PostAsync($"api/cards/{id}/block",
-                new { email = email?.Trim() ?? string.Empty, password = password ?? string.Empty });
+                new
+                {
+                    email = email?.Trim() ?? string.Empty,
+                    password = password ?? string.Empty
+                });
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
             if (success)
@@ -167,7 +187,10 @@ namespace CaspianBank_MVC_FinalProject.Controllers
                 TempData["BlockError"] = string.Join(" ", errors);   // pəncərə xəta ilə yenidən açılır
             }
 
-            return RedirectToAction(nameof(Card), new { id });
+            return RedirectToAction(nameof(Card), new
+            {
+                id
+            });
         }
 
     }

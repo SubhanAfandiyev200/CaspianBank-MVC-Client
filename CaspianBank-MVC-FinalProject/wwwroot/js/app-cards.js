@@ -393,6 +393,14 @@
     const cashbackHint = byId("cashback-hint");
     const ownEmpty = byId("own-empty");
     const reviewBtn = byId("review-btn");
+    const reviewHint = byId("review-hint");
+    const ownPick = byId("own-pick");
+    const ownEmptyOther = byId("own-empty-other");
+    const amountBox = byId("amount-box");
+    const amountError = byId("amount-error");
+    const numberGroup = byId("number-group");
+    const noteInput = byId("note");
+    const noteCount = byId("note-count");
     const payCard = byId("pay-card");
     const meterFill = byId("meter-fill");
     const meterText = byId("meter-text");
@@ -488,10 +496,11 @@
       paintNumber(digits);
       byId("live-holder").textContent = holder;
 
-      // Öz kartlarım rejimində başqa kart yoxdursa izah və düymənin söndürülməsi
+      // Öz kartlarım rejimində başqa kart yoxdursa boş açılan siyahı əvəzinə izah göstərilir
       const noTarget = mode === "own" && ownTargets === 0;
-      ownEmpty.hidden = !(mode === "own" && ownTargets === 0);
-      reviewBtn.disabled = noTarget;
+      ownEmpty.hidden = !noTarget;
+      ownPick.hidden = noTarget;
+      if (ownEmptyOther) ownEmptyOther.hidden = isCashback();
 
       const fee = amount === null ? 0 : commissionFor(amount, limit, pct);
       const shown = amount === null ? 0 : amount;
@@ -518,13 +527,57 @@
       hint.textContent = !from ? "" : limit > 0
         ? "Commission-free up to " + money(limit) + ". " + String(pct) + "% applies to the part above that. Available: " + money(balance) + "."
         : "No commission on " + tier + " transfers. Available: " + money(balance) + ".";
+
+      // Məbləğ balansa (komissiya ilə) sığmırsa sahədə xəta çıxır. Server də eyni yoxlayır, bu yalnız rahatlıq üçündür
+      const max = from ? maxAmount(balance, limit, pct) : 0;
+      let amountProblem = "";
+      if (amount !== null && amount > 100000) {
+        amountProblem = "The most you can send at once is " + money(100000) + ".";
+      } else if (amount !== null && from && round2(amount + fee) > balance) {
+        amountProblem = max > 0 ? "Not enough balance. The most you can send from this card is " + money(max) + "." : "This card has no balance to send.";
+      }
+      amountError.hidden = !amountProblem;
+      amountError.textContent = amountProblem;
+      amountBox.classList.toggle("is-error", !!amountProblem);
+
+      // Düymə hazır olana qədər söndürülür, nəyin çatışmadığı düymənin altında yazılır
+      let waiting = "";
+      if (noTarget) waiting = isCashback() ? "Add another card to continue." : "Add another card or send to another customer to continue.";
+      else if (mode === "other" && digits.length !== 16) waiting = "Enter the recipient's 16-digit card number.";
+      else if (amount === null) waiting = "Enter an amount to continue.";
+      else if (amountProblem) waiting = "Fix the amount to continue.";
+      reviewBtn.disabled = waiting !== "";
+      reviewHint.textContent = waiting;
+
+      numberGroup.classList.toggle("is-complete", mode === "other" && digits.length === 16);
+      transferForm.querySelectorAll("[data-quick]").forEach((chip) => {
+        chip.classList.toggle("is-active", amount !== null && Number(chip.getAttribute("data-quick")) === amount);
+      });
+    }
+
+    // Məbləğ sahəsi: yalnız rəqəm və bir ayırıcı, ayırıcıdan sonra ən çox 2 rəqəm ("12,5" və "12.5" ikisi də olar)
+    function cleanAmount() {
+      let value = amountInput.value.replace(/[^0-9.,]/g, "");
+      const sep = value.search(/[.,]/);
+      if (sep !== -1) {
+        value = value.slice(0, sep + 1) + value.slice(sep + 1).replace(/[.,]/g, "").slice(0, 2);
+      }
+      value = value.replace(/^0+(?=\d)/, "");
+      if (value.startsWith(".") || value.startsWith(",")) value = "0" + value;
+      if (value !== amountInput.value) amountInput.value = value;
+    }
+
+    function countNote() {
+      noteCount.textContent = noteInput.value.length + " / 140";
     }
 
     fromSel.addEventListener("change", () => { rebuildDestinations(); setMode(mode); });
     toSel.addEventListener("change", paint);
     ownBtn.addEventListener("click", () => setMode("own"));
     otherBtn.addEventListener("click", () => setMode("other"));
-    amountInput.addEventListener("input", paint);
+    ownEmptyOther?.addEventListener("click", () => setMode("other"));
+    amountInput.addEventListener("input", () => { cleanAmount(); paint(); });
+    noteInput.addEventListener("input", countNote);
     numberInput.addEventListener("input", () => {
       numberInput.value = numberInput.value.replace(/\D/g, "").slice(0, 16).replace(/(\d{4})(?=\d)/g, "$1 ").trim();
       paint();
@@ -545,78 +598,11 @@
       paint();
     });
 
+    cleanAmount();
+    countNote();
     rebuildDestinations();
     setMode(mode);
   }
-
-  // ---------- təsdiq pəncərəsi (SweetAlert tipli) ----------
-  // data-confirm-text olan düymə basılanda əvvəl "Are you sure?" soruşulur; "Yes" olarsa forma həmin düymə ilə göndərilir
-  function confirmDialog(options) {
-    return new Promise((resolve) => {
-      const wrap = document.createElement("div");
-      wrap.className = "swal-backdrop";
-      wrap.innerHTML =
-        '<div class="swal" role="alertdialog" aria-modal="true" aria-labelledby="swal-title" aria-describedby="swal-text">'
-        + '<div class="swal-icon" aria-hidden="true">?</div>'
-        + '<h2 id="swal-title"></h2>'
-        + '<p id="swal-text"></p>'
-        + '<div class="swal-actions">'
-        + '<button type="button" class="swal-btn swal-cancel"></button>'
-        + '<button type="button" class="swal-btn swal-confirm"></button>'
-        + '</div></div>';
-      wrap.querySelector("#swal-title").textContent = options.title;
-      wrap.querySelector("#swal-text").textContent = options.text;
-      const cancel = wrap.querySelector(".swal-cancel");
-      const confirm = wrap.querySelector(".swal-confirm");
-      cancel.textContent = options.no;
-      confirm.textContent = options.yes;
-      document.body.appendChild(wrap);
-      document.body.classList.add("modal-open");
-      confirm.focus();
-
-      function close(result) {
-        document.removeEventListener("keydown", onKey);
-        wrap.classList.add("is-closing");
-        setTimeout(() => {
-          wrap.remove();
-          if (!document.querySelector(".modal:not([hidden])")) document.body.classList.remove("modal-open");
-        }, 160);
-        resolve(result);
-      }
-      function onKey(event) {
-        if (event.key === "Escape") close(false);
-      }
-      document.addEventListener("keydown", onKey);
-      cancel.addEventListener("click", () => close(false));
-      confirm.addEventListener("click", () => close(true));
-      wrap.addEventListener("click", (event) => { if (event.target === wrap) close(false); });
-    });
-  }
-
-  document.addEventListener("click", async (event) => {
-    const button = event.target.closest("[data-confirm-text]");
-    if (!button || button.dataset.confirmed === "1") return;
-    event.preventDefault();
-    const form = button.form;
-    const ok = await confirmDialog({
-      title: button.getAttribute("data-confirm-title") || "Are you sure?",
-      text: button.getAttribute("data-confirm-text") || "",
-      yes: button.getAttribute("data-confirm-yes") || "Yes",
-      no: button.getAttribute("data-confirm-no") || "Cancel"
-    });
-    if (ok && form) {
-      button.dataset.confirmed = "1";
-      form.requestSubmit(button);
-    }
-  });
-
-  // Təsdiq düyməsi iki dəfə basılmasın (server də eyni sorğunu təkrar köçürmür, amma düymə dərhal söndürülür)
-  document.querySelectorAll("form").forEach((form) => {
-    form.addEventListener("submit", (event) => {
-      const submitter = event.submitter;
-      if (submitter && submitter.hasAttribute("data-once")) setTimeout(() => { submitter.disabled = true; }, 0);
-    });
-  });
 
   // ---------- qəbz: PDF kimi saxla (çap pəncərəsi) və paylaş ----------
   document.getElementById("rc-print")?.addEventListener("click", () => window.print());

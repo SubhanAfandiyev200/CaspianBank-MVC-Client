@@ -1,0 +1,68 @@
+@model IEnumerable<BenefitItemVM>
+@{
+    ViewData["Title"] = "Benefit items";
+}
+<main id="content" class="page">
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">UI · Home page</p>
+            <h1>Benefit items</h1>
+            <p class="lede">The sliding cards of the Benefits block on the Home page.</p>
+        </div>
+        <a class="btn btn-primary" asp-area="Admin" asp-controller="BenefitItem" asp-action="Create">Create</a>
+    </header>
+
+    @if (TempData["Success"] is string success)
+    {
+        <p class="flash flash-ok" role="status">@success</p>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <p class="flash flash-error" role="alert">@error</p>
+    }
+
+    <section class="surface surface-tight">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th class="num">Id</th>
+                        <th>Label</th>
+                        <th>Title</th>
+                        <th>Button</th>
+                        <th class="actions">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="num">@item.Id</td>
+                            <td>@item.Label</td>
+                            <td>@item.Title</td>
+                            <td>@item.ButtonText <span class="hint">→ @item.ButtonUrl</span></td>
+                            <td class="actions">
+                                <span class="row-actions">
+                                    <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="BenefitItem" asp-action="Detail" asp-route-id="@item.Id">Detail</a>
+                                    <a class="btn btn-secondary btn-sm" asp-area="Admin" asp-controller="BenefitItem" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                    <form method="post" asp-area="Admin" asp-controller="BenefitItem" asp-action="Delete" asp-route-id="@item.Id">
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                data-confirm-title="Delete this card?"
+                                                data-confirm-text="It will disappear from the Benefits block on the Home page."
+                                                data-confirm-yes="Delete" data-confirm-danger="true">Delete</button>
+                                    </form>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="5">No cards yet. Create the first one.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>

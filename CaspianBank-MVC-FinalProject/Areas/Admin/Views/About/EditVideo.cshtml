@@ -1,0 +1,49 @@
+@model AboutVideoEditVM
+@{
+    ViewData["Title"] = "About video · Edit";
+}
+<main id="content" class="page">
+    <a class="back" asp-area="Admin" asp-controller="About" asp-action="Detail">About text</a>
+
+    <header class="page-head">
+        <p class="eyebrow">UI · Home page</p>
+        <h1>Change the video</h1>
+        <p class="lede">The video in the About block of the Home page. MP4 or WebM, up to 50 MB. A short, light video loads faster for visitors.</p>
+    </header>
+
+    @if (!string.IsNullOrEmpty(Model.CurrentVideo))
+    {
+        <section class="surface narrow">
+            <p class="hint">Current video</p>
+            <video controls preload="metadata" src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], Model.CurrentVideo)#t=0.5" style="display:block;width:100%;max-width:480px;margin-top:8px;border-radius:12px"></video>
+        </section>
+    }
+
+    <form method="post" asp-area="Admin" asp-controller="About" asp-action="EditVideo" asp-route-id="@Model.Id" enctype="multipart/form-data" class="narrow stack-lg" novalidate>
+        <section class="surface form-stack">
+            <div asp-validation-summary="ModelOnly" class="field-error"></div>
+            <div class="field">
+                <label asp-for="Video">New video</label>
+                <div class="file-drop" data-file-drop data-kind="video" data-types="video/mp4,video/webm" data-max-bytes="52428800"
+                     data-type-error="Only MP4 or WebM videos are allowed." data-size-error="The video must be up to 50 MB.">
+                    <input class="file-drop-input" asp-for="Video" type="file" accept="video/mp4,video/webm" />
+                    <div class="file-drop-box">
+                        <span class="file-drop-preview" data-file-preview>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="2.5"/><path d="m16 10.5 5-3v9l-5-3"/></svg>
+                        </span>
+                        <span class="file-drop-text">
+                            <strong data-file-title>Choose a video</strong>
+                            <span data-file-hint>Click here or drag it in. MP4 or WebM, up to 50 MB. Uploading can take a moment.</span>
+                        </span>
+                    </div>
+                </div>
+                <span asp-validation-for="Video" class="field-error"></span>
+            </div>
+        </section>
+
+        <div class="rv-actions">
+            <a class="btn btn-secondary btn-cancel" asp-area="Admin" asp-controller="About" asp-action="Detail">Cancel</a>
+            <button class="btn btn-primary" type="submit">Upload video</button>
+        </div>
+    </form>
+</main>

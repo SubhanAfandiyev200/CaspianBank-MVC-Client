@@ -1,0 +1,57 @@
+@{
+    ViewData["Title"] = "Contact tickets";
+}
+<main id="content" class="page">
+    <header class="page-head">
+        <p class="eyebrow">Support</p>
+        <h1>Contact tickets</h1>
+        <p class="lede">Messages from customers. Open one to reply.</p>
+    </header>
+
+    @* Hələlik statik dizayn (nümunə sətirlər) *@
+    <section class="surface surface-tight">
+        <div class="toolbar filters">
+            <div class="field">
+                <label for="status">Status</label>
+                <select class="select" id="status">
+                    <option value="all">All</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Answered">Answered</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Subject</th>
+                        <th>Received</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Leyla Mammadova</td>
+                        <td><a asp-area="Admin" asp-controller="Tickets" asp-action="Detail">SWIFT transfer timing</a></td>
+                        <td>06 Oct 2026, 09:00</td>
+                        <td><span class="badge badge-pending">Pending</span></td>
+                    </tr>
+                    <tr>
+                        <td>Rashad Huseynov</td>
+                        <td><a asp-area="Admin" asp-controller="Tickets" asp-action="Detail">Increase my transfer limit</a></td>
+                        <td>07 Oct 2026, 11:30</td>
+                        <td><span class="badge badge-pending">Pending</span></td>
+                    </tr>
+                    <tr>
+                        <td>Leyla Mammadova</td>
+                        <td><a asp-area="Admin" asp-controller="Tickets" asp-action="Detail">Cashback for August</a></td>
+                        <td>28 Sep 2026, 14:00</td>
+                        <td><span class="badge badge-success">Answered</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>

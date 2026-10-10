@@ -1,6 +1,7 @@
 @model SiteSettingsVM
 @{
     var signedIn = User.Identity?.IsAuthenticated == true;
+    var isStaff = signedIn && AppRoles.IsStaff(User);
 }
     <footer class="site-footer" id="contact">
         <div class="footer-hero">
@@ -61,7 +62,7 @@
                 </div>
                 <div class="footer-col">
                     <p class="footer-label">Account</p>
-                    <a href="@NavLinks.Page(signedIn, NavLinks.App)">@(signedIn ? "My cards" : "Log in")</a>
+                    <a href="@NavLinks.Page(signedIn, NavLinks.AppHome(isStaff))">@(signedIn ? (isStaff ? "Admin panel" : "My cards") : "Log in")</a>
                     <a href="@NavLinks.OpenAccount(signedIn)">@(signedIn ? "Add a card" : "Open an account")</a>
                     <a href="@NavLinks.Page(signedIn, NavLinks.Transfer)">Transfers</a>
                     <a href="@NavLinks.Page(signedIn, NavLinks.Loan)">Loans</a>

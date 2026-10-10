@@ -1,0 +1,39 @@
+@model BrandDetailVM
+@{
+    ViewData["Title"] = "Brand · Detail";
+}
+<main id="content" class="page">
+    <a class="back" asp-area="Admin" asp-controller="Brand" asp-action="Index">All brands</a>
+
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">UI · Home page</p>
+            <h1>@Model.Name</h1>
+            <p class="lede">One partner logo from the moving strip on the Home page.</p>
+        </div>
+        <span class="row-actions">
+            <a class="btn btn-secondary" asp-area="Admin" asp-controller="Brand" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+            <a class="btn btn-back" asp-area="Admin" asp-controller="Brand" asp-action="Index">Go Back</a>
+            <form method="post" asp-area="Admin" asp-controller="Brand" asp-action="Delete" asp-route-id="@Model.Id">
+                <button type="submit" class="btn btn-danger"
+                        data-confirm-title="Delete this brand?"
+                        data-confirm-text="The logo will disappear from the Home page."
+                        data-confirm-yes="Delete" data-confirm-danger="true">Delete</button>
+            </form>
+        </span>
+    </header>
+
+    <div class="narrow stack-lg">
+        <section class="surface">
+            <dl class="detail-list">
+                <div><dt>Id</dt><dd>@Model.Id</dd></div>
+                <div><dt>Name</dt><dd>@Model.Name</dd></div>
+                <div><dt>Image path</dt><dd>@Model.Image</dd></div>
+                <div>
+                    <dt>Logo</dt>
+                    <dd><img src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], Model.Image)" alt="@Model.Name" style="display:block;height:48px;width:auto;max-width:200px;object-fit:contain" /></dd>
+                </div>
+            </dl>
+        </section>
+    </div>
+</main>

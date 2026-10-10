@@ -73,6 +73,9 @@ namespace CaspianBank_MVC_FinalProject.ViewComponents
         {
             if (string.IsNullOrWhiteSpace(iconUrl)) return string.Empty;
 
+            // Yalnız .svg ikonlar səhifəyə yerləşdirilir; yüklənmiş şəkillər (PNG, JPEG, WebP) <img> kimi göstərilir
+            if (!iconUrl.EndsWith(".svg", StringComparison.OrdinalIgnoreCase)) return string.Empty;
+
             try
             {
                 return ExtractSvg(await client.GetStringAsync(iconUrl));

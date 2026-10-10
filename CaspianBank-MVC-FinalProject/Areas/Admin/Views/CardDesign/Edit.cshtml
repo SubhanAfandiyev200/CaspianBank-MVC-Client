@@ -1,0 +1,71 @@
+@model CardDesignEditVM
+@{
+    ViewData["Title"] = "Card design · Edit";
+}
+<main id="content" class="page">
+    <a class="back" asp-area="Admin" asp-controller="CardDesign" asp-action="Index">All designs</a>
+
+    <header class="page-head">
+        <p class="eyebrow">UI · Cards</p>
+        <h1>Edit design</h1>
+        <p class="lede">Change the title, the order, whether it is shown on Home or the image. Leave the image as it is to keep the current one.</p>
+    </header>
+
+    @if (!string.IsNullOrEmpty(Model.CurrentImage))
+    {
+        <section class="surface narrow">
+            <p class="hint">How the card looks now</p>
+            <partial name="_CardPreview" model="new CardDesignPreviewVM { Title = Model.Title, Image = Model.CurrentImage, Large = true }" />
+        </section>
+    }
+
+    <form method="post" asp-area="Admin" asp-controller="CardDesign" asp-action="Edit" asp-route-id="@Model.Id" enctype="multipart/form-data" class="narrow stack-lg" novalidate>
+        <section class="surface form-stack">
+            <div asp-validation-summary="ModelOnly" class="field-error"></div>
+            <div class="field">
+                <label asp-for="Title">Title</label>
+                <input class="input" asp-for="Title" maxlength="50" placeholder="Design name" autocomplete="off" />
+                <span asp-validation-for="Title" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="DisplayOrder">Order</label>
+                <input class="input" asp-for="DisplayOrder" type="number" min="0" max="1000" />
+                <span asp-validation-for="DisplayOrder" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label class="check">
+                    <input asp-for="ShowOnHome" type="checkbox" />
+                    <span>Show on the Home page</span>
+                </label>
+            </div>
+            <div class="field">
+                <label asp-for="Image">Card image</label>
+                <div class="file-drop" data-file-drop>
+                    <input class="file-drop-input" asp-for="Image" type="file" accept="image/png,image/jpeg,image/webp" />
+                    <div class="file-drop-box">
+                        <span class="file-drop-preview" data-file-preview>
+                            @if (!string.IsNullOrEmpty(Model.CurrentImage))
+                            {
+                                <img src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], Model.CurrentImage)" alt="Current design" />
+                            }
+                            else
+                            {
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m0 0 4 4m-4-4L8 8"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+                            }
+                        </span>
+                        <span class="file-drop-text">
+                            <strong data-file-title>Current image</strong>
+                            <span data-file-hint>Click here or drag a new one in. PNG, JPEG or WebP, up to 2 MB.</span>
+                        </span>
+                    </div>
+                </div>
+                <span asp-validation-for="Image" class="field-error"></span>
+            </div>
+        </section>
+
+        <div class="rv-actions">
+            <a class="btn btn-secondary btn-cancel" asp-area="Admin" asp-controller="CardDesign" asp-action="Index">Cancel</a>
+            <button class="btn btn-primary" type="submit">Save changes</button>
+        </div>
+    </form>
+</main>

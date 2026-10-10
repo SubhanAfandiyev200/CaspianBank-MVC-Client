@@ -1,0 +1,41 @@
+@model SettingDetailVM
+@{
+    ViewData["Title"] = "Setting · Detail";
+}
+<main id="content" class="page">
+    <a class="back" asp-area="Admin" asp-controller="Setting" asp-action="Index">All settings</a>
+
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">UI · Site</p>
+            <h1>@SettingLabels.For(Model.Key)</h1>
+            <p class="lede">@SettingLabels.Hint(Model.Key)</p>
+        </div>
+        <span class="row-actions">
+            <a class="btn btn-secondary" asp-area="Admin" asp-controller="Setting" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
+            <a class="btn btn-back" asp-area="Admin" asp-controller="Setting" asp-action="Index">Go Back</a>
+        </span>
+    </header>
+
+    <div class="narrow stack-lg">
+        <section class="surface">
+            <dl class="detail-list">
+                <div><dt>Id</dt><dd>@Model.Id</dd></div>
+                <div><dt>Setting</dt><dd>@SettingLabels.For(Model.Key)</dd></div>
+                <div><dt>Key</dt><dd>@Model.Key</dd></div>
+                @if (SettingLabels.IsLogo(Model.Key))
+                {
+                    <div><dt>Image path</dt><dd>@Model.Value</dd></div>
+                    <div>
+                        <dt>Logo</dt>
+                        <dd><img src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], Model.Value)" alt="Logo" style="display:block;height:64px;width:auto;max-width:240px;object-fit:contain" /></dd>
+                    </div>
+                }
+                else
+                {
+                    <div><dt>Value</dt><dd>@Model.Value</dd></div>
+                }
+            </dl>
+        </section>
+    </div>
+</main>

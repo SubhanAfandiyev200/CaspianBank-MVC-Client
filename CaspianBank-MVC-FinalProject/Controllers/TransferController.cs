@@ -25,7 +25,10 @@ namespace CaspianBank_MVC_FinalProject.Controllers
         [HttpGet("")]
         public async Task<IActionResult> Index(int? from)
         {
-            var (model, unauthorized) = await LoadFormAsync(new TransferFormVM { FromCardId = from ?? 0 });
+            var (model, unauthorized) = await LoadFormAsync(new TransferFormVM
+            {
+                FromCardId = from ?? 0
+            });
             return unauthorized ? await SessionExpiredAsync() : View(model);
         }
 

@@ -16,7 +16,13 @@
                 <span class="service-icon" aria-hidden="true">
                     @if (!string.IsNullOrEmpty(item.IconSvg))
                     {
+                        @* Başlanğıc .svg ikonlar: rəngi mətnin rəngindən alsın deyə səhifəyə yerləşdirilir *@
                         @Html.Raw(item.IconSvg)
+                    }
+                    else if (!string.IsNullOrEmpty(item.Icon))
+                    {
+                        @* Adminin yüklədiyi şəkil ikon (PNG, JPEG, WebP) *@
+                        <img src="@item.Icon" alt="" />
                     }
                 </span>
                 <h3>@item.Title</h3>

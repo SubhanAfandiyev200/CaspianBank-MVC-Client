@@ -11,6 +11,7 @@
             </svg>
             <span>Caspian Bank</span>
         </a>
+        <a class="back" asp-controller="Account" asp-action="Welcome">← Use a different email</a>
         <h1>Verify your email</h1>
         <p class="lede">We sent a code to @Model.MaskedEmail.</p>
         @if (!string.IsNullOrEmpty(Model.DevCode))
@@ -40,7 +41,7 @@
         </form>
         <form class="hint mt-5" asp-controller="Account" asp-action="ResendOtp" method="post">
             <input type="hidden" name="email" value="@Model.Email" />
-            <button class="btn-link" type="submit" id="resend" data-wait="60" disabled>Resend code</button>
+            <button class="btn-link" type="submit" id="resend" data-wait="@Model.ResendWaitSeconds" disabled>Resend code</button>
         </form>
         <p class="auth-foot">
             <a asp-controller="Home" asp-action="Index" asp-fragment="contact">Contact us</a>
