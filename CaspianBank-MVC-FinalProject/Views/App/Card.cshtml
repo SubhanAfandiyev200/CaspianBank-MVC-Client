@@ -12,21 +12,6 @@
     string Money(decimal value) { return value.ToString("N2", inv) + " AZN"; }
     string Percent(decimal value) { return value.ToString("0.##", inv) + "%"; }
 
-    // Əməliyyatın növünə görə ikon
-    string Icon(TransactionUIVM t)
-    {
-        switch (t.Type)
-        {
-            case "TopUp":
-                return "<path d=\"M12 5v14M5 12h14\"/>";
-            case "TransferOut":
-                return "<path d=\"M7 17 17 7M9 7h8v8\"/>";
-            case "TransferIn":
-                return "<path d=\"M17 7 7 17M15 17H7V9\"/>";
-            default:
-                return "<path d=\"M6 4h12v16l-3-2-3 2-3-2-3 2zM9 9h6M9 13h4\"/>";
-        }
-    }
 }
 <main id="content" class="page cd-page">
     <a class="back" asp-action="Index">All cards</a>
@@ -134,25 +119,7 @@
                 <div>
                     @foreach (var t in Model.Transactions)
                     {
-                        <article class="activity">
-                            <div class="activity-icon @(t.IsIncome ? "is-in" : "is-out")">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">@Html.Raw(Icon(t))</svg>
-                            </div>
-                            <div>
-                                <div class="activity-desc">@t.Description</div>
-                                <div class="activity-meta">
-                                    @t.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)
-                                    @if (!string.IsNullOrEmpty(t.Note))
-                                    {
-                                        <span> · “@t.Note”</span>
-                                    }
-                                </div>
-                            </div>
-                            <div class="activity-amount">
-                                <div class="@(t.IsIncome ? "amount-in" : "amount-out") num">@(t.IsIncome ? "+" : "−")@t.Amount.ToString("N2", inv) AZN</div>
-                                <div class="activity-meta num">Balance @t.BalanceAfter.ToString("N2", inv)</div>
-                            </div>
-                        </article>
+                        <partial name="_ActivityRow" model="t" />
                     }
                 </div>
             }

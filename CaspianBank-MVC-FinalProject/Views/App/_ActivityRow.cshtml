@@ -1,0 +1,49 @@
+@model TransactionUIVM
+@using System.Globalization
+@*
+    Əməliyyat sətri: kart səhifəsində və Cards siyahısındakı "Recent activity" bunu istifadə edir.
+    CardLabel doludursa (bütün kartların siyahısı) tarixin yanında hansı kartın olduğu da göstərilir.
+*@
+@{
+    var inv = CultureInfo.InvariantCulture;
+    var showCard = !string.IsNullOrEmpty(Model.CardLabel);
+
+    // Əməliyyatın növünə görə ikon
+    string Icon(TransactionUIVM t)
+    {
+        switch (t.Type)
+        {
+            case "TopUp":
+                return "<path d=\"M12 5v14M5 12h14\"/>";
+            case "TransferOut":
+                return "<path d=\"M7 17 17 7M9 7h8v8\"/>";
+            case "TransferIn":
+                return "<path d=\"M17 7 7 17M15 17H7V9\"/>";
+            default:
+                return "<path d=\"M6 4h12v16l-3-2-3 2-3-2-3 2zM9 9h6M9 13h4\"/>";
+        }
+    }
+}
+<article class="activity">
+    <div class="activity-icon @(Model.IsIncome ? "is-in" : "is-out")">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">@Html.Raw(Icon(Model))</svg>
+    </div>
+    <div>
+        <div class="activity-desc">@Model.Description</div>
+        <div class="activity-meta">
+            @Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)
+            @if (showCard && !string.IsNullOrEmpty(Model.CardLabel))
+            {
+                <span> · @Model.CardLabel</span>
+            }
+            @if (!string.IsNullOrEmpty(Model.Note))
+            {
+                <span> · “@Model.Note”</span>
+            }
+        </div>
+    </div>
+    <div class="activity-amount">
+        <div class="@(Model.IsIncome ? "amount-in" : "amount-out") num">@(Model.IsIncome ? "+" : "−")@Model.Amount.ToString("N2", inv) AZN</div>
+        <div class="activity-meta num">Balance @Model.BalanceAfter.ToString("N2", inv)</div>
+    </div>
+</article>

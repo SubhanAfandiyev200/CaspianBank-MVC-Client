@@ -28,6 +28,13 @@ namespace CaspianBank_MVC_FinalProject.Controllers
                 ApiUnavailable = cards is null
             };
             if (cards is not null) model.Cards = Absolutize(cards);
+
+            // Bütün kartların son əməliyyatları (alınmasa siyahı yenə də göstərilir, "Recent activity" boş qalır)
+            if (cards is not null && cards.Count > 0)
+            {
+                var (activity, activityStatus) = await GetAsync<List<TransactionUIVM>>("api/cards/activity?take=8");
+                model.Activity = activity ?? new List<TransactionUIVM>();
+            }
             return View(model);
         }
 

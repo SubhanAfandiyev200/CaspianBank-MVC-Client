@@ -57,7 +57,19 @@
             <div class="spread">
                 <h2>Recent activity</h2>
             </div>
-            <div class="empty"><h3>No activity yet</h3><p>Transactions on your cards will show up here.</p></div>
+            @if (Model.Activity.Count == 0)
+            {
+                <div class="empty"><h3>No activity yet</h3><p>Transactions on your cards will show up here.</p></div>
+            }
+            else
+            {
+                <div>
+                    @foreach (var t in Model.Activity)
+                    {
+                        <partial name="_ActivityRow" model="t" />
+                    }
+                </div>
+            }
         </section>
     }
 </main>
