@@ -3352,3 +3352,31 @@ body.body-admin .site-footer-inner {
 
 .citizen-info strong { font-size: 1.125rem; }
 .citizen-info span { color: var(--color-text-secondary); font-size: var(--fs-sm); }
+
+/* Header-dəki istifadəçi (profilə aparır): şəkil varsa ikonun yerinə dairəvi ağ-qara şəkil */
+a.header-user { text-decoration: none; transition: opacity 0.2s ease; }
+a.header-user:hover { opacity: 0.85; }
+a.header-user:focus-visible { outline: 2px solid var(--color-lime); outline-offset: 3px; border-radius: 999px; }
+.header-user-icon { position: relative; overflow: hidden; }
+.header-user-photo {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  filter: grayscale(1) contrast(1.05);
+}
+
+/* Profil səhifəsi */
+.profile-card { display: flex; align-items: flex-start; gap: 28px; }
+.profile-photo { width: 160px; height: 160px; border-radius: 16px; }
+.profile-body { display: grid; gap: 14px; min-width: 0; flex: 1; }
+.profile-body h2 { margin: 0; }
+.profile-list { display: grid; gap: 0; margin: 0; }
+.profile-list > div {
+  display: grid; grid-template-columns: 140px 1fr; gap: 12px; padding: 12px 0;
+  border-top: 1px solid var(--color-border);
+}
+.profile-list dt { color: var(--color-text-secondary); font-size: var(--fs-sm); }
+.profile-list dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+@media (max-width: 640px) {
+  .profile-card { flex-direction: column; align-items: center; text-align: center; }
+  .profile-body { width: 100%; text-align: left; }
+  .profile-list > div { grid-template-columns: 110px 1fr; }
+}

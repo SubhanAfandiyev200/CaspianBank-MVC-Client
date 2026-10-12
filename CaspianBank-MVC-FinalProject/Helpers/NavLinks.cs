@@ -24,6 +24,14 @@ namespace CaspianBank_MVC_FinalProject.Helpers
             return isStaff ? RoleRedirect.AdminHome : App;
         }
 
+        public const string Profile = "/App/Profile";
+
+        // Header-dəki şəkil və ad: müştəri üçün profil səhifəsi, işçi üçün admin paneli
+        public static string UserLink(bool isStaff)
+        {
+            return isStaff ? RoleRedirect.AdminHome : Profile;
+        }
+
         // Qeydiyyatdan keçmək / kart açmaq düymələri
         // Login olmayanlar üçün: birbaşa kimlik formu. Login olanın artıq hesabı var, ona kart əlavə etmək təklif olunur
         public static string OpenAccount(bool signedIn) => signedIn ? AddCard : Register;
