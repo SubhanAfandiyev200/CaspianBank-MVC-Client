@@ -2,6 +2,7 @@
 @using System.Globalization
 @{
     Layout = "_AppLayout";
+    ViewData["Title"] = "Card details";
     var inv = CultureInfo.InvariantCulture;
     var card = Model.Card;
     var blockError = TempData["BlockError"] as string;

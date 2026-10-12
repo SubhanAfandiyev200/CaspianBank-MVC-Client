@@ -1,6 +1,7 @@
 @model AppIndexVM
 @{
     Layout = "_AppLayout";
+    ViewData["Title"] = "Cards";
 
     // Ad claim-də tam adla saxlanılır (Name Surname): salamlama üçün ilk söz
     var fullName = User.Identity?.Name ?? string.Empty;

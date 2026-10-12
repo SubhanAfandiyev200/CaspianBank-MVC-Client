@@ -2,6 +2,7 @@
 @using System.Globalization
 @{
     Layout = "_AppLayout";
+    ViewData["Title"] = "Add a card";
     var inv = CultureInfo.InvariantCulture;
 
     string Money(decimal value) => value.ToString("N2", inv) + " AZN";
