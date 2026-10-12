@@ -73,12 +73,12 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             return View(model);
         }
 
-        // İlk giriş: FİN daxil edilir, Standard + Cashback pulsuz açılır
+        // İlk kartlar qeydiyyatda onsuz da açılır; bu yalnız o addım alınmayıbsa təkrar cəhd üçündür (Standard + Cashback pulsuz)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateFirstCards(string? fin)
+        public async Task<IActionResult> CreateFirstCards()
         {
-            var (success, errors, status) = await PostAsync("api/cards/initial", new { fin = fin?.Trim() ?? string.Empty });
+            var (success, errors, status) = await PostAsync("api/cards/initial", new { });
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
             if (!success)

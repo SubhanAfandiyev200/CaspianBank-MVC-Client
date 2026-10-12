@@ -11,7 +11,7 @@
             </svg>
             <span>Caspian Bank</span>
         </a>
-        <a class="back" asp-controller="Account" asp-action="Welcome">← Use a different email</a>
+        <a class="back" asp-controller="Account" asp-action="RegisterEmail">← Use a different email</a>
         <h1>Verify your email</h1>
         <p class="lede">We sent a code to @Model.MaskedEmail.</p>
         @if (!string.IsNullOrEmpty(Model.DevCode))

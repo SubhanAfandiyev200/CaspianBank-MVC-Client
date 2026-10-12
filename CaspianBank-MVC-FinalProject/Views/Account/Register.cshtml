@@ -1,7 +1,10 @@
-﻿@model RegisterVM
+@model IdentityVM
 @{
     Layout = "_AuthLayout";
+    ViewData["Title"] = "Open an account";
 }
+@* Qeydiyyat, 1-ci addım ("Open account" birbaşa bura gətirir): vətəndaş dövlət reyestrində FİN, vəsiqə nömrəsi, ad və soyad ilə yoxlanılır.
+   Uyğun gəlsə "Bu sizsiniz?" addımına, sonra emailə kod göndərilməsinə keçir; uyğun gəlməsə "tapılmadı" deyir. *@
 <main class="auth-shell">
     <section class="auth-card auth-wide">
         <a class="brand" asp-controller="Home" asp-action="Index">
@@ -11,47 +14,32 @@
             </svg>
             <span>Caspian Bank</span>
         </a>
-        <a class="back" asp-controller="Account" asp-action="Welcome">← Use a different email</a>
-        <h1>Create your account</h1>
-        <p class="lede">A few details and you can open your first cards.</p>
-        <form id="register-form" class="form-stack mt-5" asp-controller="Account" asp-action="Register" method="post" novalidate>
-            <input type="hidden" asp-for="VerificationToken" />
+        <a class="back" asp-controller="Home" asp-action="Index">← Back to home</a>
+        <h1>Open an account</h1>
+        <p class="lede">Enter your details exactly as they appear on your ID card. We check them against the state registry.</p>
+        <form id="identity-form" class="form-stack mt-5" asp-controller="Account" asp-action="Register" method="post" novalidate>
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
-            <div class="field">
-                <label for="email">Email</label>
-                <input class="input" id="email" asp-for="Email" type="email" autocomplete="email" readonly />
-            </div>
-            <div class="field">
-                <label for="phone">Phone number</label>
-                <div class="phone-wrap">
-                    <span class="phone-prefix">+994</span>
-                    <input class="phone-input" id="phone" asp-for="PhoneNumber" type="tel" inputmode="numeric" autocomplete="tel" data-phone placeholder="12 345 67 89" />
+            <div class="form-row">
+                <div class="field">
+                    <label for="fin">FIN code</label>
+                    <input class="input" id="fin" asp-for="Fin" maxlength="7" autocapitalize="characters" spellcheck="false" autocomplete="off" placeholder="7 characters" />
+                </div>
+                <div class="field">
+                    <label for="idcard">ID card number</label>
+                    <input class="input" id="idcard" asp-for="IdCardNumber" maxlength="11" autocapitalize="characters" spellcheck="false" autocomplete="off" placeholder="AZE12345678" />
                 </div>
             </div>
             <div class="form-row">
                 <div class="field">
                     <label for="first-name">First name</label>
-                    <input class="input" id="first-name" asp-for="Name" autocomplete="given-name" />
+                    <input class="input" id="first-name" asp-for="Name" autocomplete="off" />
                 </div>
                 <div class="field">
                     <label for="last-name">Last name</label>
-                    <input class="input" id="last-name" asp-for="Surname" autocomplete="family-name" />
+                    <input class="input" id="last-name" asp-for="Surname" autocomplete="off" />
                 </div>
             </div>
-            <div class="field">
-                <label for="dob">Date of birth</label>
-                <input class="input" id="dob" asp-for="BirthDay" type="date" autocomplete="bday" min="1920-01-01" max="@DateTime.Today.ToString("yyyy-MM-dd")" />
-            </div>
-            <div class="field">
-                <label for="password">Password</label>
-                <input class="input" id="password" asp-for="Password" type="password" data-password autocomplete="new-password" />
-                <p class="field-hint">At least 6 characters, with upper and lower case letters, a number and a symbol.</p>
-            </div>
-            <div class="field">
-                <label for="confirm">Confirm password</label>
-                <input class="input" id="confirm" asp-for="ConfirmPassword" type="password" data-password autocomplete="new-password" />
-            </div>
-            <button class="btn btn-primary btn-block" type="submit">Create account</button>
+            <button class="btn btn-primary btn-block" type="submit">Continue</button>
             <div class="auth-links auth-links-center">
                 <a asp-controller="Account" asp-action="Login" data-carry-email>Already have an account? Log in</a>
             </div>
@@ -63,6 +51,5 @@
     </section>
 </main>
 @section Scripts {
-    <script src="~/js/wheel-date.js"></script>
     <script src="~/js/auth-fields.js"></script>
 }

@@ -1,0 +1,35 @@
+@model WelcomeVM
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Your email";
+}
+@* Qeydiyyat: kimlik təsdiqləndikdən sonra email soruşulur (Welcome-dən gəlməyənlər üçün). Email OTP kodu ilə təsdiqlənir. *@
+<main class="auth-shell">
+    <section class="auth-card">
+        <a class="brand" asp-controller="Home" asp-action="Index">
+            <svg class="brand-mark" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+                <rect width="32" height="32" rx="8" fill="#1F8A4C" />
+                <path d="M22 11.2a7.2 7.2 0 1 0 0 9.6" fill="none" stroke="#E4D2A8" stroke-width="2.4" stroke-linecap="round" />
+            </svg>
+            <span>Caspian Bank</span>
+        </a>
+        <a class="back" asp-controller="Account" asp-action="Register">← Back</a>
+        <h1>Your email</h1>
+        <p class="lede">We send a 6-digit code to this address to confirm it is yours. You will use it to log in.</p>
+        <form class="form-stack mt-5" asp-controller="Account" asp-action="RegisterEmail" method="post" novalidate>
+            <div asp-validation-summary="ModelOnly" class="field-error"></div>
+            <div class="field">
+                <label for="email">Email</label>
+                <input class="input" id="email" asp-for="Email" type="email" autocomplete="email" placeholder="name@email.com" />
+            </div>
+            <button class="btn btn-primary btn-block" type="submit">Send code</button>
+        </form>
+        <p class="auth-foot">
+            <a asp-controller="Home" asp-action="Index" asp-fragment="contact">Contact us</a>
+            <span>Caspian Bank · Baku</span>
+        </p>
+    </section>
+</main>
+@section Scripts {
+    <script src="~/js/auth-fields.js"></script>
+}

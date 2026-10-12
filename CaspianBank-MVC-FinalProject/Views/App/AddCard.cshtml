@@ -34,7 +34,7 @@
         <h1>@(Model.FirstTime ? "Your first cards" : "Choose a tier")</h1>
         @if (Model.FirstTime)
         {
-            <p class="lede">We'll open a Standard card for everyday spending and a Cashback card that returns a portion of eligible purchases. Both are free. Confirm your identity to continue.</p>
+            <p class="lede">We'll open a Standard card for everyday spending and a Cashback card that returns a portion of eligible purchases. Both are free.</p>
         }
         else if (!Model.ApiUnavailable)
         {
@@ -62,11 +62,6 @@
             <div class="field">
                 <label for="holder">Cardholder</label>
                 <input class="input" id="holder" value="@Model.HolderName" readonly />
-            </div>
-            <div class="field">
-                <label for="fin">FIN / ID code</label>
-                <input class="input" id="fin" name="fin" maxlength="7" autocapitalize="characters" spellcheck="false"
-                       autocomplete="off" placeholder="7 characters" required />
             </div>
             <button class="btn btn-primary" type="submit">Create my cards</button>
         </form>

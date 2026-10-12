@@ -7,6 +7,7 @@ namespace CaspianBank_MVC_FinalProject.Helpers
     public static class NavLinks
     {
         public const string Welcome = "/Account/Welcome";
+        public const string Register = "/Account/Register";     // "Open account": birbaşa kimlik formu (FİN, vəsiqə, ad, soyad)
         public const string Contact = "/#contact";
 
         // TODO: səhifələr yazılanda ünvanları dəyiş (AddCard artıq hazırdır)
@@ -24,7 +25,8 @@ namespace CaspianBank_MVC_FinalProject.Helpers
         }
 
         // Qeydiyyatdan keçmək / kart açmaq düymələri
-        public static string OpenAccount(bool signedIn) => signedIn ? AddCard : Welcome;
+        // Login olmayanlar üçün: birbaşa kimlik formu. Login olanın artıq hesabı var, ona kart əlavə etmək təklif olunur
+        public static string OpenAccount(bool signedIn) => signedIn ? AddCard : Register;
 
         // Giriş tələb edən səhifələr: login olmayıbsa əvvəl Welcome
         public static string Page(bool signedIn, string appUrl) => signedIn ? appUrl : Welcome;
@@ -35,10 +37,11 @@ namespace CaspianBank_MVC_FinalProject.Helpers
         // Bazadan gələn ButtonUrl (/Account/Welcome və /#contact) login vəziyyətinə görə dəyişir
         public static string FromDb(string? url, bool signedIn)
         {
-            if (!signedIn || string.IsNullOrWhiteSpace(url)) return url ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(url)) return url ?? string.Empty;
 
-            if (url.Equals(Welcome, StringComparison.OrdinalIgnoreCase)) return AddCard;
-            if (url.Equals(Contact, StringComparison.OrdinalIgnoreCase)) return Support;
+            // Bazadakı "/Account/Welcome" düymələri "hesab aç" mənasındadır: login olmayan birbaşa kimlik formuna düşür
+            if (url.Equals(Welcome, StringComparison.OrdinalIgnoreCase)) return OpenAccount(signedIn);
+            if (signedIn && url.Equals(Contact, StringComparison.OrdinalIgnoreCase)) return Support;
             return url;
         }
 
