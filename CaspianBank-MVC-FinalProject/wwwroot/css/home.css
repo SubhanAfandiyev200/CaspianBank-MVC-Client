@@ -1405,3 +1405,6 @@ a.header-user:focus-visible { outline: 2px solid var(--lime); outline-offset: 3p
 .stats .ring-long .ring-figure { font-size: 23px; }
 .stats .ring-xlong .ring-figure { font-size: 17px; }
 .stat-money { color: var(--lime); font-weight: 700; white-space: nowrap; }
+
+/* Tünd yaşıl header-də loqo kvadratı itməsin: incə limon halqa */
+.site-header .logo img { border-radius: 8px; box-shadow: 0 0 0 1.5px rgba(214, 227, 107, 0.55); }

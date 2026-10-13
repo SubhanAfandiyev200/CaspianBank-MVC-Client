@@ -1,0 +1,16 @@
+@model SiteLogoUIVM
+@* Loqo və ad bazadan (Settings) gəlir. Loqo yoxdursa (və ya API işləmirsə) köhnə SVG işarə qalır. *@
+<a class="brand" href="@Url.Action(Model.Action, Model.Controller, new { area = Model.Area })">
+    @if (!string.IsNullOrEmpty(Model.Logo))
+    {
+        <img class="brand-logo" src="@Model.Logo" width="32" height="32" alt="" />
+    }
+    else
+    {
+        <svg class="brand-mark" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
+            <rect width="32" height="32" rx="8" fill="#1F8A4C" />
+            <path d="M22 11.2a7.2 7.2 0 1 0 0 9.6" fill="none" stroke="#E4D2A8" stroke-width="2.4" stroke-linecap="round" />
+        </svg>
+    }
+    <span>@Model.CompanyName</span>
+</a>

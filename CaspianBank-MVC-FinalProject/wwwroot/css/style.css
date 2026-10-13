@@ -3400,3 +3400,10 @@ a.header-user:focus-visible { outline: 2px solid var(--color-lime); outline-offs
   .profile-body { width: 100%; text-align: left; }
   .profile-list > div { grid-template-columns: 110px 1fr; }
 }
+
+/* Bazadan (Settings) gələn loqo şəkli: köhnə SVG işarə ilə eyni ölçüdə */
+.brand-logo { display: block; width: 32px; height: 32px; flex: none; border-radius: 8px; object-fit: contain; }
+
+
+/* Müştəri və admin panelinin tünd yaşıl header-ində loqo kvadratı itməsin: incə limon halqa */
+.topnav .brand-logo { box-shadow: 0 0 0 1.5px rgba(214, 227, 107, 0.55); }
