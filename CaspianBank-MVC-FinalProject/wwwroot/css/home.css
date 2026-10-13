@@ -1388,3 +1388,20 @@ a.header-user:focus-visible { outline: 2px solid var(--lime); outline-offset: 3p
   object-fit: cover;
   filter: grayscale(1) contrast(1.05);
 }
+
+/* Trust indicators: canlı rəqəmlər. Rəqəm böyük və qalın, başlıq + mətn bir blokda, AZN məbləği vurğulanır */
+.stats .stat { grid-template-columns: 118px 1fr; gap: 0 20px; }
+.stats .ring { grid-row: auto; }
+.stat-text { display: grid; gap: 6px; align-content: center; }
+.stat-text h3 { margin: 0; }
+.stat .stat-text p { margin: 0; }
+.stats .ring-figure {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.stats .ring-long .ring-figure { font-size: 23px; }
+.stats .ring-xlong .ring-figure { font-size: 17px; }
+.stat-money { color: var(--lime); font-weight: 700; white-space: nowrap; }

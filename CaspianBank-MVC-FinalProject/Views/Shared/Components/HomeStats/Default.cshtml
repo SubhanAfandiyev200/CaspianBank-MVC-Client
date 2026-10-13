@@ -1,0 +1,91 @@
+@model HomeStatsUIVM
+@using System.Globalization
+@{
+    var inv = CultureInfo.InvariantCulture;
+
+    // Rəqəm uzun olanda dairənin içinə sığsın deyə şrift kiçilir (1,000 və yuxarı: ring-long, 100,000 və yuxarı: ring-xlong)
+    string Size(int value)
+    {
+        if (value >= 100000)
+        {
+            return "ring-xlong";
+        }
+        if (value >= 1000)
+        {
+            return "ring-long";
+        }
+        return string.Empty;
+    }
+}
+@* "Trust indicators": rəqəmlər uydurma deyil, bazadan canlı gəlir (müştərilər, köçürmələr, kartlar).
+   Dairənin içindəki rəqəm say animasiyası ilə artır; dairə dekorativdir (həmişə tam dolur). *@
+<section class="stats" aria-labelledby="stats-title">
+    <div class="section-intro stats-intro split">
+        <div>
+            <p class="eyebrow"><span aria-hidden="true">✱ </span><span data-ui="statsEyebrow">Trust indicators</span></p>
+            <h2 id="stats-title" data-ui="statsTitle">Driving the future of digital finance</h2>
+        </div>
+        <p class="lede" data-ui="statsLede">
+            Real figures from the bank, counted live from our own accounts, cards and transfers.
+        </p>
+    </div>
+    <div class="stat-row">
+        <article class="stat">
+            <div class="ring @Size(Model.CustomerCount)" data-percent="100" data-count="@Model.CustomerCount.ToString(inv)" data-decimals="0">
+                <svg viewBox="0 0 160 160" aria-hidden="true">
+                    <circle class="ring-face" cx="80" cy="80" r="52" />
+                    <g transform="rotate(-90 80 80)">
+                        <circle class="ring-track" cx="80" cy="80" r="64" />
+                        <circle class="ring-value" cx="80" cy="80" r="64" />
+                    </g>
+                    <g class="ring-orbit">
+                        <circle cx="80" cy="16" r="4" />
+                    </g>
+                </svg>
+                <p class="ring-figure"><span class="ring-num">0</span></p>
+            </div>
+            <div class="stat-text">
+                <h3>Customers</h3>
+                <p>People who have opened a Caspian account.</p>
+            </div>
+        </article>
+        <article class="stat">
+            <div class="ring @Size(Model.TransferCount)" data-percent="100" data-count="@Model.TransferCount.ToString(inv)" data-decimals="0">
+                <svg viewBox="0 0 160 160" aria-hidden="true">
+                    <circle class="ring-face" cx="80" cy="80" r="52" />
+                    <g transform="rotate(-90 80 80)">
+                        <circle class="ring-track" cx="80" cy="80" r="64" />
+                        <circle class="ring-value" cx="80" cy="80" r="64" />
+                    </g>
+                    <g class="ring-orbit">
+                        <circle cx="80" cy="16" r="4" />
+                    </g>
+                </svg>
+                <p class="ring-figure"><span class="ring-num">0</span></p>
+            </div>
+            <div class="stat-text">
+                <h3>Transfers</h3>
+                <p>Card transfers completed, moving <strong class="stat-money">@Model.TransferVolume.ToString("N2", inv) AZN</strong> in total.</p>
+            </div>
+        </article>
+        <article class="stat">
+            <div class="ring @Size(Model.CardCount)" data-percent="100" data-count="@Model.CardCount.ToString(inv)" data-decimals="0">
+                <svg viewBox="0 0 160 160" aria-hidden="true">
+                    <circle class="ring-face" cx="80" cy="80" r="52" />
+                    <g transform="rotate(-90 80 80)">
+                        <circle class="ring-track" cx="80" cy="80" r="64" />
+                        <circle class="ring-value" cx="80" cy="80" r="64" />
+                    </g>
+                    <g class="ring-orbit">
+                        <circle cx="80" cy="16" r="4" />
+                    </g>
+                </svg>
+                <p class="ring-figure"><span class="ring-num">0</span></p>
+            </div>
+            <div class="stat-text">
+                <h3>Cards issued</h3>
+                <p>Standard, Silver, Gold and Cashback cards opened in AZN.</p>
+            </div>
+        </article>
+    </div>
+</section>
