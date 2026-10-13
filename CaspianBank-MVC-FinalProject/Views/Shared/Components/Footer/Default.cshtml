@@ -38,8 +38,8 @@
                 <p>Personal and business banking from one desk at @Model.Address.</p>
                 @if (!signedIn)
                 {
-                    @* Email yazıb davam et: Welcome səhifəsinin eyni axını (mövcuddursa Login, yenidirsə qeydiyyat) *@
-                    <form class="footer-form" asp-controller="Account" asp-action="Welcome" method="post">
+                    @* Email yazıb davam et: email sistemdə varsa Login, yenidirsə qeydiyyat (Account/Start) *@
+                    <form class="footer-form" asp-controller="Account" asp-action="Start" method="post">
                         <label class="sr-only" for="footer-email">Your email</label>
                         <input id="footer-email" name="Email" type="email" autocomplete="email" placeholder="Enter your email to get started" required />
                         <button class="foot-go" type="submit" aria-label="Continue">

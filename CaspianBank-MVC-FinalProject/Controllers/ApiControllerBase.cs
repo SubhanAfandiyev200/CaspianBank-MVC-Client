@@ -209,7 +209,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
         protected async Task<IActionResult> SessionExpiredAsync()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Welcome", "Account");
+            return RedirectToAction("Login", "Account");
         }
     }
 }

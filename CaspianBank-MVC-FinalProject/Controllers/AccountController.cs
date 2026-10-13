@@ -21,30 +21,24 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             _configuration = configuration;
         }
 
+        // Köhnə "/Account/Welcome" ünvanı (bookmark, köhnə link): artıq ayrıca səhifə yoxdur, giriş səhifəsinə yönləndirilir
         [HttpGet]
         public IActionResult Welcome()
         {
-            if (User.Identity?.IsAuthenticated == true)
-            {
-                return LocalRedirect(RoleRedirect.HomeUrl(User.FindAll(ClaimTypes.Role).Select(claim => claim.Value)));
-            }
-
-            // Geri düyməsi ilə qayıdanda yazılan email yenidən dolu gəlsin
-            return View(new WelcomeVM
-            {
-                Email = TempData.Peek("AuthEmail") as string ?? string.Empty
-            });
+            return RedirectToAction(nameof(Login));
         }
 
+        // Footer-dakı "email yaz və davam et" formu: email sistemdə varsa Login-ə (email hazır dolu gəlir),
+        // yoxdursa qeydiyyata (kimlik formu) aparır. Ayrıca səhifəsi yoxdur: xəta olarsa Login-də mesaj göstərilir
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Welcome(WelcomeVM model)
+        public async Task<IActionResult> Start(string? email)
         {
-            var email = model.Email?.Trim() ?? string.Empty;
+            email = email?.Trim() ?? string.Empty;
             if (email.Length == 0)
             {
-                ModelState.AddModelError(string.Empty, "Enter your email.");
-                return View(model);
+                TempData["Info"] = "Enter your email.";
+                return RedirectToAction(nameof(Login));
             }
 
             try
@@ -54,21 +48,17 @@ namespace CaspianBank_MVC_FinalProject.Controllers
 
                 if (response.StatusCode == HttpStatusCode.TooManyRequests)
                 {
-                    ModelState.AddModelError(string.Empty, "Too many attempts. Please wait a minute and try again.");
-                    return View(model);
+                    TempData["Info"] = "Too many attempts. Please wait a minute and try again.";
+                    return RedirectToAction(nameof(Login));
                 }
 
                 var result = await ReadJsonAsync<CheckEmailResponseVM>(response);
                 if (!response.IsSuccessStatusCode || result is null || !result.IsSuccess)
                 {
-                    var errors = result?.Errors is { Length: > 0 }
-                        ? result.Errors
-                        : new[] { "Could not check the email. Please try again." };
-
-                    foreach (var error in errors)
-                        ModelState.AddModelError(string.Empty, error);
-
-                    return View(model);
+                    TempData["Info"] = result?.Errors is { Length: > 0 }
+                        ? result.Errors[0]
+                        : "Could not check the email. Please try again.";
+                    return RedirectToAction(nameof(Login));
                 }
 
                 // Email növbəti səhifədə hazır dolsun (URL-ə yazılmır)
@@ -83,8 +73,8 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
             catch (HttpRequestException)
             {
-                ModelState.AddModelError(string.Empty, "The service is unavailable right now. Please try again later.");
-                return View(model);
+                TempData["Info"] = "The service is unavailable right now. Please try again later.";
+                return RedirectToAction(nameof(Login));
             }
         }
 
@@ -93,7 +83,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
         {
             var email = TempData.Peek("AuthEmail") as string;
             if (string.IsNullOrEmpty(email))
-                return RedirectToAction(nameof(Welcome));
+                return RedirectToAction(nameof(Register));
 
             return View(new VerifyOtpVM
             {
@@ -162,7 +152,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
         public async Task<IActionResult> ResendOtp(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
-                return RedirectToAction(nameof(Welcome));
+                return RedirectToAction(nameof(Register));
 
             email = email.Trim();
             TempData["AuthEmail"] = email;
@@ -324,7 +314,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
         // Qeydiyyat kimlikdən başlayır, "Open account" düyməsi birbaşa buraya gətirir (login olmayanlar üçün):
         //   1) Register: FİN, vəsiqə nömrəsi, ad, soyad reyestrdə yoxlanılır (uyğun gəlməsə "tapılmadı")
         //   2) ConfirmIdentity: "Bu sizsiniz?" (şəkil, ad, soyadın baş hərfi, doğum ili)
-        //   3) RegisterEmail (Welcome-dən gəlibsə email artıq məlumdur, bu addım keçilir) və VerifyOtp: emailə 6 rəqəmli kod
+        //   3) RegisterEmail (footer-dakı email formundan gəlibsə email artıq məlumdur, bu addım keçilir) və VerifyOtp: emailə 6 rəqəmli kod
         //   4) CreateAccount: telefon + şifrə, hesab açılır, ilk kartlar avtomatik yaranır
         [HttpGet]
         public IActionResult Register()
@@ -409,7 +399,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             return View(BuildConfirmModel(fin, name));
         }
 
-        // "Yes, this is me": Welcome-dən gəlibsə email məlumdur və dərhal ona kod göndərilir, yoxsa əvvəl email soruşulur
+        // "Yes, this is me": footer formundan gəlibsə email məlumdur və dərhal ona kod göndərilir, yoxsa əvvəl email soruşulur
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ConfirmIdentityYes()
@@ -447,7 +437,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             if (TempData.Peek("RegConfirmed") is not "1")
                 return RedirectToAction(nameof(Register));
 
-            return View(new WelcomeVM
+            return View(new RegisterEmailVM
             {
                 Email = TempData.Peek("RegEmail") as string ?? string.Empty
             });
@@ -455,7 +445,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterEmail(WelcomeVM model)
+        public async Task<IActionResult> RegisterEmail(RegisterEmailVM model)
         {
             if (TempData.Peek("RegConfirmed") is not "1")
                 return RedirectToAction(nameof(Register));

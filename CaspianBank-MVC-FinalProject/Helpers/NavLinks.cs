@@ -1,12 +1,15 @@
 namespace CaspianBank_MVC_FinalProject.Helpers
 {
     // Home səhifəsindəki bütün düymə və linklərin hara getdiyi burada həll olunur.
-    //   Login olmayıb: qeydiyyat/giriş axınına (Welcome), dəstək üçün isə footer-ə (#contact)
+    //   Login olmayıb: giriş səhifəsinə (Login) və ya qeydiyyata (Register), dəstək üçün isə footer-ə (#contact)
     //   Login olub   : həmin işin öz səhifəsinə
     // Səhifələr MVC-yə köçürüləndə yalnız aşağıdakı ünvanlar dəyişdirilir.
     public static class NavLinks
     {
-        public const string Welcome = "/Account/Welcome";
+        public const string Login = "/Account/Login";
+
+        // Köhnə ayrıca "Welcome" səhifəsi silinib. Bazadakı düymələrdə bu ünvan hələ qala bilər ("hesab aç" mənasında), FromDb onu tanıyır
+        public const string LegacyWelcome = "/Account/Welcome";
         public const string Register = "/Account/Register";     // "Open account": birbaşa kimlik formu (FİN, vəsiqə, ad, soyad)
         public const string Contact = "/#contact";
 
@@ -36,19 +39,19 @@ namespace CaspianBank_MVC_FinalProject.Helpers
         // Login olmayanlar üçün: birbaşa kimlik formu. Login olanın artıq hesabı var, ona kart əlavə etmək təklif olunur
         public static string OpenAccount(bool signedIn) => signedIn ? AddCard : Register;
 
-        // Giriş tələb edən səhifələr: login olmayıbsa əvvəl Welcome
-        public static string Page(bool signedIn, string appUrl) => signedIn ? appUrl : Welcome;
+        // Giriş tələb edən səhifələr: login olmayıbsa giriş səhifəsi
+        public static string Page(bool signedIn, string appUrl) => signedIn ? appUrl : Login;
 
         // Dəstək: login olmayıbsa footer-dakı əlaqə hissəsi, olubsa tətbiqin dəstək səhifəsi
         public static string SupportLink(bool signedIn) => signedIn ? Support : Contact;
 
-        // Bazadan gələn ButtonUrl (/Account/Welcome və /#contact) login vəziyyətinə görə dəyişir
+        // Bazadan gələn ButtonUrl (/Account/Welcome (köhnə ad) və /#contact) login vəziyyətinə görə dəyişir
         public static string FromDb(string? url, bool signedIn)
         {
             if (string.IsNullOrWhiteSpace(url)) return url ?? string.Empty;
 
             // Bazadakı "/Account/Welcome" düymələri "hesab aç" mənasındadır: login olmayan birbaşa kimlik formuna düşür
-            if (url.Equals(Welcome, StringComparison.OrdinalIgnoreCase)) return OpenAccount(signedIn);
+            if (url.Equals(LegacyWelcome, StringComparison.OrdinalIgnoreCase)) return OpenAccount(signedIn);
             if (signedIn && url.Equals(Contact, StringComparison.OrdinalIgnoreCase)) return Support;
             return url;
         }

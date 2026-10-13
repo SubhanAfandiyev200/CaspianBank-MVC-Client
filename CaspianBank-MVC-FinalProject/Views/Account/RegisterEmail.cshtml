@@ -1,9 +1,9 @@
-@model WelcomeVM
+@model RegisterEmailVM
 @{
     Layout = "_AuthLayout";
     ViewData["Title"] = "Your email";
 }
-@* Qeydiyyat: kimlik təsdiqləndikdən sonra email soruşulur (Welcome-dən gəlməyənlər üçün). Email OTP kodu ilə təsdiqlənir. *@
+@* Qeydiyyat: kimlik təsdiqləndikdən sonra email soruşulur (footer-dakı email formundan gəlməyənlər üçün). Email OTP kodu ilə təsdiqlənir. *@
 <main class="auth-shell">
     <section class="auth-card">
         @await Component.InvokeAsync("SiteLogo")
