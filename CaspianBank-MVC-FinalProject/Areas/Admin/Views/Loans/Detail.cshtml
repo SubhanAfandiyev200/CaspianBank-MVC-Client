@@ -1,0 +1,396 @@
+@*
+    İşçinin kredit səhifəsi: müraciətçinin reyestr məlumatı, iş yerləri, başqa banklardakı kreditlər, qaydalara görə rəqəmlər, qərar.
+    Rədd səbəbi daxilidir: müştəri ümumi mətn görür. Bütün qaydalar və hesablamalar API-dədir.
+*@
+@model LoanReviewDetailVM
+@using System.Globalization
+@{
+    var loan = Model.Loan;
+    var who = Model.Applicant;
+    var rules = Model.Rules;
+    var totals = Model.ExternalTotals;
+    ViewData["Title"] = "Loan " + loan.ContractNumber;
+    var inv = CultureInfo.InvariantCulture;
+    var approveValue = Model.ApprovedAmountText ?? rules.SuggestedApproval.ToString("0.00", inv);
+}
+<main id="content" class="page">
+    <a class="back" asp-area="Admin" asp-controller="Loans" asp-action="Index">All loans</a>
+
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">Credit · @LoanUi.PurposeText(loan.Purpose)</p>
+            <h1>@loan.ContractNumber</h1>
+            <p class="lede">
+                <span class="badge @LoanUi.StatusBadge(loan.Status)">@LoanUi.StaffStatusText(loan.Status)</span>
+                @who.Name @who.Surname asked for <strong>@LoanUi.Money(loan.RequestedAmount)</strong> over @loan.TermMonths months.
+            </p>
+        </div>
+        <span class="row-actions">
+            <a class="btn btn-back" asp-area="Admin" asp-controller="Loans" asp-action="Index">Go Back</a>
+        </span>
+    </header>
+
+    @if (TempData["Success"] is string success)
+    {
+        <p class="flash flash-ok" role="status">@success</p>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <p class="flash flash-error" role="alert">@error</p>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <p class="flash flash-error" role="alert">@Model.Error</p>
+    }
+
+    <div class="stack-lg">
+        @* ---------- Müraciətçi ---------- *@
+        <section class="surface">
+            <h2>Applicant</h2>
+            @if (who.IsBlacklisted)
+            {
+                <p class="flash flash-error" role="alert">This citizen is on the bank's blacklist@(string.IsNullOrEmpty(who.BlacklistReason) ? "." : ": " + who.BlacklistReason)</p>
+            }
+            @if (who.AccountRestricted)
+            {
+                <p class="flash flash-error" role="alert">The customer's account is restricted.</p>
+            }
+            <div class="citizen-card">
+                <div class="citizen-photo">
+                    @if (!string.IsNullOrEmpty(who.PhotoUrl))
+                    {
+                        <img src="@who.PhotoUrl" alt="" onerror="this.remove()" />
+                    }
+                </div>
+                <div class="citizen-info">
+                    <strong>@who.Name @who.Surname@(string.IsNullOrEmpty(who.FatherName) ? "" : " " + who.FatherName)</strong>
+                    <span>FIN @(who.Fin ?? "—") · born @LoanUi.Date(who.BirthDate) (@who.Age years old)</span>
+                    <span>@(string.IsNullOrEmpty(who.ResidenceAddress) ? "No address on record" : who.ResidenceAddress)</span>
+                    <span>@(who.PhoneNumber ?? "No phone") · @(who.Email ?? "No email")</span>
+                </div>
+            </div>
+        </section>
+
+        @* ---------- Müraciət ---------- *@
+        <section class="surface">
+            <h2>Application</h2>
+            <dl class="detail-list">
+                <div><dt>Requested amount</dt><dd class="num">@LoanUi.Money(loan.RequestedAmount)</dd></div>
+                @if (loan.ApprovedAmount.HasValue)
+                {
+                    <div><dt>Approved amount</dt><dd class="num">@LoanUi.Money(loan.ApprovedAmount.Value)</dd></div>
+                }
+                <div><dt>Term</dt><dd>@loan.TermMonths months</dd></div>
+                <div><dt>Interest rate</dt><dd>@LoanUi.Percent(loan.AnnualInterestRate) a year</dd></div>
+                <div><dt>Monthly payment</dt><dd class="num">@LoanUi.Money(loan.MonthlyPayment) (for @LoanUi.Money(loan.ApprovedAmount ?? loan.RequestedAmount))</dd></div>
+                <div><dt>Purpose</dt><dd>@LoanUi.PurposeText(loan.Purpose)@(string.IsNullOrEmpty(loan.PurposeNote) ? "" : " · " + loan.PurposeNote)</dd></div>
+                <div><dt>Money goes to</dt><dd>@loan.TargetCardLabel</dd></div>
+                <div><dt>Submitted</dt><dd>@LoanUi.Date(loan.CreatedAt.ToLocalTime())</dd></div>
+                @if (Model.ReviewedAt.HasValue)
+                {
+                    <div><dt>Reviewed</dt><dd>@LoanUi.Date(Model.ReviewedAt.Value.ToLocalTime())@(string.IsNullOrEmpty(Model.ReviewedBy) ? "" : " by " + Model.ReviewedBy)</dd></div>
+                }
+                @if (!string.IsNullOrEmpty(Model.RejectReason))
+                {
+                    <div><dt>Reject reason</dt><dd>@Model.RejectReason <span class="hint">(internal, the customer does not see it)</span></dd></div>
+                }
+            </dl>
+        </section>
+
+        @* ---------- Qaydalara görə rəqəmlər ---------- *@
+        <section class="surface">
+            <h2>What the rules say</h2>
+            <p class="hint">These numbers help the decision. You can approve a different amount.</p>
+
+            @if (rules.Warnings.Count > 0)
+            {
+                <ul class="note-list">
+                    @foreach (var warning in rules.Warnings)
+                    {
+                        <li class="flash flash-error">@warning</li>
+                    }
+                </ul>
+            }
+
+            <div class="stat-grid cols-3">
+                <div class="stat"><div class="stat-label">Current income</div><div class="stat-value">@LoanUi.Money(rules.CurrentIncome)</div></div>
+                <div class="stat"><div class="stat-label">Delay factor</div><div class="stat-value">@(rules.DelayMultiplier) × salary</div><p class="hint">@totals.TotalDelays delay@(totals.TotalDelays == 1 ? "" : "s") at other banks</p></div>
+                <div class="stat"><div class="stat-label">Max by income</div><div class="stat-value">@LoanUi.Money(rules.MaxByIncome)</div></div>
+            </div>
+            <div class="stat-grid cols-3">
+                <div class="stat"><div class="stat-label">Max by payment limit</div><div class="stat-value">@(rules.MaxByPaymentLimit.HasValue ? LoanUi.Money(rules.MaxByPaymentLimit.Value) : "—")</div>@if (rules.PaymentLimitPercent.HasValue){<p class="hint">payments up to @LoanUi.Percent(rules.PaymentLimitPercent.Value) of income</p>}</div>
+                <div class="stat is-strong"><div class="stat-label">Suggested maximum</div><div class="stat-value">@LoanUi.Money(rules.SuggestedMax)</div></div>
+                <div class="stat"><div class="stat-label">Payments vs income</div><div class="stat-value">@LoanUi.Percent(rules.PaymentToIncomePercent)</div><p class="hint">with this loan (existing payments @LoanUi.Money(rules.ExistingMonthlyPayments) + @LoanUi.Money(rules.RequestedMonthlyPayment))</p></div>
+            </div>
+            <p class="hint">Open Caspian loans: @rules.ActiveLoanCount of @rules.MaxActiveLoans allowed. Amounts allowed: @LoanUi.Money(rules.MinAmount) to @LoanUi.Money(rules.MaxAmount).</p>
+        </section>
+
+        @* ---------- Qərar ---------- *@
+        @if (Model.CanDecide)
+        {
+            <div class="layout-2">
+                <form asp-area="Admin" asp-controller="Loans" asp-action="Approve" asp-route-id="@loan.Id" method="post" class="surface form-stack form-card">
+                    <h2>Approve</h2>
+                    <div class="field">
+                        <label for="approved-amount">Amount to approve (AZN)</label>
+                        <input class="input" id="approved-amount" name="approvedAmount" inputmode="decimal" autocomplete="off" value="@approveValue" />
+                        <p class="hint">Same as requested: the money goes to the customer's card right away. A smaller amount becomes an offer the customer has to accept.</p>
+                    </div>
+                    <div class="row-actions">
+                        <button type="submit" class="btn btn-primary"
+                                data-confirm-title="Approve this loan?"
+                                data-confirm-text="The amount in the field will be approved for @who.Name @who.Surname."
+                                data-confirm-yes="Approve">Approve</button>
+                        <button type="button" class="btn btn-secondary"
+                                onclick="document.getElementById('approved-amount').value=this.dataset.value"
+                                data-value="@rules.SuggestedApproval.ToString("0.00", inv)">Use suggested (@LoanUi.Money(rules.SuggestedApproval))</button>
+                    </div>
+                </form>
+
+                <form asp-area="Admin" asp-controller="Loans" asp-action="Reject" asp-route-id="@loan.Id" method="post" class="surface form-stack form-card">
+                    <h2>Reject</h2>
+                    <div class="field">
+                        <label for="reject-reason">Reason (internal)</label>
+                        <textarea class="textarea" id="reject-reason" name="reason" rows="4" maxlength="500">@Model.RejectReasonText</textarea>
+                        <p class="hint">The customer only sees "We can't approve this application right now".</p>
+                    </div>
+                    <div class="row-actions">
+                        <button type="submit" class="btn btn-danger"
+                                data-confirm-title="Reject this application?"
+                                data-confirm-text="The customer will be told the application was not approved."
+                                data-confirm-yes="Reject" data-confirm-danger="true">Reject</button>
+                    </div>
+                </form>
+            </div>
+        }
+
+        @* ---------- İş yerləri ---------- *@
+        <section class="surface surface-tight">
+            <div class="toolbar"><h2>Employment</h2></div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Workplace</th>
+                            <th>Position</th>
+                            <th class="num">Salary</th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Left because</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var job in Model.Employments)
+                        {
+                            <tr>
+                                <td>@job.Workplace @if (job.IsCurrent){<span class="badge badge-success">Current</span>}</td>
+                                <td>@job.Position</td>
+                                <td class="num">@LoanUi.Money(job.MonthlySalary)</td>
+                                <td>@LoanUi.Date(job.StartDate)</td>
+                                <td>@(job.EndDate.HasValue ? LoanUi.Date(job.EndDate.Value) : "—")</td>
+                                <td>@(string.IsNullOrEmpty(job.LeaveReason) ? "—" : job.LeaveReason)</td>
+                            </tr>
+                        }
+                        @if (Model.Employments.Count == 0)
+                        {
+                            <tr><td colspan="6">No employment on record.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        @* ---------- Başqa banklardakı kreditlər ---------- *@
+        <section class="surface surface-tight">
+            <div class="toolbar">
+                <h2>Loans at other banks</h2>
+                <p class="hint">@totals.OpenCount open · borrowed @LoanUi.Money(totals.TotalBorrowed) · paid @LoanUi.Money(totals.TotalPaid) · still owed @LoanUi.Money(totals.TotalRemaining) · overdue @LoanUi.Money(totals.TotalOverdue) · @totals.TotalDelays delays · @totals.CourtCount in court · monthly payments @LoanUi.Money(totals.OpenMonthlyPayments)</p>
+            </div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Bank</th>
+                            <th>Purpose</th>
+                            <th class="num">Borrowed</th>
+                            <th class="num">Paid</th>
+                            <th class="num">Left</th>
+                            <th class="num">Monthly</th>
+                            <th>Period</th>
+                            <th>Delays</th>
+                            <th>State</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var other in Model.ExternalLoans)
+                        {
+                            <tr>
+                                <td>@other.Bank</td>
+                                <td>@LoanUi.PurposeText(other.Purpose)</td>
+                                <td class="num">@LoanUi.Money(other.BorrowedAmount)</td>
+                                <td class="num">@LoanUi.Money(other.PaidAmount)</td>
+                                <td class="num">@LoanUi.Money(other.RemainingAmount)</td>
+                                <td class="num">@LoanUi.Money(other.MonthlyPayment)</td>
+                                <td>@LoanUi.Date(other.StartDate) – @(other.EndDate.HasValue ? LoanUi.Date(other.EndDate.Value) : "open")</td>
+                                <td>
+                                    @if (other.DelayCount == 0)
+                                    {
+                                        <span class="hint">none</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@other.DelayCount (longest @other.MaxDelayDays days)</span>
+                                    }
+                                    @if (other.OverdueAmount > 0)
+                                    {
+                                        <div class="hint">overdue @LoanUi.Money(other.OverdueAmount)</div>
+                                    }
+                                </td>
+                                <td>
+                                    @if (other.WentToCourt)
+                                    {
+                                        <span class="badge badge-danger">Court</span>
+                                    }
+                                    else if (other.IsClosed)
+                                    {
+                                        <span class="badge badge-neutral">Closed</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge badge-success">Open</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        @if (Model.ExternalLoans.Count == 0)
+                        {
+                            <tr><td colspan="9">No loans at other banks on record.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        @* ---------- Caspian-dakı digər kreditlər ---------- *@
+        <section class="surface surface-tight">
+            <div class="toolbar"><h2>Other Caspian loans</h2></div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Loan</th>
+                            <th>Status</th>
+                            <th class="num">Amount</th>
+                            <th class="num">Still to repay</th>
+                            <th class="num">Monthly</th>
+                            <th>Overdue</th>
+                            <th class="actions"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var other in Model.CaspianLoans)
+                        {
+                            <tr>
+                                <td>@other.ContractNumber<div class="hint">@LoanUi.Date(other.CreatedAt.ToLocalTime())</div></td>
+                                <td>
+                                    <span class="badge @LoanUi.StatusBadge(other.Status)">@LoanUi.StaffStatusText(other.Status)</span>
+                                    @if (other.ClosedEarly)
+                                    {
+                                        <div class="hint">paid off early</div>
+                                    }
+                                </td>
+                                <td class="num">@LoanUi.Money(other.Amount)</td>
+                                <td class="num">@LoanUi.Money(other.OutstandingPrincipal)</td>
+                                <td class="num">@LoanUi.Money(other.MonthlyPayment)</td>
+                                <td>
+                                    @if (other.OverdueInstallments > 0)
+                                    {
+                                        <span class="badge badge-danger">@other.OverdueInstallments late · @LoanUi.Money(other.OverdueAmount)</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="hint">none</span>
+                                    }
+                                </td>
+                                <td class="actions"><a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Loans" asp-action="Detail" asp-route-id="@other.Id">Detail</a></td>
+                            </tr>
+                        }
+                        @if (Model.CaspianLoans.Count == 0)
+                        {
+                            <tr><td colspan="7">No other Caspian loans.</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        @* ---------- Qrafik və ödənişlər (kredit verilibsə) ---------- *@
+        @if (loan.Installments.Count > 0)
+        {
+            <section class="surface surface-tight">
+                <div class="toolbar"><h2>Payment schedule</h2></div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Due date</th>
+                                <th class="num">Principal</th>
+                                <th class="num">Interest</th>
+                                <th class="num">Payment</th>
+                                <th class="num">Penalty</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in loan.Installments)
+                            {
+                                <tr>
+                                    <td>@item.Number</td>
+                                    <td>@LoanUi.Date(item.DueDate)@(item.DaysOverdue > 0 ? " · " + item.DaysOverdue + " days late" : "")</td>
+                                    <td class="num">@LoanUi.Money(item.Principal)</td>
+                                    <td class="num">@LoanUi.Money(item.Interest)</td>
+                                    <td class="num">@LoanUi.Money(item.Payment)</td>
+                                    <td class="num">@(item.Penalty > 0 ? LoanUi.Money(item.Penalty) : "—")</td>
+                                    <td><span class="badge @LoanUi.InstallmentBadge(item.Status)">@LoanUi.InstallmentText(item.Status)</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        }
+
+        @if (loan.Payments.Count > 0)
+        {
+            <section class="surface surface-tight">
+                <div class="toolbar"><h2>Payments received</h2></div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Card</th>
+                                <th class="num">Amount</th>
+                                <th>Reference</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var payment in loan.Payments)
+                            {
+                                <tr>
+                                    <td>@LoanUi.Date(payment.PaidAt.ToLocalTime())</td>
+                                    <td>@LoanUi.PaymentTypeText(payment.Type)</td>
+                                    <td>@payment.CardLabel</td>
+                                    <td class="num">@LoanUi.Money(payment.Amount)</td>
+                                    <td class="num">@payment.Reference</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        }
+    </div>
+</main>
