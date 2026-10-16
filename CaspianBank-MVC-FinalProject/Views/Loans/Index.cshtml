@@ -169,7 +169,6 @@
                                 <th>Loan</th>
                                 <th class="num">Amount</th>
                                 <th>Status</th>
-                                <th class="actions"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -178,7 +177,7 @@
                                 var shown = loan.ApprovedAmount ?? loan.RequestedAmount;
                                 <tr>
                                     <td>
-                                        <strong>@loan.ContractNumber</strong>
+                                        <a class="loan-link" asp-action="Detail" asp-route-id="@loan.Id"><strong>@loan.ContractNumber</strong></a>
                                         <div class="hint">@LoanUi.PurposeText(loan.Purpose) · @loan.TermMonths months</div>
                                         <div class="hint">@LoanUi.Date(loan.CreatedAt.ToLocalTime())</div>
                                     </td>
@@ -204,13 +203,12 @@
                                             <div class="hint">@loan.Message</div>
                                         }
                                     </td>
-                                    <td class="actions"><a class="btn btn-secondary btn-sm" asp-action="Detail" asp-route-id="@loan.Id">Open</a></td>
                                 </tr>
                             }
                             @if (Model.Loans.Count == 0)
                             {
                                 <tr class="empty-row">
-                                    <td colspan="4">
+                                    <td colspan="3">
                                         <div class="empty">
                                             <h3>No applications yet</h3>
                                             <p>When you apply, the decision will appear here.</p>
