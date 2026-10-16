@@ -10,6 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/style.css" />
+    <link rel="stylesheet" href="~/css/chat-widget.css" asp-append-version="true" />
 </head>
 <body class="body-app">
     <a class="skip" href="#content">Skip to content</a>
@@ -64,6 +65,8 @@
     </footer>
     <script src="~/js/confirm-dialog.js" asp-append-version="true"></script>
     <script src="~/js/app-cards.js" asp-append-version="true"></script>
+    <partial name="_ChatWidget" />
+    <script src="~/js/chat-widget.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>
