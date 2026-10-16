@@ -29,6 +29,8 @@
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Support" ? "is-active" : "")" asp-controller="Support" asp-action="Index">Contact</a>
                 </nav>
                 <div class="nav-tools">
+                    @* Bildiriş zəngi: son bildirişlər API-dən gəlir, yenilər SignalR ilə canlı əlavə olunur (wwwroot/js/notifications.js) *@
+                    @await Component.InvokeAsync("NotificationBell")
                     <form class="header-auth" asp-controller="Account" asp-action="Logout" method="post">
                         @* Şəkil və ad profil səhifəsinə aparır. Şəkil ayrıca ünvandan gəlir (Profile/Avatar); şəkli olmayanda ikon qalır *@
                         <a class="header-user" asp-controller="Profile" asp-action="Index" title="My profile">
@@ -65,6 +67,8 @@
     </footer>
     <script src="~/js/confirm-dialog.js" asp-append-version="true"></script>
     <script src="~/js/app-cards.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@@8.0.7/dist/browser/signalr.min.js"></script>
+    <script src="~/js/notifications.js" asp-append-version="true"></script>
     <partial name="_ChatWidget" />
     <script src="~/js/chat-widget.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)

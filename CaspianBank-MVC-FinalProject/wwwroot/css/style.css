@@ -3423,3 +3423,16 @@ a.header-user:focus-visible { outline: 2px solid var(--color-lime); outline-offs
 .page-head .lede .btn-copy { margin-left: 6px; }
 .segment-full.segment-3 { grid-template-columns: repeat(3, 1fr); }
 @media (max-width: 560px) { .segment-full.segment-3 { grid-template-columns: 1fr; } }
+
+/* Bildirişlər: zəng, siyahı və canlı pop-up (toast) */
+.notif-count[hidden] { display: none; }
+.notif-bell .panel-head .hint { font-size: var(--fs-xs); }
+.note-empty { margin: 0; padding: 18px 14px; color: var(--color-text-secondary); font-size: var(--fs-sm); text-align: center; }
+.note-empty[hidden], .note-list .empty[hidden] { display: none; }
+.segment .seg-link {
+  border-radius: var(--radius-pill); padding: 6px 12px; font-weight: 600; font-size: var(--fs-sm);
+  color: var(--color-text-secondary); text-decoration: none;
+}
+.segment .seg-link.is-active { background: var(--color-primary); color: #fff; }
+.toast-note { display: grid; gap: 2px; text-decoration: none; color: inherit; }
+.toast-note span { color: var(--color-text-secondary); font-size: var(--fs-sm); font-weight: 400; }
