@@ -3407,3 +3407,19 @@ a.header-user:focus-visible { outline: 2px solid var(--color-lime); outline-offs
 
 /* Müştəri və admin panelinin tünd yaşıl header-ində loqo kvadratı itməsin: incə limon halqa */
 .topnav .brand-logo { box-shadow: 0 0 0 1.5px rgba(214, 227, 107, 0.55); }
+
+/* Kreditlər: təklif xəbərdarlığı və ödəniş növü seçimi */
+.loan-banner {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  margin: 0 0 16px; padding: 14px 18px; border-radius: 14px; text-decoration: none; color: inherit;
+  background: radial-gradient(260px 90px at 100% 0%, rgba(197, 216, 109, 0.55), transparent 70%), #f4f7ef;
+  border: 1px solid var(--color-border);
+}
+.loan-banner-copy { display: grid; gap: 2px; min-width: 0; }
+.loan-banner-copy span { color: var(--color-text-secondary); font-size: var(--fs-sm); }
+.segment button:disabled { opacity: 0.45; cursor: not-allowed; }
+.pulse small.hint { display: block; margin-top: 4px; }
+.page-head .lede .badge { margin-right: 8px; }
+.page-head .lede .btn-copy { margin-left: 6px; }
+.segment-full.segment-3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 560px) { .segment-full.segment-3 { grid-template-columns: 1fr; } }
