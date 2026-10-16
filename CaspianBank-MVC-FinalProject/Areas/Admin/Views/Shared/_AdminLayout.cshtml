@@ -98,6 +98,10 @@
             <a class="@On("BankDashboard")" asp-area="Admin" asp-controller="BankDashboard" asp-action="Index">Dashboard</a>
             <a class="@On("Users")" asp-area="Admin" asp-controller="Users" asp-action="Index">Users</a>
             <a class="@On("Loans")" asp-area="Admin" asp-controller="Loans" asp-action="Index">Loans</a>
+            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin))
+            {
+                <a class="@On("BillProviders")" asp-area="Admin" asp-controller="BillProviders" asp-action="Index">Bill providers</a>
+            }
             <a class="@On("Reports")" asp-area="Admin" asp-controller="Reports" asp-action="Index">Reports</a>
             <a class="@On("Tickets")" asp-area="Admin" asp-controller="Tickets" asp-action="Index">Contact Tickets</a>
             <a class="@On("Audit")" asp-area="Admin" asp-controller="Audit" asp-action="Index">Audit Log</a>
