@@ -23,6 +23,7 @@
     Transfer: '<path d="M7 17 17 7"/><path d="M9 7h8v8"/>',
     Card: '<rect x="3" y="6" width="18" height="13" rx="2.5"/><path d="M3 10.5h18M7 15h3"/>',
     Staff: '<path d="M4 6h16v10H7l-3 3z"/>',
+    Bill: '<path d="M13 3 5 14h6l-1 7 8-11h-6z"/>',
     Default: '<path d="M6 17h12l-1.5-2V11a4.5 4.5 0 0 0-9 0v4z"/><path d="M10 20a2 2 0 0 0 4 0"/>'
   };
 
