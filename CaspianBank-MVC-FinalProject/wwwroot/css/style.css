@@ -3455,3 +3455,39 @@ a.header-user:focus-visible { outline: 2px solid var(--color-lime); outline-offs
     margin-right: auto;
   }
 }
+
+/* =========================================================
+   Ödənişlər (Bills): təchizatçı qrupları, loqolar, axtarış nəticəsi
+   ========================================================= */
+.bill-group + .bill-group { margin-top: 14px; }
+.bill-group-title {
+  margin: 0 0 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+.provider-grid.bill-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.provider-logo {
+  width: 32px; height: 32px; flex: none; padding: 2px; object-fit: contain;
+  border: 1px solid var(--color-border); border-radius: 8px; background: #fff;
+}
+.provider-logo.is-small { width: 24px; height: 24px; border-radius: 6px; padding: 1px; }
+.bill-provider-cell { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
+.bill-provider-cell.is-end { justify-content: flex-end; }
+.bill-lookup-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.bill-lookup-row .btn { min-width: 96px; }
+.bill-found {
+  display: grid; gap: 4px; padding: 14px 16px; border: 1px solid #cfe08a; border-radius: 14px; background: #f6faea;
+}
+.bill-found-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.bill-found-who { display: grid; gap: 2px; min-width: 0; flex: 1 1 160px; }
+.bill-found-who span { font-size: 13px; color: var(--color-text-secondary); }
+.bill-found .detail-list div:last-child { border-bottom: 0; }
+.bill-found .detail-list div { grid-template-columns: 130px 1fr; padding: 8px 0; }
+.data-table small.hint { display: block; margin-top: 2px; }
+@media (max-width: 560px) {
+  .provider-grid.bill-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bill-found .detail-list div { grid-template-columns: 1fr; }
+}
+.provider-mark.is-small { width: 24px; height: 24px; font-size: 9px; border-radius: 6px; }
+.bill-provider-cell > span:last-child { display: grid; gap: 1px; }
+.data-table td small.hint { display: block; margin-top: 2px; max-width: 220px; white-space: normal; }
+.layout-2 > .stack-lg { align-content: start; min-width: 0; }

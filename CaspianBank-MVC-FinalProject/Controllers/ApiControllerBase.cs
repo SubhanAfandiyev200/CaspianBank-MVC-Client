@@ -52,6 +52,30 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
         }
 
+        // GET: GetAsync-dən fərqi, uğursuz olanda istifadəçiyə göstəriləcək xətaları da qaytarır (məs. "nömrə tapılmadı")
+        protected async Task<(T? Data, string[] Errors, HttpStatusCode? Status)> GetWithErrorsAsync<T>(string url) where T : class
+        {
+            try
+            {
+                var response = await Api.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadFromJsonAsync<T>();
+                    return (data, Array.Empty<string>(), response.StatusCode);
+                }
+
+                return (null, await ReadErrorsAsync(response), response.StatusCode);
+            }
+            catch (HttpRequestException)
+            {
+                return (null, new[] { UnavailableMessage }, null);
+            }
+            catch (JsonException)
+            {
+                return (null, new[] { "Something went wrong. Please try again." }, null);
+            }
+        }
+
         // POST: uğurlu olarsa cavabın gövdəsi Data-da qayıdır, olmazsa istifadəçiyə göstəriləcək xətalar
         protected async Task<(T? Data, string[] Errors, HttpStatusCode? Status)> PostAsync<T>(string url, object body) where T : class
         {
