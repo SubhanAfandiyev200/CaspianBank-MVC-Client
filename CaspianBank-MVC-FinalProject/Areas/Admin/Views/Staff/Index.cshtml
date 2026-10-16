@@ -1,0 +1,113 @@
+@{
+    ViewData["Title"] = "Staff";
+    var roles = new[] { "Admin", "Accountant", "Customer support", "Security" };
+}
+<main id="content" class="page">
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">Operations</p>
+            <h1>Staff and roles</h1>
+            <p class="lede">Add a staff member, change what they can do, or switch an account off when someone leaves. Only the super admin can open this page.</p>
+        </div>
+    </header>
+
+    @* Hələlik statik dizayn (nümunə sətirlər): siyahı və düymələr API hazır olanda işləyəcək *@
+    <p class="demo-note"><span>Preview: staff management opens soon. The rows below are samples.</span></p>
+
+    <div class="layout-2">
+        <section class="surface surface-tight">
+            <div class="toolbar"><h2>Team</h2></div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th class="actions"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Subhan Efendiyev</strong><div class="hint">superadmin@caspianbank.az</div></td>
+                            <td><span class="badge badge-info">Super admin</span></td>
+                            <td><span class="badge badge-success">Active</span></td>
+                            <td class="actions"><span class="hint">You</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Nurlan Efendiyev</strong><div class="hint">admin@caspianbank.az</div></td>
+                            <td><span class="badge badge-neutral">Administrator</span></td>
+                            <td><span class="badge badge-success">Active</span></td>
+                            <td class="actions">
+                                <span class="row-actions">
+                                    <button type="button" class="btn btn-secondary btn-sm" disabled>Change role</button>
+                                    <button type="button" class="btn btn-danger btn-sm" disabled>Deactivate</button>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Abdulla Mirzeyev</strong><div class="hint">accountant@caspianbank.az</div></td>
+                            <td><span class="badge badge-neutral">Accountant</span></td>
+                            <td><span class="badge badge-success">Active</span></td>
+                            <td class="actions">
+                                <span class="row-actions">
+                                    <button type="button" class="btn btn-secondary btn-sm" disabled>Change role</button>
+                                    <button type="button" class="btn btn-danger btn-sm" disabled>Deactivate</button>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Canehmed Piroglanov</strong><div class="hint">support@caspianbank.az</div></td>
+                            <td><span class="badge badge-neutral">Customer support</span></td>
+                            <td><span class="badge badge-success">Active</span></td>
+                            <td class="actions">
+                                <span class="row-actions">
+                                    <button type="button" class="btn btn-secondary btn-sm" disabled>Change role</button>
+                                    <button type="button" class="btn btn-danger btn-sm" disabled>Deactivate</button>
+                                </span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tural Hesenov</strong><div class="hint">security@caspianbank.az</div></td>
+                            <td><span class="badge badge-neutral">Security</span></td>
+                            <td><span class="badge badge-pending">Deactivated</span></td>
+                            <td class="actions">
+                                <span class="row-actions">
+                                    <button type="button" class="btn btn-secondary btn-sm" disabled>Activate</button>
+                                </span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <form class="surface form-stack form-card" novalidate>
+            <h2>Add a staff member</h2>
+            <div class="field">
+                <label for="staff-name">First name</label>
+                <input class="input" id="staff-name" autocomplete="off" disabled />
+            </div>
+            <div class="field">
+                <label for="staff-surname">Last name</label>
+                <input class="input" id="staff-surname" autocomplete="off" disabled />
+            </div>
+            <div class="field">
+                <label for="staff-email">Work email</label>
+                <input class="input" id="staff-email" type="email" autocomplete="off" disabled />
+            </div>
+            <div class="field">
+                <label for="staff-role">Role</label>
+                <select class="select" id="staff-role" disabled>
+                    @foreach (var role in roles)
+                    {
+                        <option>@role</option>
+                    }
+                </select>
+                <p class="hint">Administrators can do everything except give or remove roles. Accountants decide loans and card rules, customer support helps customers, security handles suspicious reports and freezes.</p>
+            </div>
+            <p class="hint">The new person gets an email to choose their own password.</p>
+            <button class="btn btn-primary" type="button" disabled>Add staff member</button>
+        </form>
+    </div>
+</main>

@@ -172,6 +172,7 @@
                             <th>Type</th>
                             <th class="num">Amount</th>
                             <th class="num">Balance after</th>
+                            <th class="actions"><span class="sr-only">Report</span></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -196,12 +197,18 @@
                                 <td><span class="badge @(t.IsIncome ? "badge-success" : "badge-danger")">@(t.IsIncome ? "Income" : "Expense")</span></td>
                                 <td class="num"><span class="@(t.IsIncome ? "amount-in" : "amount-out")">@(t.IsIncome ? "+" : "−")@t.Amount.ToString("N2", inv) AZN</span></td>
                                 <td class="num">@Money(t.BalanceAfter)</td>
+                                <td class="actions">
+                                    @if (!t.IsIncome)
+                                    {
+                                        <a class="btn btn-secondary btn-sm" asp-controller="Report" asp-action="Index" asp-route-reference="@t.Reference" asp-route-description="@t.Description" asp-route-amount="@t.Amount" asp-route-date="@t.CreatedAt.ToString("o")">Report</a>
+                                    }
+                                </td>
                             </tr>
                         }
                         @if (r.Items.Count == 0)
                         {
                             <tr class="empty-row">
-                                <td colspan="6">
+                                <td colspan="7">
                                     <div class="empty">
                                         <h3>@(hasFilter ? "No transactions" : "No activity yet")</h3>
                                         <p>@(hasFilter ? "Nothing matches these filters." : "Top ups, transfers and fees on your cards will appear here.")</p>

@@ -1,0 +1,49 @@
+@model CaspianBank_MVC_FinalProject.Controllers.ReportController.ReportPreview
+@using System.Globalization
+@*
+    Şübhəli əməliyyatı bildir: dizayn CaspianBank-Frontend/report-transaction.html-dir.
+    Hələlik statik görünüşdür: yazı sahəsi və göndərmə düyməsi söndürülüb, fraud komandası tərəfi (Admin/Reports) yazılanda işləyəcək.
+*@
+@{
+    Layout = "_AppLayout";
+    ViewData["Title"] = "Report a transaction";
+    var inv = CultureInfo.InvariantCulture;
+}
+<main id="content" class="page">
+    <a class="back" asp-controller="History" asp-action="Index">Back to history</a>
+
+    <header class="page-head">
+        <p class="eyebrow">Fraud</p>
+        <h1>Report a suspicious transaction</h1>
+        <p class="lede">Tell us what looks wrong. The transaction stays visible while we review it.</p>
+    </header>
+
+    <p class="demo-note"><span>Preview: reporting opens soon. The form below can't be sent yet.</span></p>
+
+    <div class="narrow stack-lg">
+        <section class="surface">
+            <dl class="summary">
+                <div><dt>Reference</dt><dd class="num">@Model.Reference</dd></div>
+                <div><dt>Description</dt><dd>@Model.Description</dd></div>
+                @if (Model.Amount.HasValue)
+                {
+                    <div><dt>Amount</dt><dd class="num">@Model.Amount.Value.ToString("N2", inv) AZN</dd></div>
+                }
+                @if (Model.Date.HasValue)
+                {
+                    <div><dt>Date</dt><dd>@Model.Date.Value.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)</dd></div>
+                }
+            </dl>
+
+            <div class="field mt-5">
+                <label for="report-reason">Reason</label>
+                <textarea class="textarea" id="report-reason" maxlength="500" placeholder="What made this transaction suspicious?" disabled></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <a class="btn btn-secondary" asp-controller="History" asp-action="Index">Cancel</a>
+                <button type="button" class="btn btn-primary" disabled>Submit report</button>
+            </div>
+        </section>
+    </div>
+</main>

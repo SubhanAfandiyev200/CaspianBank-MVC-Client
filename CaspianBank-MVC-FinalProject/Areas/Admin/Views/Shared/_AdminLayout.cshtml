@@ -101,6 +101,10 @@
             <a class="@On("Reports")" asp-area="Admin" asp-controller="Reports" asp-action="Index">Reports</a>
             <a class="@On("Tickets")" asp-area="Admin" asp-controller="Tickets" asp-action="Index">Contact Tickets</a>
             <a class="@On("Audit")" asp-area="Admin" asp-controller="Audit" asp-action="Index">Audit Log</a>
+            @if (User.IsInRole(AppRoles.SuperAdmin))
+            {
+                <a class="@On("Staff")" asp-area="Admin" asp-controller="Staff" asp-action="Index">Staff</a>
+            }
         }
     </aside>
 
@@ -116,7 +120,7 @@
     <script src="~/js/confirm-dialog.js" asp-append-version="true"></script>
     <script src="~/js/file-drop.js" asp-append-version="true"></script>
     <script src="~/js/admin.js" asp-append-version="true"></script>
-</body>
-</html>
     <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@@8.0.7/dist/browser/signalr.min.js"></script>
     <script src="~/js/notifications.js" asp-append-version="true"></script>
+</body>
+</html>
