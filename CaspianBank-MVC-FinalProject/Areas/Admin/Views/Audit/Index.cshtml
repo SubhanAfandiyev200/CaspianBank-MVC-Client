@@ -17,7 +17,11 @@
         ("SettingChanged", "Setting changed"),
         ("TicketAnswered", "Message answered"),
         ("TicketClosed", "Message closed"),
-        ("DepositPlanChanged", "Deposit term changed")
+        ("DepositPlanChanged", "Deposit term changed"),
+        ("StaffAdded", "Staff member added"),
+        ("StaffRoleChanged", "Staff role changed"),
+        ("StaffDeactivated", "Staff account switched off"),
+        ("StaffActivated", "Staff account switched on")
     };
 
     string ActionLabel(string code)
@@ -32,9 +36,12 @@
         {
             case "AccountRestricted":
             case "LoanRejected":
+            case "StaffDeactivated":
                 return "badge-danger";
             case "AccountRestored":
             case "LoanApproved":
+            case "StaffActivated":
+            case "StaffAdded":
                 return "badge-success";
             case "LoanOffered":
                 return "badge-info";
