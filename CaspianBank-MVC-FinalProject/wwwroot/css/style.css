@@ -3491,3 +3491,13 @@ a.header-user:focus-visible { outline: 2px solid var(--color-lime); outline-offs
 .bill-provider-cell > span:last-child { display: grid; gap: 1px; }
 .data-table td small.hint { display: block; margin-top: 2px; max-width: 220px; white-space: normal; }
 .layout-2 > .stack-lg { align-content: start; min-width: 0; }
+
+/* Təkər tipli seçim (wheel-select.js): doğum tarixi seçicisinin eyni görünüşü, bir sütunlu */
+.wheel-select-btn { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; }
+.wheel-select.is-open .wheel-select-btn { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(15, 92, 63, 0.12); }
+.wheel-select.is-open .pick-chevron { transform: rotate(180deg); }
+.wheel-frame.is-single { grid-template-columns: 1fr; }
+.wheel-select-pop .wheel-item { font-size: 16px; }
+.pager-wrap { display: grid; justify-items: center; gap: 4px; margin: 18px 0 8px; }
+.pager-wrap .pager { margin: 4px 0 0; }
+.pager-summary { margin: 0; font-size: 13px; color: var(--color-text-secondary); }
