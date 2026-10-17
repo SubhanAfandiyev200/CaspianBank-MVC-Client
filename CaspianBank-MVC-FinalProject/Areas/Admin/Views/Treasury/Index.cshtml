@@ -1,0 +1,150 @@
+@model CaspianBank_MVC_FinalProject.ViewModels.Bank.TreasuryPageVM
+@using System.Globalization
+@{
+    ViewData["Title"] = "Treasury";
+    var inv = CultureInfo.InvariantCulture;
+    var today = DateTime.Today.ToString("yyyy-MM-dd");
+
+    string Money(decimal value) { return value.ToString("N2", inv) + " AZN"; }
+    string Signed(decimal value) { return (value >= 0 ? "+" : "−") + Math.Abs(value).ToString("N2", inv) + " AZN"; }
+
+    // API-dəki TreasuryEntryKind adları və göstərilən adları
+    var kinds = new List<(string Code, string Label)>
+    {
+        ("Capital", "Starting capital"),
+        ("Commission", "Transfer commission"),
+        ("CardFee", "Card opening fee"),
+        ("LoanPaidOut", "Loan paid out"),
+        ("LoanPrincipal", "Loan principal repaid"),
+        ("LoanInterest", "Loan interest"),
+        ("LoanPenalty", "Loan penalty"),
+        ("DepositReceived", "Deposit received"),
+        ("DepositReturned", "Deposit returned"),
+        ("DepositInterest", "Deposit interest paid"),
+        ("Cashback", "Cashback paid")
+    };
+
+    string KindLabel(string code)
+    {
+        var found = kinds.FirstOrDefault(k => k.Code == code);
+        return found.Label ?? code;
+    }
+
+    string PageUrl(int page)
+    {
+        return Url.Action("Index", "Treasury", new
+        {
+            area = "Admin",
+            kind = Model.Kind,
+            from = Model.From?.ToString("yyyy-MM-dd", inv),
+            to = Model.To?.ToString("yyyy-MM-dd", inv),
+            page
+        }) ?? "#";
+    }
+}
+<main id="content" class="page">
+    <header class="page-head">
+        <p class="eyebrow">Bank</p>
+        <h1>Treasury</h1>
+        <p class="lede">The bank's own money and every movement of it. A loan can be paid out only while the treasury stays above the required reserve. Entries can't be edited.</p>
+    </header>
+
+    @if (Model.Unavailable)
+    {
+        <p class="flash flash-error" role="alert">The treasury can't be loaded right now. Please try again in a moment.</p>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <p class="flash flash-error" role="alert">@Model.Error</p>
+    }
+
+    <div class="stat-grid cols-3">
+        <article class="stat is-strong">
+            <p class="stat-label">Treasury balance</p>
+            <p class="stat-value">@Money(Model.Balance)</p>
+            <p class="hint">The bank's own money right now</p>
+        </article>
+        <article class="stat">
+            <p class="stat-label">Required reserve</p>
+            <p class="stat-value">@Money(Model.RequiredReserve)</p>
+            <p class="hint">@Model.ReservePercent.ToString("0.##", inv)% of @Money(Model.CustomerMoney) (cards and deposits)</p>
+        </article>
+        <article class="stat">
+            <p class="stat-label">Available for loans</p>
+            <p class="stat-value">@Money(Model.AvailableForLoans)</p>
+            <p class="hint">Balance minus the required reserve</p>
+        </article>
+    </div>
+
+    <div class="stat-grid cols-3">
+        <article class="stat">
+            <p class="stat-label">Came in (@Model.MonthLabel)</p>
+            <p class="stat-value">@Money(Model.MonthIn)</p>
+            <p class="hint">Fees, commissions, loan repayments, deposits</p>
+        </article>
+        <article class="stat">
+            <p class="stat-label">Went out (@Model.MonthLabel)</p>
+            <p class="stat-value">@Money(Model.MonthOut)</p>
+            <p class="hint">Loans, deposit returns and interest, cashback</p>
+        </article>
+        <article class="stat">
+            <p class="stat-label">Net (@Model.MonthLabel)</p>
+            <p class="stat-value">@Signed(Model.MonthIn - Model.MonthOut)</p>
+            <p class="hint">Operating costs and tax are on the dashboard</p>
+        </article>
+    </div>
+
+    <section class="surface surface-tight">
+        <form method="get" asp-area="Admin" asp-controller="Treasury" asp-action="Index" class="toolbar filters">
+            <div class="field">
+                <label for="kind">Type</label>
+                <select class="select" data-wheel id="kind" name="kind">
+                    <option value="" selected="@string.IsNullOrEmpty(Model.Kind)">All types</option>
+                    @foreach (var item in kinds)
+                    {
+                        <option value="@item.Code" selected="@(Model.Kind == item.Code)">@item.Label</option>
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label for="from">From</label>
+                <input class="input" id="from" name="from" type="date" min="2020-01-01" max="@today" value="@Model.From?.ToString("yyyy-MM-dd", inv)" />
+            </div>
+            <div class="field">
+                <label for="to">To</label>
+                <input class="input" id="to" name="to" type="date" min="2020-01-01" max="@today" value="@Model.To?.ToString("yyyy-MM-dd", inv)" />
+            </div>
+            <div class="field">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" type="submit">Filter</button>
+            </div>
+        </form>
+
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr><th>Time</th><th>Type</th><th>Details</th><th class="num">Amount</th><th class="num">Treasury after</th><th>Code</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)</td>
+                            <td><span class="badge @(item.Amount >= 0 ? "badge-success" : "badge-neutral")">@KindLabel(item.Kind)</span></td>
+                            <td>@item.Description</td>
+                            <td class="num @(item.Amount >= 0 ? "amount-in" : "amount-out")">@Signed(item.Amount)</td>
+                            <td class="num">@Money(item.BalanceAfter)</td>
+                            <td class="num">@item.Reference</td>
+                        </tr>
+                    }
+                    @if (!Model.Items.Any())
+                    {
+                        <tr><td colspan="6">No entries found.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <partial name="_Pager" model="new CaspianBank_MVC_FinalProject.ViewModels.Common.PagerVM { Page = Model.Page, PageSize = Model.PageSize, TotalCount = Model.Total, TotalPages = Model.TotalPages, Url = PageUrl }" />
+</main>

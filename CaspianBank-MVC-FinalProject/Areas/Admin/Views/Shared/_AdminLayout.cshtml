@@ -99,6 +99,10 @@
             <a class="@On("Users")" asp-area="Admin" asp-controller="Users" asp-action="Index">Users</a>
             <a class="@On("Loans")" asp-area="Admin" asp-controller="Loans" asp-action="Index">Loans</a>
             <a class="@On("Deposits")" asp-area="Admin" asp-controller="Deposits" asp-action="Index">Deposits</a>
+            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Accountant))
+            {
+                <a class="@On("Treasury")" asp-area="Admin" asp-controller="Treasury" asp-action="Index">Treasury</a>
+            }
             @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin))
             {
                 <a class="@On("BillProviders")" asp-area="Admin" asp-controller="BillProviders" asp-action="Index">Bill providers</a>
