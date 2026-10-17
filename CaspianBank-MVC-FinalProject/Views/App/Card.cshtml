@@ -55,7 +55,10 @@
                     @if (!card.IsBlocked)
                     {
                         <a class="btn btn-secondary" asp-controller="Transfer" asp-action="Index" asp-route-from="@card.Id">Transfer</a>
-                        <button class="btn btn-danger" type="button" data-open-modal="block-modal">Block card</button>
+                        @if (!isCashback)
+                        {
+                            <button class="btn btn-danger" type="button" data-open-modal="block-modal">Block card</button>
+                        }
                     }
                     else
                     {
