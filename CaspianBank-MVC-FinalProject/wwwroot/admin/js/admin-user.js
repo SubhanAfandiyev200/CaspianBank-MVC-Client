@@ -17,8 +17,8 @@
     const n = user.name.length;
     const holder = user.name.toUpperCase();
     const cards = [
-      { id: user.id + "a", tier: "standard", label: "Standard", number: "453200001111" + String(1000 + n).slice(-4), cvv: String(100 + (n * 17) % 900), balance: 800 + n * 25, expiry: "11/28", holder, accountNo: "CB-41" + user.id, blocked: user.status === "Restricted" },
-      { id: user.id + "b", tier: "cashback", label: "Cashback", number: "453211112222" + String(2000 + n).slice(-4), cvv: String(100 + (n * 29) % 900), balance: 240, expiry: "06/29", holder, accountNo: "CB-42" + user.id, blocked: false }
+      { id: user.id + "a", tier: "standard", label: "Standard", number: "963010200001" + String(1000 + n).slice(-4), cvv: String(100 + (n * 17) % 900), balance: 800 + n * 25, expiry: "11/28", holder, accountNo: "CB-41" + user.id, blocked: user.status === "Restricted" },
+      { id: user.id + "b", tier: "cashback", label: "Cashback", number: "963010201111" + String(2000 + n).slice(-4), cvv: String(100 + (n * 29) % 900), balance: 240, expiry: "06/29", holder, accountNo: "CB-42" + user.id, blocked: false }
     ];
     const transactions = [
       { id: user.id + "t1", cardId: cards[0].id, description: "Bravo Hypermarket", type: "expense", amount: 36.4, category: "groceries", at: new Date().toISOString(), balanceAfter: cards[0].balance },
