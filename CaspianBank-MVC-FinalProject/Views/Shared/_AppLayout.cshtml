@@ -25,6 +25,7 @@
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Transfer" ? "is-active" : "")" asp-controller="Transfer" asp-action="Index">Transfers</a>
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "History" ? "is-active" : "")" asp-controller="History" asp-action="Index">History</a>
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Loans" ? "is-active" : "")" asp-controller="Loans" asp-action="Index">Loans</a>
+                    <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Deposits" ? "is-active" : "")" asp-controller="Deposits" asp-action="Index">Deposits</a>
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Bills" ? "is-active" : "")" asp-controller="Bills" asp-action="Index">Bill Payments</a>
                     <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Support" ? "is-active" : "")" asp-controller="Support" asp-action="Index">Contact</a>
                 </nav>
