@@ -161,7 +161,7 @@
                     <div><dt>Tax accrued this month</dt><dd>@Money(Model.ProfitTax)</dd></div>
                     <div><dt>Tax accrued this quarter so far</dt><dd>@Money(Model.QuarterTaxAccrued)</dd></div>
                     <div><dt>Required reserve (@Model.ReservePercent.ToString("0.##", inv)% of deposits)</dt><dd>@Money(Model.RequiredReserve)</dd></div>
-                    <div><dt>Bank reserve (own funds)</dt><dd>@Money(Model.OwnFunds)</dd></div>
+                    <div><dt>Treasury (own funds)</dt><dd>@Money(Model.OwnFunds) <a asp-area="Admin" asp-controller="Treasury" asp-action="Index">history</a></dd></div>
                     <div><dt>Reserve after paying the quarter's tax</dt><dd>@Money(Model.ReserveAfterTax)</dd></div>
                 </dl>
 
@@ -186,7 +186,7 @@
                         }
                     </p>
                 </div>
-                <p class="sample-note">If own funds fell below the required reserve plus the tax due, this card would turn red and warn the finance team. Own funds, operating costs, the tax rate and the reserve rate are the bank's rules stored in the database.</p>
+                <p class="sample-note">If own funds fell below the required reserve plus the tax due, this card would turn red and warn the finance team. Own funds are the treasury balance (every movement is in the Treasury history). Operating costs, the tax rate and the reserve rate are the bank's rules stored in the database.</p>
             </section>
 
             @* ===== Gözləyən işlər ===== *@
