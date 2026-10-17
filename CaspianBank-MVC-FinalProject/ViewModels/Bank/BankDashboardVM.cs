@@ -26,6 +26,9 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.Bank
         public decimal? IncomeChangePercent { get; set; }
 
         public decimal CashbackPaid { get; set; }
+        public decimal DepositInterestPaid { get; set; }
+        public decimal TermDeposits { get; set; }
+        public decimal TermDepositInterestOwed { get; set; }
         public decimal OperatingCosts { get; set; }
         public decimal ProfitTaxPercent { get; set; }
         public decimal ProfitTax { get; set; }

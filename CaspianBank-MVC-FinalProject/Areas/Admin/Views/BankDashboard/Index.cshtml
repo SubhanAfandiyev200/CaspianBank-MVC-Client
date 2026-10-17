@@ -69,8 +69,9 @@
             </article>
             <article class="stat">
                 <p class="stat-label">Customer deposits</p>
-                <p class="stat-value">@Money(Model.CustomerDeposits)</p>
-                <p class="hint">Money held on customer cards right now</p>
+                <p class="stat-value">@Money(Model.CustomerDeposits + Model.TermDeposits)</p>
+                <p class="hint">On cards @Money(Model.CustomerDeposits) · in term deposits @Money(Model.TermDeposits) (interest still to pay @Money(Model.TermDepositInterestOwed))</p>
+                <a asp-area="Admin" asp-controller="Deposits" asp-action="Index">View deposits</a>
             </article>
             <article class="stat">
                 <p class="stat-label">Loans outstanding</p>
@@ -91,7 +92,7 @@
                 <p class="stat-label">Total expenses</p>
                 <p class="stat-value">@Money(Model.TotalExpenses)</p>
                 <p class="stat-delta @(Model.ExpenseChangePercent is > 0 ? "is-down" : "")">@Change(Model.ExpenseChangePercent)</p>
-                <p class="hint">Operations, cashback and tax</p>
+                <p class="hint">Operations, cashback, deposit interest and tax</p>
             </article>
             <article class="stat is-strong">
                 <p class="stat-label">Net profit</p>
@@ -136,6 +137,10 @@
                     <div class="fin-bar is-out"><span style="width:@(Width(Model.CashbackPaid, Model.TotalExpenses))%"></span></div>
                 </div>
                 <div class="fin-row">
+                    <div class="fin-row-top"><span>Interest paid on deposits</span><span>@Money(Model.DepositInterestPaid)</span></div>
+                    <div class="fin-bar is-out"><span style="width:@(Width(Model.DepositInterestPaid, Model.TotalExpenses))%"></span></div>
+                </div>
+                <div class="fin-row">
                     <div class="fin-row-top"><span>Salaries and operations</span><span>@Money(Model.OperatingCosts)</span></div>
                     <div class="fin-bar is-out"><span style="width:@(Width(Model.OperatingCosts, Model.TotalExpenses))%"></span></div>
                 </div>
@@ -144,7 +149,7 @@
                     <div class="fin-bar is-out"><span style="width:@(Width(Model.ProfitTax, Model.TotalExpenses))%"></span></div>
                 </div>
                 <div class="fin-total"><span>Total expenses</span><span>@Money(Model.TotalExpenses)</span></div>
-                <p class="sample-note">Income @Money(Model.TotalIncome) − cashback @Money(Model.CashbackPaid) − operating costs @Money(Model.OperatingCosts) = profit before tax @Money(Model.ProfitBeforeTax)@(Model.ProfitBeforeTax > 0 ? "; tax " + Model.ProfitTaxPercent.ToString("0.##", inv) + "% = " + Money(Model.ProfitTax) : "; no tax on a loss").</p>
+                <p class="sample-note">Income @Money(Model.TotalIncome) − cashback @Money(Model.CashbackPaid) − deposit interest @Money(Model.DepositInterestPaid) − operating costs @Money(Model.OperatingCosts) = profit before tax @Money(Model.ProfitBeforeTax)@(Model.ProfitBeforeTax > 0 ? "; tax " + Model.ProfitTaxPercent.ToString("0.##", inv) + "% = " + Money(Model.ProfitTax) : "; no tax on a loss").</p>
             </section>
 
             @* ===== Vergi və ehtiyat ===== *@
