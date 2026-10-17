@@ -21,7 +21,9 @@
         ("StaffAdded", "Staff member added"),
         ("StaffRoleChanged", "Staff role changed"),
         ("StaffDeactivated", "Staff account switched off"),
-        ("StaffActivated", "Staff account switched on")
+        ("StaffActivated", "Staff account switched on"),
+        ("SecurityAlertDismissed", "Security alert marked safe"),
+        ("SecurityAlertFrozen", "Security alert: account frozen")
     };
 
     string ActionLabel(string code)
@@ -36,10 +38,12 @@
         {
             case "AccountRestricted":
             case "LoanRejected":
+            case "SecurityAlertFrozen":
             case "StaffDeactivated":
                 return "badge-danger";
             case "AccountRestored":
             case "LoanApproved":
+            case "SecurityAlertDismissed":
             case "StaffActivated":
             case "StaffAdded":
                 return "badge-success";
