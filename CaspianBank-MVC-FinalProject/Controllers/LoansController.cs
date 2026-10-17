@@ -145,10 +145,15 @@ namespace CaspianBank_MVC_FinalProject.Controllers
         // Ödəniş: aylıq, hissəvi erkən və ya tam bağlama. Eyni RequestId təkrar gələrsə API əvvəlki qəbzi qaytarır (pul bir dəfə çıxır)
         [HttpPost("{id:int}/Pay")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Pay(int id, int cardId, string type, string? amount, string? requestId)
+        public async Task<IActionResult> Pay(int id, int cardId, string type, string? amount, string? installmentAmount, string? requestId)
         {
+            // Aylıq ödənişdə məbləğ boş qala bilər (hamısı ödənir), yazılıbsa hissə-hissə ödənir
             decimal parsedAmount = 0m;
             if (type == "PartialEarly" && !TryParseAmount(amount, out parsedAmount))
+            {
+                return await ShowDetailAsync(id, "Enter a valid amount.", requestId);
+            }
+            if (type == "Installment" && !string.IsNullOrWhiteSpace(installmentAmount) && !TryParseAmount(installmentAmount, out parsedAmount))
             {
                 return await ShowDetailAsync(id, "Enter a valid amount.", requestId);
             }

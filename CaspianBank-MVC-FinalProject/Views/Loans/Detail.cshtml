@@ -16,7 +16,9 @@
     var granted = loan.ApprovedAmount ?? loan.RequestedAmount;
 
     // Ödəniş kartı: məbləği çatan ilk kart, yoxdursa ilk yararlı kart. Təklif qəbulunda isə müraciətdə seçilən kart
-    var payCard = usable.FirstOrDefault(c => c.Balance >= loan.Due.Total) ?? usable.FirstOrDefault();
+    // Kredit ödənişi Cashback kartından da olur (bloklanmayan istənilən kart)
+    var payers = Model.Cards.Where(c => !c.IsBlocked).ToList();
+    var payCard = payers.FirstOrDefault(c => c.Balance >= loan.Due.Total) ?? payers.FirstOrDefault();
     var targetCard = usable.FirstOrDefault(c => c.Id == loan.TargetCardId) ?? usable.FirstOrDefault();
 
     // Açılışda ilk mümkün ödəniş növü seçilir
@@ -142,12 +144,12 @@
                 </p>
             }
 
-            @if (usable.Count == 0)
+            @if (payers.Count == 0)
             {
                 <div class="empty-inline">
                     <div class="empty-inline-copy">
                         <strong>You need a card to pay from</strong>
-                        <p>A loan can't be paid from the Cashback card or from a blocked card.</p>
+                        <p>A loan can't be paid from a blocked card.</p>
                         <div class="empty-inline-actions"><a class="btn btn-secondary btn-sm" href="@NavLinks.AddCard">Add a card</a></div>
                     </div>
                 </div>
@@ -188,6 +190,14 @@
                             }
                             <div><dt>Covers</dt><dd>@loan.Due.InstallmentCount payment@(loan.Due.InstallmentCount == 1 ? "" : "s")@(loan.Due.NextDueDate.HasValue ? ", next one due " + LoanUi.Date(loan.Due.NextDueDate) : "")</dd></div>
                         </dl>
+                        <div class="field">
+                            <label for="pay-part">Amount to pay now <span class="optional">(optional)</span></label>
+                            <div class="amount-box">
+                                <input class="amount-input" id="pay-part" name="InstallmentAmount" inputmode="decimal" placeholder="@loan.Due.Total.ToString("N2", inv)" maxlength="12" autocomplete="off" />
+                                <span class="amount-cur">AZN</span>
+                            </div>
+                            <p class="hint">Leave it empty to pay everything due. Or pay a part now (for example from your Cashback card) and the rest from another card. The penalty and interest are paid first.</p>
+                        </div>
                     </div>
 
                     <div data-pay-panel="PartialEarly" @(firstType == "PartialEarly" ? null : "hidden")>
@@ -214,7 +224,7 @@
                     <div class="field">
                         <label for="pay-card">Pay from</label>
                         <select class="select" id="pay-card" name="CardId" data-card-pick>
-                            @foreach (var card in usable)
+                            @foreach (var card in payers)
                             {
                                 <option value="@card.Id" selected="@(payCard is not null && card.Id == payCard.Id)"
                                         data-tier="@card.Tier" data-last4="@card.Last4" data-money="@LoanUi.Money(card.Balance)"

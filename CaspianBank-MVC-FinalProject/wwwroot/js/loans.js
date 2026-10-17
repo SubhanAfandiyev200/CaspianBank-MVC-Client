@@ -71,6 +71,7 @@
     const typeInput = document.getElementById("pay-type");
     const submit = document.getElementById("pay-submit");
     const amountInput = document.getElementById("pay-amount");
+    const partInput = document.getElementById("pay-part");
     const partialNote = document.getElementById("pay-partial-note");
     const buttons = [...pay.querySelectorAll("[data-pay-type]")];
     const panels = [...pay.querySelectorAll("[data-pay-panel]")];
@@ -93,8 +94,15 @@
       let label = "Pay";
       let text = "";
       if (type === "Installment") {
-        label = "Pay " + dueText + " AZN";
-        text = dueText + " AZN will be taken from your card.";
+        const part = toNumber(partInput ? partInput.value : "");
+        const due = parseFloat(dueText.replace(/,/g, ""));
+        if (Number.isFinite(part) && part > 0 && part < due) {
+          label = "Pay " + money(part);
+          text = money(part) + " will be taken from your card. You still owe " + money(due - part) + " of this payment.";
+        } else {
+          label = "Pay " + dueText + " AZN";
+          text = dueText + " AZN will be taken from your card.";
+        }
       } else if (type === "FullEarly") {
         label = "Pay off " + payoffText + " AZN";
         text = payoffText + " AZN will be taken from your card and the loan will be closed.";
@@ -143,6 +151,7 @@
       });
     });
     amountInput?.addEventListener("input", paintPartial);
+    partInput?.addEventListener("input", paint);
     paint();
   }
 })();
