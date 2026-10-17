@@ -32,14 +32,14 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             return unauthorized ? await SessionExpiredAsync() : View(model);
         }
 
-        // Kart nömrəsinin ilk 8 rəqəmi yazılanda bank adı və loqosu (formadakı çip üçün). Tapılmazsa 404
+        // Kart nömrəsinin ilk 6 rəqəmi yazılanda bank adı və loqosu (formadakı çip üçün). Tapılmazsa 404
         [HttpGet("Bank")]
         public async Task<IActionResult> Bank(string? bin)
         {
             var digits = new string((bin ?? string.Empty).Where(char.IsDigit).ToArray());
-            if (digits.Length < 8) return NotFound();
+            if (digits.Length < 6) return NotFound();
 
-            var (bank, status) = await GetAsync<BankLookupUIVM>("api/banks/lookup?bin=" + digits[..8]);
+            var (bank, status) = await GetAsync<BankLookupUIVM>("api/banks/lookup?bin=" + digits[..6]);
             if (status == HttpStatusCode.Unauthorized) return Unauthorized();
             if (bank is null) return NotFound();
 

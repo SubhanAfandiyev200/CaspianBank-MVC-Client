@@ -545,7 +545,7 @@
       return Math.floor(((balance + room * rate) / (1 + rate)) * 100) / 100;
     }
 
-    // Kart nömrəsinin ilk 8 rəqəmi (BIN) → bank adı və loqosu (çip nömrə sahəsinin üstündə)
+    // Kart nömrəsinin ilk 6 rəqəmi (BIN) → bank adı və loqosu (çip nömrə sahəsinin üstündə)
     const bankChip = byId("bank-chip");
     const bankLogo = byId("bank-chip-logo");
     const bankName = byId("bank-chip-name");
@@ -562,8 +562,8 @@
       bankChip.hidden = false;
     }
     async function lookupBank(digits) {
-      const bin = digits.slice(0, 8);
-      if (bin.length < 8 || mode !== "other") {
+      const bin = digits.slice(0, 6);
+      if (bin.length < 6 || mode !== "other") {
         bankBin = "";
         showBank(null);
         return;
