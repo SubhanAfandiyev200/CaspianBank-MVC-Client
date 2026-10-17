@@ -39,7 +39,7 @@
             </div>
             <div class="field">
                 <label for="status">Status</label>
-                <select class="select" id="status" name="status">
+                <select class="select" data-wheel id="status" name="status">
                     <option value="" selected="@string.IsNullOrEmpty(Model.Status)">All</option>
                     @foreach (var status in statuses)
                     {
@@ -105,21 +105,5 @@
         </div>
     </section>
 
-    @if (Model.TotalPages > 1)
-    {
-        <nav class="pager" aria-label="Pages">
-            @if (Model.Page > 1)
-            {
-                <a class="pager-link" href="@PageUrl(Model.Page - 1)">‹ Previous</a>
-            }
-            @for (var p = 1; p <= Model.TotalPages; p++)
-            {
-                <a class="pager-link @(p == Model.Page ? "is-current" : "")" href="@PageUrl(p)" aria-current="@(p == Model.Page ? "page" : null)">@p</a>
-            }
-            @if (Model.Page < Model.TotalPages)
-            {
-                <a class="pager-link" href="@PageUrl(Model.Page + 1)">Next ›</a>
-            }
-        </nav>
-    }
+    <partial name="_Pager" model="new CaspianBank_MVC_FinalProject.ViewModels.Common.PagerVM { Page = Model.Page, PageSize = Model.PageSize, TotalCount = Model.TotalCount, TotalPages = Model.TotalPages, Url = PageUrl }" />
 </main>
