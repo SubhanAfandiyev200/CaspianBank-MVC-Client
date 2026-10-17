@@ -117,7 +117,7 @@
                 </div>
                 <div class="field">
                     <label for="h-dir">Type</label>
-                    <select class="select" id="h-dir" name="Direction" data-select>
+                    <select class="select" id="h-dir" name="Direction" data-wheel>
                         <option value="">All</option>
                         <option value="in" selected="@(f.Direction == "in")">Income</option>
                         <option value="out" selected="@(f.Direction == "out")">Expense</option>
@@ -136,7 +136,7 @@
                 </div>
                 <div class="field">
                     <label for="h-kind">Kind</label>
-                    <select class="select" id="h-kind" name="Type" data-select>
+                    <select class="select" id="h-kind" name="Type" data-wheel>
                         <option value="">Any</option>
                         <option value="TopUp" selected="@(f.Type == "TopUp")">Top up</option>
                         <option value="TransferOut" selected="@(f.Type == "TransferOut")">Transfer sent</option>

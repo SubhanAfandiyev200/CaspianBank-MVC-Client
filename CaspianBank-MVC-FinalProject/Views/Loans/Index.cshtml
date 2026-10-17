@@ -109,7 +109,7 @@
 
                     <div class="field">
                         <label for="loan-purpose">Purpose</label>
-                        <select class="select" id="loan-purpose" name="Purpose" data-select>
+                        <select class="select" id="loan-purpose" name="Purpose" data-wheel>
                             @foreach (var purpose in purposes)
                             {
                                 <option value="@purpose" selected="@(Model.Form.Purpose == purpose)">@LoanUi.PurposeText(purpose)</option>
@@ -124,7 +124,7 @@
 
                     <div class="field">
                         <label for="loan-term">Term</label>
-                        <select class="select" id="loan-term" name="TermMonths" data-select>
+                        <select class="select" id="loan-term" name="TermMonths" data-wheel>
                             @foreach (var months in options.TermOptions)
                             {
                                 <option value="@months" selected="@(Model.Form.TermMonths == months)">@months months</option>
