@@ -1,36 +1,85 @@
+@model CaspianBank_MVC_FinalProject.ViewModels.Support.TicketDetailVM
+@using System.Globalization
 @{
-    ViewData["Title"] = "SWIFT transfer timing";
+    ViewData["Title"] = Model.Subject;
+    var inv = CultureInfo.InvariantCulture;
+    var closed = Model.Status == "Closed";
 }
 <main id="content" class="page">
     <a class="back" asp-area="Admin" asp-controller="Tickets" asp-action="Index">All tickets</a>
 
-    @* Hələlik statik dizayn: mesaj və cavab API hazır olanda gələcək *@
-    <header class="page-head">
-        <p class="eyebrow">Support</p>
-        <h1>SWIFT transfer timing</h1>
-        <p class="lede">Leyla Mammadova · leyla.mammadova@gmail.com · 06 Oct 2026, 09:00</p>
+    <header class="page-head spread">
+        <div>
+            <p class="eyebrow">Support</p>
+            <h1>@Model.Subject</h1>
+            <p class="lede">
+                @if (Model.Status == "Answered")
+                {
+                    <span class="badge badge-success">Answered</span>
+                }
+                else if (closed)
+                {
+                    <span class="badge badge-neutral">Closed</span>
+                }
+                else
+                {
+                    <span class="badge badge-pending">Pending</span>
+                }
+                @Model.CustomerName · @Model.CustomerEmail ·
+                <a asp-area="Admin" asp-controller="Users" asp-action="Detail" asp-route-id="@Model.CustomerId">Open customer</a>
+            </p>
+        </div>
+        @if (!closed)
+        {
+            <form method="post" asp-area="Admin" asp-controller="Tickets" asp-action="Close" asp-route-id="@Model.Id">
+                <button type="submit" class="btn btn-secondary"
+                        data-confirm-title="Close this conversation?"
+                        data-confirm-text="The customer is told it was closed and has to write a new message to ask more."
+                        data-confirm-yes="Close">Close conversation</button>
+            </form>
+        }
     </header>
 
-    <div class="narrow stack-lg">
-        <article class="surface">
-            <div class="spread"><h2>Original message</h2><span class="badge badge-pending">Pending</span></div>
-            <div class="bubble mt-5">
-                <p class="meta">Leyla Mammadova · 06 Oct 2026, 09:00</p>
-                <p>How long does an incoming SWIFT transfer take to appear?</p>
-            </div>
-            <div class="bubble bubble-staff mt-5">
-                <p class="meta">Caspian Support · 06 Oct 2026, 16:20</p>
-                <p>Incoming SWIFT transfers usually appear within 1 to 3 business days.</p>
-            </div>
-        </article>
+    @if (TempData["Success"] is string success)
+    {
+        <p class="flash flash-ok" role="status">@success</p>
+    }
+    @if (TempData["Error"] is string tempError)
+    {
+        <p class="flash flash-error" role="alert">@tempError</p>
+    }
 
-        <div class="surface form-stack">
-            <h2>Reply</h2>
-            <div class="field">
-                <label for="reply">Message</label>
-                <textarea class="textarea" id="reply" maxlength="1000"></textarea>
-            </div>
-            <button class="btn btn-primary" type="button">Send reply</button>
+    <section class="surface chat" aria-label="Conversation">
+        <div class="chat-log" role="log">
+            @foreach (var message in Model.Messages)
+            {
+                @* Müştərinin mesajı sağda (is-user), işçinin cavabı solda: işçi öz cavablarını "bank tərəfi" kimi görür *@
+                <div class="chat-msg @(message.IsStaff ? "" : "is-user")">
+                    <div class="chat-bubble">
+                        <small class="hint">@message.AuthorName@(message.IsStaff ? " · staff" : " · customer") · @message.CreatedAt.ToLocalTime().ToString("dd MMM, HH:mm", inv)</small>
+                        <div style="white-space: pre-wrap">@message.Body</div>
+                    </div>
+                </div>
+            }
         </div>
-    </div>
+
+        @if (!closed)
+        {
+            @if (!string.IsNullOrEmpty(Model.Error))
+            {
+                <p class="flash flash-error" role="alert">@Model.Error</p>
+            }
+            <form method="post" asp-area="Admin" asp-controller="Tickets" asp-action="Reply" asp-route-id="@Model.Id" class="form-stack" novalidate>
+                <div class="field">
+                    <label for="reply">Your reply</label>
+                    <textarea class="input" id="reply" name="message" rows="4" maxlength="2000" placeholder="Write the answer for @Model.CustomerName">@Model.Draft</textarea>
+                </div>
+                <button class="btn btn-primary" type="submit" data-once>Send reply</button>
+            </form>
+        }
+        else
+        {
+            <p class="hint">This conversation is closed.</p>
+        }
+    </section>
 </main>
