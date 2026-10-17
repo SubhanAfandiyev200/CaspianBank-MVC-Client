@@ -1,4 +1,4 @@
-using CaspianBank_MVC_FinalProject.ViewModels.Notifications;
+﻿using CaspianBank_MVC_FinalProject.ViewModels.Notifications;
 using System.Globalization;
 
 namespace CaspianBank_MVC_FinalProject.Helpers
@@ -18,6 +18,8 @@ namespace CaspianBank_MVC_FinalProject.Helpers
                 case "Card":
                     return "<rect x=\"3\" y=\"6\" width=\"18\" height=\"13\" rx=\"2.5\"/><path d=\"M3 10.5h18M7 15h3\"/>";
                 case "Staff":
+                    return "<path d=\"M4 6h16v10H7l-3 3z\"/>";
+                case "Support":
                     return "<path d=\"M4 6h16v10H7l-3 3z\"/>";
                 case "Bill":
                     return "<path d=\"M13 3 5 14h6l-1 7 8-11h-6z\"/>";
