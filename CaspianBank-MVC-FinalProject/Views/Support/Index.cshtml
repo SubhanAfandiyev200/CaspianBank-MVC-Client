@@ -1,7 +1,7 @@
-@model SiteSettingsVM
+﻿@model SupportPageVM
 @*
     Contact us: söhbət pəncərəsi (AI tipli köməkçi) Contact formasının əvəzidir. Dizayn əsası: CaspianBank-Frontend/contact-us.html (başlıq və Head office hissəsi).
-    Hələlik statik görünüşdür: yazı sahəsi və düymələr söndürülüb, cavab verən yoxdur. Aşağıdakı söhbət nümunədir.
+    Söhbət paneli hələ önizləmədir (cavab verən yoxdur, AI qoşulanda işləyəcək). Altdakı "Write to us" və "Your messages" real işləyir: mesaj dəstəyə gedir (admin Tickets).
     Köməkçi bank və bu sayt haqqında suallara cavab verəcək. Ad, ünvan və telefon footer ilə eyni yerdən (Settings) gəlir.
 *@
 @{
@@ -52,14 +52,84 @@
         <section class="surface stack">
             <h2>Head office</h2>
             <div class="address-list">
-                <strong>@Model.CompanyName</strong>
-                <span>@Model.Address</span>
-                <span>Tel @Model.PhoneNumber</span>
+                <strong>@Model.Settings.CompanyName</strong>
+                <span>@Model.Settings.Address</span>
+                <span>Tel @Model.Settings.PhoneNumber</span>
                 <span>Mon–Fri, 09:00–18:00</span>
             </div>
             <div class="map-wrap">
                 <iframe title="Map showing Caspian Bank head office on Nizami Street, Baku" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="https://maps.google.com/maps?q=40.3730,49.8370&amp;z=16&amp;output=embed"></iframe>
             </div>
+        </section>
+    </div>
+    <div class="layout-2 mt-5">
+        <section class="surface">
+            <h2>Write to us</h2>
+            <p class="hint">Send a message to our desk. We answer here and you get a notification.</p>
+            @if (!string.IsNullOrEmpty(Model.Error))
+            {
+                <p class="flash flash-error" role="alert">@Model.Error</p>
+            }
+            <form method="post" asp-action="Create" class="form-stack" novalidate>
+                <div class="field">
+                    <label for="ticket-subject">Subject</label>
+                    <input class="input" id="ticket-subject" name="Subject" maxlength="120" autocomplete="off" placeholder="For example: SWIFT transfer timing" value="@Model.Form.Subject" />
+                </div>
+                <div class="field">
+                    <label for="ticket-message">Message</label>
+                    <textarea class="input" id="ticket-message" name="Message" rows="5" maxlength="2000" placeholder="Tell us what you need">@Model.Form.Message</textarea>
+                </div>
+                <button class="btn btn-primary" type="submit" data-once>Send message</button>
+            </form>
+        </section>
+
+        <section class="surface surface-tight">
+            <div class="toolbar"><h2>Your messages</h2></div>
+            @if (TempData["Error"] is string supportError)
+            {
+                <p class="flash flash-error" role="alert">@supportError</p>
+            }
+            @if (Model.Tickets.Count == 0)
+            {
+                <div class="empty">
+                    <h3>No messages yet</h3>
+                    <p>Messages you send to the desk will show up here with our answers.</p>
+                </div>
+            }
+            else
+            {
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead><tr><th>Subject</th><th>Status</th><th>Last activity</th></tr></thead>
+                        <tbody>
+                            @foreach (var ticket in Model.Tickets)
+                            {
+                                <tr>
+                                    <td>
+                                        <a asp-action="Ticket" asp-route-id="@ticket.Id"><strong>@ticket.Subject</strong></a>
+                                        <div class="hint">@ticket.LastMessagePreview</div>
+                                    </td>
+                                    <td>
+                                        @if (ticket.Status == "Answered")
+                                        {
+                                            <span class="badge badge-success">Answered</span>
+                                        }
+                                        else if (ticket.Status == "Closed")
+                                        {
+                                            <span class="badge badge-neutral">Closed</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge badge-pending">Waiting for us</span>
+                                        }
+                                    </td>
+                                    <td>@ticket.LastActivityAt.ToLocalTime().ToString("dd MMM, HH:mm", System.Globalization.CultureInfo.InvariantCulture)</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
         </section>
     </div>
 </main>
