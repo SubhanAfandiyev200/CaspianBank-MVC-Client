@@ -3501,3 +3501,7 @@ a.header-user:focus-visible { outline: 2px solid var(--color-lime); outline-offs
 .pager-wrap { display: grid; justify-items: center; gap: 4px; margin: 18px 0 8px; }
 .pager-wrap .pager { margin: 4px 0 0; }
 .pager-summary { margin: 0; font-size: 13px; color: var(--color-text-secondary); }
+
+/* Dəstək yazışması: tünd (müştəri) balonda ad və vaxt oxunaqlı olsun */
+.chat-msg.is-user .chat-bubble .hint { color: rgba(255, 255, 255, 0.78); display: block; margin-bottom: 2px; }
+.chat-msg .chat-bubble .hint { display: block; margin-bottom: 2px; }
