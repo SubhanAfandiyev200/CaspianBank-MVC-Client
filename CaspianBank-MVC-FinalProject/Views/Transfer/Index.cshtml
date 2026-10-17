@@ -19,7 +19,14 @@
         return rule is null ? (0m, 0m) : (rule.TransferLimit, rule.CommissionPercent);
     }
 
-    var firstTier = active.FirstOrDefault(c => c.Id == Model.FromCardId) ?? active.FirstOrDefault();
+    // Bu ay kartdan artıq göndərilən məbləğ (aylıq komissiyasız limitdən çıxılır)
+    decimal UsedThisMonth(int cardId)
+    {
+        var row = Model.Limits.FirstOrDefault(l => l.CardId == cardId);
+        return row is null ? 0m : row.UsedThisMonth;
+    }
+
+    var firstTier =active.FirstOrDefault(c => c.Id == Model.FromCardId) ?? active.FirstOrDefault();
 }
 <main id="content" class="page pay-page">
     <a class="back" asp-controller="App" asp-action="Index">Back to cards</a>
@@ -96,7 +103,7 @@
             </aside>
 
             <div class="pay-details">
-                <form asp-controller="Transfer" asp-action="Review" method="post" id="transfer-form" class="pay-form" novalidate data-mode="@mode">
+                <form asp-controller="Transfer" asp-action="Review" method="post" id="transfer-form" class="pay-form" novalidate data-mode="@mode" data-bank-url="@Url.Action("Bank", "Transfer")">
                     <div class="pay-form-head">
                         <h2>Transfer details</h2>
                         <p class="lede">Fill in the details. You will review everything before the money moves.</p>
@@ -119,7 +126,8 @@
                                 <option value="@card.Id" selected="@(card.Id == Model.FromCardId)"
                                         data-tier="@card.Tier" data-last4="@card.Last4" data-money="@Money(card.Balance)"
                                         data-balance="@card.Balance.ToString(inv)" data-design="@card.DesignImage"
-                                        data-limit="@rule.Limit.ToString(inv)" data-pct="@rule.Percent.ToString(inv)">@card.Tier · •••• @card.Last4 · @Money(card.Balance)</option>
+                                        data-limit="@rule.Limit.ToString(inv)" data-pct="@rule.Percent.ToString(inv)"
+                                        data-used="@UsedThisMonth(card.Id).ToString(inv)">@card.Tier · •••• @card.Last4 · @Money(card.Balance)</option>
                             }
                         </select>
                     </div>
@@ -130,7 +138,7 @@
                             <button type="button" id="to-own" class="@(mode == "own" ? "is-active" : "")">My own card</button>
                             <button type="button" id="to-other" class="@(mode == "other" ? "is-active" : "")">Another customer</button>
                         </div>
-                        <p class="hint" id="cashback-hint" hidden>The Cashback card can only send money to your own cards.</p>
+                        <p class="hint" id="cashback-hint" hidden>Sending from the Cashback card has no commission.</p>
                     </div>
 
                     <div class="field" id="own-field" @(mode == "other" ? "hidden" : null)>
@@ -164,6 +172,11 @@
 
                     <div class="field" id="other-field" @(mode == "own" ? "hidden" : null)>
                         <label for="to-number">Recipient card number</label>
+                        @* Nömrənin ilk 8 rəqəmi (BIN) yazılanda bankın adı və loqosu burada çıxır *@
+                        <div class="bank-chip" id="bank-chip" hidden aria-live="polite">
+                            <span class="bank-chip-logo" id="bank-chip-logo" aria-hidden="true"></span>
+                            <span class="bank-chip-name" id="bank-chip-name"></span>
+                        </div>
                         <div class="input-group has-prefix has-status" id="number-group">
                             <span class="input-prefix" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="13" rx="2.5" /><path d="M3 10.5h18M7 15h3" /></svg>
@@ -174,7 +187,7 @@
                                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 5 5 9-10" /></svg>
                             </span>
                         </div>
-                        <p class="hint">The 16-digit number of a Caspian card. You will see the recipient's name before you confirm.</p>
+                        <p class="hint">The 16-digit number of a Caspian card or a card from another bank. You will see the recipient's name before you confirm.</p>
                     </div>
 
                     <div class="field">

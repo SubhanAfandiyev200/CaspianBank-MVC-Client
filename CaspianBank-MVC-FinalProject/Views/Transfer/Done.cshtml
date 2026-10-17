@@ -31,7 +31,11 @@
 
         <dl class="rc-list">
             <div><dt>Status</dt><dd><span class="badge-pill is-ok">Completed</span></dd></div>
-            <div><dt>Type</dt><dd>@(isOwn ? "Between your cards" : "To another customer")</dd></div>
+            <div><dt>Type</dt><dd>@(isOwn ? "Between your cards" : Model.IsExternal ? "To another bank" : "To another customer")</dd></div>
+            @if (Model.IsExternal && !string.IsNullOrEmpty(Model.ToBankName))
+            {
+                <div><dt>Bank</dt><dd>@Model.ToBankName</dd></div>
+            }
             <div><dt>From</dt><dd>@Model.FromLabel</dd></div>
             <div><dt>To</dt><dd>@Model.ToLabel@(isOwn ? "" : " · " + Model.ToHolder)</dd></div>
             @if (!string.IsNullOrEmpty(Model.Note))

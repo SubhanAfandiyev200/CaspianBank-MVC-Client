@@ -10,6 +10,7 @@
     var recipient = p.ToHolder is null ? p.ToLabel : p.ToLabel + " · " + p.ToHolder;
     var confirmText = "You are about to send " + Money(p.Amount) + " to " + recipient + "."
         + (p.Commission > 0 ? " A commission of " + Money(p.Commission) + " will be charged." : string.Empty)
+        + (p.IsExternal ? " The money goes to another bank." : string.Empty)
         + " This can't be undone.";
 }
 <main id="content" class="page pay-page">
@@ -46,12 +47,27 @@
                 <span class="rv-label">To</span>
                 <strong>@(p.ToHolder ?? p.ToLabel)</strong>
                 <span class="rv-sub">@(p.ToHolder is null ? "Your own card" : p.ToLabel)</span>
+                @if (p.IsExternal && !string.IsNullOrEmpty(p.ToBankName))
+                {
+                    <span class="rv-sub">Other bank · @p.ToBankName</span>
+                }
             </div>
         </div>
 
         <dl class="rv-list">
             <div><dt>Amount</dt><dd class="num">@Money(p.Amount)</dd></div>
             <div><dt>Commission</dt><dd class="num @(p.Commission > 0 ? "" : "is-free")">@(p.Commission > 0 ? Money(p.Commission) : "Free")</dd></div>
+            @if (p.MonthlyLimit > 0)
+            {
+                <div>
+                    <dt>Monthly free limit</dt>
+                    <dd class="num">@(p.UsedThisMonth >= p.MonthlyLimit ? "Used up (" + Money(p.MonthlyLimit) + ")" : Money(p.UsedThisMonth) + " used of " + Money(p.MonthlyLimit))</dd>
+                </div>
+                @if (p.ChargedAmount > 0)
+                {
+                    <div><dt>Part charged</dt><dd class="num">@Money(p.ChargedAmount)</dd></div>
+                }
+            }
             @if (!string.IsNullOrEmpty(p.Note))
             {
                 <div><dt>Note</dt><dd>@p.Note</dd></div>

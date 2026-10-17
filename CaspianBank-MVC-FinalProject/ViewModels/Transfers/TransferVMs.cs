@@ -15,8 +15,27 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.Transfers
 
         public List<CardUIVM> Cards { get; set; } = new();
         public List<CardTierUIVM> Tiers { get; set; } = new();  // canlı komissiya hesabı üçün
+        public List<CardLimitUIVM> Limits { get; set; } = new(); // bu ay hər kartdan artıq göndərilən məbləğ
         public string? Error { get; set; }
         public bool ApiUnavailable { get; set; }
+    }
+
+    // Kartın aylıq komissiyasız limiti və bu ay göndərilən məbləğ
+    public class CardLimitUIVM
+    {
+        public int CardId { get; set; }
+        public string Tier { get; set; } = string.Empty;
+        public decimal MonthlyLimit { get; set; }
+        public decimal CommissionPercent { get; set; }
+        public decimal UsedThisMonth { get; set; }
+    }
+
+    // Kart nömrəsinin ilk 8 rəqəminə görə tapılan bank (formada nömrənin üstündə göstərilir)
+    public class BankLookupUIVM
+    {
+        public string Name { get; set; } = string.Empty;
+        public string? LogoUrl { get; set; }
+        public bool IsCaspian { get; set; }
     }
 
     // API-dən gələn "yoxla" nəticəsi (pul hələ köçürülməyib)
@@ -27,6 +46,11 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.Transfers
         public string ToLabel { get; set; } = string.Empty;
         public string? ToHolder { get; set; }
         public bool IsOwn { get; set; }
+        public string? ToBankName { get; set; }
+        public bool IsExternal { get; set; }
+        public decimal MonthlyLimit { get; set; }
+        public decimal UsedThisMonth { get; set; }
+        public decimal ChargedAmount { get; set; }   // komissiya tutulan hissə (limitdən artıq olan)
         public decimal Amount { get; set; }
         public decimal Commission { get; set; }
         public decimal Total { get; set; }
@@ -46,6 +70,8 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.Transfers
         public string FromLabel { get; set; } = string.Empty;
         public string ToLabel { get; set; } = string.Empty;
         public string? ToHolder { get; set; }
+        public string? ToBankName { get; set; }
+        public bool IsExternal { get; set; }
         public decimal Amount { get; set; }
         public decimal Commission { get; set; }
         public decimal Total { get; set; }
