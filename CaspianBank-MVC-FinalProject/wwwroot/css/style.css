@@ -3547,3 +3547,4 @@ a.header-user:focus-visible { outline: 2px solid var(--color-lime); outline-offs
 /* Admin Staff: sətir daxilində rol seçimi və düymə */
 .inline-form { display: inline-flex; align-items: center; gap: 8px; margin: 0; }
 .select-sm { min-height: 34px; padding-top: 4px; padding-bottom: 4px; font-size: 13px; width: auto; }
+.input-sm { min-height: 34px; padding-top: 4px; padding-bottom: 4px; font-size: 13px; width: 190px; }

@@ -114,6 +114,7 @@
             }
             @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Security))
             {
+                <a class="@On("Security")" asp-area="Admin" asp-controller="Security" asp-action="Index">Suspicious activity</a>
                 <a class="@On("Audit")" asp-area="Admin" asp-controller="Audit" asp-action="Index">Audit Log</a>
             }
             @if (User.IsInRole(AppRoles.SuperAdmin))
