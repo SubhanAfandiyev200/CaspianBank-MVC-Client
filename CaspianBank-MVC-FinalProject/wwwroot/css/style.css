@@ -790,7 +790,7 @@ a { color: var(--color-primary-ink); }
 
 .wheel-pop {
   position: fixed;
-  z-index: 80;
+  z-index: 90;
   width: 300px;
   padding: 8px 8px 12px;
   border: 1px solid var(--color-border);
@@ -1831,7 +1831,27 @@ body.body-public {
   backdrop-filter: blur(8px);
 }
 
-.auth-card .brand { margin-bottom: 28px; }
+/* Loqo öz sətrindədir (blok), geri linki onun altında ayrı sətirdə kiçik düymə kimi durur */
+.auth-card .brand { display: flex; width: fit-content; margin-bottom: 20px; }
+
+.auth-card .back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 24px;
+  padding: 6px 14px 6px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.auth-card .back:hover,
+.auth-card .back:focus-visible {
+  background: #fff;
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
 
 .auth-foot {
   display: flex;
@@ -3165,3 +3185,323 @@ body.body-admin .site-footer-inner {
   .input-number::placeholder { letter-spacing: 0.04em; }
   .amount-input { font-size: 26px; }
 }
+
+/* =========================================================
+   Tarixçə (History) və çıxarış (Statement)
+   ========================================================= */
+
+.pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; margin: 20px 0 8px; }
+.pager-link {
+  min-width: 38px; padding: 8px 12px; text-align: center; border: 1px solid var(--color-border-strong); border-radius: 10px;
+  background: #fff; color: var(--color-text); font-size: 14px; font-weight: 600; text-decoration: none;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.pager-link:hover { background: #eef6d8; border-color: var(--color-primary); }
+.pager-link.is-current { background: var(--color-primary); border-color: var(--color-primary); color: #fff; }
+.pager-gap { color: var(--color-text-tertiary); padding: 0 2px; }
+
+/* Çıxarış səhifəsi (çap üçün) */
+.st { max-width: 860px; margin: 0 auto; padding: 28px 30px; background: #fff; border: 1px solid var(--color-border); border-radius: 18px; box-shadow: 0 20px 50px rgba(20, 40, 30, 0.08); }
+.st-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; padding-bottom: 18px; border-bottom: 2px solid var(--color-primary); }
+.st-bank { display: block; font-size: 20px; letter-spacing: -0.02em; color: var(--color-primary); }
+.st-sub { display: block; font-size: 13px; color: var(--color-text-secondary); }
+.st-title-block { text-align: right; }
+.st-title-block h1 { margin: 0 0 2px; font-size: 22px; }
+.st-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin: 18px 0; }
+.st-meta dt { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-tertiary); }
+.st-meta dd { margin: 2px 0 0; font-weight: 600; }
+.st-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 18px; }
+.st-summary > div { display: grid; gap: 4px; padding: 12px 14px; border: 1px solid var(--color-border); border-radius: 12px; background: #fafbf7; }
+.st-summary span { font-size: 12px; color: var(--color-text-secondary); }
+.st-summary strong { font-size: 17px; font-variant-numeric: tabular-nums; }
+.st-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+.st-table th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-tertiary); padding: 8px 10px; border-bottom: 1px solid var(--color-border-strong); }
+.st-table td { padding: 10px; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+.st-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.st-note { display: block; font-size: 12px; color: var(--color-text-tertiary); }
+.st-empty { padding: 28px 0; text-align: center; color: var(--color-text-secondary); }
+.st-foot { margin: 18px 0 0; font-size: 12px; color: var(--color-text-tertiary); }
+
+@media (max-width: 640px) {
+  .st { padding: 20px 16px; }
+  .st-title-block { text-align: left; }
+}
+
+@media print {
+  .st { box-shadow: none; border: 0; padding: 0; max-width: none; }
+  .st-summary > div { break-inside: avoid; }
+  .st-table tr { break-inside: avoid; }
+}
+
+/* Tarixçə: cədvəl, səhifələmə və filtr sətri (səhifə dizaynı transaction-history.html-dəkidir) */
+.filters .field.is-wide { width: min(260px, 100%); }
+.hist-reset { align-self: flex-end; margin-bottom: 10px; }
+.page-activity .data-table .tx-card span:last-child { white-space: nowrap; }
+.page-activity .data-table td:first-child, .page-activity .data-table td.num { white-space: nowrap; }
+
+/* Seçim qutusu (checkbox): saytın rəngləri ilə */
+.check { cursor: pointer; align-items: center; }
+.check input[type="checkbox"] {
+  appearance: none; -webkit-appearance: none; flex: none; display: grid; place-items: center;
+  width: 20px; height: 20px; margin: 0; border: 1.5px solid var(--color-border-strong); border-radius: 6px; background: #fff;
+  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease; cursor: pointer;
+}
+.check input[type="checkbox"]::after {
+  content: ""; width: 5px; height: 10px; margin-top: -2px; border: solid #fff; border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0); transition: transform 0.15s ease;
+}
+.check input[type="checkbox"]:checked { background: var(--color-primary); border-color: var(--color-primary); }
+.check input[type="checkbox"]:checked::after { transform: rotate(45deg) scale(1); }
+.check input[type="checkbox"]:hover { border-color: var(--color-primary); }
+.check input[type="checkbox"]:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(15, 92, 63, 0.18); }
+
+/* Pəncərədəki kart seçimi açılanda siyahı pəncərənin içində kəsilməsin */
+.modal-dialog:has(.card-pick.is-open) { overflow: visible; }
+
+/* Tarixçənin filtr zolağı: sahələr üst-üstə düşmür, etiketlər eyni xəttdədir, kart seçimi kompaktdır */
+.page-activity .filters { align-items: flex-start; gap: 14px 16px; }
+.page-activity .filters .field.grow { flex: 0 0 auto; width: auto; min-width: max-content; }
+.page-activity .filters .field { width: 190px; }
+.page-activity .filters .field.is-wide { width: min(260px, 100%); }
+.page-activity .filters .field:has(.card-pick) { width: min(300px, 100%); }
+.page-activity .filters .segment { height: 44px; align-items: center; }
+.page-activity .filters .hist-reset { align-self: flex-end; margin-bottom: 4px; }
+.filters .card-pick-btn { min-height: 44px; padding: 4px 10px; }
+.filters .card-pick .card-thumb-frame { width: 56px; height: 35px; border-radius: 5px; }
+.filters .card-pick .card-thumb-scale.plastic { transform: scale(0.2); }
+.filters .card-pick .card-thumb-all span { width: 28px; height: 16px; left: 8px; top: 6px; }
+.filters .card-pick .card-thumb-all span:last-child { left: 16px; top: 12px; }
+
+/* Sadə seçim siyahısı (select[data-select]): kart seçimi ilə eyni üslub, brauzerin göy siyahısı yoxdur */
+.pick { position: relative; }
+.pick.is-open { z-index: 30; }
+.pick-native { position: absolute; width: 1px; height: 1px; margin: 0; padding: 0; opacity: 0; pointer-events: none; }
+.pick-btn { display: flex; align-items: center; justify-content: space-between; gap: 10px; text-align: left; cursor: pointer; font: inherit; }
+.pick-label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pick-chevron { flex: none; color: var(--color-text-tertiary); transition: transform 0.2s ease; }
+.pick.is-open .pick-btn { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(15, 92, 63, 0.12); }
+.pick.is-open .pick-chevron { transform: rotate(180deg); }
+.pick-menu {
+  position: absolute; z-index: 40; left: 0; right: 0; top: calc(100% + 6px);
+  display: grid; gap: 2px; max-height: 280px; overflow: auto; padding: 6px;
+  border: 1px solid var(--color-border); border-radius: 14px; background: #fff; box-shadow: var(--shadow-md);
+}
+.pick-option {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%;
+  padding: 10px 12px; border: 0; border-radius: 10px; background: transparent; text-align: left;
+  font: inherit; font-size: 14px; color: var(--color-text); cursor: pointer;
+}
+.pick-option:hover, .pick-option:focus-visible { background: #f4f7ef; outline: none; }
+.pick-option.is-selected { background: #eef6d8; font-weight: 600; color: var(--color-primary); }
+.pick-option.is-selected::after {
+  content: ""; width: 5px; height: 10px; margin-right: 4px; border: solid var(--color-primary); border-width: 0 2px 2px 0; transform: rotate(45deg);
+}
+.surface-tight:has(.pick.is-open) { overflow: visible; }
+.modal-dialog:has(.pick.is-open) { overflow: visible; }
+
+/* ---------- Chat (Contact us): AI tipli söhbət pəncərəsi. Hələlik statik görünüş, funksionallıq sonra ---------- */
+.surface.chat { padding: 0; overflow: hidden; display: grid; }
+.chat-head { display: flex; align-items: center; gap: 12px; padding: 14px 18px; border-bottom: 1px solid var(--color-border); }
+.chat-avatar {
+  width: 38px; height: 38px; border-radius: 50%; flex: none;
+  display: grid; place-items: center;
+  background: var(--color-primary); color: var(--color-lime); font-weight: 700;
+}
+.chat-head strong { display: block; font-size: var(--fs-md); }
+.chat-head small { color: var(--color-text-tertiary); font-size: var(--fs-xs); }
+.chat-log {
+  display: grid; align-content: start; gap: 12px;
+  padding: 18px; min-height: 320px; max-height: 460px; overflow-y: auto;
+  background: var(--color-bg);
+}
+.chat-msg { display: flex; }
+.chat-msg.is-user { justify-content: flex-end; }
+.chat-bubble {
+  max-width: 84%; padding: 10px 14px;
+  border: 1px solid var(--color-border); border-radius: 14px; border-bottom-left-radius: 4px;
+  background: var(--color-surface); font-size: var(--fs-base); line-height: 1.5;
+}
+.chat-msg.is-user .chat-bubble {
+  background: var(--color-primary); border-color: var(--color-primary); color: #fff;
+  border-bottom-left-radius: 14px; border-bottom-right-radius: 4px;
+}
+.chat-suggest { margin: 0; padding: 14px 18px 0; }
+.chat-suggest .chip:disabled { opacity: 0.65; cursor: not-allowed; }
+.chat-composer { display: flex; gap: 10px; padding: 12px 18px 16px; }
+.chat-composer .input { flex: 1; min-width: 0; }
+@media (max-width: 560px) {
+  .chat-bubble { max-width: 92%; }
+  .chat-log { min-height: 260px; }
+}
+
+/* "Bu sizsiniz?" kartı (qeydiyyat) və vətəndaş şəkli: şəkil rəngli olsa da ağ-qara göstərilir */
+.citizen-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: var(--color-surface, #fff);
+}
+
+.citizen-photo {
+  position: relative;
+  flex: none;
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #d9dedb url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'><circle cx='48' cy='38' r='17' fill='%23a3aca7'/><path d='M14 96c2-22 16-34 34-34s32 12 34 34z' fill='%23a3aca7'/></svg>") center / cover no-repeat;
+}
+
+.citizen-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.05);
+}
+
+.citizen-info {
+  display: grid;
+  gap: 4px;
+}
+
+.citizen-info strong { font-size: 1.125rem; }
+.citizen-info span { color: var(--color-text-secondary); font-size: var(--fs-sm); }
+
+/* Header-dəki istifadəçi (profilə aparır): şəkil varsa ikonun yerinə dairəvi ağ-qara şəkil */
+a.header-user { text-decoration: none; transition: opacity 0.2s ease; }
+a.header-user:hover { opacity: 0.85; }
+a.header-user:focus-visible { outline: 2px solid var(--color-lime); outline-offset: 3px; border-radius: 999px; }
+.header-user-icon { position: relative; overflow: hidden; }
+.header-user-photo {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  filter: grayscale(1) contrast(1.05);
+}
+
+/* Profil səhifəsi */
+.profile-card { display: flex; align-items: flex-start; gap: 28px; }
+.profile-photo { width: 160px; height: 160px; border-radius: 16px; }
+.profile-body { display: grid; gap: 14px; min-width: 0; flex: 1; }
+.profile-body h2 { margin: 0; }
+.profile-list { display: grid; gap: 0; margin: 0; }
+.profile-list > div {
+  display: grid; grid-template-columns: 140px 1fr; gap: 12px; padding: 12px 0;
+  border-top: 1px solid var(--color-border);
+}
+.profile-list dt { color: var(--color-text-secondary); font-size: var(--fs-sm); }
+.profile-list dd { margin: 0; font-weight: 600; overflow-wrap: anywhere; }
+@media (max-width: 640px) {
+  .profile-card { flex-direction: column; align-items: center; text-align: center; }
+  .profile-body { width: 100%; text-align: left; }
+  .profile-list > div { grid-template-columns: 110px 1fr; }
+}
+
+/* Bazadan (Settings) gələn loqo şəkli: köhnə SVG işarə ilə eyni ölçüdə */
+.brand-logo { display: block; width: 32px; height: 32px; flex: none; border-radius: 8px; object-fit: contain; }
+
+
+/* Müştəri və admin panelinin tünd yaşıl header-ində loqo kvadratı itməsin: incə limon halqa */
+.topnav .brand-logo { box-shadow: 0 0 0 1.5px rgba(214, 227, 107, 0.55); }
+
+/* Kreditlər: təklif xəbərdarlığı və ödəniş növü seçimi */
+.loan-banner {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  margin: 0 0 16px; padding: 14px 18px; border-radius: 14px; text-decoration: none; color: inherit;
+  background: radial-gradient(260px 90px at 100% 0%, rgba(197, 216, 109, 0.55), transparent 70%), #f4f7ef;
+  border: 1px solid var(--color-border);
+}
+.loan-banner-copy { display: grid; gap: 2px; min-width: 0; }
+.loan-banner-copy span { color: var(--color-text-secondary); font-size: var(--fs-sm); }
+.segment button:disabled { opacity: 0.45; cursor: not-allowed; }
+.pulse small.hint { display: block; margin-top: 4px; }
+.page-head .lede .badge { margin-right: 8px; }
+.page-head .lede .btn-copy { margin-left: 6px; }
+.segment-full.segment-3 { grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 560px) { .segment-full.segment-3 { grid-template-columns: 1fr; } }
+
+/* Bildirişlər: zəng, siyahı və canlı pop-up (toast) */
+.notif-count[hidden] { display: none; }
+.notif-bell .panel-head .hint { font-size: var(--fs-xs); }
+.note-empty { margin: 0; padding: 18px 14px; color: var(--color-text-secondary); font-size: var(--fs-sm); text-align: center; }
+.note-empty[hidden], .note-list .empty[hidden] { display: none; }
+.segment .seg-link {
+  border-radius: var(--radius-pill); padding: 6px 12px; font-weight: 600; font-size: var(--fs-sm);
+  color: var(--color-text-secondary); text-decoration: none;
+}
+.segment .seg-link.is-active { background: var(--color-primary); color: #fff; }
+.toast-note { display: grid; gap: 2px; text-decoration: none; color: inherit; }
+.toast-note span { color: var(--color-text-secondary); font-size: var(--fs-sm); font-weight: 400; }
+
+/* Müştəri cədvəllərində əməliyyat sütunu admin üçün nəzərdə tutulmuş 230px minimumu ilə enlənməsin */
+.page-activity .data-table td.actions { min-width: 0; width: auto; }
+.loan-link { color: inherit; text-decoration: none; }
+.loan-link:hover strong { color: var(--color-primary); text-decoration: underline; }
+
+/* Admin: kiçik ekranda yan menyu üstdə sıralanır. Yuxarıdakı eyni qayda 2076-cı və 2136-cı sətirlərdəki təkrar elanlarla ləğv olunurdu, ona görə faylın sonunda təkrarlanır */
+@media (max-width: 860px) {
+  .admin-side { position: static; width: auto; flex-direction: row; flex-wrap: wrap; align-items: center; gap: 4px 6px; padding: 12px 14px; animation: none; }
+  .admin-side .eyebrow { width: 100%; margin: 0 6px 2px; }
+  .admin-side a, .admin-side button { width: auto; padding: 9px 14px; }
+  body.body-admin main.page,
+  body.body-admin .admin-stage,
+  body.body-admin .site-footer-inner {
+    width: min(980px, calc(100% - 28px));
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* =========================================================
+   Ödənişlər (Bills): təchizatçı qrupları, loqolar, axtarış nəticəsi
+   ========================================================= */
+.bill-group + .bill-group { margin-top: 14px; }
+.bill-group-title {
+  margin: 0 0 8px; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+.provider-grid.bill-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+.provider-logo {
+  width: 32px; height: 32px; flex: none; padding: 2px; object-fit: contain;
+  border: 1px solid var(--color-border); border-radius: 8px; background: #fff;
+}
+.provider-logo.is-small { width: 24px; height: 24px; border-radius: 6px; padding: 1px; }
+.bill-provider-cell { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; }
+.bill-provider-cell.is-end { justify-content: flex-end; }
+.bill-lookup-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+.bill-lookup-row .btn { min-width: 96px; }
+.bill-found {
+  display: grid; gap: 4px; padding: 14px 16px; border: 1px solid #cfe08a; border-radius: 14px; background: #f6faea;
+}
+.bill-found-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.bill-found-who { display: grid; gap: 2px; min-width: 0; flex: 1 1 160px; }
+.bill-found-who span { font-size: 13px; color: var(--color-text-secondary); }
+.bill-found .detail-list div:last-child { border-bottom: 0; }
+.bill-found .detail-list div { grid-template-columns: 130px 1fr; padding: 8px 0; }
+.data-table small.hint { display: block; margin-top: 2px; }
+@media (max-width: 560px) {
+  .provider-grid.bill-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bill-found .detail-list div { grid-template-columns: 1fr; }
+}
+.provider-mark.is-small { width: 24px; height: 24px; font-size: 9px; border-radius: 6px; }
+.bill-provider-cell > span:last-child { display: grid; gap: 1px; }
+.data-table td small.hint { display: block; margin-top: 2px; max-width: 220px; white-space: normal; }
+.layout-2 > .stack-lg { align-content: start; min-width: 0; }
+
+/* Təkər tipli seçim (wheel-select.js): doğum tarixi seçicisinin eyni görünüşü, bir sütunlu */
+.wheel-select-btn { display: flex; align-items: center; justify-content: space-between; gap: 10px; width: 100%; }
+.wheel-select.is-open .wheel-select-btn { border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(15, 92, 63, 0.12); }
+.wheel-select.is-open .pick-chevron { transform: rotate(180deg); }
+.wheel-frame.is-single { grid-template-columns: 1fr; }
+.wheel-select-pop .wheel-item { font-size: 16px; }
+.pager-wrap { display: grid; justify-items: center; gap: 4px; margin: 18px 0 8px; }
+.pager-wrap .pager { margin: 4px 0 0; }
+.pager-summary { margin: 0; font-size: 13px; color: var(--color-text-secondary); }
+
+/* Dəstək yazışması: tünd (müştəri) balonda ad və vaxt oxunaqlı olsun */
+.chat-msg.is-user .chat-bubble .hint { color: rgba(255, 255, 255, 0.78); display: block; margin-bottom: 2px; }
+.chat-msg .chat-bubble .hint { display: block; margin-bottom: 2px; }

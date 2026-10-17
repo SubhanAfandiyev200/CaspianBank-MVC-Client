@@ -36,6 +36,14 @@ namespace CaspianBank_MVC_FinalProject.Helpers
                     return "Footer text";
                 case "Copyright":
                     return "Copyright line";
+                case "InstagramUrl":
+                    return "Instagram link";
+                case "FacebookUrl":
+                    return "Facebook link";
+                case "TwitterUrl":
+                    return "X (Twitter) link";
+                case "LinkedInUrl":
+                    return "LinkedIn link";
                 default:
                     return key;
             }
@@ -61,6 +69,11 @@ namespace CaspianBank_MVC_FinalProject.Helpers
                     return "The text under the footer heading, up to 500 characters.";
                 case "Copyright":
                     return "The copyright line at the very bottom, up to 100 characters.";
+                case "InstagramUrl":
+                case "FacebookUrl":
+                case "TwitterUrl":
+                case "LinkedInUrl":
+                    return "Where the icon in the footer opens. Write the full link, for example https://www.instagram.com/caspianbank.";
                 default:
                     return string.Empty;
             }

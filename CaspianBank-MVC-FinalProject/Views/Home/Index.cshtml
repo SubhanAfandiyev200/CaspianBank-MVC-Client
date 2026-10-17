@@ -1,9 +1,9 @@
-﻿@{
+@{
     Layout = "_HomeLayout";
 }
 
 <main id="main">
-    
+
     @await Component.InvokeAsync("HomeTicker")
 
     @await Component.InvokeAsync("AboutVideo")
@@ -16,70 +16,5 @@
 
     @await Component.InvokeAsync("Benefit")
 
-    <section class="stats" aria-labelledby="stats-title">
-        <div class="section-intro stats-intro split">
-            <div>
-                <p class="eyebrow"><span aria-hidden="true">✱ </span><span data-ui="statsEyebrow">Trust indicators</span></p>
-                <h2 id="stats-title" data-ui="statsTitle">Driving the future of digital finance</h2>
-            </div>
-            <p class="lede" data-ui="statsLede">
-                Our platform is built on transparency, high-velocity performance, and
-                institutional-grade security.
-            </p>
-        </div>
-        <div class="stat-row">
-            <!-- TODO: replace these placeholder figures with audited numbers -->
-            <article class="stat">
-                <div class="ring" data-percent="97" data-count="97" data-decimals="0" data-suffix="%">
-                    <svg viewBox="0 0 160 160" aria-hidden="true">
-                        <circle class="ring-face" cx="80" cy="80" r="52" />
-                        <g transform="rotate(-90 80 80)">
-                            <circle class="ring-track" cx="80" cy="80" r="64" />
-                            <circle class="ring-value" cx="80" cy="80" r="64" />
-                        </g>
-                        <g class="ring-orbit">
-                            <circle cx="80" cy="16" r="4" />
-                        </g>
-                    </svg>
-                    <p class="ring-figure"><span class="ring-num">0</span></p>
-                </div>
-                <h3>System availability</h3>
-                <p>Maintaining a 97% uptime record so banking services stay online.</p>
-            </article>
-            <article class="stat">
-                <div class="ring" data-percent="98" data-count="98" data-decimals="0" data-suffix="%">
-                    <svg viewBox="0 0 160 160" aria-hidden="true">
-                        <circle class="ring-face" cx="80" cy="80" r="52" />
-                        <g transform="rotate(-90 80 80)">
-                            <circle class="ring-track" cx="80" cy="80" r="64" />
-                            <circle class="ring-value" cx="80" cy="80" r="64" />
-                        </g>
-                        <g class="ring-orbit">
-                            <circle cx="80" cy="16" r="4" />
-                        </g>
-                    </svg>
-                    <p class="ring-figure"><span class="ring-num">0</span></p>
-                </div>
-                <h3>Customer retention</h3>
-                <p>Clear payments and a straightforward account keep clients with the bank.</p>
-            </article>
-            <article class="stat">
-                <div class="ring" data-percent="99" data-count="99" data-decimals="0" data-suffix="%">
-                    <svg viewBox="0 0 160 160" aria-hidden="true">
-                        <circle class="ring-face" cx="80" cy="80" r="52" />
-                        <g transform="rotate(-90 80 80)">
-                            <circle class="ring-track" cx="80" cy="80" r="64" />
-                            <circle class="ring-value" cx="80" cy="80" r="64" />
-                        </g>
-                        <g class="ring-orbit">
-                            <circle cx="80" cy="16" r="4" />
-                        </g>
-                    </svg>
-                    <p class="ring-figure"><span class="ring-num">0</span></p>
-                </div>
-                <h3>Automated AML/KYC</h3>
-                <p>Verification that shortens onboarding and keeps the same record on the account.</p>
-            </article>
-        </div>
-    </section>
+    @await Component.InvokeAsync("HomeStats")
 </main>

@@ -1,6 +1,6 @@
 namespace CaspianBank_MVC_FinalProject.ViewModels.Account
 {
-    public class WelcomeVM
+    public class RegisterEmailVM
     {
         public string Email { get; set; } = string.Empty;
     }

@@ -2,6 +2,7 @@
 @using System.Globalization
 @{
     Layout = "_AppLayout";
+    ViewData["Title"] = "Transfer complete";
     var inv = CultureInfo.InvariantCulture;
     var local = Model.CreatedAt.ToLocalTime();
     var isOwn = Model.ToHolder is null;

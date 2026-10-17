@@ -11,7 +11,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
     // UI bölməsi: Home-dakı "About" blokunun mətni (label, title, description) və videosu. Tək yazıdır: yalnız görünür (Detail) və dəyişdirilir (Edit).
     // Video ayrıca dəyişdirilir (EditVideo). Sütunları AboutPillarController idarə edir. API: api/admin/about
     [Area("Admin")]
-    [Authorize(Roles = "Admin,SuperAdmin,WebDesigner")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class AboutController : ApiControllerBase
     {
         private const long MaxVideoBytes = 50L * 1024 * 1024;

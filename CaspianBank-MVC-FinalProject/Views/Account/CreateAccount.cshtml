@@ -1,0 +1,57 @@
+@model RegisterVM
+@{
+    Layout = "_AuthLayout";
+    ViewData["Title"] = "Create account";
+}
+@* Qeydiyyat, 3-cü addım: telefon və şifrə. Kimlik artıq təsdiqlənib; hesab açılanda ilk iki kart (Standard + Cashback) avtomatik yaranır. *@
+<main class="auth-shell">
+    <section class="auth-card auth-wide">
+        @await Component.InvokeAsync("SiteLogo")
+        <a class="back" asp-controller="Account" asp-action="Register">← Start over</a>
+        <h1>Create your account</h1>
+        <p class="lede">Last step. Your first two cards open automatically.</p>
+        <form id="register-form" class="form-stack mt-5" asp-controller="Account" asp-action="CreateAccount" method="post" novalidate>
+            <input type="hidden" asp-for="VerificationToken" />
+            <input type="hidden" asp-for="Fin" />
+            <input type="hidden" asp-for="IdCardNumber" />
+            <input type="hidden" asp-for="Name" />
+            <input type="hidden" asp-for="Surname" />
+            <div asp-validation-summary="ModelOnly" class="field-error"></div>
+            <div class="field">
+                <label for="holder">Account holder</label>
+                <input class="input" id="holder" value="@Model.HolderName" readonly />
+            </div>
+            <div class="field">
+                <label for="email">Email</label>
+                <input class="input" id="email" asp-for="Email" type="email" autocomplete="email" readonly />
+            </div>
+            <div class="field">
+                <label for="phone">Phone number</label>
+                <div class="phone-wrap">
+                    <span class="phone-prefix">+994</span>
+                    <input class="phone-input" id="phone" asp-for="PhoneNumber" type="tel" inputmode="numeric" autocomplete="tel" data-phone placeholder="12 345 67 89" />
+                </div>
+            </div>
+            <div class="field">
+                <label for="password">Password</label>
+                <input class="input" id="password" asp-for="Password" type="password" data-password autocomplete="new-password" />
+                <p class="field-hint">At least 6 characters, with upper and lower case letters, a number and a symbol.</p>
+            </div>
+            <div class="field">
+                <label for="confirm">Confirm password</label>
+                <input class="input" id="confirm" asp-for="ConfirmPassword" type="password" data-password autocomplete="new-password" />
+            </div>
+            <button class="btn btn-primary btn-block" type="submit">Create account</button>
+            <div class="auth-links auth-links-center">
+                <a asp-controller="Account" asp-action="Login" data-carry-email>Already have an account? Log in</a>
+            </div>
+        </form>
+        <p class="auth-foot">
+            <a asp-controller="Home" asp-action="Index" asp-fragment="contact">Contact us</a>
+            <span>Caspian Bank · Baku</span>
+        </p>
+    </section>
+</main>
+@section Scripts {
+    <script src="~/js/auth-fields.js"></script>
+}

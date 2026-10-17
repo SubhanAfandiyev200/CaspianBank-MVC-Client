@@ -33,15 +33,20 @@
             @if (User.Identity?.IsAuthenticated == true)
             {
                 <form class="header-auth" asp-controller="Account" asp-action="Logout" method="post">
-                    <span class="header-user">
+                    @* Şəkil və ad: müştəriyə profil səhifəsini, işçiyə admin panelini açır *@
+                    <a class="header-user" href="@NavLinks.UserLink(isStaff)" title="@(isStaff ? "Admin panel" : "My profile")">
                         <span class="header-user-icon" aria-hidden="true">
                             <svg viewBox="0 0 24 24" width="18" height="18">
                                 <circle cx="12" cy="8.2" r="3.4" fill="none" stroke="currentColor" stroke-width="1.7" />
                                 <path d="M5.4 19.2c.9-3.5 3.4-5.2 6.6-5.2s5.7 1.7 6.6 5.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
                             </svg>
+                            @if (!isStaff)
+                            {
+                                <img class="header-user-photo" src="@Url.Action("Avatar", "Profile")" alt="" onerror="this.remove()" />
+                            }
                         </span>
-                        <a class="header-user-name" href="@NavLinks.AppHome(isStaff)">@User.Identity.Name</a>
-                    </span>
+                        <span class="header-user-name">@User.Identity.Name</span>
+                    </a>
                     <button class="btn-logout" type="submit" data-confirm-title="Log out?" data-confirm-text="You will need to log in again to open your account." data-confirm-yes="Log out">
                         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
                             <path d="M10 7V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
@@ -68,7 +73,7 @@
                 }
                 else
                 {
-                    <a class="mega-card" href="@NavLinks.Welcome">
+                    <a class="mega-card" href="@NavLinks.Register">
                         <span class="mega-swatch mega-swatch-a" aria-hidden="true"><partial name="_MegaArt" model='"account"' /></span>
                         <strong>Open an account</strong>
                         <span>Current accounts for personal and salary clients.</span>

@@ -2,6 +2,7 @@
 @using System.Globalization
 @{
     Layout = "_AppLayout";
+    ViewData["Title"] = "Transfer";
     var inv = CultureInfo.InvariantCulture;
     var active = Model.Cards.Where(c => !c.IsBlocked).ToList();
     var mode = Model.Mode == "other" ? "other" : "own";

@@ -1,4 +1,4 @@
-using CaspianBank_MVC_FinalProject.ViewModels.Account;
+﻿using CaspianBank_MVC_FinalProject.ViewModels.Account;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -13,36 +13,32 @@ namespace CaspianBank_MVC_FinalProject.Controllers
     public class AccountController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
 
-        public AccountController(IHttpClientFactory httpClientFactory)
+        public AccountController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
         }
 
+        // Köhnə "/Account/Welcome" ünvanı (bookmark, köhnə link): artıq ayrıca səhifə yoxdur, giriş səhifəsinə yönləndirilir
         [HttpGet]
         public IActionResult Welcome()
         {
-            if (User.Identity?.IsAuthenticated == true)
-            {
-                return LocalRedirect(RoleRedirect.HomeUrl(User.FindAll(ClaimTypes.Role).Select(claim => claim.Value)));
-            }
-
-            // Geri düyməsi ilə qayıdanda yazılan email yenidən dolu gəlsin
-            return View(new WelcomeVM
-            {
-                Email = TempData.Peek("AuthEmail") as string ?? string.Empty
-            });
+            return RedirectToAction(nameof(Login));
         }
 
+        // Footer-dakı "email yaz və davam et" formu: email sistemdə varsa Login-ə (email hazır dolu gəlir),
+        // yoxdursa qeydiyyata (kimlik formu) aparır. Ayrıca səhifəsi yoxdur: xəta olarsa Login-də mesaj göstərilir
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Welcome(WelcomeVM model)
+        public async Task<IActionResult> Start(string? email)
         {
-            var email = model.Email?.Trim() ?? string.Empty;
+            email = email?.Trim() ?? string.Empty;
             if (email.Length == 0)
             {
-                ModelState.AddModelError(string.Empty, "Enter your email.");
-                return View(model);
+                TempData["Info"] = "Enter your email.";
+                return RedirectToAction(nameof(Login));
             }
 
             try
@@ -52,21 +48,17 @@ namespace CaspianBank_MVC_FinalProject.Controllers
 
                 if (response.StatusCode == HttpStatusCode.TooManyRequests)
                 {
-                    ModelState.AddModelError(string.Empty, "Too many attempts. Please wait a minute and try again.");
-                    return View(model);
+                    TempData["Info"] = "Too many attempts. Please wait a minute and try again.";
+                    return RedirectToAction(nameof(Login));
                 }
 
                 var result = await ReadJsonAsync<CheckEmailResponseVM>(response);
                 if (!response.IsSuccessStatusCode || result is null || !result.IsSuccess)
                 {
-                    var errors = result?.Errors is { Length: > 0 }
-                        ? result.Errors
-                        : new[] { "Could not check the email. Please try again." };
-
-                    foreach (var error in errors)
-                        ModelState.AddModelError(string.Empty, error);
-
-                    return View(model);
+                    TempData["Info"] = result?.Errors is { Length: > 0 }
+                        ? result.Errors[0]
+                        : "Could not check the email. Please try again.";
+                    return RedirectToAction(nameof(Login));
                 }
 
                 // Email növbəti səhifədə hazır dolsun (URL-ə yazılmır)
@@ -75,23 +67,14 @@ namespace CaspianBank_MVC_FinalProject.Controllers
                 if (result.Exists)
                     return RedirectToAction(nameof(Login));
 
-                // Yeni email: Register-dən əvvəl emailin sahibi olduğunu OTP kodu ilə təsdiqləyir
-                var otp = await SendOtpAsync(client, email);
-                if (otp.Error is not null)
-                {
-                    ModelState.AddModelError(string.Empty, otp.Error);
-                    return View(model);
-                }
-
-                TempData["Info"] = otp.Info;
-                SetDevCode(otp.DevCode);
-                MarkResendAvailable(otp.WaitSeconds);
-                return RedirectToAction(nameof(VerifyOtp));
+                // Yeni email: qeydiyyat kimlikdən başlayır (FİN, vəsiqə, ad, soyad). Email yadda qalır, kimlik təsdiqlənəndən sonra ona OTP göndərilir
+                TempData["RegEmail"] = email;
+                return RedirectToAction(nameof(Register));
             }
             catch (HttpRequestException)
             {
-                ModelState.AddModelError(string.Empty, "The service is unavailable right now. Please try again later.");
-                return View(model);
+                TempData["Info"] = "The service is unavailable right now. Please try again later.";
+                return RedirectToAction(nameof(Login));
             }
         }
 
@@ -100,7 +83,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
         {
             var email = TempData.Peek("AuthEmail") as string;
             if (string.IsNullOrEmpty(email))
-                return RedirectToAction(nameof(Welcome));
+                return RedirectToAction(nameof(Register));
 
             return View(new VerifyOtpVM
             {
@@ -151,11 +134,11 @@ namespace CaspianBank_MVC_FinalProject.Controllers
                     return View(model);
                 }
 
-                // Email təsdiqləndi: Register bu tokeni API-yə göndərəcək
+                // Email təsdiqləndi: kimlik artıq yoxlanılıb, qalan telefon və şifrədir. CreateAccount bu tokeni API-yə göndərəcək
                 TempData["AuthEmail"] = model.Email;
                 TempData["VerificationToken"] = result.VerificationToken;
                 TempData.Remove("DevCode");
-                return RedirectToAction(nameof(Register));
+                return RedirectToAction(nameof(CreateAccount));
             }
             catch (HttpRequestException)
             {
@@ -169,7 +152,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
         public async Task<IActionResult> ResendOtp(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
-                return RedirectToAction(nameof(Welcome));
+                return RedirectToAction(nameof(Register));
 
             email = email.Trim();
             TempData["AuthEmail"] = email;
@@ -328,31 +311,257 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
         }
 
+        // Qeydiyyat kimlikdən başlayır, "Open account" düyməsi birbaşa buraya gətirir (login olmayanlar üçün):
+        //   1) Register: FİN, vəsiqə nömrəsi, ad, soyad reyestrdə yoxlanılır (uyğun gəlməsə "tapılmadı")
+        //   2) ConfirmIdentity: "Bu sizsiniz?" (şəkil, ad, soyadın baş hərfi, doğum ili)
+        //   3) RegisterEmail (footer-dakı email formundan gəlibsə email artıq məlumdur, bu addım keçilir) və VerifyOtp: emailə 6 rəqəmli kod
+        //   4) CreateAccount: telefon + şifrə, hesab açılır, ilk kartlar avtomatik yaranır
         [HttpGet]
         public IActionResult Register()
         {
-            // Email OTP ilə təsdiqlənməyibsə Register açılmır
-            var email = TempData.Peek("AuthEmail") as string;
-            var token = TempData.Peek("VerificationToken") as string;
-            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
-                return RedirectToAction(nameof(Welcome));
-
-            return View(new RegisterVM
+            // Hesabı olan və daxil olan adam yenidən qeydiyyatdan keçmir
+            if (User.Identity?.IsAuthenticated == true)
             {
-                Email = email,
-                VerificationToken = token
+                return LocalRedirect(RoleRedirect.HomeUrl(User.FindAll(ClaimTypes.Role).Select(claim => claim.Value)));
+            }
+
+            return View(new IdentityVM
+            {
+                Fin = TempData.Peek("RegFin") as string ?? string.Empty,
+                IdCardNumber = TempData.Peek("RegIdCard") as string ?? string.Empty,
+                Name = TempData.Peek("RegFirst") as string ?? string.Empty,
+                Surname = TempData.Peek("RegLast") as string ?? string.Empty
             });
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Register(RegisterVM model)
+        public async Task<IActionResult> Register(IdentityVM model)
         {
-            if (model.BirthDay is null)
+            var fin = model.Fin?.Trim().ToUpperInvariant() ?? string.Empty;
+            var idCard = model.IdCardNumber?.Trim().ToUpperInvariant() ?? string.Empty;
+            var name = model.Name?.Trim() ?? string.Empty;
+            var surname = model.Surname?.Trim() ?? string.Empty;
+            model.Fin = fin;
+            model.IdCardNumber = idCard;
+            model.Name = name;
+            model.Surname = surname;
+
+            try
             {
-                ModelState.AddModelError(string.Empty, "Enter your date of birth.");
+                var client = _httpClientFactory.CreateClient("CaspianApi");
+                var response = await client.PostAsJsonAsync("api/account/check-identity", new { fin, idCardNumber = idCard, name, surname });
+
+                if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                {
+                    ModelState.AddModelError(string.Empty, "Too many attempts. Please wait a minute and try again.");
+                    return View(model);
+                }
+
+                var result = await ReadJsonAsync<IdentityResponseVM>(response);
+                if (!response.IsSuccessStatusCode || result is null || !result.IsSuccess)
+                {
+                    var errors = result?.Errors is { Length: > 0 }
+                        ? result.Errors
+                        : new[] { "Could not check the details. Please try again." };
+
+                    foreach (var error in errors)
+                        ModelState.AddModelError(string.Empty, error);
+
+                    return View(model);
+                }
+
+                // Növbəti səhifə "Bu sizsiniz?" göstərir (şəkil API-dən gəlir, ona görə tam ünvan lazımdır)
+                TempData["RegFin"] = fin;
+                TempData["RegIdCard"] = idCard;
+                TempData["RegFirst"] = name;
+                TempData["RegLast"] = surname;
+                TempData["RegName"] = result.Name;
+                TempData["RegSurname"] = result.MaskedSurname;
+                TempData["RegYear"] = result.BirthYear.ToString();
+                TempData["RegPhoto"] = ApiUrl.ToAbsolute(_configuration["ApiSettings:BaseUrl"], result.PhotoUrl);
+                TempData.Remove("RegConfirmed");
+                return RedirectToAction(nameof(ConfirmIdentity));
+            }
+            catch (HttpRequestException)
+            {
+                ModelState.AddModelError(string.Empty, "The service is unavailable right now. Please try again later.");
                 return View(model);
             }
+        }
+
+        [HttpGet]
+        public IActionResult ConfirmIdentity()
+        {
+            if (TempData.Peek("RegFin") is not string fin || TempData.Peek("RegName") is not string name)
+                return RedirectToAction(nameof(Register));
+
+            return View(BuildConfirmModel(fin, name));
+        }
+
+        // "Yes, this is me": footer formundan gəlibsə email məlumdur və dərhal ona kod göndərilir, yoxsa əvvəl email soruşulur
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmIdentityYes()
+        {
+            if (TempData.Peek("RegFin") is not string fin || TempData.Peek("RegName") is not string name)
+                return RedirectToAction(nameof(Register));
+
+            TempData["RegConfirmed"] = "1";
+
+            var email = TempData.Peek("RegEmail") as string;
+            if (string.IsNullOrWhiteSpace(email))
+                return RedirectToAction(nameof(RegisterEmail));
+
+            try
+            {
+                var client = _httpClientFactory.CreateClient("CaspianApi");
+                var error = await StartEmailVerificationAsync(client, email);
+                if (error is null)
+                    return RedirectToAction(nameof(VerifyOtp));
+
+                ModelState.AddModelError(string.Empty, error);
+            }
+            catch (HttpRequestException)
+            {
+                ModelState.AddModelError(string.Empty, "The service is unavailable right now. Please try again later.");
+            }
+
+            return View("ConfirmIdentity", BuildConfirmModel(fin, name));
+        }
+
+        // Email soruşulur (Open account düyməsi ilə gələnlər üçün): email sistemdə varsa girişə yönləndirilir, yoxdursa koda keçir
+        [HttpGet]
+        public IActionResult RegisterEmail()
+        {
+            if (TempData.Peek("RegConfirmed") is not "1")
+                return RedirectToAction(nameof(Register));
+
+            return View(new RegisterEmailVM
+            {
+                Email = TempData.Peek("RegEmail") as string ?? string.Empty
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterEmail(RegisterEmailVM model)
+        {
+            if (TempData.Peek("RegConfirmed") is not "1")
+                return RedirectToAction(nameof(Register));
+
+            var email = model.Email?.Trim() ?? string.Empty;
+            if (email.Length == 0)
+            {
+                ModelState.AddModelError(string.Empty, "Enter your email.");
+                return View(model);
+            }
+
+            try
+            {
+                var client = _httpClientFactory.CreateClient("CaspianApi");
+                var response = await client.PostAsJsonAsync("api/account/check-email", new { email });
+
+                if (response.StatusCode == HttpStatusCode.TooManyRequests)
+                {
+                    ModelState.AddModelError(string.Empty, "Too many attempts. Please wait a minute and try again.");
+                    return View(model);
+                }
+
+                var result = await ReadJsonAsync<CheckEmailResponseVM>(response);
+                if (!response.IsSuccessStatusCode || result is null || !result.IsSuccess)
+                {
+                    var errors = result?.Errors is { Length: > 0 }
+                        ? result.Errors
+                        : new[] { "Could not check the email. Please try again." };
+
+                    foreach (var error in errors)
+                        ModelState.AddModelError(string.Empty, error);
+
+                    return View(model);
+                }
+
+                if (result.Exists)
+                {
+                    ModelState.AddModelError(string.Empty, "An account with this email already exists. Log in instead, or use a different email.");
+                    return View(model);
+                }
+
+                TempData["RegEmail"] = email;
+                var sendError = await StartEmailVerificationAsync(client, email);
+                if (sendError is null)
+                    return RedirectToAction(nameof(VerifyOtp));
+
+                ModelState.AddModelError(string.Empty, sendError);
+            }
+            catch (HttpRequestException)
+            {
+                ModelState.AddModelError(string.Empty, "The service is unavailable right now. Please try again later.");
+            }
+
+            return View(model);
+        }
+
+        // Emailə 6 rəqəmli kod göndərir və VerifyOtp səhifəsi üçün lazım olan məlumatı TempData-ya yazır. Xəta olarsa mətni qaytarır, uğurda null
+        private async Task<string?> StartEmailVerificationAsync(HttpClient client, string email)
+        {
+            var otp = await SendOtpAsync(client, email);
+            if (otp.Error is not null)
+                return otp.Error;
+
+            TempData["AuthEmail"] = email;
+            TempData["Info"] = otp.Info;
+            SetDevCode(otp.DevCode);
+            MarkResendAvailable(otp.WaitSeconds);
+            return null;
+        }
+
+        private ConfirmIdentityVM BuildConfirmModel(string fin, string name)
+        {
+            int.TryParse(TempData.Peek("RegYear") as string, out var year);
+            return new ConfirmIdentityVM
+            {
+                Fin = fin,
+                Name = name,
+                MaskedSurname = TempData.Peek("RegSurname") as string ?? string.Empty,
+                BirthYear = year,
+                PhotoUrl = TempData.Peek("RegPhoto") as string
+            };
+        }
+
+        [HttpGet]
+        public IActionResult CreateAccount()
+        {
+            // Əvvəl kimlik təsdiqlənməli, sonra email OTP ilə təsdiqlənməlidir
+            if (TempData.Peek("RegConfirmed") is not "1" ||
+                TempData.Peek("RegFin") is not string fin ||
+                TempData.Peek("RegIdCard") is not string idCard ||
+                TempData.Peek("RegFirst") is not string first ||
+                TempData.Peek("RegLast") is not string last)
+                return RedirectToAction(nameof(Register));
+
+            var email = TempData.Peek("AuthEmail") as string;
+            var token = TempData.Peek("VerificationToken") as string;
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
+                return RedirectToAction(nameof(RegisterEmail));
+
+            return View(new RegisterVM
+            {
+                Email = email,
+                VerificationToken = token,
+                Fin = fin,
+                IdCardNumber = idCard,
+                Name = first,
+                Surname = last,
+                HolderName = $"{TempData.Peek("RegName")} {TempData.Peek("RegSurname")}".Trim()
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateAccount(RegisterVM model)
+        {
+            model.HolderName = $"{TempData.Peek("RegName")} {TempData.Peek("RegSurname")}".Trim();
 
             if (model.Password != model.ConfirmPassword)
             {
@@ -363,10 +572,11 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             var request = new
             {
                 email = model.Email?.Trim(),
-                phoneNumber = Regex.Replace(model.PhoneNumber ?? string.Empty, @"\D", ""), 
-                name = model.Name?.Trim(),
-                surname = model.Surname?.Trim(),
-                birthDay = model.BirthDay,
+                phoneNumber = Regex.Replace(model.PhoneNumber ?? string.Empty, @"\D", ""),
+                fin = model.Fin,
+                idCardNumber = model.IdCardNumber,
+                name = model.Name,
+                surname = model.Surname,
                 password = model.Password,
                 verificationToken = model.VerificationToken
             };
@@ -378,10 +588,12 @@ namespace CaspianBank_MVC_FinalProject.Controllers
 
                 if (response.IsSuccessStatusCode)
                 {
-                    // Login səhifəsi emailə hazır açılsın; təsdiq tokeni artıq istifadə olunub
+                    // Login səhifəsi emailə hazır açılsın; təsdiq tokeni və qeydiyyat addımlarının məlumatı artıq lazım deyil
                     TempData.Remove("VerificationToken");
+                    foreach (var key in new[] { "RegFin", "RegIdCard", "RegFirst", "RegLast", "RegName", "RegSurname", "RegYear", "RegPhoto", "RegConfirmed", "RegEmail" })
+                        TempData.Remove(key);
                     TempData["AuthEmail"] = model.Email;
-                    TempData["Info"] = "Your account is ready. Log in to continue.";
+                    TempData["Info"] = "Your account is ready, with your first two cards. Log in to continue.";
                     return RedirectToAction(nameof(Login));
                 }
 
@@ -491,7 +703,11 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             var result = await ReadJsonAsync<SendOtpResponseVM>(response);
 
             if (response.IsSuccessStatusCode)
-                return (null, "We sent a code to your email.", result?.DevCode, ResendWaitTotalSeconds);
+            {
+                // Email qurulmayıbsa (yalnız Development) kod ekranda göstərilir və "göndərdik" deyilmir; qurulubsa demo yazısı heç çıxmır
+                var emailSent = string.IsNullOrEmpty(result?.DevCode);
+                return (null, emailSent ? "We sent a code to your email." : null, result?.DevCode, ResendWaitTotalSeconds);
+            }
 
             // Eyni email-ə az əvvəl kod göndərilib (gözləmə müddəti): əvvəlki kod hələ etibarlıdır
             if (response.StatusCode == HttpStatusCode.TooManyRequests && result?.RetryAfterSeconds > 0)
@@ -546,7 +762,6 @@ namespace CaspianBank_MVC_FinalProject.Controllers
                 new(ClaimTypes.Name, login.FullName ?? login.Email ?? string.Empty)
             };
             claims.AddRange(login.Roles.Select(role => new Claim(ClaimTypes.Role, role)));
-
             var principal = new ClaimsPrincipal(
                 new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme));
 

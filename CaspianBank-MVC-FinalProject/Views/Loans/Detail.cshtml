@@ -1,0 +1,346 @@
+@*
+    Bir kreditin səhifəsi: təklifə cavab, ödəniş, qrafik, ödənişlər.
+    Hesablama və qaydalar API-dədir: bu səhifə yalnız API-nin hazır rəqəmlərini (Due, PayoffAmount, Can... bayraqları) göstərir.
+*@
+@model LoanDetailPageVM
+@using System.Globalization
+@{
+    Layout = "_AppLayout";
+    var loan = Model.Loan;
+    ViewData["Title"] = "Loan " + loan.ContractNumber;
+    var inv = CultureInfo.InvariantCulture;
+
+    var usable = Model.Cards.Where(c => LoanUi.CanUseCard(c.IsBlocked, c.Tier)).ToList();
+    var running = loan.Status == "Active" || loan.Status == "Court";
+    var offered = loan.Status == "Offered";
+    var granted = loan.ApprovedAmount ?? loan.RequestedAmount;
+
+    // Ödəniş kartı: məbləği çatan ilk kart, yoxdursa ilk yararlı kart. Təklif qəbulunda isə müraciətdə seçilən kart
+    var payCard = usable.FirstOrDefault(c => c.Balance >= loan.Due.Total) ?? usable.FirstOrDefault();
+    var targetCard = usable.FirstOrDefault(c => c.Id == loan.TargetCardId) ?? usable.FirstOrDefault();
+
+    // Açılışda ilk mümkün ödəniş növü seçilir
+    var firstType = loan.CanPayInstallment ? "Installment" : (loan.CanPartialEarly ? "PartialEarly" : (loan.CanPayOff ? "FullEarly" : ""));
+    var penaltyTotal = loan.Installments.Sum(i => i.Penalty);
+}
+<main id="content" class="page page-activity">
+    <a class="back" asp-action="Index">All loans</a>
+
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">@LoanUi.PurposeText(loan.Purpose) loan</p>
+            <h1>@loan.ContractNumber</h1>
+            <p class="lede">
+                <span class="badge @LoanUi.StatusBadge(loan.Status)">@LoanUi.StatusText(loan.Status)</span>
+                @if (loan.HasOverdue)
+                {
+                    <span class="badge badge-danger">Overdue</span>
+                }
+                <span>Payment code: <strong class="num">@loan.ContractNumber</strong> <button type="button" class="btn-copy" data-copy="@loan.ContractNumber">Copy</button></span>
+            </p>
+        </div>
+    </header>
+
+    <partial name="_Flash" />
+    @if (TempData["LoanError"] is string loanError)
+    {
+        <p class="flash flash-error" role="alert">@loanError</p>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <p class="flash flash-error" role="alert">@Model.Error</p>
+    }
+
+    @if (loan.Status == "Pending")
+    {
+        <section class="surface form-card">
+            <h2>Under review</h2>
+            <p class="lede">We received your application on @LoanUi.Date(loan.CreatedAt.ToLocalTime()). A decision will appear on this page.</p>
+        </section>
+    }
+    else if (loan.Status == "Rejected" || loan.Status == "Declined")
+    {
+        <section class="surface form-card">
+            <h2>@(loan.Status == "Rejected" ? "Not approved" : "Offer declined")</h2>
+            <p class="lede">@(string.IsNullOrEmpty(loan.Message) ? "This application is closed." : loan.Message)</p>
+            <a class="btn btn-primary" asp-action="Index">Back to loans</a>
+        </section>
+    }
+
+    @if (offered)
+    {
+        <section class="surface form-card">
+            <h2>We have an offer for you</h2>
+            <p class="lede">
+                You asked for @LoanUi.Money(loan.RequestedAmount). We can approve @LoanUi.Money(granted) over @loan.TermMonths months at @LoanUi.Percent(loan.AnnualInterestRate) a year,
+                with a monthly payment of about @LoanUi.Money(loan.MonthlyPayment).
+                @if (loan.OfferExpiresAt.HasValue)
+                {
+                    <span>The offer is valid until <strong>@LoanUi.Date(loan.OfferExpiresAt.Value.ToLocalTime())</strong>.</span>
+                }
+            </p>
+
+            @if (usable.Count == 0)
+            {
+                <p class="flash flash-error">You have no card that can receive the money. Add a card first (the Cashback card can't be used).</p>
+                <a class="btn btn-secondary" href="@NavLinks.AddCard">Add a card</a>
+            }
+            else
+            {
+                <form asp-action="Accept" asp-route-id="@loan.Id" method="post" class="form-stack mt-4">
+                    <div class="field">
+                        <label for="offer-card">Send the money to</label>
+                        <select class="select" id="offer-card" name="targetCardId" data-card-pick>
+                            @foreach (var card in usable)
+                            {
+                                <option value="@card.Id" selected="@(targetCard is not null && card.Id == targetCard.Id)"
+                                        data-tier="@card.Tier" data-last4="@card.Last4" data-money="@LoanUi.Money(card.Balance)"
+                                        data-design="@card.DesignImage">@card.Tier · •••• @card.Last4 · @LoanUi.Money(card.Balance)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="row-actions">
+                        <button type="submit" class="btn btn-primary" data-once
+                                data-confirm-title="Accept this offer?"
+                                data-confirm-text="@(LoanUi.Money(granted)) will be sent to your card and the loan starts today."
+                                data-confirm-yes="Accept">Accept offer</button>
+                        <button type="submit" class="btn btn-secondary" formaction="@Url.Action("Decline", "Loans", new { id = loan.Id })"
+                                data-confirm-title="Decline this offer?"
+                                data-confirm-text="The application will be closed. You can apply again later."
+                                data-confirm-yes="Decline" data-confirm-danger="true">Decline</button>
+                    </div>
+                </form>
+            }
+        </section>
+    }
+
+    @if (running || loan.Status == "Closed")
+    {
+        <div class="pulse-row">
+            <article class="pulse"><span>Monthly payment</span><strong class="num">@LoanUi.Money(loan.MonthlyPayment)</strong></article>
+            <article class="pulse"><span>Still to repay (principal)</span><strong class="num">@LoanUi.Money(loan.OutstandingPrincipal)</strong></article>
+            <article class="pulse">
+                <span>Interest rate</span>
+                <strong>@LoanUi.Percent(loan.AnnualInterestRate)</strong>
+                @if (loan.AnnualInterestRate < loan.InitialAnnualInterestRate)
+                {
+                    <small class="hint">started at @LoanUi.Percent(loan.InitialAnnualInterestRate)</small>
+                }
+            </article>
+        </div>
+    }
+
+    @if (running)
+    {
+        <section class="surface form-card" id="pay-panel">
+            <h2>Make a payment</h2>
+
+            @if (loan.Due.OverdueCount > 0)
+            {
+                <p class="flash flash-error" role="alert">
+                    @loan.Due.OverdueCount payment@(loan.Due.OverdueCount == 1 ? " is" : "s are") overdue (@LoanUi.Money(loan.Due.OverdueTotal) including the penalty). Pay now to stop the penalty growing.
+                </p>
+            }
+
+            @if (usable.Count == 0)
+            {
+                <div class="empty-inline">
+                    <div class="empty-inline-copy">
+                        <strong>You need a card to pay from</strong>
+                        <p>A loan can't be paid from the Cashback card or from a blocked card.</p>
+                        <div class="empty-inline-actions"><a class="btn btn-secondary btn-sm" href="@NavLinks.AddCard">Add a card</a></div>
+                    </div>
+                </div>
+            }
+            else if (firstType == string.Empty)
+            {
+                <p class="hint">@(loan.EarlyBlockedReason ?? "There is nothing to pay right now.")</p>
+            }
+            else
+            {
+                <form asp-action="Pay" asp-route-id="@loan.Id" method="post" id="pay-form" class="form-stack"
+                      data-outstanding="@loan.OutstandingPrincipal.ToString(inv)" data-rate="@loan.AnnualInterestRate.ToString(inv)"
+                      data-min-percent="@loan.EarlyRepaymentMinPercent.ToString(inv)" data-reduction="@loan.EarlyRepaymentRateReduction.ToString(inv)"
+                      data-min-rate="@loan.MinAnnualInterestRate.ToString(inv)" data-min-early="@loan.MinEarlyPayment.ToString(inv)"
+                      data-due="@loan.Due.Total.ToString("N2", inv)" data-payoff="@loan.PayoffAmount.ToString("N2", inv)">
+                    <input type="hidden" name="RequestId" value="@Model.RequestId" />
+                    <input type="hidden" name="Type" id="pay-type" value="@firstType" />
+
+                    <div class="segment segment-full segment-3" role="group" aria-label="Payment type">
+                        <button type="button" data-pay-type="Installment" class="@(firstType == "Installment" ? "is-active" : "")" disabled="@(!loan.CanPayInstallment)">Monthly payment</button>
+                        <button type="button" data-pay-type="PartialEarly" class="@(firstType == "PartialEarly" ? "is-active" : "")" disabled="@(!loan.CanPartialEarly)">Pay part early</button>
+                        <button type="button" data-pay-type="FullEarly" class="@(firstType == "FullEarly" ? "is-active" : "")" disabled="@(!loan.CanPayOff)">Pay off in full</button>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(loan.EarlyBlockedReason))
+                    {
+                        <p class="hint">@loan.EarlyBlockedReason</p>
+                    }
+
+                    <div data-pay-panel="Installment" @(firstType == "Installment" ? null : "hidden")>
+                        <dl class="detail-list">
+                            <div><dt>You pay</dt><dd class="num"><strong>@LoanUi.Money(loan.Due.Total)</strong></dd></div>
+                            <div><dt>Principal</dt><dd class="num">@LoanUi.Money(loan.Due.Principal)</dd></div>
+                            <div><dt>Interest</dt><dd class="num">@LoanUi.Money(loan.Due.Interest)</dd></div>
+                            @if (loan.Due.Penalty > 0)
+                            {
+                                <div><dt>Penalty</dt><dd class="num">@LoanUi.Money(loan.Due.Penalty)</dd></div>
+                            }
+                            <div><dt>Covers</dt><dd>@loan.Due.InstallmentCount payment@(loan.Due.InstallmentCount == 1 ? "" : "s")@(loan.Due.NextDueDate.HasValue ? ", next one due " + LoanUi.Date(loan.Due.NextDueDate) : "")</dd></div>
+                        </dl>
+                    </div>
+
+                    <div data-pay-panel="PartialEarly" @(firstType == "PartialEarly" ? null : "hidden")>
+                        <div class="field">
+                            <label for="pay-amount">Amount to pay early</label>
+                            <div class="amount-box">
+                                <input class="amount-input" id="pay-amount" name="Amount" inputmode="decimal" placeholder="0.00" maxlength="12" autocomplete="off" />
+                                <span class="amount-cur">AZN</span>
+                            </div>
+                            <p class="hint" id="pay-partial-note">
+                                At least @LoanUi.Money(loan.MinEarlyPayment). The term stays the same and your monthly payment goes down.
+                                Pay @LoanUi.Percent(loan.EarlyRepaymentMinPercent) or more of what is left (@LoanUi.Money(loan.OutstandingPrincipal * loan.EarlyRepaymentMinPercent / 100m)) and the rate drops by @loan.EarlyRepaymentRateReduction.ToString("0.##", inv) point.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div data-pay-panel="FullEarly" @(firstType == "FullEarly" ? null : "hidden")>
+                        <dl class="detail-list">
+                            <div><dt>You pay</dt><dd class="num"><strong>@LoanUi.Money(loan.PayoffAmount)</strong></dd></div>
+                            <div><dt>What it covers</dt><dd>Everything you still owe today: the remaining principal, the interest earned so far and any overdue amounts. The future interest is cancelled.</dd></div>
+                        </dl>
+                    </div>
+
+                    <div class="field">
+                        <label for="pay-card">Pay from</label>
+                        <select class="select" id="pay-card" name="CardId" data-card-pick>
+                            @foreach (var card in usable)
+                            {
+                                <option value="@card.Id" selected="@(payCard is not null && card.Id == payCard.Id)"
+                                        data-tier="@card.Tier" data-last4="@card.Last4" data-money="@LoanUi.Money(card.Balance)"
+                                        data-design="@card.DesignImage">@card.Tier · •••• @card.Last4 · @LoanUi.Money(card.Balance)</option>
+                            }
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg" id="pay-submit" data-once
+                            data-confirm-title="Confirm payment"
+                            data-confirm-text="@LoanUi.Money(loan.Due.Total) will be taken from your card."
+                            data-confirm-yes="Pay">Pay @LoanUi.Money(loan.Due.Total)</button>
+                </form>
+            }
+        </section>
+    }
+
+    @if (offered || running || loan.Status == "Closed")
+    {
+        <section class="surface">
+            <h2>Loan details</h2>
+            <dl class="detail-list">
+                <div><dt>Amount</dt><dd class="num">@LoanUi.Money(granted)@(loan.ApprovedAmount.HasValue && loan.ApprovedAmount.Value != loan.RequestedAmount ? " (you asked for " + LoanUi.Money(loan.RequestedAmount) + ")" : "")</dd></div>
+                <div><dt>Purpose</dt><dd>@LoanUi.PurposeText(loan.Purpose)@(string.IsNullOrEmpty(loan.PurposeNote) ? "" : " · " + loan.PurposeNote)</dd></div>
+                <div><dt>Term</dt><dd>@loan.TermMonths months, due on the last day of each month</dd></div>
+                <div><dt>Interest rate</dt><dd>@LoanUi.Percent(loan.AnnualInterestRate) a year@(loan.AnnualInterestRate != loan.InitialAnnualInterestRate ? " (started at " + LoanUi.Percent(loan.InitialAnnualInterestRate) + ")" : "")</dd></div>
+                <div><dt>Total to repay</dt><dd class="num">@LoanUi.Money(loan.TotalRepayment)</dd></div>
+                <div><dt>Money sent to</dt><dd>@loan.TargetCardLabel</dd></div>
+                @if (loan.DisbursedAt.HasValue)
+                {
+                    <div><dt>Started</dt><dd>@LoanUi.Date(loan.DisbursedAt.Value.ToLocalTime())</dd></div>
+                }
+                @if (loan.ClosedAt.HasValue)
+                {
+                    <div><dt>Closed</dt><dd>@LoanUi.Date(loan.ClosedAt.Value.ToLocalTime())@(loan.ClosedEarly ? " · paid off early" : "")</dd></div>
+                }
+                <div><dt>If you are late</dt><dd>A fixed @LoanUi.Money(loan.FixedPenalty) plus @loan.DailyPenaltyPercent.ToString("0.##", inv)% of the unpaid payment for each day. Long delays can lead to court.</dd></div>
+            </dl>
+        </section>
+    }
+
+    @if (loan.Installments.Count > 0)
+    {
+        <section class="surface surface-tight">
+            <div class="toolbar"><h2>Payment schedule</h2></div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Due date</th>
+                            <th class="num">Principal</th>
+                            <th class="num">Interest</th>
+                            <th class="num">Payment</th>
+                            @if (penaltyTotal > 0)
+                            {
+                                <th class="num">Penalty</th>
+                            }
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in loan.Installments)
+                        {
+                            <tr>
+                                <td>@item.Number</td>
+                                <td>@LoanUi.Date(item.DueDate)@(item.DaysOverdue > 0 ? " · " + item.DaysOverdue + " days late" : "")</td>
+                                <td class="num">@LoanUi.Money(item.Principal)</td>
+                                <td class="num">@LoanUi.Money(item.Interest)</td>
+                                <td class="num">@LoanUi.Money(item.Payment)</td>
+                                @if (penaltyTotal > 0)
+                                {
+                                    <td class="num">@(item.Penalty > 0 ? LoanUi.Money(item.Penalty) : "—")</td>
+                                }
+                                <td><span class="badge @LoanUi.InstallmentBadge(item.Status)">@LoanUi.InstallmentText(item.Status)</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    }
+
+    @if (loan.Payments.Count > 0)
+    {
+        <section class="surface surface-tight">
+            <div class="toolbar"><h2>Your payments</h2></div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Card</th>
+                            <th class="num">Amount</th>
+                            <th>Split</th>
+                            <th>Reference</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var payment in loan.Payments)
+                        {
+                            <tr>
+                                <td>@LoanUi.Date(payment.PaidAt.ToLocalTime())</td>
+                                <td>
+                                    @LoanUi.PaymentTypeText(payment.Type)
+                                    @if (payment.InterestRateAfter.HasValue)
+                                    {
+                                        <div class="hint">rate now @LoanUi.Percent(payment.InterestRateAfter.Value)</div>
+                                    }
+                                </td>
+                                <td>@payment.CardLabel</td>
+                                <td class="num">@LoanUi.Money(payment.Amount)</td>
+                                <td class="hint">
+                                    principal @LoanUi.Money(payment.Principal) · interest @LoanUi.Money(payment.Interest)@(payment.Penalty > 0 ? " · penalty " + LoanUi.Money(payment.Penalty) : "")
+                                </td>
+                                <td class="num">@payment.Reference</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    }
+</main>
+
+@section Scripts {
+    <script src="~/js/loans.js" asp-append-version="true"></script>
+}

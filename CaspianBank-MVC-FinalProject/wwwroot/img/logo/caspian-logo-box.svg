@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Caspian Bank">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1F8A4C" />
+      <stop offset="1" stop-color="#0C4632" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="64" fill="url(#bg)" />
+  <rect x="26" y="26" width="460" height="460" rx="44" fill="none" stroke="#D6E36B" stroke-width="7" />
+  <g font-family="'Segoe UI Black','Arial Black',Arial,sans-serif" font-weight="900" font-size="84" text-anchor="middle" letter-spacing="7">
+    <text x="256" y="232" fill="#F7FAF6">CASPIAN</text>
+    <text x="256" y="372" fill="#D6E36B">BANK</text>
+  </g>
+  <path d="M196 266c8-12 22-12 30 0s22 12 30 0 22-12 30 0" fill="none" stroke="#F4F7E8" stroke-width="8" stroke-linecap="round" />
+</svg>

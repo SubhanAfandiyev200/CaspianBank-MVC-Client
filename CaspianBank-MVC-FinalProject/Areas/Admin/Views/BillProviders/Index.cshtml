@@ -1,0 +1,95 @@
+@model IEnumerable<CaspianBank_MVC_FinalProject.ViewModels.Bills.BillProviderVM>
+@{
+    ViewData["Title"] = "Bill providers";
+
+    string CategoryText(string category)
+    {
+        switch (category)
+        {
+            case "Mobile":
+                return "Mobile";
+            case "Electricity":
+                return "Electricity";
+            case "Gas":
+                return "Gas";
+            case "Water":
+                return "Water";
+            case "Internet":
+                return "Internet";
+            default:
+                return category;
+        }
+    }
+}
+<main id="content" class="page">
+    <header class="page-head crud-head">
+        <div>
+            <p class="eyebrow">Bank · Payments</p>
+            <h1>Bill providers</h1>
+            <p class="lede">The companies customers can pay: their name, logo and whether they are shown on the Bills page. The rules (phone prefixes, code lengths, prices) are fixed.</p>
+        </div>
+    </header>
+
+    @if (TempData["Success"] is string success)
+    {
+        <p class="flash flash-ok" role="status">@success</p>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <p class="flash flash-error" role="alert">@error</p>
+    }
+
+    <section class="surface surface-tight">
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th class="num">Id</th>
+                        <th>Logo</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Shown to customers</th>
+                        <th class="actions">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="num">@item.Id</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.LogoUrl))
+                                {
+                                    <img class="provider-logo" src="@item.LogoUrl" alt="@item.Name logo" width="32" height="32" loading="lazy" />
+                                }
+                            </td>
+                            <td>@item.Name</td>
+                            <td>@CategoryText(item.Category)</td>
+                            <td>
+                                @if (item.IsActive)
+                                {
+                                    <span class="badge badge-success">Shown</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-neutral">Hidden</span>
+                                }
+                            </td>
+                            <td class="actions">
+                                <span class="row-actions">
+                                    <a class="btn btn-secondary btn-sm" asp-area="Admin" asp-controller="BillProviders" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="6">No providers found. Run the bills seed script (Repository/Data/Seed/bills.sql) on an empty database.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+</main>

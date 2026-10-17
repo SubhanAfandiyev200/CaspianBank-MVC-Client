@@ -1,0 +1,12 @@
+@model CardUIVM
+@*
+    Kartın kiçik şəkli (siyahılarda): bazadakı dizayn + kartın növü. JS-dəki thumb() ilə eyni markup-dur.
+    ViewData["Row"] = true: cədvəl sətri üçün kiçik ölçü (.is-row).
+*@
+@{
+    var isRow = (ViewData["Row"] as bool?) == true;
+    var style = string.IsNullOrEmpty(Model.DesignImage)
+        ? string.Empty
+        : $"background-image:url('{Model.DesignImage}');background-size:cover;background-position:center";
+}
+<span class="card-thumb-frame @(isRow ? "is-row" : "")" aria-hidden="true"><span class="plastic plastic-@Model.Tier.ToLowerInvariant() card-thumb-scale" style="@style"><span class="plastic-art" aria-hidden="true"></span><span class="plastic-shine" aria-hidden="true"></span><div class="plastic-top"><span class="plastic-brand"><span class="plastic-mark" aria-hidden="true"></span><span class="plastic-bank">Caspian</span></span><span class="plastic-tier">@Model.Tier</span></div><div class="plastic-mid"><span class="plastic-chip" aria-hidden="true"></span></div><p class="plastic-number">•••• @Model.Last4</p><div class="plastic-bottom"><span class="plastic-issuer">Caspian Bank</span></div></span></span>

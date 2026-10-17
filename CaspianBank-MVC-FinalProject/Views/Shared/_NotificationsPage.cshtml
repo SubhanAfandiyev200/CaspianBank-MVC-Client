@@ -1,0 +1,71 @@
+@model NotificationPageUIVM
+@*
+    Bildirişlər səhifəsinin gövdəsi: müştəri (_AppLayout) və işçi (_AdminLayout) eyni görünüşü işlədir. Dizayn: CaspianBank-Frontend/notifications.html.
+    Sətirlər id="note-page" daxilindədir: yeni bildiriş gələndə notifications.js onu siyahının başına əlavə edir.
+*@
+@{
+    var isAdmin = Model.Area == "Admin";
+    string PageUrl(int page, bool unread)
+    {
+        return Url.Action("Index", "Notifications", new { area = Model.Area, unread = unread ? true : (bool?)null, page }) ?? "#";
+    }
+}
+<main id="content" class="page page-activity" data-notes-page>
+    <header class="page-head spread">
+        <div>
+            <p class="eyebrow">Inbox</p>
+            <h1>Notifications</h1>
+            <p class="lede">@(isAdmin ? "Applications waiting for you and other staff alerts." : "Payments, balances, loans and card alerts.")</p>
+        </div>
+        <form asp-area="@Model.Area" asp-controller="Notifications" asp-action="MarkAll" method="post">
+            <button class="btn btn-secondary" type="submit" @(Model.UnreadCount > 0 ? null : "disabled")>Mark all as read</button>
+        </form>
+    </header>
+
+    @if (Model.Unavailable)
+    {
+        <p class="flash flash-error" role="alert">We can't load your notifications right now. Please try again in a moment.</p>
+    }
+
+    <div class="segment" role="group" aria-label="Filter" style="margin-bottom:16px">
+        <a class="seg-link @(Model.UnreadOnly ? "" : "is-active")" href="@PageUrl(1, false)">All</a>
+        <a class="seg-link @(Model.UnreadOnly ? "is-active" : "")" href="@PageUrl(1, true)">Unread@(Model.UnreadCount > 0 ? " (" + Model.UnreadCount + ")" : "")</a>
+    </div>
+
+    <section class="surface surface-tight">
+        <div id="note-page" class="note-list" data-note-page-list>
+            @foreach (var item in Model.Items)
+            {
+                <a class="note @(item.IsRead ? "" : "is-unread")" href="@NotificationUi.OpenUrl(item)">
+                    <span class="note-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">@Html.Raw(NotificationUi.IconPaths(item.Category))</svg></span>
+                    <span>
+                        <span class="spread"><span class="note-title">@item.Title</span><time datetime="@item.CreatedAt.ToString("o")">@NotificationUi.Ago(item.CreatedAt)</time></span>
+                        <span class="note-body">@item.Message</span>
+                    </span>
+                </a>
+            }
+            <div class="empty" data-note-page-empty @(Model.Items.Count > 0 ? "hidden" : null)>
+                <h3>@(Model.UnreadOnly ? "Nothing unread" : "No notifications")</h3>
+                <p>Payments, alerts and replies will show up here.</p>
+            </div>
+        </div>
+    </section>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="pager" aria-label="Pages">
+            @if (Model.Page > 1)
+            {
+                <a class="pager-link" href="@PageUrl(Model.Page - 1, Model.UnreadOnly)">‹ Previous</a>
+            }
+            @for (var p = 1; p <= Model.TotalPages; p++)
+            {
+                <a class="pager-link @(p == Model.Page ? "is-current" : "")" href="@PageUrl(p, Model.UnreadOnly)" aria-current="@(p == Model.Page ? "page" : null)">@p</a>
+            }
+            @if (Model.Page < Model.TotalPages)
+            {
+                <a class="pager-link" href="@PageUrl(Model.Page + 1, Model.UnreadOnly)">Next ›</a>
+            }
+        </nav>
+    }
+</main>

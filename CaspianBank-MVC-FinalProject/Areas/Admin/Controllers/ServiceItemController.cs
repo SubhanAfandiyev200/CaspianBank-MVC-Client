@@ -10,7 +10,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
     // UI bölməsi: Home-dakı altı xidmət kartı. Hər kart proqramın bir bölməsinə aparır, ona görə mətnləri və ikonu dəyişir, amma əlavə/silmə yoxdur.
     // Başlıq yazısını ServiceSectionController idarə edir. API: api/admin/service-items
     [Area("Admin")]
-    [Authorize(Roles = "Admin,SuperAdmin,WebDesigner")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class ServiceItemController : ApiControllerBase
     {
         private const int MaxImageBytes = 2 * 1024 * 1024;

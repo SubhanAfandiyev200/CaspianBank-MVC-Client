@@ -1,0 +1,229 @@
+@*
+    Kreditlər: dizayn CaspianBank-Frontend/loan-application.html-dir.
+    Dizayndan fərq: "Purpose" sərbəst mətn yox, siyahıdır (Other seçilərsə izah məcburidir), pul düşəcək kart seçilir.
+    Aylıq ödənişin canlı hesabı yalnız göstərişdir (wwwroot/js/loans.js): həqiqi hesablama və bütün qaydalar API-dədir.
+*@
+@model LoanIndexVM
+@using System.Globalization
+@{
+    Layout = "_AppLayout";
+    ViewData["Title"] = "Loans";
+    var inv = CultureInfo.InvariantCulture;
+    var options = Model.Options;
+
+    var usable = Model.Cards.Where(c => LoanUi.CanUseCard(c.IsBlocked, c.Tier)).ToList();
+    var running = Model.Loans.Where(l => l.Status == "Active" || l.Status == "Court").ToList();
+    var offers = Model.Loans.Where(l => l.Status == "Offered").ToList();
+    var outstanding = running.Sum(l => l.OutstandingPrincipal);
+    var next = running.Where(l => l.NextDueDate.HasValue).OrderBy(l => l.NextDueDate).FirstOrDefault();
+    var purposes = new[] { "Consumer", "Car", "Mortgage", "Education", "Medical", "Repair", "Business", "Other" };
+}
+<main id="content" class="page page-activity">
+    <header class="page-head">
+        <p class="eyebrow">Credit</p>
+        <h1>Loans</h1>
+        <p class="lede">Apply for a personal loan and follow it here: the decision, the schedule and your payments.</p>
+    </header>
+
+    <partial name="_Flash" />
+    @if (TempData["LoanError"] is string loanError)
+    {
+        <p class="flash flash-error" role="alert">@loanError</p>
+    }
+
+    @if (Model.ApiUnavailable)
+    {
+        <div class="empty">
+            <h3>We can't load your loans</h3>
+            <p>The service is unavailable right now. Please try again in a moment.</p>
+            <a class="btn btn-secondary" asp-action="Index">Try again</a>
+        </div>
+    }
+    else
+    {
+        foreach (var offer in offers)
+        {
+            <a class="loan-banner" asp-action="Detail" asp-route-id="@offer.Id">
+                <span class="loan-banner-copy">
+                    <strong>Offer waiting for your answer</strong>
+                    <span>We can offer @LoanUi.Money(offer.ApprovedAmount ?? 0m) instead of @LoanUi.Money(offer.RequestedAmount)@(offer.OfferExpiresAt.HasValue ? ". Valid until " + LoanUi.Date(offer.OfferExpiresAt.Value.ToLocalTime()) : "").</span>
+                </span>
+                <span class="btn btn-primary btn-sm">Review offer</span>
+            </a>
+        }
+
+        <div class="pulse-row">
+            <article class="pulse"><span>Active loans</span><strong>@running.Count</strong></article>
+            <article class="pulse"><span>Still to repay (principal)</span><strong class="num">@LoanUi.Money(outstanding)</strong></article>
+            <article class="pulse">
+                <span>Next payment</span>
+                <strong class="num">@(next is null ? "—" : LoanUi.Money(next.NextDueAmount))</strong>
+                @if (next is not null)
+                {
+                    <small class="hint">@LoanUi.Date(next.NextDueDate) · @next.ContractNumber</small>
+                }
+            </article>
+        </div>
+
+        <div class="layout-2">
+            <form class="surface form-stack form-card" asp-controller="Loans" asp-action="Apply" method="post" id="loan-form" novalidate
+                  data-rate="@options.AnnualInterestRate.ToString(inv)" data-min="@options.MinAmount.ToString(inv)" data-max="@options.MaxAmount.ToString(inv)">
+                <h2>New application</h2>
+
+                @if (!string.IsNullOrEmpty(Model.Error))
+                {
+                    <p class="flash flash-error" role="alert">@Model.Error</p>
+                }
+
+                @if (!options.CanApply)
+                {
+                    <div class="empty-inline">
+                        <div class="empty-inline-copy">
+                            <strong>You can't apply right now</strong>
+                            <p>@(options.CannotApplyReason ?? "Please try again later.")</p>
+                        </div>
+                    </div>
+                }
+                else if (usable.Count == 0)
+                {
+                    <div class="empty-inline">
+                        <div class="empty-inline-copy">
+                            <strong>You need a card to receive the money</strong>
+                            <p>The loan is paid to one of your cards. The Cashback card can't be used, and a blocked card can't either.</p>
+                            <div class="empty-inline-actions">
+                                <a class="btn btn-secondary btn-sm" href="@NavLinks.AddCard">Add a card</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="field">
+                        <label for="loan-amount">Requested amount</label>
+                        <div class="amount-box">
+                            <input class="amount-input" id="loan-amount" name="Amount" inputmode="decimal" placeholder="0.00" maxlength="12" autocomplete="off" value="@Model.Form.Amount" />
+                            <span class="amount-cur">AZN</span>
+                        </div>
+                        <p class="hint">From @LoanUi.Money(options.MinAmount) to @LoanUi.Money(options.MaxAmount). The bank may approve a smaller amount based on your income.</p>
+                    </div>
+
+                    <div class="field">
+                        <label for="loan-purpose">Purpose</label>
+                        <select class="select" id="loan-purpose" name="Purpose" data-wheel>
+                            @foreach (var purpose in purposes)
+                            {
+                                <option value="@purpose" selected="@(Model.Form.Purpose == purpose)">@LoanUi.PurposeText(purpose)</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="field" id="loan-note-field" @(Model.Form.Purpose == "Other" ? null : "hidden")>
+                        <label for="loan-note">Details <span class="optional">(required for Other)</span></label>
+                        <input class="input" id="loan-note" name="PurposeNote" maxlength="200" autocomplete="off" value="@Model.Form.PurposeNote" />
+                    </div>
+
+                    <div class="field">
+                        <label for="loan-term">Term</label>
+                        <select class="select" id="loan-term" name="TermMonths" data-wheel>
+                            @foreach (var months in options.TermOptions)
+                            {
+                                <option value="@months" selected="@(Model.Form.TermMonths == months)">@months months</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="loan-card">Send the money to</label>
+                        <select class="select" id="loan-card" name="TargetCardId" data-card-pick>
+                            @foreach (var card in usable)
+                            {
+                                <option value="@card.Id" selected="@(card.Id == Model.Form.TargetCardId)"
+                                        data-tier="@card.Tier" data-last4="@card.Last4" data-money="@LoanUi.Money(card.Balance)"
+                                        data-design="@card.DesignImage">@card.Tier · •••• @card.Last4 · @LoanUi.Money(card.Balance)</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="loan-quote" aria-live="polite">
+                        <span>About each month</span>
+                        <strong id="loan-monthly">—</strong>
+                        <small id="loan-quote-note">Enter an amount to see the monthly payment at @LoanUi.Percent(options.AnnualInterestRate) a year.</small>
+                    </div>
+
+                    <ul class="pay-trust">
+                        <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>Payments are due on the last day of each month</li>
+                        <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>Pay early and the rate can drop (down to @LoanUi.Percent(options.MinAnnualInterestRate))</li>
+                        <li><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 5 5 9-10" /></svg>You can have up to @options.MaxActiveLoans open loans (you have @options.OpenLoanCount)</li>
+                    </ul>
+
+                    <button class="btn btn-primary btn-block btn-lg" type="submit" id="loan-submit">Submit application</button>
+                }
+            </form>
+
+            <section class="surface surface-tight form-card">
+                <div class="toolbar"><h2>Your loans and applications</h2></div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Loan</th>
+                                <th class="num">Amount</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var loan in Model.Loans)
+                            {
+                                var shown = loan.ApprovedAmount ?? loan.RequestedAmount;
+                                <tr>
+                                    <td>
+                                        <a class="loan-link" asp-action="Detail" asp-route-id="@loan.Id"><strong>@loan.ContractNumber</strong></a>
+                                        <div class="hint">@LoanUi.PurposeText(loan.Purpose) · @loan.TermMonths months</div>
+                                        <div class="hint">@LoanUi.Date(loan.CreatedAt.ToLocalTime())</div>
+                                    </td>
+                                    <td class="num">
+                                        @LoanUi.Money(shown)
+                                        @if (loan.ApprovedAmount.HasValue && loan.ApprovedAmount.Value != loan.RequestedAmount)
+                                        {
+                                            <div class="hint">asked @LoanUi.Money(loan.RequestedAmount)</div>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="badge @LoanUi.StatusBadge(loan.Status)">@LoanUi.StatusText(loan.Status)</span>
+                                        @if (loan.HasOverdue)
+                                        {
+                                            <span class="badge badge-danger">Overdue</span>
+                                        }
+                                        @if (loan.NextDueDate.HasValue && (loan.Status == "Active" || loan.Status == "Court"))
+                                        {
+                                            <div class="hint">Next: @LoanUi.Money(loan.NextDueAmount) on @LoanUi.Date(loan.NextDueDate)</div>
+                                        }
+                                        @if (!string.IsNullOrEmpty(loan.Message))
+                                        {
+                                            <div class="hint">@loan.Message</div>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                            @if (Model.Loans.Count == 0)
+                            {
+                                <tr class="empty-row">
+                                    <td colspan="3">
+                                        <div class="empty">
+                                            <h3>No applications yet</h3>
+                                            <p>When you apply, the decision will appear here.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    }
+</main>
+
+@section Scripts {
+    <script src="~/js/loans.js" asp-append-version="true"></script>
+}

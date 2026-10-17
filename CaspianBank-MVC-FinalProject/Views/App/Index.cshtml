@@ -1,6 +1,7 @@
 @model AppIndexVM
 @{
     Layout = "_AppLayout";
+    ViewData["Title"] = "Cards";
 
     // Ad claim-də tam adla saxlanılır (Name Surname): salamlama üçün ilk söz
     var fullName = User.Identity?.Name ?? string.Empty;
@@ -56,8 +57,21 @@
         <section class="surface mt-5">
             <div class="spread">
                 <h2>Recent activity</h2>
+                <a class="link-btn" asp-controller="History" asp-action="Index">View all</a>
             </div>
-            <div class="empty"><h3>No activity yet</h3><p>Transactions on your cards will show up here.</p></div>
+            @if (Model.Activity.Count == 0)
+            {
+                <div class="empty"><h3>No activity yet</h3><p>Transactions on your cards will show up here.</p></div>
+            }
+            else
+            {
+                <div>
+                    @foreach (var t in Model.Activity)
+                    {
+                        <partial name="_ActivityRow" model="t" />
+                    }
+                </div>
+            }
         </section>
     }
 </main>

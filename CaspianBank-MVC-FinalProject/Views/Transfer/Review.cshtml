@@ -2,6 +2,7 @@
 @using System.Globalization
 @{
     Layout = "_AppLayout";
+    ViewData["Title"] = "Review transfer";
     var inv = CultureInfo.InvariantCulture;
     var p = Model.Preview;
     string Money(decimal value) { return value.ToString("N2", inv) + " AZN"; }

@@ -30,6 +30,10 @@ namespace CaspianBank_MVC_FinalProject.Helpers
                     model.PhoneNumber = Get(all, "PhoneNumber", model.PhoneNumber);
                     model.FooterTitle = Get(all, "FooterTitle", model.FooterTitle);
                     model.FooterDescription = Get(all, "FooterDescription", model.FooterDescription);
+                    model.InstagramUrl = Get(all, "InstagramUrl", model.InstagramUrl);
+                    model.FacebookUrl = Get(all, "FacebookUrl", model.FacebookUrl);
+                    model.TwitterUrl = Get(all, "TwitterUrl", model.TwitterUrl);
+                    model.LinkedInUrl = Get(all, "LinkedInUrl", model.LinkedInUrl);
                 }
             }
             catch (HttpRequestException)

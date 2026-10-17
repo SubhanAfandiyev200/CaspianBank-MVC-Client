@@ -1,4 +1,4 @@
-@using System.Security.Claims
+﻿@using System.Security.Claims
 @{
     var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
     // İki bölmə: UI (saytın görünüşü) və Bank (maliyyə və əməliyyatlar). Yeni UI controller əlavə edəndə adını bura yaz.
@@ -15,7 +15,6 @@
         { AppRoles.SuperAdmin, "Super admin" },
         { AppRoles.Admin, "Administrator" },
         { AppRoles.Accountant, "Accountant" },
-        { AppRoles.WebDesigner, "Web designer" },
         { AppRoles.CustomerSupport, "Customer support" },
         { AppRoles.Security, "Security" }
     };
@@ -32,6 +31,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0F5C3F" />
+    <link rel="icon" type="image/svg+xml" href="~/img/logo/favicon.svg" />
     <title>@(ViewData["Title"] ?? "Admin") · Caspian Bank</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -42,13 +42,7 @@
     <a class="skip" href="#content">Skip to content</a>
     <header class="topnav">
         <div class="topnav-inner">
-            <a class="brand" asp-area="Admin" asp-controller="BankDashboard" asp-action="Index">
-                <svg class="brand-mark" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true">
-                    <rect width="32" height="32" rx="8" fill="#1F8A4C" />
-                    <path d="M22 11.2a7.2 7.2 0 1 0 0 9.6" fill="none" stroke="#E4D2A8" stroke-width="2.4" stroke-linecap="round" />
-                </svg>
-                <span>Caspian Bank</span>
-            </a>
+            @await Component.InvokeAsync("SiteLogo", new { area = "Admin", controller = "BankDashboard", action = "Index" })
             <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Open menu"><span></span><span></span><span></span></button>
             <div class="topnav-panel">
                 <nav class="main-nav admin-areas" aria-label="Administration">
@@ -56,39 +50,8 @@
                     <a class="nav-link @(isUi ? "" : "is-active")" asp-area="Admin" asp-controller="BankDashboard" asp-action="Index">Bank</a>
                 </nav>
                 <div class="nav-tools">
-                    @* Bildiriş zəngi: hələlik statik nümunə. Notification modeli yazılanda siyahı oradan gələcək. *@
-                    <div class="dropdown" data-dropdown>
-                        <button class="icon-btn" type="button" data-dropdown-toggle aria-haspopup="true" aria-expanded="false" aria-label="Notifications">
-                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17h12l-1.5-2V11a4.5 4.5 0 0 0-9 0v4z" /><path d="M10 20a2 2 0 0 0 4 0" /></svg>
-                            <span class="notif-count">3</span>
-                        </button>
-                        <div class="dropdown-panel notes-panel">
-                            <div class="panel-head"><strong>Needs attention</strong></div>
-                            <div class="note-list">
-                                <a class="note is-unread" asp-area="Admin" asp-controller="Loans" asp-action="Index">
-                                    <span class="note-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10l8-6 8 6" /><path d="M6 10v8h12v-8" /><path d="M10 18v-4h4v4" /></svg></span>
-                                    <span>
-                                        <span class="spread"><span class="note-title">Loan waiting</span><time>05 Oct, 18:20</time></span>
-                                        <span class="note-body">Rashad Huseynov · 8,000.00 AZN</span>
-                                    </span>
-                                </a>
-                                <a class="note is-unread" asp-area="Admin" asp-controller="Reports" asp-action="Index">
-                                    <span class="note-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 16H3z" /><path d="M12 9v4" /><path d="M12 16h.01" /></svg></span>
-                                    <span>
-                                        <span class="spread"><span class="note-title">Suspicious report</span><time>05 Oct, 09:41</time></span>
-                                        <span class="note-body">Aysel Karimova · TX-204918</span>
-                                    </span>
-                                </a>
-                                <a class="note is-unread" asp-area="Admin" asp-controller="Tickets" asp-action="Index">
-                                    <span class="note-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16v10H7l-3 3z" /></svg></span>
-                                    <span>
-                                        <span class="spread"><span class="note-title">Ticket waiting</span><time>05 Oct, 07:12</time></span>
-                                        <span class="note-body">Leyla Mammadova · SWIFT transfer timing</span>
-                                    </span>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                    @* Bildiriş zəngi: son bildirişlər API-dən gəlir, yenilər SignalR ilə canlı əlavə olunur (wwwroot/js/notifications.js) *@
+                    @await Component.InvokeAsync("NotificationBell", new { area = "Admin" })
                     <span class="profile-btn" title="@string.Join(", ", roles)">
                         <span class="avatar">@initials</span>
                         <span>
@@ -135,9 +98,23 @@
             <a class="@On("BankDashboard")" asp-area="Admin" asp-controller="BankDashboard" asp-action="Index">Dashboard</a>
             <a class="@On("Users")" asp-area="Admin" asp-controller="Users" asp-action="Index">Users</a>
             <a class="@On("Loans")" asp-area="Admin" asp-controller="Loans" asp-action="Index">Loans</a>
+            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin))
+            {
+                <a class="@On("BillProviders")" asp-area="Admin" asp-controller="BillProviders" asp-action="Index">Bill providers</a>
+            }
             <a class="@On("Reports")" asp-area="Admin" asp-controller="Reports" asp-action="Index">Reports</a>
-            <a class="@On("Tickets")" asp-area="Admin" asp-controller="Tickets" asp-action="Index">Contact Tickets</a>
-            <a class="@On("Audit")" asp-area="Admin" asp-controller="Audit" asp-action="Index">Audit Log</a>
+            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.CustomerSupport))
+            {
+                <a class="@On("Tickets")" asp-area="Admin" asp-controller="Tickets" asp-action="Index">Contact Tickets</a>
+            }
+            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Security))
+            {
+                <a class="@On("Audit")" asp-area="Admin" asp-controller="Audit" asp-action="Index">Audit Log</a>
+            }
+            @if (User.IsInRole(AppRoles.SuperAdmin))
+            {
+                <a class="@On("Staff")" asp-area="Admin" asp-controller="Staff" asp-action="Index">Staff</a>
+            }
         }
     </aside>
 
@@ -152,6 +129,10 @@
 
     <script src="~/js/confirm-dialog.js" asp-append-version="true"></script>
     <script src="~/js/file-drop.js" asp-append-version="true"></script>
+    <script src="~/js/wheel-select.js" asp-append-version="true"></script>
+    <script src="~/js/wheel-date.js" asp-append-version="true"></script>
     <script src="~/js/admin.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@@8.0.7/dist/browser/signalr.min.js"></script>
+    <script src="~/js/notifications.js" asp-append-version="true"></script>
 </body>
 </html>

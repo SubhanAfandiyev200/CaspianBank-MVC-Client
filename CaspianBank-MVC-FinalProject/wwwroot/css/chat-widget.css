@@ -1,0 +1,118 @@
+/* Köməkçi düyməsi və sağdan açılan panel (bütün səhifələrdə). Öz dəyişənləri var: Home layout-u style.css yükləmir */
+.cw {
+  --cw-primary: #0f5c3f;
+  --cw-primary-dark: #0c3f2c;
+  --cw-lime: #c5d86d;
+  --cw-ink: #141816;
+  --cw-muted: #5b655f;
+  --cw-faint: #8a948e;
+  --cw-border: #e3e8e4;
+  --cw-bg: #f7f8f6;
+  --cw-surface: #ffffff;
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--cw-ink);
+}
+
+/* ---------- üzən düymə ---------- */
+.cw-fab {
+  position: fixed; right: 20px; bottom: 20px; z-index: 90;
+  display: inline-flex; align-items: center; gap: 10px;
+  height: 52px; padding: 0 20px 0 8px; border: 0; border-radius: 999px; cursor: pointer;
+  background: linear-gradient(150deg, #146848, var(--cw-primary-dark)); color: #f4f7e8;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85), 0 10px 28px rgba(12, 63, 44, 0.35), 0 2px 6px rgba(0, 0, 0, 0.12);
+  font-family: inherit; font-weight: 600; font-size: 14px; line-height: 1; letter-spacing: 0.01em;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.2s ease;
+}
+.cw-fab:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(12, 63, 44, 0.4), 0 2px 6px rgba(0, 0, 0, 0.12); }
+.cw-fab:focus-visible { outline: 3px solid var(--cw-lime); outline-offset: 3px; }
+.cw-fab-mark {
+  width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--cw-lime); color: var(--cw-primary-dark);
+}
+.cw.is-open .cw-fab { opacity: 0; pointer-events: none; transform: translateY(8px); }
+
+/* ---------- panel ---------- */
+.cw-backdrop {
+  position: fixed; inset: 0; z-index: 91; background: rgba(12, 24, 18, 0.36);
+  opacity: 0; visibility: hidden; transition: opacity 0.25s ease, visibility 0s linear 0.25s;
+}
+.cw.is-open .cw-backdrop { opacity: 1; visibility: visible; transition-delay: 0s; }
+
+.cw-panel {
+  position: fixed; top: 0; right: 0; bottom: 0; z-index: 92;
+  width: min(420px, 100vw); display: flex; flex-direction: column;
+  background: var(--cw-surface); border-left: 1px solid var(--cw-border);
+  box-shadow: -18px 0 48px rgba(12, 24, 18, 0.18);
+  transform: translateX(104%); visibility: hidden;
+  transition: transform 0.3s cubic-bezier(0.22, 0.8, 0.3, 1), visibility 0s linear 0.3s;
+}
+.cw.is-open .cw-panel { transform: none; visibility: visible; transition-delay: 0s; }
+
+.cw-head {
+  display: flex; align-items: center; gap: 12px; padding: 16px 14px 14px 18px;
+  border-bottom: 1px solid var(--cw-border);
+  background: radial-gradient(260px 90px at 100% 0%, rgba(197, 216, 109, 0.5), transparent 70%), var(--cw-surface);
+}
+.cw-avatar {
+  width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; flex: none;
+  background: linear-gradient(150deg, #146848, var(--cw-primary-dark)); color: var(--cw-lime); font-weight: 700; font-size: 18px;
+}
+.cw-head-copy { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.cw-head-copy strong { font-size: 15px; }
+.cw-head-copy small { color: var(--cw-faint); font-size: 12px; display: flex; align-items: center; gap: 6px; }
+.cw-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--cw-lime); box-shadow: 0 0 0 3px rgba(197, 216, 109, 0.35); }
+.cw-icon {
+  width: 34px; height: 34px; border: 0; border-radius: 10px; background: transparent; color: var(--cw-muted);
+  display: grid; place-items: center; cursor: pointer;
+}
+.cw-icon:hover { background: var(--cw-bg); color: var(--cw-ink); }
+.cw-icon:focus-visible, .cw-chip:focus-visible, .cw-send:focus-visible { outline: 2px solid var(--cw-primary); outline-offset: 2px; }
+
+/* ---------- söhbət ---------- */
+.cw-log { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 12px; background: var(--cw-bg); }
+.cw-msg { display: flex; animation: cw-in 0.25s ease both; }
+.cw-msg.is-user { justify-content: flex-end; }
+.cw-bubble {
+  max-width: 86%; padding: 10px 14px; border-radius: 16px 16px 16px 4px; font-size: 14px; line-height: 1.5;
+  background: var(--cw-surface); border: 1px solid var(--cw-border); overflow-wrap: anywhere;
+}
+.cw-msg.is-user .cw-bubble { background: var(--cw-primary); color: #fff; border-color: var(--cw-primary); border-radius: 16px 16px 4px 16px; }
+.cw-typing { display: inline-flex; gap: 4px; align-items: center; height: 16px; }
+.cw-typing span { width: 6px; height: 6px; border-radius: 50%; background: var(--cw-faint); animation: cw-bounce 1s infinite ease-in-out; }
+.cw-typing span:nth-child(2) { animation-delay: 0.15s; }
+.cw-typing span:nth-child(3) { animation-delay: 0.3s; }
+
+.cw-suggest { display: flex; flex-wrap: wrap; gap: 8px; padding: 12px 18px 0; background: var(--cw-surface); border-top: 1px solid var(--cw-border); }
+.cw-suggest[hidden] { display: none; }
+.cw-chip {
+  border: 1px solid var(--cw-border); background: var(--cw-surface); color: var(--cw-ink); border-radius: 999px;
+  padding: 7px 12px; font-family: inherit; font-weight: 500; font-size: 13px; line-height: 1.2; cursor: pointer; transition: background 0.15s ease, border-color 0.15s ease;
+}
+.cw-chip:hover { background: #eef3d4; border-color: var(--cw-lime); }
+
+.cw-composer { display: flex; align-items: flex-end; gap: 10px; padding: 12px 18px 6px; background: var(--cw-surface); }
+.cw-suggest[hidden] + .cw-composer { border-top: 1px solid var(--cw-border); }
+.cw-input {
+  flex: 1; min-width: 0; resize: none; max-height: 120px; box-sizing: border-box; overflow-y: hidden; padding: 10px 14px; border: 1px solid var(--cw-border); border-radius: 14px;
+  background: var(--cw-bg); font-family: inherit; font-weight: 400; font-size: 14px; line-height: 1.45; color: var(--cw-ink);
+}
+.cw-input:focus { outline: 2px solid var(--cw-primary); outline-offset: 0; background: #fff; }
+.cw-send {
+  width: 40px; height: 40px; flex: none; border: 0; border-radius: 12px; cursor: pointer; display: grid; place-items: center;
+  background: var(--cw-primary); color: #fff; transition: background 0.15s ease, opacity 0.15s ease;
+}
+.cw-send:hover { background: #146848; }
+.cw-send:disabled { opacity: 0.45; cursor: not-allowed; }
+.cw-note { margin: 0; padding: 4px 18px 14px; background: var(--cw-surface); font-size: 12px; color: var(--cw-faint); text-align: center; }
+
+@keyframes cw-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@keyframes cw-bounce { 0%, 80%, 100% { transform: translateY(0); opacity: 0.5; } 40% { transform: translateY(-4px); opacity: 1; } }
+
+@media (max-width: 560px) {
+  .cw-fab { right: 14px; bottom: 14px; padding: 0 16px 0 6px; }
+  .cw-panel { width: 100vw; border-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cw-fab, .cw-panel, .cw-backdrop, .cw-msg { transition: none; animation: none; }
+  .cw-typing span { animation: none; }
+}

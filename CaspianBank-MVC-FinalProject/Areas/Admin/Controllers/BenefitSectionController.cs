@@ -10,7 +10,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
     // UI bölməsi: Home-dakı "Benefits" blokunun başlıq yazısı (label, title, description). Tək yazıdır: yalnız görünür (Detail) və dəyişdirilir (Edit).
     // Kartları BenefitItemController idarə edir. API: api/admin/benefit-section
     [Area("Admin")]
-    [Authorize(Roles = "Admin,SuperAdmin,WebDesigner")]
+    [Authorize(Roles = "Admin,SuperAdmin")]
     public class BenefitSectionController : ApiControllerBase
     {
         public BenefitSectionController(IHttpClientFactory httpClientFactory, IConfiguration configuration)

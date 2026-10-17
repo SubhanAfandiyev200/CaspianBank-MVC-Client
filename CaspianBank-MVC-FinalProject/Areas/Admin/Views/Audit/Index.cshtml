@@ -1,83 +1,144 @@
+﻿@model CaspianBank_MVC_FinalProject.ViewModels.Audit.AuditPageVM
+@using System.Globalization
 @{
     ViewData["Title"] = "Audit log";
+    var inv = CultureInfo.InvariantCulture;
+    var today = DateTime.Today.ToString("yyyy-MM-dd");
+
+    // API-dəki AuditActions kodları və göstərilən adları
+    var actions = new List<(string Code, string Label)>
+    {
+        ("AccountRestricted", "Account restricted"),
+        ("AccountRestored", "Account restored"),
+        ("LoanApproved", "Loan approved"),
+        ("LoanOffered", "Loan offer sent"),
+        ("LoanRejected", "Loan rejected"),
+        ("BillProviderChanged", "Bill provider changed"),
+        ("SettingChanged", "Setting changed"),
+        ("TicketAnswered", "Message answered"),
+        ("TicketClosed", "Message closed")
+    };
+
+    string ActionLabel(string code)
+    {
+        var found = actions.FirstOrDefault(a => a.Code == code);
+        return found.Label ?? code;
+    }
+
+    string ActionBadge(string code)
+    {
+        switch (code)
+        {
+            case "AccountRestricted":
+            case "LoanRejected":
+                return "badge-danger";
+            case "AccountRestored":
+            case "LoanApproved":
+                return "badge-success";
+            case "LoanOffered":
+                return "badge-info";
+            default:
+                return "badge-neutral";
+        }
+    }
+
+    string PageUrl(int page)
+    {
+        return Url.Action("Index", "Audit", new
+        {
+            area = "Admin",
+            search = Model.Search,
+            kind = Model.Action,
+            from = Model.From?.ToString("yyyy-MM-dd", inv),
+            to = Model.To?.ToString("yyyy-MM-dd", inv),
+            page
+        }) ?? "#";
+    }
 }
 <main id="content" class="page">
     <header class="page-head">
         <p class="eyebrow">Controls</p>
         <h1>Audit log</h1>
-        <p class="lede">A record of sign-ins, money movement, decisions, and account changes.</p>
+        <p class="lede">A record of staff decisions and account changes: who did what, to whom and when. Entries can't be edited or deleted.</p>
     </header>
 
-    @* Hələlik statik dizayn (nümunə sətirlər) *@
+    @if (Model.Unavailable)
+    {
+        <p class="flash flash-error" role="alert">The audit log can't be loaded right now. Please try again in a moment.</p>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <p class="flash flash-error" role="alert">@Model.Error</p>
+    }
+
     <section class="surface surface-tight">
-        <div class="toolbar filters">
+        <form method="get" asp-area="Admin" asp-controller="Audit" asp-action="Index" class="toolbar filters">
             <div class="field grow">
-                <label for="q">Search</label>
-                <input class="input" id="q" type="search" placeholder="User, action, or detail" />
+                <label for="search">Search</label>
+                <input class="input" id="search" name="search" type="search" placeholder="Staff, target or detail" value="@Model.Search" autocomplete="off" />
             </div>
             <div class="field">
                 <label for="action">Action</label>
-                <select class="select" id="action">
-                    <option value="all">All actions</option>
-                    <option>Account restricted</option>
-                    <option>Loan decision</option>
-                    <option>Sign-in</option>
-                    <option>Transfer</option>
+                <select class="select" data-wheel id="action" name="kind">
+                    <option value="" selected="@string.IsNullOrEmpty(Model.Action)">All actions</option>
+                    @foreach (var item in actions)
+                    {
+                        <option value="@item.Code" selected="@(Model.Action == item.Code)">@item.Label</option>
+                    }
                 </select>
             </div>
             <div class="field">
                 <label for="from">From</label>
-                <input class="input" id="from" type="date" />
+                <input class="input" id="from" name="from" type="date" min="2020-01-01" max="@today" value="@Model.From?.ToString("yyyy-MM-dd", inv)" />
             </div>
             <div class="field">
                 <label for="to">To</label>
-                <input class="input" id="to" type="date" />
+                <input class="input" id="to" name="to" type="date" min="2020-01-01" max="@today" value="@Model.To?.ToString("yyyy-MM-dd", inv)" />
             </div>
-        </div>
+            <div class="field">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" type="submit">Filter</button>
+            </div>
+        </form>
 
         <div class="table-wrap">
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Timestamp</th>
-                        <th>User</th>
+                        <th>Time</th>
+                        <th>Staff</th>
                         <th>Action</th>
+                        <th>Target</th>
                         <th>Details</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>07 Oct 2026, 18:25</td>
-                        <td>Leyla Mammadova</td>
-                        <td>Sign-in</td>
-                        <td>Web banking session opened</td>
-                    </tr>
-                    <tr>
-                        <td>07 Oct 2026, 18:24</td>
-                        <td>Leyla Mammadova</td>
-                        <td>Transfer</td>
-                        <td>1,000.00 AZN to Silver •••• 2977</td>
-                    </tr>
-                    <tr>
-                        <td>06 Oct 2026, 16:20</td>
-                        <td>Nigar Aliyeva</td>
-                        <td>Support reply</td>
-                        <td>Replied to “Cashback for August”</td>
-                    </tr>
-                    <tr>
-                        <td>03 Oct 2026, 15:00</td>
-                        <td>Nigar Aliyeva</td>
-                        <td>Loan decision</td>
-                        <td>Approved 20,000.00 AZN for Tural Ismayilov</td>
-                    </tr>
-                    <tr>
-                        <td>01 Oct 2026, 13:05</td>
-                        <td>Nigar Aliyeva</td>
-                        <td>Account restricted</td>
-                        <td>Elvin Qasimov restricted after report TX-198332</td>
-                    </tr>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)</td>
+                            <td>
+                                <strong>@item.ActorName</strong>
+                                @if (!string.IsNullOrEmpty(item.ActorRole))
+                                {
+                                    <div class="hint">@item.ActorRole</div>
+                                }
+                            </td>
+                            <td><span class="badge @ActionBadge(item.Action)">@ActionLabel(item.Action)</span></td>
+                            <td>@item.TargetLabel</td>
+                            <td>@item.Details</td>
+                        </tr>
+                    }
+                    @if (!Model.Items.Any())
+                    {
+                        <tr>
+                            <td colspan="5">No entries found.</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
     </section>
+
+    <partial name="_Pager" model="new CaspianBank_MVC_FinalProject.ViewModels.Common.PagerVM { Page = Model.Page, PageSize = Model.PageSize, TotalCount = Model.TotalCount, TotalPages = Model.TotalPages, Url = PageUrl }" />
 </main>

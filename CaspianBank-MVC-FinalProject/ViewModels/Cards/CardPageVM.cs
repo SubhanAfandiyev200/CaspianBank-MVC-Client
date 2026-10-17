@@ -11,6 +11,8 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.Cards
     public class TransactionUIVM
     {
         public int Id { get; set; }
+        public int CardId { get; set; }
+        public string CardLabel { get; set; } = string.Empty;   // yalnız bütün kartların son əməliyyatlarında dolur
         public string Type { get; set; } = string.Empty;        // TopUp, TransferOut, TransferIn, Commission, CardFee
         public bool IsIncome { get; set; }
         public decimal Amount { get; set; }

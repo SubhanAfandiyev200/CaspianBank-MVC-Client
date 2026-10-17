@@ -1,0 +1,57 @@
+@model CardCodeModalVM
+@*
+    Kartı bloklamaq / blokdan çıxarmaq pəncərəsi. İki addım:
+      1) kod hələ göndərilməyib (SentTo boşdur): "Send code" düyməsi
+      2) kod göndərilib: 6 rəqəmli kodu yaz və təsdiq et; "Resend code" ilə yenisini istəmək olar
+    Pəncərə xəta və ya göndərilmiş kod varsa səhifə açılanda özü açılır (data-open-on-load).
+*@
+@{
+    var step2 = !string.IsNullOrEmpty(Model.SentTo);
+    var open = step2 || Model.Error is not null;
+}
+<div class="modal" id="@Model.Id" hidden data-open-on-load="@(open ? "true" : "false")">
+    <div class="modal-backdrop" data-close-modal></div>
+    <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="@(Model.Id)-title">
+        <h2 id="@(Model.Id)-title">@Model.Title</h2>
+        <p class="lede">@Model.Lede</p>
+
+        @if (Model.Error is not null)
+        {
+            <p class="flash flash-error" role="alert">@Model.Error</p>
+        }
+
+        @if (!step2)
+        {
+            <form asp-action="@Model.SendAction" asp-route-id="@Model.CardId" method="post" class="form-stack" novalidate>
+                <p class="demo-note"><span>We will email a 6-digit code to the address on this account.</span></p>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" type="button" data-close-modal>Cancel</button>
+                    <button class="btn btn-primary" type="submit">Send code</button>
+                </div>
+            </form>
+        }
+        else
+        {
+            <form asp-action="@Model.ConfirmAction" asp-route-id="@Model.CardId" method="post" class="form-stack" autocomplete="off" novalidate>
+                <input type="hidden" name="sentTo" value="@Model.SentTo" />
+                <p class="demo-note"><span>We sent a 6-digit code to <strong>@Model.SentTo</strong>. It is valid for 5 minutes.</span></p>
+                @if (!string.IsNullOrEmpty(Model.DevCode))
+                {
+                    <p class="demo-note"><span>Demo mode (no email server): your code is <strong>@Model.DevCode</strong></span></p>
+                }
+                <div class="field">
+                    <label for="@(Model.Id)-code">Code</label>
+                    <input class="input" id="@(Model.Id)-code" name="code" inputmode="numeric" maxlength="6" pattern="[0-9]*" autocomplete="one-time-code" placeholder="000000" />
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" type="button" data-close-modal>Cancel</button>
+                    <button class="btn @Model.ConfirmClass" type="submit">@Model.ConfirmLabel</button>
+                </div>
+            </form>
+            <form asp-action="@Model.SendAction" asp-route-id="@Model.CardId" method="post" novalidate>
+                <input type="hidden" name="sentTo" value="@Model.SentTo" />
+                <button type="submit" class="link-btn">Resend code</button>
+            </form>
+        }
+    </div>
+</div>

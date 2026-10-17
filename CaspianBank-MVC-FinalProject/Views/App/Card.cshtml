@@ -2,9 +2,15 @@
 @using System.Globalization
 @{
     Layout = "_AppLayout";
+    ViewData["Title"] = "Card details";
     var inv = CultureInfo.InvariantCulture;
     var card = Model.Card;
     var blockError = TempData["BlockError"] as string;
+    var blockSentTo = TempData["BlockSentTo"] as string;
+    var blockDevCode = TempData.Peek("BlockDevCode") as string;   // Peek: səhv kod yazılıb səhifə yenilənəndə demo kod itməsin
+    var unblockError = TempData["UnblockError"] as string;
+    var unblockSentTo = TempData["UnblockSentTo"] as string;
+    var unblockDevCode = TempData.Peek("UnblockDevCode") as string;
     var topUpError = TempData["TopUpError"] as string;
     var isCashback = card is not null && card.Tier.Equals("Cashback", StringComparison.OrdinalIgnoreCase);
     var canTopUp = card is not null && !card.IsBlocked && !isCashback;
@@ -12,21 +18,6 @@
     string Money(decimal value) { return value.ToString("N2", inv) + " AZN"; }
     string Percent(decimal value) { return value.ToString("0.##", inv) + "%"; }
 
-    // Əməliyyatın növünə görə ikon
-    string Icon(TransactionUIVM t)
-    {
-        switch (t.Type)
-        {
-            case "TopUp":
-                return "<path d=\"M12 5v14M5 12h14\"/>";
-            case "TransferOut":
-                return "<path d=\"M7 17 17 7M9 7h8v8\"/>";
-            case "TransferIn":
-                return "<path d=\"M17 7 7 17M15 17H7V9\"/>";
-            default:
-                return "<path d=\"M6 4h12v16l-3-2-3 2-3-2-3 2zM9 9h6M9 13h4\"/>";
-        }
-    }
 }
 <main id="content" class="page cd-page">
     <a class="back" asp-action="Index">All cards</a>
@@ -64,11 +55,14 @@
                     @if (!card.IsBlocked)
                     {
                         <a class="btn btn-secondary" asp-controller="Transfer" asp-action="Index" asp-route-from="@card.Id">Transfer</a>
-                        <button class="btn btn-danger" type="button" data-open-modal="block-modal">Block card</button>
+                        @if (!isCashback)
+                        {
+                            <button class="btn btn-danger" type="button" data-open-modal="block-modal">Block card</button>
+                        }
                     }
                     else
                     {
-                        <button class="btn btn-danger" type="button" disabled>Card is blocked</button>
+                        <button class="btn btn-primary" type="button" data-open-modal="unblock-modal">Unblock card</button>
                     }
                 </div>
             </section>
@@ -120,6 +114,7 @@
         <section class="surface cd-activity" aria-labelledby="activity-title">
             <div class="spread">
                 <h2 id="activity-title">Recent activity</h2>
+                <a class="link-btn" asp-controller="History" asp-action="Index" asp-route-cardId="@card.Id">View all</a>
             </div>
 
             @if (Model.Transactions.Count == 0)
@@ -134,25 +129,7 @@
                 <div>
                     @foreach (var t in Model.Transactions)
                     {
-                        <article class="activity">
-                            <div class="activity-icon @(t.IsIncome ? "is-in" : "is-out")">
-                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">@Html.Raw(Icon(t))</svg>
-                            </div>
-                            <div>
-                                <div class="activity-desc">@t.Description</div>
-                                <div class="activity-meta">
-                                    @t.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)
-                                    @if (!string.IsNullOrEmpty(t.Note))
-                                    {
-                                        <span> · “@t.Note”</span>
-                                    }
-                                </div>
-                            </div>
-                            <div class="activity-amount">
-                                <div class="@(t.IsIncome ? "amount-in" : "amount-out") num">@(t.IsIncome ? "+" : "−")@t.Amount.ToString("N2", inv) AZN</div>
-                                <div class="activity-meta num">Balance @t.BalanceAfter.ToString("N2", inv)</div>
-                            </div>
-                        </article>
+                        <partial name="_ActivityRow" model="t" />
                     }
                 </div>
             }
@@ -207,33 +184,40 @@
             </div>
         }
 
+        @* Bloklamaq / blokdan çıxarmaq emailə gələn 6 rəqəmli kodla təsdiqlənir (iki addımlı pəncərə) *@
         @if (!card.IsBlocked)
         {
-            <div class="modal" id="block-modal" hidden data-open-on-load="@(blockError is null ? "false" : "true")">
-                <div class="modal-backdrop" data-close-modal></div>
-                <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="block-title">
-                    <h2 id="block-title">Block this card?</h2>
-                    <p class="lede">New purchases and transfers stop immediately. Confirm with the email and password on this account.</p>
-                    <form asp-action="BlockCard" asp-route-id="@card.Id" method="post" class="form-stack" novalidate>
-                        @if (blockError is not null)
-                        {
-                            <p class="flash flash-error" role="alert">@blockError</p>
-                        }
-                        <div class="field">
-                            <label for="block-email">Email</label>
-                            <input class="input" id="block-email" name="email" type="email" autocomplete="username" />
-                        </div>
-                        <div class="field">
-                            <label for="block-password">Password</label>
-                            <input class="input" id="block-password" name="password" type="password" autocomplete="current-password" />
-                        </div>
-                        <div class="modal-actions">
-                            <button class="btn btn-secondary" type="button" data-close-modal>Cancel</button>
-                            <button class="btn btn-danger" type="submit">Block card</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            <partial name="_CardCodeModal" model='new CardCodeModalVM
+            {
+                Id = "block-modal",
+                CardId = card.Id,
+                Title = "Block this card?",
+                Lede = "New purchases and transfers stop immediately. We email a 6-digit code to confirm it is you.",
+                SendAction = "SendBlockCode",
+                ConfirmAction = "BlockCard",
+                ConfirmLabel = "Block card",
+                ConfirmClass = "btn-danger",
+                SentTo = blockSentTo,
+                DevCode = blockDevCode,
+                Error = blockError
+            }' />
+        }
+        else
+        {
+            <partial name="_CardCodeModal" model='new CardCodeModalVM
+            {
+                Id = "unblock-modal",
+                CardId = card.Id,
+                Title = "Unblock this card?",
+                Lede = "The card works again for top-ups and transfers. We email a 6-digit code to confirm it is you.",
+                SendAction = "SendUnblockCode",
+                ConfirmAction = "UnblockCard",
+                ConfirmLabel = "Unblock card",
+                ConfirmClass = "btn-primary",
+                SentTo = unblockSentTo,
+                DevCode = unblockDevCode,
+                Error = unblockError
+            }' />
         }
     }
 </main>

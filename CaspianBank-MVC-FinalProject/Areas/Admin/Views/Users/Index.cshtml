@@ -1,29 +1,51 @@
+@model CaspianBank_MVC_FinalProject.ViewModels.Users.UserPageVM
 @{
     ViewData["Title"] = "Users";
+
+    string PageUrl(int page)
+    {
+        return Url.Action("Index", "Users", new { area = "Admin", search = Model.Search, status = Model.Status, page }) ?? "#";
+    }
 }
 <main id="content" class="page">
     <header class="page-head">
         <p class="eyebrow">Operations</p>
         <h1>Users</h1>
-        <p class="lede">Search the customer book, open a profile, or restrict an account.</p>
+        <p class="lede">Search the customer book, open a profile, or restrict an account. @Model.RestrictedCount restricted at the moment.</p>
     </header>
 
-    @* Hələlik statik dizayn (nümunə sətirlər): siyahı və axtarış API hazır olanda işləyəcək *@
+    @if (TempData["Success"] is string success)
+    {
+        <p class="flash flash-ok" role="status">@success</p>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <p class="flash flash-error" role="alert">@error</p>
+    }
+    @if (Model.Unavailable)
+    {
+        <p class="flash flash-error" role="alert">The customer list can't be loaded right now. Please try again in a moment.</p>
+    }
+
     <section class="surface surface-tight">
-        <div class="toolbar filters">
+        <form method="get" asp-area="Admin" asp-controller="Users" asp-action="Index" class="toolbar filters">
             <div class="field grow">
-                <label for="q">Search</label>
-                <input class="input" id="q" type="search" placeholder="Name, email, or phone" />
+                <label for="search">Search</label>
+                <input class="input" id="search" name="search" type="search" placeholder="Name, email, phone or FIN" value="@Model.Search" autocomplete="off" />
             </div>
             <div class="field">
                 <label for="status">Status</label>
-                <select class="select" id="status">
-                    <option value="all">All</option>
-                    <option value="Active">Active</option>
-                    <option value="Restricted">Restricted</option>
+                <select class="select" data-wheel id="status" name="status">
+                    <option value="" selected="@string.IsNullOrEmpty(Model.Status)">All</option>
+                    <option value="Active" selected="@(Model.Status == "Active")">Active</option>
+                    <option value="Restricted" selected="@(Model.Status == "Restricted")">Restricted</option>
                 </select>
             </div>
-        </div>
+            <div class="field">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" type="submit">Filter</button>
+            </div>
+        </form>
 
         <div class="table-wrap">
             <table class="data-table">
@@ -32,70 +54,53 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Phone</th>
+                        <th class="num">Cards</th>
+                        <th class="num">Total balance</th>
                         <th>Registered</th>
                         <th>Status</th>
                         <th class="actions"></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Leyla Mammadova</td>
-                        <td>leyla.mammadova@gmail.com</td>
-                        <td>+994 50 312 44 18</td>
-                        <td>18 Apr 2023</td>
-                        <td><span class="badge badge-success">Active</span></td>
-                        <td class="actions">
-                            <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Users" asp-action="Detail">View</a>
-                            <button type="button" class="btn btn-danger btn-sm"
-                                    data-confirm-title="Restrict this account?"
-                                    data-confirm-text="Leyla Mammadova will be unable to move money until the account is restored."
-                                    data-confirm-yes="Restrict account" data-confirm-danger="true">Restrict</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Rashad Huseynov</td>
-                        <td>rashad.huseynov@gmail.com</td>
-                        <td>+994 55 201 90 14</td>
-                        <td>09 Jan 2024</td>
-                        <td><span class="badge badge-success">Active</span></td>
-                        <td class="actions">
-                            <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Users" asp-action="Detail">View</a>
-                            <button type="button" class="btn btn-danger btn-sm"
-                                    data-confirm-title="Restrict this account?"
-                                    data-confirm-text="Rashad Huseynov will be unable to move money until the account is restored."
-                                    data-confirm-yes="Restrict account" data-confirm-danger="true">Restrict</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Elvin Qasimov</td>
-                        <td>elvin.qasimov@gmail.com</td>
-                        <td>+994 51 440 18 77</td>
-                        <td>21 Jun 2025</td>
-                        <td><span class="badge badge-danger">Restricted</span></td>
-                        <td class="actions">
-                            <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Users" asp-action="Detail">View</a>
-                            <button type="button" class="btn btn-danger btn-sm"
-                                    data-confirm-title="Restore this account?"
-                                    data-confirm-text="Elvin Qasimov will be able to transact again."
-                                    data-confirm-yes="Unfreeze">Unfreeze</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Tural Ismayilov</td>
-                        <td>tural.ismayil@outlook.com</td>
-                        <td>+994 55 673 00 19</td>
-                        <td>14 Feb 2021</td>
-                        <td><span class="badge badge-success">Active</span></td>
-                        <td class="actions">
-                            <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Users" asp-action="Detail">View</a>
-                            <button type="button" class="btn btn-danger btn-sm"
-                                    data-confirm-title="Restrict this account?"
-                                    data-confirm-text="Tural Ismayilov will be unable to move money until the account is restored."
-                                    data-confirm-yes="Restrict account" data-confirm-danger="true">Restrict</button>
-                        </td>
-                    </tr>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@item.FullName</strong>
+                                <div class="hint">FIN @(item.Fin ?? "—")</div>
+                            </td>
+                            <td>@item.Email</td>
+                            <td>@(item.Phone ?? "—")</td>
+                            <td class="num">@item.CardCount</td>
+                            <td class="num">@LoanUi.Money(item.TotalBalance)</td>
+                            <td>@LoanUi.Date(item.RegisteredAt.ToLocalTime())</td>
+                            <td>
+                                @if (item.IsRestricted)
+                                {
+                                    <span class="badge badge-danger">Restricted</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-success">Active</span>
+                                }
+                            </td>
+                            <td class="actions">
+                                <span class="row-actions">
+                                    <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Users" asp-action="Detail" asp-route-id="@item.Id">View</a>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Items.Any())
+                    {
+                        <tr>
+                            <td colspan="8">No customers found.</td>
+                        </tr>
+                    }
                 </tbody>
             </table>
         </div>
     </section>
+
+    <partial name="_Pager" model="new CaspianBank_MVC_FinalProject.ViewModels.Common.PagerVM { Page = Model.Page, PageSize = Model.PageSize, TotalCount = Model.TotalCount, TotalPages = Model.TotalPages, Url = PageUrl }" />
 </main>

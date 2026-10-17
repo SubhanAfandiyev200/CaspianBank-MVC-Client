@@ -182,7 +182,8 @@
     const end = length * (1 - Math.min(percent, 100) / 100);
     const counter = { n: 0 };
     const paint = () => {
-      figure.textContent = counter.n.toFixed(decimals) + suffix;
+      // Mində birlər vergüllə ayrılır (12,345); say tam ədəddirsə 0 onluq
+      figure.textContent = counter.n.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals }) + suffix;
     };
     if (reduce) {
       value.style.strokeDashoffset = String(end);
