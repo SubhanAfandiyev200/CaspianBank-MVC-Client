@@ -3543,3 +3543,7 @@ a.header-user:focus-visible { outline: 2px solid var(--color-lime); outline-offs
 .dep-meta { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px 18px; }
 .dep-meta dt { font-size: 12px; color: var(--color-text-tertiary); }
 .dep-meta dd { margin: 2px 0 0; font-size: 14px; }
+
+/* Admin Staff: sətir daxilində rol seçimi və düymə */
+.inline-form { display: inline-flex; align-items: center; gap: 8px; margin: 0; }
+.select-sm { min-height: 34px; padding-top: 4px; padding-bottom: 4px; font-size: 13px; width: auto; }
