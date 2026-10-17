@@ -1,4 +1,4 @@
-"use strict";
+﻿"use strict";
 
 // Ödənişlər səhifəsi: təchizatçı seçimi, nömrə/kod axtarışı (JSON), məbləğ qısa yolları və təsdiq mətni.
 // Burada yalnız göstəriş və sürətli yoxlama var; operator, abunəçi, məbləğ və cashback qaydaları API-dədir.
@@ -80,7 +80,7 @@
 
     if (recurringText) {
       recurringText.textContent = tile.dataset.category === LOAN
-        ? "Pay this loan automatically every month. On the 1st the monthly payment is taken from the card you selected."
+        ? "Pay this loan automatically every month. The installment is taken from the card you selected on its due date, the last day of the month, so there is never a late fee."
         : "Make this a monthly payment. It runs on the 1st, from the card you selected.";
     }
 
@@ -295,7 +295,7 @@
       text += " and added to the balance of " + current.subscriberName + " at " + current.providerName + ".";
     }
     if (recurringBox && recurringBox.checked) {
-      text += " It will repeat every month on the 1st.";
+      text += current.category === LOAN ? " It will repeat on the last day of every month, when the installment is due." : " It will repeat every month on the 1st.";
     }
     submit.setAttribute("data-confirm-text", text);
     submit.removeAttribute("data-confirmed");
