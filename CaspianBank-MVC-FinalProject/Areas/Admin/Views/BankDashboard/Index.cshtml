@@ -1,142 +1,204 @@
+@model CaspianBank_MVC_FinalProject.ViewModels.Bank.BankDashboardVM
+@using System.Globalization
 @{
     ViewData["Title"] = "Bank dashboard";
+    var inv = CultureInfo.InvariantCulture;
+
+    string Money(decimal value) { return value.ToString("N2", inv) + " AZN"; }
+
+    // Zolağın uzunluğu: hissənin cəmə nisbəti (cəm 0-dırsa boş)
+    string Width(decimal part, decimal total)
+    {
+        if (total <= 0m || part <= 0m)
+        {
+            return "0";
+        }
+        return Math.Min(100m, Math.Round(part / total * 100m, 1)).ToString("0.#", inv);
+    }
+
+    string Change(decimal? value)
+    {
+        if (!value.HasValue)
+        {
+            return "no data for last month";
+        }
+        return (value.Value >= 0 ? "+" : "") + value.Value.ToString("0.#", inv) + "% vs last month";
+    }
 }
 <main id="content" class="page">
     <header class="page-head">
         <p class="eyebrow">Bank</p>
         <h1>Bank dashboard</h1>
-        <p class="lede">Customers, income, expenses, taxes and the bank's own funds. The numbers below are sample figures for one month.</p>
+        <p class="lede">Customers, income, expenses, taxes and the bank's own funds for @Model.PeriodLabel. Every number comes from real transactions in the database.</p>
     </header>
 
-    @* ===== Müştərilər və pul ===== *@
-    <div class="stat-grid cols-3">
-        <article class="stat">
-            <p class="stat-label">Total users</p>
-            <p class="stat-value">1,248</p>
-            <p class="stat-delta">+32 this month</p>
-            <a asp-area="Admin" asp-controller="Users" asp-action="Index">View users</a>
-        </article>
-        <article class="stat">
-            <p class="stat-label">Customer deposits</p>
-            <p class="stat-value">4,860,200.00 AZN</p>
-            <p class="hint">Money held on customer cards</p>
-        </article>
-        <article class="stat">
-            <p class="stat-label">Loans outstanding</p>
-            <p class="stat-value">1,950,000.00 AZN</p>
-            <p class="hint">Issued and not yet repaid</p>
-            <a asp-area="Admin" asp-controller="Loans" asp-action="Index">View loans</a>
-        </article>
-    </div>
+    @if (Model.Unavailable)
+    {
+        <p class="flash flash-error" role="alert">The dashboard can't be loaded right now. Please try again in a moment.</p>
+    }
+    else
+    {
+        @if (!string.IsNullOrEmpty(Model.Error))
+        {
+            <p class="flash flash-error" role="alert">@Model.Error</p>
+        }
 
-    @* ===== Aylıq nəticə: gəlir, xərc, mənfəət ===== *@
-    <div class="stat-grid cols-3">
-        <article class="stat">
-            <p class="stat-label">Total income</p>
-            <p class="stat-value">128,450.00 AZN</p>
-            <p class="stat-delta">+8.4% vs last month</p>
-        </article>
-        <article class="stat">
-            <p class="stat-label">Total expenses</p>
-            <p class="stat-value">66,810.00 AZN</p>
-            <p class="stat-delta is-down">+3.1% vs last month</p>
-            <p class="hint">Operations, cashback and taxes</p>
-        </article>
-        <article class="stat is-strong">
-            <p class="stat-label">Net profit</p>
-            <p class="stat-value">61,640.00 AZN</p>
-            <p class="hint">After tax</p>
-        </article>
-    </div>
+        <form method="get" asp-area="Admin" asp-controller="BankDashboard" asp-action="Index" class="toolbar filters">
+            <div class="field">
+                <label for="month">Month</label>
+                <select class="select" data-wheel id="month" name="month">
+                    @foreach (var item in Model.Months)
+                    {
+                        <option value="@item.Value" selected="@(item.Value == Model.Period)">@item.Label</option>
+                    }
+                </select>
+            </div>
+            <div class="field">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" type="submit">Show</button>
+            </div>
+        </form>
 
-    <div class="fin-grid">
-        @* ===== Bankın gəlirləri (komissiyalar, haqlar, faiz) ===== *@
-        <section class="fin-card">
-            <h2>Bank income</h2>
-            <p class="hint">Where the money comes from</p>
+        @* ===== Müştərilər və pul ===== *@
+        <div class="stat-grid cols-3">
+            <article class="stat">
+                <p class="stat-label">Total users</p>
+                <p class="stat-value">@Model.TotalUsers.ToString("N0", inv)</p>
+                <p class="stat-delta">+@Model.NewUsers joined in @Model.PeriodLabel</p>
+                <a asp-area="Admin" asp-controller="Users" asp-action="Index">View users</a>
+            </article>
+            <article class="stat">
+                <p class="stat-label">Customer deposits</p>
+                <p class="stat-value">@Money(Model.CustomerDeposits)</p>
+                <p class="hint">Money held on customer cards right now</p>
+            </article>
+            <article class="stat">
+                <p class="stat-label">Loans outstanding</p>
+                <p class="stat-value">@Money(Model.LoansOutstanding)</p>
+                <p class="hint">Issued and not yet repaid</p>
+                <a asp-area="Admin" asp-controller="Loans" asp-action="Index">View loans</a>
+            </article>
+        </div>
 
-            <div class="fin-row">
-                <div class="fin-row-top"><span>Transfer commissions</span><span>38,200.00 AZN</span></div>
-                <div class="fin-bar"><span style="width:29.7%"></span></div>
-            </div>
-            <div class="fin-row">
-                <div class="fin-row-top"><span>Card opening fees</span><span>12,650.00 AZN</span></div>
-                <div class="fin-bar"><span style="width:9.8%"></span></div>
-            </div>
-            <div class="fin-row">
-                <div class="fin-row-top"><span>Loan interest</span><span>71,400.00 AZN</span></div>
-                <div class="fin-bar"><span style="width:55.6%"></span></div>
-            </div>
-            <div class="fin-row">
-                <div class="fin-row-top"><span>Other fees</span><span>6,200.00 AZN</span></div>
-                <div class="fin-bar"><span style="width:4.8%"></span></div>
-            </div>
-            <div class="fin-total"><span>Total income</span><span>128,450.00 AZN</span></div>
-            <p class="sample-note">Commissions come from transfers above each card's free limit; opening fees from Silver, Gold and extra cards.</p>
-        </section>
+        @* ===== Aylıq nəticə: gəlir, xərc, mənfəət ===== *@
+        <div class="stat-grid cols-3">
+            <article class="stat">
+                <p class="stat-label">Total income</p>
+                <p class="stat-value">@Money(Model.TotalIncome)</p>
+                <p class="stat-delta @(Model.IncomeChangePercent is < 0 ? "is-down" : "")">@Change(Model.IncomeChangePercent)</p>
+            </article>
+            <article class="stat">
+                <p class="stat-label">Total expenses</p>
+                <p class="stat-value">@Money(Model.TotalExpenses)</p>
+                <p class="stat-delta @(Model.ExpenseChangePercent is > 0 ? "is-down" : "")">@Change(Model.ExpenseChangePercent)</p>
+                <p class="hint">Operations, cashback and tax</p>
+            </article>
+            <article class="stat is-strong">
+                <p class="stat-label">Net profit</p>
+                <p class="stat-value">@Money(Model.NetProfit)</p>
+                <p class="hint">After tax</p>
+            </article>
+        </div>
 
-        @* ===== Xərclər (cashback, əməliyyat, vergi) ===== *@
-        <section class="fin-card">
-            <h2>Expenses</h2>
-            <p class="hint">Where the money goes</p>
+        <div class="fin-grid">
+            @* ===== Bankın gəlirləri ===== *@
+            <section class="fin-card">
+                <h2>Bank income</h2>
+                <p class="hint">Where the money comes from</p>
 
-            <div class="fin-row">
-                <div class="fin-row-top"><span>Cashback paid to customers</span><span>14,900.00 AZN</span></div>
-                <div class="fin-bar is-out"><span style="width:22.3%"></span></div>
-            </div>
-            <div class="fin-row">
-                <div class="fin-row-top"><span>Salaries and operations</span><span>31,200.00 AZN</span></div>
-                <div class="fin-bar is-out"><span style="width:46.7%"></span></div>
-            </div>
-            <div class="fin-row">
-                <div class="fin-row-top"><span>Card production and infrastructure</span><span>5,300.00 AZN</span></div>
-                <div class="fin-bar is-out"><span style="width:7.9%"></span></div>
-            </div>
-            <div class="fin-row">
-                <div class="fin-row-top"><span>Profit tax (20%)</span><span>15,410.00 AZN</span></div>
-                <div class="fin-bar is-out"><span style="width:23.1%"></span></div>
-            </div>
-            <div class="fin-total"><span>Total expenses</span><span>66,810.00 AZN</span></div>
-            <p class="sample-note">Income 128,450.00 − operating costs 51,400.00 = profit before tax 77,050.00; tax 20% = 15,410.00.</p>
-        </section>
+                <div class="fin-row">
+                    <div class="fin-row-top"><span>Transfer commissions</span><span>@Money(Model.TransferCommissions)</span></div>
+                    <div class="fin-bar"><span style="width:@(Width(Model.TransferCommissions, Model.TotalIncome))%"></span></div>
+                </div>
+                <div class="fin-row">
+                    <div class="fin-row-top"><span>Card opening fees</span><span>@Money(Model.CardOpeningFees)</span></div>
+                    <div class="fin-bar"><span style="width:@(Width(Model.CardOpeningFees, Model.TotalIncome))%"></span></div>
+                </div>
+                <div class="fin-row">
+                    <div class="fin-row-top"><span>Loan interest</span><span>@Money(Model.LoanInterest)</span></div>
+                    <div class="fin-bar"><span style="width:@(Width(Model.LoanInterest, Model.TotalIncome))%"></span></div>
+                </div>
+                <div class="fin-row">
+                    <div class="fin-row-top"><span>Late payment penalties</span><span>@Money(Model.LatePenalties)</span></div>
+                    <div class="fin-bar"><span style="width:@(Width(Model.LatePenalties, Model.TotalIncome))%"></span></div>
+                </div>
+                <div class="fin-total"><span>Total income</span><span>@Money(Model.TotalIncome)</span></div>
+                <p class="sample-note">Commissions come from transfers above each card's free limit; opening fees from Silver, Gold and extra cards; interest and penalties from loan payments made in the month.</p>
+            </section>
 
-        @* ===== Vergi və ehtiyat: bankın vergini ödəməyə vəsaiti varmı ===== *@
-        <section class="fin-card">
-            <h2>Taxes and reserve</h2>
-            <p class="hint">Can the bank pay what it owes?</p>
+            @* ===== Xərclər ===== *@
+            <section class="fin-card">
+                <h2>Expenses</h2>
+                <p class="hint">Where the money goes</p>
 
-            <dl class="reserve-list">
-                <div><dt>Tax accrued this month</dt><dd>15,410.00 AZN</dd></div>
-                <div><dt>Tax due this quarter</dt><dd>46,230.00 AZN</dd></div>
-                <div><dt>Required reserve (10% of deposits)</dt><dd>486,020.00 AZN</dd></div>
-                <div><dt>Bank reserve (own funds)</dt><dd>2,400,000.00 AZN</dd></div>
-                <div><dt>Reserve after paying the quarter's tax</dt><dd>2,353,770.00 AZN</dd></div>
-            </dl>
+                <div class="fin-row">
+                    <div class="fin-row-top"><span>Cashback paid to customers</span><span>@Money(Model.CashbackPaid)</span></div>
+                    <div class="fin-bar is-out"><span style="width:@(Width(Model.CashbackPaid, Model.TotalExpenses))%"></span></div>
+                </div>
+                <div class="fin-row">
+                    <div class="fin-row-top"><span>Salaries and operations</span><span>@Money(Model.OperatingCosts)</span></div>
+                    <div class="fin-bar is-out"><span style="width:@(Width(Model.OperatingCosts, Model.TotalExpenses))%"></span></div>
+                </div>
+                <div class="fin-row">
+                    <div class="fin-row-top"><span>Profit tax (@Model.ProfitTaxPercent.ToString("0.##", inv)%)</span><span>@Money(Model.ProfitTax)</span></div>
+                    <div class="fin-bar is-out"><span style="width:@(Width(Model.ProfitTax, Model.TotalExpenses))%"></span></div>
+                </div>
+                <div class="fin-total"><span>Total expenses</span><span>@Money(Model.TotalExpenses)</span></div>
+                <p class="sample-note">Income @Money(Model.TotalIncome) − cashback @Money(Model.CashbackPaid) − operating costs @Money(Model.OperatingCosts) = profit before tax @Money(Model.ProfitBeforeTax)@(Model.ProfitBeforeTax > 0 ? "; tax " + Model.ProfitTaxPercent.ToString("0.##", inv) + "% = " + Money(Model.ProfitTax) : "; no tax on a loss").</p>
+            </section>
 
-            <div class="reserve-meter">
-                <div class="fin-bar"><span style="width:100%"></span></div>
-                <p>Reserve covers the required reserve plus this quarter's tax <strong>4.5×</strong> <span class="badge badge-success">Healthy</span></p>
-            </div>
-            <p class="sample-note">If the reserve fell below the required reserve plus the tax due, this card would turn red and warn the finance team.</p>
-        </section>
+            @* ===== Vergi və ehtiyat ===== *@
+            <section class="fin-card">
+                <h2>Taxes and reserve</h2>
+                <p class="hint">Can the bank pay what it owes?</p>
 
-        @* ===== Gözləyən işlər ===== *@
-        <section class="fin-card">
-            <h2>Needs attention</h2>
-            <p class="hint">Queues waiting on the bank</p>
+                <dl class="reserve-list">
+                    <div><dt>Tax accrued this month</dt><dd>@Money(Model.ProfitTax)</dd></div>
+                    <div><dt>Tax accrued this quarter so far</dt><dd>@Money(Model.QuarterTaxAccrued)</dd></div>
+                    <div><dt>Required reserve (@Model.ReservePercent.ToString("0.##", inv)% of deposits)</dt><dd>@Money(Model.RequiredReserve)</dd></div>
+                    <div><dt>Bank reserve (own funds)</dt><dd>@Money(Model.OwnFunds)</dd></div>
+                    <div><dt>Reserve after paying the quarter's tax</dt><dd>@Money(Model.ReserveAfterTax)</dd></div>
+                </dl>
 
-            <div class="fin-row">
-                <div class="fin-row-top"><span><a asp-area="Admin" asp-controller="Loans" asp-action="Index">Loans waiting for a decision</a></span><span>2</span></div>
-            </div>
-            <div class="fin-row">
-                <div class="fin-row-top"><span><a asp-area="Admin" asp-controller="Reports" asp-action="Index">Suspicious transaction reports</a></span><span>1</span></div>
-            </div>
-            <div class="fin-row">
-                <div class="fin-row-top"><span><a asp-area="Admin" asp-controller="Tickets" asp-action="Index">Contact tickets</a></span><span>2</span></div>
-            </div>
-            <div class="fin-row">
-                <div class="fin-row-top"><span><a asp-area="Admin" asp-controller="Users" asp-action="Index">Restricted accounts</a></span><span>2</span></div>
-            </div>
-        </section>
-    </div>
+                <div class="reserve-meter">
+                    <div class="fin-bar @(Model.ReserveHealthy ? "" : "is-out")"><span style="width:@(Model.ReserveHealthy ? "100" : "40")%"></span></div>
+                    <p>
+                        @if (Model.CoverageRatio.HasValue)
+                        {
+                            <text>Own funds cover the required reserve plus this quarter's tax <strong>@Model.CoverageRatio.Value.ToString("N1", inv)×</strong></text>
+                        }
+                        else
+                        {
+                            <text>Nothing is required yet.</text>
+                        }
+                        @if (Model.ReserveHealthy)
+                        {
+                            <span class="badge badge-success">Healthy</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-danger">Reserve too low</span>
+                        }
+                    </p>
+                </div>
+                <p class="sample-note">If own funds fell below the required reserve plus the tax due, this card would turn red and warn the finance team. Own funds, operating costs, the tax rate and the reserve rate are the bank's rules stored in the database.</p>
+            </section>
+
+            @* ===== Gözləyən işlər ===== *@
+            <section class="fin-card">
+                <h2>Needs attention</h2>
+                <p class="hint">Queues waiting on the bank</p>
+
+                <div class="fin-row">
+                    <div class="fin-row-top"><span><a asp-area="Admin" asp-controller="Loans" asp-action="Index" asp-route-status="Pending">Loans waiting for a decision</a></span><span>@Model.PendingLoans</span></div>
+                </div>
+                <div class="fin-row">
+                    <div class="fin-row-top"><span><a asp-area="Admin" asp-controller="Tickets" asp-action="Index" asp-route-status="Pending">Contact tickets waiting for an answer</a></span><span>@Model.PendingTickets</span></div>
+                </div>
+                <div class="fin-row">
+                    <div class="fin-row-top"><span><a asp-area="Admin" asp-controller="Users" asp-action="Index" asp-route-status="Restricted">Restricted accounts</a></span><span>@Model.RestrictedAccounts</span></div>
+                </div>
+            </section>
+        </div>
+    }
 </main>
