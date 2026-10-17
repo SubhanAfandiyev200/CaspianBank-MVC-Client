@@ -1,4 +1,4 @@
-@using System.Security.Claims
+﻿@using System.Security.Claims
 @{
     var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
     // İki bölmə: UI (saytın görünüşü) və Bank (maliyyə və əməliyyatlar). Yeni UI controller əlavə edəndə adını bura yaz.
@@ -104,7 +104,10 @@
             }
             <a class="@On("Reports")" asp-area="Admin" asp-controller="Reports" asp-action="Index">Reports</a>
             <a class="@On("Tickets")" asp-area="Admin" asp-controller="Tickets" asp-action="Index">Contact Tickets</a>
-            <a class="@On("Audit")" asp-area="Admin" asp-controller="Audit" asp-action="Index">Audit Log</a>
+            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Security))
+            {
+                <a class="@On("Audit")" asp-area="Admin" asp-controller="Audit" asp-action="Index">Audit Log</a>
+            }
             @if (User.IsInRole(AppRoles.SuperAdmin))
             {
                 <a class="@On("Staff")" asp-area="Admin" asp-controller="Staff" asp-action="Index">Staff</a>
