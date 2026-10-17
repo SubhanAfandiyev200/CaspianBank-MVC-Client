@@ -1,4 +1,4 @@
-using CaspianBank_MVC_FinalProject.ViewModels.Account;
+﻿using CaspianBank_MVC_FinalProject.ViewModels.Account;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -703,7 +703,11 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             var result = await ReadJsonAsync<SendOtpResponseVM>(response);
 
             if (response.IsSuccessStatusCode)
-                return (null, "We sent a code to your email.", result?.DevCode, ResendWaitTotalSeconds);
+            {
+                // Email qurulmayıbsa (yalnız Development) kod ekranda göstərilir və "göndərdik" deyilmir; qurulubsa demo yazısı heç çıxmır
+                var emailSent = string.IsNullOrEmpty(result?.DevCode);
+                return (null, emailSent ? "We sent a code to your email." : null, result?.DevCode, ResendWaitTotalSeconds);
+            }
 
             // Eyni email-ə az əvvəl kod göndərilib (gözləmə müddəti): əvvəlki kod hələ etibarlıdır
             if (response.StatusCode == HttpStatusCode.TooManyRequests && result?.RetryAfterSeconds > 0)
