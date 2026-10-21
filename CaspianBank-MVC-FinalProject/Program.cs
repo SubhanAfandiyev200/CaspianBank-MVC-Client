@@ -9,6 +9,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<BearerTokenHandler>();
 
+// Saytın dilləri: tərcümələr verilənlər bazasından (API) gəlir, yaddaşda saxlanılır; səhifələrdə @T["English text"]
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<CaspianBank_MVC_FinalProject.Services.ITranslationStore, CaspianBank_MVC_FinalProject.Services.TranslationStore>();
+builder.Services.AddScoped<CaspianBank_MVC_FinalProject.Services.ITranslator, CaspianBank_MVC_FinalProject.Services.Translator>();
+
 // API-yə gedən sorğulara cookie-dəki JWT avtomatik əlavə olunur
 builder.Services.AddHttpClient("CaspianApi", client =>
 {
@@ -76,6 +81,9 @@ else
 {
     app.UseStaticFiles();
 }
+
+// Hər sorğuda dil seçilir (cookie, brauzerin dili) və tərcümə lüğəti sorğuya qoyulur
+app.UseMiddleware<CaspianBank_MVC_FinalProject.Services.LanguageMiddleware>();
 
 app.UseRouting();
 
