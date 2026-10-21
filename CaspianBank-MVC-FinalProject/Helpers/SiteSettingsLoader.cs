@@ -34,6 +34,8 @@ namespace CaspianBank_MVC_FinalProject.Helpers
                     model.FacebookUrl = Get(all, "FacebookUrl", model.FacebookUrl);
                     model.TwitterUrl = Get(all, "TwitterUrl", model.TwitterUrl);
                     model.LinkedInUrl = Get(all, "LinkedInUrl", model.LinkedInUrl);
+                    model.MapLatitude = Get(all, "MapLatitude", model.MapLatitude);
+                    model.MapLongitude = Get(all, "MapLongitude", model.MapLongitude);
                 }
             }
             catch (HttpRequestException)
