@@ -7,9 +7,9 @@
 <main class="auth-shell">
     <section class="auth-card auth-wide">
         @await Component.InvokeAsync("SiteLogo")
-        <a class="back" asp-controller="Account" asp-action="Register">← Enter the details again</a>
-        <h1>Is this you?</h1>
-        <p class="lede">We found this person in the registry. Confirm to continue.</p>
+        <a class="back" asp-controller="Account" asp-action="Register">@T["← Enter the details again"]</a>
+        <h1>@T["Is this you?"]</h1>
+        <p class="lede">@T["We found this person in the registry. Confirm to continue."]</p>
         <div class="citizen-card">
             <div class="citizen-photo">
                 @if (!string.IsNullOrEmpty(Model.PhotoUrl))
@@ -19,20 +19,20 @@
             </div>
             <div class="citizen-info">
                 <strong>@Model.Name @Model.MaskedSurname</strong>
-                <span>Born in @Model.BirthYear</span>
-                <span>FIN @Model.Fin</span>
+                <span>@T["Born in {0}", Model.BirthYear]</span>
+                <span>@T["FIN {0}", Model.Fin]</span>
             </div>
         </div>
         <form class="form-stack mt-5" asp-controller="Account" asp-action="ConfirmIdentityYes" method="post">
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
-            <button class="btn btn-primary btn-block" type="submit">Yes, this is me</button>
+            <button class="btn btn-primary btn-block" type="submit">@T["Yes, this is me"]</button>
             <div class="auth-links auth-links-center">
-                <a asp-controller="Account" asp-action="Register">No, this is not me</a>
+                <a asp-controller="Account" asp-action="Register">@T["No, this is not me"]</a>
             </div>
         </form>
         <p class="auth-foot">
-            <a asp-controller="Home" asp-action="Index" asp-fragment="contact">Contact us</a>
-            <span>Caspian Bank · Baku</span>
+            <a asp-controller="Home" asp-action="Index" asp-fragment="contact">@T["Contact us"]</a>
+            <span>@T["Caspian Bank · Baku"]</span>
         </p>
     </section>
 </main>

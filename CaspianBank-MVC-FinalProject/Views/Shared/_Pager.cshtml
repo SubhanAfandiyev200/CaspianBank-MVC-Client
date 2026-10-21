@@ -12,13 +12,13 @@
 @if (Model.TotalCount > 0)
 {
     <div class="pager-wrap">
-        <p class="pager-summary">Showing <strong>@from–@to</strong> of <strong>@Model.TotalCount</strong></p>
+        <p class="pager-summary">@T["Showing"] <strong>@from–@to</strong> @T["of"] <strong>@Model.TotalCount</strong></p>
         @if (Model.TotalPages > 1)
         {
-            <nav class="pager" aria-label="Pages">
+            <nav class="pager" aria-label="@T["Pages"]">
                 @if (Model.Page > 1)
                 {
-                    <a class="pager-link" href="@Model.Url(Model.Page - 1)">‹ Previous</a>
+                    <a class="pager-link" href="@Model.Url(Model.Page - 1)">@T["‹ Previous"]</a>
                 }
                 @if (first > 1)
                 {
@@ -42,7 +42,7 @@
                 }
                 @if (Model.Page < Model.TotalPages)
                 {
-                    <a class="pager-link" href="@Model.Url(Model.Page + 1)">Next ›</a>
+                    <a class="pager-link" href="@Model.Url(Model.Page + 1)">@T["Next ›"]</a>
                 }
             </nav>
         }

@@ -9,7 +9,7 @@
     string Day(DateTime value) { return value.ToString("dd MMM yyyy", inv); }
 }
 <main id="content" class="page">
-    <a class="back no-print" asp-controller="History" asp-action="Index" asp-route-cardId="@Model.CardId">Back to history</a>
+    <a class="back no-print" asp-controller="History" asp-action="Index" asp-route-cardId="@Model.CardId">@T["Back to history"]</a>
 
     <section class="st" aria-labelledby="st-title">
         <header class="st-head">
@@ -21,27 +21,27 @@
                 }
             </div>
             <div class="st-title-block">
-                <h1 id="st-title">Account statement</h1>
-                <span class="st-sub">Created @DateTime.Now.ToString("dd MMM yyyy, HH:mm", inv)</span>
+                <h1 id="st-title">@T["Account statement"]</h1>
+                <span class="st-sub">@T["Created {0}", DateTime.Now.ToString("dd MMM yyyy, HH:mm", inv)]</span>
             </div>
         </header>
 
         <dl class="st-meta">
-            <div><dt>Card</dt><dd>@Model.CardLabel</dd></div>
-            <div><dt>Holder</dt><dd>@Model.HolderName</dd></div>
-            <div><dt>Period</dt><dd>@Day(Model.From) – @Day(Model.To)</dd></div>
+            <div><dt>@T["Card"]</dt><dd>@Model.CardLabel</dd></div>
+            <div><dt>@T["Holder"]</dt><dd>@Model.HolderName</dd></div>
+            <div><dt>@T["Period"]</dt><dd>@Day(Model.From) – @Day(Model.To)</dd></div>
         </dl>
 
         <div class="st-summary">
-            <div><span>Opening balance</span><strong class="num">@Money(Model.OpeningBalance)</strong></div>
-            <div><span>Money in</span><strong class="num amount-in">+@Money(Model.TotalIn)</strong></div>
-            <div><span>Money out</span><strong class="num amount-out">−@Money(Model.TotalOut)</strong></div>
-            <div><span>Closing balance</span><strong class="num">@Money(Model.ClosingBalance)</strong></div>
+            <div><span>@T["Opening balance"]</span><strong class="num">@Money(Model.OpeningBalance)</strong></div>
+            <div><span>@T["Money in"]</span><strong class="num amount-in">+@Money(Model.TotalIn)</strong></div>
+            <div><span>@T["Money out"]</span><strong class="num amount-out">−@Money(Model.TotalOut)</strong></div>
+            <div><span>@T["Closing balance"]</span><strong class="num">@Money(Model.ClosingBalance)</strong></div>
         </div>
 
         @if (Model.Rows.Count == 0)
         {
-            <p class="st-empty">There are no transactions on this card in this period.</p>
+            <p class="st-empty">@T["There are no transactions on this card in this period."]</p>
         }
         else
         {
@@ -49,11 +49,11 @@
                 <table class="st-table">
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>Description</th>
-                            <th>Reference</th>
-                            <th class="num">Amount</th>
-                            <th class="num">Balance</th>
+                            <th>@T["Date"]</th>
+                            <th>@T["Description"]</th>
+                            <th>@T["Reference"]</th>
+                            <th class="num">@T["Amount"]</th>
+                            <th class="num">@T["Balance"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -78,11 +78,11 @@
             </div>
         }
 
-        <p class="st-foot">@Model.Rows.Count transaction(s). Amounts are in AZN. Keep this statement for your records.</p>
+        <p class="st-foot">@T["{0} transaction(s). Amounts are in AZN. Keep this statement for your records.", Model.Rows.Count]</p>
     </section>
 
     <div class="rc-actions no-print">
-        <button type="button" class="btn btn-primary" id="rc-print">Save as PDF</button>
-        <a class="btn btn-secondary" asp-controller="History" asp-action="Index" asp-route-cardId="@Model.CardId">Back to history</a>
+        <button type="button" class="btn btn-primary" id="rc-print">@T["Save as PDF"]</button>
+        <a class="btn btn-secondary" asp-controller="History" asp-action="Index" asp-route-cardId="@Model.CardId">@T["Back to history"]</a>
     </div>
 </main>

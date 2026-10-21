@@ -7,24 +7,24 @@
     var closed = Model.Status == "Closed";
 }
 <main id="content" class="page">
-    <a class="back" asp-action="Index">All messages</a>
+    <a class="back" asp-action="Index">@T["All messages"]</a>
 
     <header class="page-head spread">
         <div>
-            <p class="eyebrow">Support</p>
+            <p class="eyebrow">@T["Support"]</p>
             <h1>@Model.Subject</h1>
             <p class="lede">
                 @if (Model.Status == "Answered")
                 {
-                    <span class="badge badge-success">Answered</span>
+                    <span class="badge badge-success">@T["Answered"]</span>
                 }
                 else if (closed)
                 {
-                    <span class="badge badge-neutral">Closed</span>
+                    <span class="badge badge-neutral">@T["Closed"]</span>
                 }
                 else
                 {
-                    <span class="badge badge-pending">Waiting for us</span>
+                    <span class="badge badge-pending">@T["Waiting for us"]</span>
                 }
                 Started @Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)
             </p>
@@ -42,13 +42,13 @@
 
     <partial name="_Flash" />
 
-    <section class="surface chat" aria-label="Conversation">
+    <section class="surface chat" aria-label="@T["Conversation"]">
         <div class="chat-log" role="log">
             @foreach (var message in Model.Messages)
             {
                 <div class="chat-msg @(message.IsStaff ? "" : "is-user")">
                     <div class="chat-bubble">
-                        <small class="hint">@(message.IsStaff ? message.AuthorName + " · Caspian Bank" : "You") · @message.CreatedAt.ToLocalTime().ToString("dd MMM, HH:mm", inv)</small>
+                        <small class="hint">@(message.IsStaff ? message.AuthorName + " · Caspian Bank" : T["You"]) · @message.CreatedAt.ToLocalTime().ToString("dd MMM, HH:mm", inv)</small>
                         <div style="white-space: pre-wrap">@message.Body</div>
                     </div>
                 </div>
@@ -59,19 +59,19 @@
         {
             @if (!string.IsNullOrEmpty(Model.Error))
             {
-                <p class="flash flash-error" role="alert">@Model.Error</p>
+                <p class="flash flash-error" role="alert">@T[Model.Error]</p>
             }
             <form method="post" asp-action="Reply" asp-route-id="@Model.Id" class="form-stack" novalidate>
                 <div class="field">
-                    <label for="reply">Your reply</label>
-                    <textarea class="input" id="reply" name="message" rows="3" maxlength="2000" placeholder="Write a message">@Model.Draft</textarea>
+                    <label for="reply">@T["Your reply"]</label>
+                    <textarea class="input" id="reply" name="message" rows="3" maxlength="2000" placeholder="@T["Write a message"]">@Model.Draft</textarea>
                 </div>
-                <button class="btn btn-primary" type="submit" data-once>Send</button>
+                <button class="btn btn-primary" type="submit" data-once>@T["Send"]</button>
             </form>
         }
         else
         {
-            <p class="hint">This conversation is closed. <a asp-action="Index">Write a new message</a> if you need more help.</p>
+            <p class="hint">@T["This conversation is closed."] <a asp-action="Index">@T["Write a new message"]</a> @T["if you need more help."]</p>
         }
     </section>
 </main>

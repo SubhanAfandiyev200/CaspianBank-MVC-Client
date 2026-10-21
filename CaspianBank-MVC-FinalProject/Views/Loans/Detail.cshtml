@@ -26,7 +26,7 @@
     var penaltyTotal = loan.Installments.Sum(i => i.Penalty);
 }
 <main id="content" class="page page-activity">
-    <a class="back" asp-action="Index">All loans</a>
+    <a class="back" asp-action="Index">@T["All loans"]</a>
 
     <header class="page-head crud-head">
         <div>
@@ -36,9 +36,9 @@
                 <span class="badge @LoanUi.StatusBadge(loan.Status)">@LoanUi.StatusText(loan.Status)</span>
                 @if (loan.HasOverdue)
                 {
-                    <span class="badge badge-danger">Overdue</span>
+                    <span class="badge badge-danger">@T["Overdue"]</span>
                 }
-                <span>Payment code: <strong class="num">@loan.ContractNumber</strong> <button type="button" class="btn-copy" data-copy="@loan.ContractNumber">Copy</button></span>
+                <span>@T["Payment code:"] <strong class="num">@loan.ContractNumber</strong> <button type="button" class="btn-copy" data-copy="@loan.ContractNumber">@T["Copy"]</button></span>
             </p>
         </div>
     </header>
@@ -46,52 +46,52 @@
     <partial name="_Flash" />
     @if (TempData["LoanError"] is string loanError)
     {
-        <p class="flash flash-error" role="alert">@loanError</p>
+        <p class="flash flash-error" role="alert">@T[loanError]</p>
     }
     @if (!string.IsNullOrEmpty(Model.Error))
     {
-        <p class="flash flash-error" role="alert">@Model.Error</p>
+        <p class="flash flash-error" role="alert">@T[Model.Error]</p>
     }
 
     @if (loan.Status == "Pending")
     {
         <section class="surface form-card">
-            <h2>Under review</h2>
-            <p class="lede">We received your application on @LoanUi.Date(loan.CreatedAt.ToLocalTime()). A decision will appear on this page.</p>
+            <h2>@T["Under review"]</h2>
+            <p class="lede">@T["We received your application on {0}. A decision will appear on this page.", LoanUi.Date(loan.CreatedAt.ToLocalTime())]</p>
         </section>
     }
     else if (loan.Status == "Rejected" || loan.Status == "Declined")
     {
         <section class="surface form-card">
-            <h2>@(loan.Status == "Rejected" ? "Not approved" : "Offer declined")</h2>
-            <p class="lede">@(string.IsNullOrEmpty(loan.Message) ? "This application is closed." : loan.Message)</p>
-            <a class="btn btn-primary" asp-action="Index">Back to loans</a>
+            <h2>@(loan.Status == T["Rejected"] ? T["Not approved"] : T["Offer declined"])</h2>
+            <p class="lede">@(string.IsNullOrEmpty(loan.Message) ? T["This application is closed."] : loan.Message)</p>
+            <a class="btn btn-primary" asp-action="Index">@T["Back to loans"]</a>
         </section>
     }
 
     @if (offered)
     {
         <section class="surface form-card">
-            <h2>We have an offer for you</h2>
+            <h2>@T["We have an offer for you"]</h2>
             <p class="lede">
                 You asked for @LoanUi.Money(loan.RequestedAmount). We can approve @LoanUi.Money(granted) over @loan.TermMonths months at @LoanUi.Percent(loan.AnnualInterestRate) a year,
                 with a monthly payment of about @LoanUi.Money(loan.MonthlyPayment).
                 @if (loan.OfferExpiresAt.HasValue)
                 {
-                    <span>The offer is valid until <strong>@LoanUi.Date(loan.OfferExpiresAt.Value.ToLocalTime())</strong>.</span>
+                    <span>@T["The offer is valid until"] <strong>@LoanUi.Date(loan.OfferExpiresAt.Value.ToLocalTime())</strong>.</span>
                 }
             </p>
 
             @if (usable.Count == 0)
             {
-                <p class="flash flash-error">You have no card that can receive the money. Add a card first (the Cashback card can't be used).</p>
-                <a class="btn btn-secondary" href="@NavLinks.AddCard">Add a card</a>
+                <p class="flash flash-error">@T["You have no card that can receive the money. Add a card first (the Cashback card can't be used)."]</p>
+                <a class="btn btn-secondary" href="@NavLinks.AddCard">@T["Add a card"]</a>
             }
             else
             {
                 <form asp-action="Accept" asp-route-id="@loan.Id" method="post" class="form-stack mt-4">
                     <div class="field">
-                        <label for="offer-card">Send the money to</label>
+                        <label for="offer-card">@T["Send the money to"]</label>
                         <select class="select" id="offer-card" name="targetCardId" data-card-pick>
                             @foreach (var card in usable)
                             {
@@ -119,14 +119,14 @@
     @if (running || loan.Status == "Closed")
     {
         <div class="pulse-row">
-            <article class="pulse"><span>Monthly payment</span><strong class="num">@LoanUi.Money(loan.MonthlyPayment)</strong></article>
-            <article class="pulse"><span>Still to repay (principal)</span><strong class="num">@LoanUi.Money(loan.OutstandingPrincipal)</strong></article>
+            <article class="pulse"><span>@T["Monthly payment"]</span><strong class="num">@LoanUi.Money(loan.MonthlyPayment)</strong></article>
+            <article class="pulse"><span>@T["Still to repay (principal)"]</span><strong class="num">@LoanUi.Money(loan.OutstandingPrincipal)</strong></article>
             <article class="pulse">
-                <span>Interest rate</span>
+                <span>@T["Interest rate"]</span>
                 <strong>@LoanUi.Percent(loan.AnnualInterestRate)</strong>
                 @if (loan.AnnualInterestRate < loan.InitialAnnualInterestRate)
                 {
-                    <small class="hint">started at @LoanUi.Percent(loan.InitialAnnualInterestRate)</small>
+                    <small class="hint">@T["started at {0}", LoanUi.Percent(loan.InitialAnnualInterestRate)]</small>
                 }
             </article>
         </div>
@@ -135,7 +135,7 @@
     @if (running)
     {
         <section class="surface form-card" id="pay-panel">
-            <h2>Make a payment</h2>
+            <h2>@T["Make a payment"]</h2>
 
             @if (loan.Due.OverdueCount > 0)
             {
@@ -148,15 +148,15 @@
             {
                 <div class="empty-inline">
                     <div class="empty-inline-copy">
-                        <strong>You need a card to pay from</strong>
-                        <p>A loan can't be paid from a blocked card.</p>
-                        <div class="empty-inline-actions"><a class="btn btn-secondary btn-sm" href="@NavLinks.AddCard">Add a card</a></div>
+                        <strong>@T["You need a card to pay from"]</strong>
+                        <p>@T["A loan can't be paid from a blocked card."]</p>
+                        <div class="empty-inline-actions"><a class="btn btn-secondary btn-sm" href="@NavLinks.AddCard">@T["Add a card"]</a></div>
                     </div>
                 </div>
             }
             else if (firstType == string.Empty)
             {
-                <p class="hint">@(loan.EarlyBlockedReason ?? "There is nothing to pay right now.")</p>
+                <p class="hint">@(loan.EarlyBlockedReason ?? T["There is nothing to pay right now."])</p>
             }
             else
             {
@@ -168,10 +168,10 @@
                     <input type="hidden" name="RequestId" value="@Model.RequestId" />
                     <input type="hidden" name="Type" id="pay-type" value="@firstType" />
 
-                    <div class="segment segment-full segment-3" role="group" aria-label="Payment type">
-                        <button type="button" data-pay-type="Installment" class="@(firstType == "Installment" ? "is-active" : "")" disabled="@(!loan.CanPayInstallment)">Monthly payment</button>
-                        <button type="button" data-pay-type="PartialEarly" class="@(firstType == "PartialEarly" ? "is-active" : "")" disabled="@(!loan.CanPartialEarly)">Pay part early</button>
-                        <button type="button" data-pay-type="FullEarly" class="@(firstType == "FullEarly" ? "is-active" : "")" disabled="@(!loan.CanPayOff)">Pay off in full</button>
+                    <div class="segment segment-full segment-3" role="group" aria-label="@T["Payment type"]">
+                        <button type="button" data-pay-type="Installment" class="@(firstType == "Installment" ? "is-active" : "")" disabled="@(!loan.CanPayInstallment)">@T["Monthly payment"]</button>
+                        <button type="button" data-pay-type="PartialEarly" class="@(firstType == "PartialEarly" ? "is-active" : "")" disabled="@(!loan.CanPartialEarly)">@T["Pay part early"]</button>
+                        <button type="button" data-pay-type="FullEarly" class="@(firstType == "FullEarly" ? "is-active" : "")" disabled="@(!loan.CanPayOff)">@T["Pay off in full"]</button>
                     </div>
 
                     @if (!string.IsNullOrEmpty(loan.EarlyBlockedReason))
@@ -181,31 +181,31 @@
 
                     <div data-pay-panel="Installment" @(firstType == "Installment" ? null : "hidden")>
                         <dl class="detail-list">
-                            <div><dt>You pay</dt><dd class="num"><strong>@LoanUi.Money(loan.Due.Total)</strong></dd></div>
-                            <div><dt>Principal</dt><dd class="num">@LoanUi.Money(loan.Due.Principal)</dd></div>
-                            <div><dt>Interest</dt><dd class="num">@LoanUi.Money(loan.Due.Interest)</dd></div>
+                            <div><dt>@T["You pay"]</dt><dd class="num"><strong>@LoanUi.Money(loan.Due.Total)</strong></dd></div>
+                            <div><dt>@T["Principal"]</dt><dd class="num">@LoanUi.Money(loan.Due.Principal)</dd></div>
+                            <div><dt>@T["Interest"]</dt><dd class="num">@LoanUi.Money(loan.Due.Interest)</dd></div>
                             @if (loan.Due.Penalty > 0)
                             {
-                                <div><dt>Penalty</dt><dd class="num">@LoanUi.Money(loan.Due.Penalty)</dd></div>
+                                <div><dt>@T["Penalty"]</dt><dd class="num">@LoanUi.Money(loan.Due.Penalty)</dd></div>
                             }
-                            <div><dt>Covers</dt><dd>@loan.Due.InstallmentCount payment@(loan.Due.InstallmentCount == 1 ? "" : "s")@(loan.Due.NextDueDate.HasValue ? ", next one due " + LoanUi.Date(loan.Due.NextDueDate) : "")</dd></div>
+                            <div><dt>@T["Covers"]</dt><dd>@(loan.Due.InstallmentCount == 1 ? T["1 payment"] : T["{0} payments", loan.Due.InstallmentCount])@(loan.Due.NextDueDate.HasValue ? ", " + T["next one due {0}", LoanUi.Date(loan.Due.NextDueDate)] : "")</dd></div>
                         </dl>
                         <div class="field">
-                            <label for="pay-part">Amount to pay now <span class="optional">(optional)</span></label>
+                            <label for="pay-part">@T["Amount to pay now"] <span class="optional">@T["(optional)"]</span></label>
                             <div class="amount-box">
                                 <input class="amount-input" id="pay-part" name="InstallmentAmount" inputmode="decimal" placeholder="@loan.Due.Total.ToString("N2", inv)" maxlength="12" autocomplete="off" />
-                                <span class="amount-cur">AZN</span>
+                                <span class="amount-cur">@T["AZN"]</span>
                             </div>
-                            <p class="hint">Leave it empty to pay everything due. Or pay a part now (for example from your Cashback card) and the rest from another card. The penalty and interest are paid first.</p>
+                            <p class="hint">@T["Leave it empty to pay everything due. Or pay a part now (for example from your Cashback card) and the rest from another card. The penalty and interest are paid first."]</p>
                         </div>
                     </div>
 
                     <div data-pay-panel="PartialEarly" @(firstType == "PartialEarly" ? null : "hidden")>
                         <div class="field">
-                            <label for="pay-amount">Amount to pay early</label>
+                            <label for="pay-amount">@T["Amount to pay early"]</label>
                             <div class="amount-box">
                                 <input class="amount-input" id="pay-amount" name="Amount" inputmode="decimal" placeholder="0.00" maxlength="12" autocomplete="off" />
-                                <span class="amount-cur">AZN</span>
+                                <span class="amount-cur">@T["AZN"]</span>
                             </div>
                             <p class="hint" id="pay-partial-note">
                                 At least @LoanUi.Money(loan.MinEarlyPayment). The term stays the same and your monthly payment goes down.
@@ -216,13 +216,13 @@
 
                     <div data-pay-panel="FullEarly" @(firstType == "FullEarly" ? null : "hidden")>
                         <dl class="detail-list">
-                            <div><dt>You pay</dt><dd class="num"><strong>@LoanUi.Money(loan.PayoffAmount)</strong></dd></div>
-                            <div><dt>What it covers</dt><dd>Everything you still owe today: the remaining principal, the interest earned so far and any overdue amounts. The future interest is cancelled.</dd></div>
+                            <div><dt>@T["You pay"]</dt><dd class="num"><strong>@LoanUi.Money(loan.PayoffAmount)</strong></dd></div>
+                            <div><dt>@T["What it covers"]</dt><dd>@T["Everything you still owe today: the remaining principal, the interest earned so far and any overdue amounts. The future interest is cancelled."]</dd></div>
                         </dl>
                     </div>
 
                     <div class="field">
-                        <label for="pay-card">Pay from</label>
+                        <label for="pay-card">@T["Pay from"]</label>
                         <select class="select" id="pay-card" name="CardId" data-card-pick>
                             @foreach (var card in payers)
                             {
@@ -245,23 +245,23 @@
     @if (offered || running || loan.Status == "Closed")
     {
         <section class="surface">
-            <h2>Loan details</h2>
+            <h2>@T["Loan details"]</h2>
             <dl class="detail-list">
-                <div><dt>Amount</dt><dd class="num">@LoanUi.Money(granted)@(loan.ApprovedAmount.HasValue && loan.ApprovedAmount.Value != loan.RequestedAmount ? " (you asked for " + LoanUi.Money(loan.RequestedAmount) + ")" : "")</dd></div>
-                <div><dt>Purpose</dt><dd>@LoanUi.PurposeText(loan.Purpose)@(string.IsNullOrEmpty(loan.PurposeNote) ? "" : " · " + loan.PurposeNote)</dd></div>
-                <div><dt>Term</dt><dd>@loan.TermMonths months, due on the last day of each month</dd></div>
-                <div><dt>Interest rate</dt><dd>@LoanUi.Percent(loan.AnnualInterestRate) a year@(loan.AnnualInterestRate != loan.InitialAnnualInterestRate ? " (started at " + LoanUi.Percent(loan.InitialAnnualInterestRate) + ")" : "")</dd></div>
-                <div><dt>Total to repay</dt><dd class="num">@LoanUi.Money(loan.TotalRepayment)</dd></div>
-                <div><dt>Money sent to</dt><dd>@loan.TargetCardLabel</dd></div>
+                <div><dt>@T["Amount"]</dt><dd class="num">@LoanUi.Money(granted)@(loan.ApprovedAmount.HasValue && loan.ApprovedAmount.Value != loan.RequestedAmount ? " (" + T["you asked for {0}", LoanUi.Money(loan.RequestedAmount)] + ")" : "")</dd></div>
+                <div><dt>@T["Purpose"]</dt><dd>@LoanUi.PurposeText(loan.Purpose)@(string.IsNullOrEmpty(loan.PurposeNote) ? "" : " · " + loan.PurposeNote)</dd></div>
+                <div><dt>@T["Term"]</dt><dd>@T["{0} months, due on the last day of each month", loan.TermMonths]</dd></div>
+                <div><dt>@T["Interest rate"]</dt><dd>@LoanUi.Percent(loan.AnnualInterestRate) a year@(loan.AnnualInterestRate != loan.InitialAnnualInterestRate ? " (started at " + LoanUi.Percent(loan.InitialAnnualInterestRate) + ")" : "")</dd></div>
+                <div><dt>@T["Total to repay"]</dt><dd class="num">@LoanUi.Money(loan.TotalRepayment)</dd></div>
+                <div><dt>@T["Money sent to"]</dt><dd>@loan.TargetCardLabel</dd></div>
                 @if (loan.DisbursedAt.HasValue)
                 {
-                    <div><dt>Started</dt><dd>@LoanUi.Date(loan.DisbursedAt.Value.ToLocalTime())</dd></div>
+                    <div><dt>@T["Started"]</dt><dd>@LoanUi.Date(loan.DisbursedAt.Value.ToLocalTime())</dd></div>
                 }
                 @if (loan.ClosedAt.HasValue)
                 {
-                    <div><dt>Closed</dt><dd>@LoanUi.Date(loan.ClosedAt.Value.ToLocalTime())@(loan.ClosedEarly ? " · paid off early" : "")</dd></div>
+                    <div><dt>@T["Closed"]</dt><dd>@LoanUi.Date(loan.ClosedAt.Value.ToLocalTime())@(loan.ClosedEarly ? " · " + T["paid off early"] : "")</dd></div>
                 }
-                <div><dt>If you are late</dt><dd>A fixed @LoanUi.Money(loan.FixedPenalty) plus @loan.DailyPenaltyPercent.ToString("0.##", inv)% of the unpaid payment for each day. Long delays can lead to court.</dd></div>
+                <div><dt>@T["If you are late"]</dt><dd>@T["A fixed {0} plus {1}% of the unpaid payment for each day. Long delays can lead to court.", LoanUi.Money(loan.FixedPenalty), loan.DailyPenaltyPercent.ToString("0.##", inv)]</dd></div>
             </dl>
         </section>
     }
@@ -269,21 +269,21 @@
     @if (loan.Installments.Count > 0)
     {
         <section class="surface surface-tight">
-            <div class="toolbar"><h2>Payment schedule</h2></div>
+            <div class="toolbar"><h2>@T["Payment schedule"]</h2></div>
             <div class="table-wrap">
                 <table class="data-table">
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Due date</th>
-                            <th class="num">Principal</th>
-                            <th class="num">Interest</th>
-                            <th class="num">Payment</th>
+                            <th>@T["Due date"]</th>
+                            <th class="num">@T["Principal"]</th>
+                            <th class="num">@T["Interest"]</th>
+                            <th class="num">@T["Payment"]</th>
                             @if (penaltyTotal > 0)
                             {
-                                <th class="num">Penalty</th>
+                                <th class="num">@T["Penalty"]</th>
                             }
-                            <th>Status</th>
+                            <th>@T["Status"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -291,7 +291,7 @@
                         {
                             <tr>
                                 <td>@item.Number</td>
-                                <td>@LoanUi.Date(item.DueDate)@(item.DaysOverdue > 0 ? " · " + item.DaysOverdue + " days late" : "")</td>
+                                <td>@LoanUi.Date(item.DueDate)@(item.DaysOverdue > 0 ? " · " + T["{0} days late", item.DaysOverdue] : "")</td>
                                 <td class="num">@LoanUi.Money(item.Principal)</td>
                                 <td class="num">@LoanUi.Money(item.Interest)</td>
                                 <td class="num">@LoanUi.Money(item.Payment)</td>
@@ -311,17 +311,17 @@
     @if (loan.Payments.Count > 0)
     {
         <section class="surface surface-tight">
-            <div class="toolbar"><h2>Your payments</h2></div>
+            <div class="toolbar"><h2>@T["Your payments"]</h2></div>
             <div class="table-wrap">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Date</th>
-                            <th>Type</th>
-                            <th>Card</th>
-                            <th class="num">Amount</th>
-                            <th>Split</th>
-                            <th>Reference</th>
+                            <th>@T["Date"]</th>
+                            <th>@T["Type"]</th>
+                            <th>@T["Card"]</th>
+                            <th class="num">@T["Amount"]</th>
+                            <th>@T["Split"]</th>
+                            <th>@T["Reference"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -333,7 +333,7 @@
                                     @LoanUi.PaymentTypeText(payment.Type)
                                     @if (payment.InterestRateAfter.HasValue)
                                     {
-                                        <div class="hint">rate now @LoanUi.Percent(payment.InterestRateAfter.Value)</div>
+                                        <div class="hint">@T["rate now {0}", LoanUi.Percent(payment.InterestRateAfter.Value)]</div>
                                     }
                                 </td>
                                 <td>@payment.CardLabel</td>

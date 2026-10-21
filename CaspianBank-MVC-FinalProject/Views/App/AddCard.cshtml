@@ -29,17 +29,17 @@
     }
 }
 <main id="content" class="page">
-    <a class="back" asp-action="Index">Back to cards</a>
+    <a class="back" asp-action="Index">@T["Back to cards"]</a>
     <header class="page-head">
-        <p class="eyebrow">Cards</p>
-        <h1>@(Model.FirstTime ? "Your first cards" : "Choose a tier")</h1>
+        <p class="eyebrow">@T["Cards"]</p>
+        <h1>@(Model.FirstTime ? T["Your first cards"] : T["Choose a tier"])</h1>
         @if (Model.FirstTime)
         {
-            <p class="lede">We'll open a Standard card for everyday spending and a Cashback card that returns a portion of eligible purchases. Both are free.</p>
+            <p class="lede">@T["We'll open a Standard card for everyday spending and a Cashback card that returns a portion of eligible purchases. Both are free."]</p>
         }
         else if (!Model.ApiUnavailable)
         {
-            <p class="lede">The opening fee is charged to a card you already hold.</p>
+            <p class="lede">@T["The opening fee is charged to a card you already hold."]</p>
         }
     </header>
 
@@ -48,9 +48,9 @@
     @if (Model.ApiUnavailable)
     {
         <div class="empty">
-            <h3>We can't load this page</h3>
-            <p>The service is unavailable right now. Please try again in a moment.</p>
-            <a class="btn btn-secondary" asp-action="AddCard">Try again</a>
+            <h3>@T["We can't load this page"]</h3>
+            <p>@T["The service is unavailable right now. Please try again in a moment."]</p>
+            <a class="btn btn-secondary" asp-action="AddCard">@T["Try again"]</a>
         </div>
     }
     else if (Model.FirstTime)
@@ -61,10 +61,10 @@
         </div>
         <form asp-action="CreateFirstCards" method="post" class="surface form-stack narrow" novalidate>
             <div class="field">
-                <label for="holder">Cardholder</label>
+                <label for="holder">@T["Cardholder"]</label>
                 <input class="input" id="holder" value="@Model.HolderName" readonly />
             </div>
-            <button class="btn btn-primary" type="submit">Create my cards</button>
+            <button class="btn btn-primary" type="submit">@T["Create my cards"]</button>
         </form>
     }
     else
@@ -75,11 +75,11 @@
                 <button type="button" class="tier" data-tier="@tier.Tier.ToLowerInvariant()" data-name="@tier.Tier" data-fee="@tier.IssueFee.ToString(inv)">
                     @{ Preview(tier.Tier, tier.Tier, tier.DesignImage); }
                     <h3>@tier.Tier</h3>
-                    <p class="tier-fee">@Money(tier.IssueFee)<span>Opening fee</span></p>
+                    <p class="tier-fee">@Money(tier.IssueFee)<span>@T["Opening fee"]</span></p>
                     <ul>
-                        <li>Cashback @Percent(tier.CashbackPercent)</li>
-                        <li>Transfer limit @Money(tier.TransferLimit) before commission</li>
-                        <li>@Percent(tier.CommissionPercent) commission beyond that limit</li>
+                        <li>@T["Cashback {0}", Percent(tier.CashbackPercent)]</li>
+                        <li>@T["Transfer limit {0} before commission", Money(tier.TransferLimit)]</li>
+                        <li>@T["{0} commission beyond that limit", Percent(tier.CommissionPercent)]</li>
                     </ul>
                 </button>
             }
@@ -87,10 +87,10 @@
 
         <form asp-action="AddTierCard" method="post" id="tier-form" class="surface form-stack narrow mt-5" hidden novalidate>
             <input type="hidden" name="tier" id="tier-input" />
-            <h2 id="tier-heading">Confirm</h2>
+            <h2 id="tier-heading">@T["Confirm"]</h2>
             <p class="lede" id="tier-copy"></p>
             <div class="field">
-                <label for="fee-card">Pay from</label>
+                <label for="fee-card">@T["Pay from"]</label>
                 @* data-card-pick: app-cards.js bunu kart şəkilli xüsusi seçimə çevirir (şəkil və mətn bazadan gəlir) *@
                 <select class="select" id="fee-card" name="fundingCardId" data-card-pick>
                     @foreach (var card in Model.Cards.Where(c => !c.IsBlocked))
@@ -103,9 +103,9 @@
                                 data-design="@card.DesignImage">@card.Tier · •••• @card.Last4 · @Money(card.Balance)</option>
                     }
                 </select>
-                <p class="field-error" id="fee-error" hidden>That card doesn't have enough balance for the opening fee.</p>
+                <p class="field-error" id="fee-error" hidden>@T["That card doesn't have enough balance for the opening fee."]</p>
             </div>
-            <button class="btn btn-primary" type="submit" id="tier-submit">Confirm and add card</button>
+            <button class="btn btn-primary" type="submit" id="tier-submit">@T["Confirm and add card"]</button>
         </form>
     }
 </main>

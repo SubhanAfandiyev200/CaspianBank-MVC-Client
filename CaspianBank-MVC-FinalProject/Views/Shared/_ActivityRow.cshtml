@@ -55,6 +55,6 @@
     </div>
     <div class="activity-amount">
         <div class="@(Model.IsIncome ? "amount-in" : "amount-out") num">@(Model.IsIncome ? "+" : "−")@Model.Amount.ToString("N2", inv) AZN</div>
-        <div class="activity-meta num">Balance @Model.BalanceAfter.ToString("N2", inv)</div>
+        <div class="activity-meta num">@T["Balance {0}", Model.BalanceAfter.ToString("N2", inv)]</div>
     </div>
 </article>

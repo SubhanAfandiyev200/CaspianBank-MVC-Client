@@ -31,21 +31,23 @@ namespace CaspianBank_MVC_FinalProject.Helpers
         }
 
         // "just now", "5 min ago", "3 h ago", sonra tarix. Bazada vaxt UTC saxlanılır
-        public static string Ago(DateTime createdAtUtc)
+        public static string Ago(DateTime createdAtUtc, CaspianBank_MVC_FinalProject.Services.ITranslator? t = null)
         {
             var utc = createdAtUtc.Kind == DateTimeKind.Utc ? createdAtUtc : DateTime.SpecifyKind(createdAtUtc, DateTimeKind.Utc);
             var span = DateTime.UtcNow - utc;
             if (span.TotalSeconds < 45)
             {
-                return "just now";
+                return t is null ? "just now" : t["just now"];
             }
             if (span.TotalMinutes < 60)
             {
-                return Math.Max(1, (int)Math.Round(span.TotalMinutes)) + " min ago";
+                var minutes = Math.Max(1, (int)Math.Round(span.TotalMinutes));
+                return t is null ? minutes + " min ago" : t["{0} min ago", minutes];
             }
             if (span.TotalHours < 24)
             {
-                return (int)span.TotalHours + " h ago";
+                var hours = (int)span.TotalHours;
+                return t is null ? hours + " h ago" : t["{0} h ago", hours];
             }
             return utc.ToLocalTime().ToString("dd MMM, HH:mm", CultureInfo.InvariantCulture);
         }

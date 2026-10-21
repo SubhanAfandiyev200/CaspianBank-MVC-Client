@@ -22,8 +22,8 @@
 
   function dateLabel(value) {
     const part = parseIsoDate(value);
-    if (!part) return "Select date";
-    return part.d + " " + MONTHS_SHORT[part.m - 1] + " " + part.y;
+    if (!part) return cbt("Select date");
+    return part.d + " " + cbt(MONTHS_SHORT[part.m - 1]) + " " + part.y;
   }
 
   function daysInMonth(year, month) {
@@ -97,11 +97,11 @@
     pop.innerHTML = `
       <div class="wheel-frame">
         <div class="wheel-highlight" aria-hidden="true"></div>
-        <div class="wheel" data-part="day" tabindex="0" role="listbox" aria-label="Day"></div>
-        <div class="wheel" data-part="month" tabindex="0" role="listbox" aria-label="Month"></div>
-        <div class="wheel" data-part="year" tabindex="0" role="listbox" aria-label="Year"></div>
+        <div class="wheel" data-part="day" tabindex="0" role="listbox" aria-label="${cbt("Day")}"></div>
+        <div class="wheel" data-part="month" tabindex="0" role="listbox" aria-label="${cbt("Month")}"></div>
+        <div class="wheel" data-part="year" tabindex="0" role="listbox" aria-label="${cbt("Year")}"></div>
       </div>
-      <button type="button" class="btn btn-primary btn-block wheel-done">Done</button>`;
+      <button type="button" class="btn btn-primary btn-block wheel-done">${cbt("Done")}</button>`;
     document.body.appendChild(pop);
 
     const columns = {
@@ -121,7 +121,7 @@
         return list;
       }
       if (part === "month") {
-        return MONTHS.map((label, index) => ({ value: index + 1, label }));
+        return MONTHS.map((label, index) => ({ value: index + 1, label: cbt(label) }));
       }
       const count = daysInMonth(draft.y, draft.m);
       const list = [];

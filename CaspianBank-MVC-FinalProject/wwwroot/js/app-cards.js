@@ -357,8 +357,8 @@
       input.value = button.getAttribute("data-name");
       heading.textContent = button.getAttribute("data-name");
       copy.textContent = fee > 0
-        ? "The opening fee is " + money(fee) + ", taken from the card you choose."
-        : "There is no opening fee for this card. Confirm to add it.";
+        ? cbt("The opening fee is {0}, taken from the card you choose.", money(fee))
+        : cbt("There is no opening fee for this card. Confirm to add it.");
       form.hidden = false;
       checkBalance();
       form.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -443,10 +443,10 @@
       expiryOk = end >= new Date();
     }
     const checks = [
-      [amountInput, Number.isFinite(amount) && amount >= 1 && amount <= 5000 && Math.round(amount * 100) / 100 === amount, "Enter an amount between 1 and 5,000 AZN."],
-      [numberInput, luhn(digits), "Enter a valid card number."],
-      [expiryInput, expiryOk, "Enter the expiry as MM/YY. It must not have passed."],
-      [cvvInput, /^\d{3,4}$/.test(cvvInput.value), "Enter the 3 or 4 digit CVV."]
+      [amountInput, Number.isFinite(amount) && amount >= 1 && amount <= 5000 && Math.round(amount * 100) / 100 === amount, cbt("Enter an amount between 1 and 5,000 AZN.")],
+      [numberInput, luhn(digits), cbt("Enter a valid card number.")],
+      [expiryInput, expiryOk, cbt("Enter the expiry as MM/YY. It must not have passed.")],
+      [cvvInput, /^\d{3,4}$/.test(cvvInput.value), cbt("Enter the 3 or 4 digit CVV.")]
     ];
     let ok = true;
     checks.forEach(([input, valid, message]) => {
@@ -651,8 +651,8 @@
         meterFill.style.width = (ratio * 100) + "%";
         meterFill.classList.toggle("is-over", used + shown > limit);
         meterText.textContent = used + shown > limit
-          ? "Above this month's " + money(limit) + " commission-free limit"
-          : "Commission-free this month: " + money(room - shown) + " left of " + money(limit);
+          ? cbt("Above this month's {0} commission-free limit", money(limit))
+          : cbt("Commission-free this month: {0} left of {1}", money(room - shown), money(limit));
       } else {
         meterFill.style.width = "0%";
         meterFill.classList.remove("is-over");
@@ -660,16 +660,16 @@
       }
 
       hint.textContent = !from ? "" : limit > 0
-        ? "Each month the first " + money(limit) + " you send from this card is commission-free (" + money(room) + " left). " + String(pct) + "% applies to the rest. Available: " + money(balance) + "."
-        : "No commission on " + tier + " transfers. Available: " + money(balance) + ".";
+        ? cbt("Each month the first {0} you send from this card is commission-free ({1} left). {2}% applies to the rest. Available: {3}.", money(limit), money(room), String(pct), money(balance))
+        : cbt("No commission on {0} transfers. Available: {1}.", tier, money(balance));
 
       // Məbləğ balansa (komissiya ilə) sığmırsa sahədə xəta çıxır. Server də eyni yoxlayır, bu yalnız rahatlıq üçündür
       const max = from ? maxAmount(balance, used, limit, pct) : 0;
       let amountProblem = "";
       if (amount !== null && amount > 100000) {
-        amountProblem = "The most you can send at once is " + money(100000) + ".";
+        amountProblem = cbt("The most you can send at once is {0}.", money(100000));
       } else if (amount !== null && from && round2(amount + fee) > balance) {
-        amountProblem = max > 0 ? "Not enough balance. The most you can send from this card is " + money(max) + "." : "This card has no balance to send.";
+        amountProblem = max > 0 ? cbt("Not enough balance. The most you can send from this card is {0}.", money(max)) : cbt("This card has no balance to send.");
       }
       amountError.hidden = !amountProblem;
       amountError.textContent = amountProblem;
@@ -677,10 +677,10 @@
 
       // Düymə hazır olana qədər söndürülür, nəyin çatışmadığı düymənin altında yazılır
       let waiting = "";
-      if (noTarget) waiting = "Add another card or send to another customer to continue.";
-      else if (mode === "other" && digits.length !== 16) waiting = "Enter the recipient's 16-digit card number.";
-      else if (amount === null) waiting = "Enter an amount to continue.";
-      else if (amountProblem) waiting = "Fix the amount to continue.";
+      if (noTarget) waiting = cbt("Add another card or send to another customer to continue.");
+      else if (mode === "other" && digits.length !== 16) waiting = cbt("Enter the recipient's 16-digit card number.");
+      else if (amount === null) waiting = cbt("Enter an amount to continue.");
+      else if (amountProblem) waiting = cbt("Fix the amount to continue.");
       reviewBtn.disabled = waiting !== "";
       reviewHint.textContent = waiting;
 

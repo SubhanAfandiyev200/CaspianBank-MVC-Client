@@ -3,7 +3,7 @@
 @{
     var steps = new[] { "Details", "Review", "Receipt" };
 }
-<ol class="steps3" aria-label="Transfer progress">
+<ol class="steps3" aria-label="@T["Transfer progress"]">
     @for (var i = 0; i < steps.Length; i++)
     {
         var number = i + 1;

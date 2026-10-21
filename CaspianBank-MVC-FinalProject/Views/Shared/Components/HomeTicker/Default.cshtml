@@ -7,7 +7,7 @@
             <ul>
                 @foreach (var ticker in Model)
                 {
-                    <li>@ticker.Text.Trim() <span>✱</span></li>
+                    <li>@T[ticker.Text.Trim()] <span>✱</span></li>
                 }
             </ul>
         }

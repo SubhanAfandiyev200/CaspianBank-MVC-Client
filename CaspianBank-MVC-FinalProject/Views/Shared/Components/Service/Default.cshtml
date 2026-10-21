@@ -3,10 +3,10 @@
 <section class="services" id="services">
     <div class="section-intro split">
         <div>
-            <p class="eyebrow"><span aria-hidden="true">✱ </span><span>@Model.ServiceSection.Label</span></p>
-            <h2>@Model.ServiceSection.Title</h2>
+            <p class="eyebrow"><span aria-hidden="true">✱ </span><span>@T[Model.ServiceSection.Label]</span></p>
+            <h2>@T[Model.ServiceSection.Title]</h2>
         </div>
-        <p class="lede">@Model.ServiceSection.Description</p>
+        <p class="lede">@T[Model.ServiceSection.Description]</p>
     </div>
     <div class="service-grid">
         @foreach (var item in Model.ServiceItems)
@@ -25,8 +25,8 @@
                         <img src="@item.Icon" alt="" />
                     }
                 </span>
-                <h3>@item.Title</h3>
-                <p>@item.Description</p>
+                <h3>@T[item.Title]</h3>
+                <p>@T[item.Description]</p>
             </a>
         }
     </div>

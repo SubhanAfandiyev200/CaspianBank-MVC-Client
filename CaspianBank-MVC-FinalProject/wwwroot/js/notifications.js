@@ -38,9 +38,9 @@
   function ago(iso) {
     const then = new Date(iso);
     const seconds = (Date.now() - then.getTime()) / 1000;
-    if (seconds < 45) return "just now";
-    if (seconds < 3600) return Math.max(1, Math.round(seconds / 60)) + " min ago";
-    if (seconds < 86400) return Math.floor(seconds / 3600) + " h ago";
+    if (seconds < 45) return cbt("just now");
+    if (seconds < 3600) return cbt("{0} min ago", Math.max(1, Math.round(seconds / 60)));
+    if (seconds < 86400) return cbt("{0} h ago", Math.floor(seconds / 3600));
     return then.toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
   }
 
@@ -57,7 +57,7 @@
     return '<a class="note' + (n.isRead ? "" : " is-unread") + '" href="' + esc(openUrl(n)) + '">'
       + '<span class="note-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + icon + "</svg></span>"
       + "<span>"
-      + '<span class="spread"><span class="note-title">' + esc(n.title) + '</span><time datetime="' + esc(n.createdAt) + '">' + esc(ago(n.createdAt)) + "</time></span>"
+      + '<span class="spread"><span class="note-title">' + esc(cbt(n.title)) + '</span><time datetime="' + esc(n.createdAt) + '">' + esc(ago(n.createdAt)) + "</time></span>"
       + '<span class="note-body">' + esc(n.message) + "</span>"
       + "</span></a>";
   }

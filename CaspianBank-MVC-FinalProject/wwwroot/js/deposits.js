@@ -60,7 +60,7 @@
     const from = sourceSel.options[sourceSel.selectedIndex];
     const balance = from ? Number(from.getAttribute("data-balance")) : 0;
 
-    limitsEl.textContent = "From " + money(min) + " to " + money(max) + " for this term. Available on the card: " + money(balance) + ".";
+    limitsEl.textContent = cbt("From {0} to {1} for this term. Available on the card: {2}.", money(min), money(max), money(balance));
 
     const interest = amount === null ? 0 : round2(amount * rate / 100 * months / 12);
     document.getElementById("dep-interest").textContent = money(interest);
@@ -69,15 +69,15 @@
     document.getElementById("dep-date").textContent = end.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
 
     let problem = "";
-    if (amount !== null && amount < min) problem = "The smallest deposit for this term is " + money(min) + ".";
-    else if (amount !== null && amount > max) problem = "The largest deposit for this term is " + money(max) + ".";
-    else if (amount !== null && amount > balance) problem = "Not enough money on this card.";
+    if (amount !== null && amount < min) problem = cbt("The smallest deposit for this term is {0}.", money(min));
+    else if (amount !== null && amount > max) problem = cbt("The largest deposit for this term is {0}.", money(max));
+    else if (amount !== null && amount > balance) problem = cbt("Not enough money on this card.");
     errorEl.hidden = !problem;
     errorEl.textContent = problem;
     amountBox.classList.toggle("is-error", !!problem);
 
     submit.disabled = amount === null || !!problem;
-    submit.textContent = amount === null ? "Open deposit" : "Open deposit · " + money(amount);
+    submit.textContent = amount === null ? cbt("Open deposit") : cbt("Open deposit · {0}", money(amount));
     submit.setAttribute("data-confirm-text",
       money(amount === null ? 0 : amount) + " will leave your card and stay locked for " + months + " months. "
       + "You will get " + money(amount === null ? 0 : round2(amount + interest)) + " on " + end.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
