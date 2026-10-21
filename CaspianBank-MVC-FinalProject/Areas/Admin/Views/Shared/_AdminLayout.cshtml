@@ -26,17 +26,19 @@
     }
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@T.Lang">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0F5C3F" />
+    <partial name="_ThemeInit" />
     <link rel="icon" type="image/svg+xml" href="~/img/logo/favicon.svg" />
     <title>@(ViewData["Title"] ?? "Admin") · Caspian Bank</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/theme-dark.css" asp-append-version="true" />
 </head>
 <body class="body-admin">
     <a class="skip" href="#content">Skip to content</a>
@@ -50,6 +52,7 @@
                     <a class="nav-link @(isUi ? "" : "is-active")" asp-area="Admin" asp-controller="BankDashboard" asp-action="Index">Bank</a>
                 </nav>
                 <div class="nav-tools">
+                    <partial name="_SiteControls" />
                     @* Bildiriş zəngi: son bildirişlər API-dən gəlir, yenilər SignalR ilə canlı əlavə olunur (wwwroot/js/notifications.js) *@
                     @await Component.InvokeAsync("NotificationBell", new { area = "Admin" })
                     <span class="profile-btn" title="@string.Join(", ", roles)">
@@ -91,6 +94,10 @@
             <a class="@On("CardDesign")" asp-area="Admin" asp-controller="CardDesign" asp-action="Index">Card designs</a>
             <a class="@On("CardTier")" asp-area="Admin" asp-controller="CardTier" asp-action="Index">Card types</a>
             <a class="@On("Setting")" asp-area="Admin" asp-controller="Setting" asp-action="Index">Settings</a>
+            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin))
+            {
+                <a class="@On("Translations")" asp-area="Admin" asp-controller="Translations" asp-action="Index">Translations</a>
+            }
         }
         else
         {
@@ -102,6 +109,7 @@
             @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Accountant))
             {
                 <a class="@On("Treasury")" asp-area="Admin" asp-controller="Treasury" asp-action="Index">Treasury</a>
+                <a class="@On("BankRules")" asp-area="Admin" asp-controller="BankRules" asp-action="Index">Bank rules</a>
             }
             @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin))
             {
@@ -133,6 +141,7 @@
         </div>
     </footer>
 
+    <script src="~/js/theme.js" asp-append-version="true"></script>
     <script src="~/js/confirm-dialog.js" asp-append-version="true"></script>
     <script src="~/js/file-drop.js" asp-append-version="true"></script>
     <script src="~/js/wheel-select.js" asp-append-version="true"></script>

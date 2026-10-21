@@ -13,6 +13,7 @@
   --muted: #5c6b63;
   --line: #e3e8e4;
   --shadow: 0 16px 40px rgba(16, 40, 30, 0.12);
+  --tint-green: #e8f3c4;
   --font: "Inter", "Segoe UI", Helvetica, Arial, sans-serif;
 }
 
@@ -240,7 +241,7 @@ h2 {
   width: min(1080px, calc(100% - 48px));
   margin: 0 auto;
   padding: 16px;
-  background: white;
+  background: var(--white);
   color: var(--text);
   border-radius: 12px;
   box-shadow: 0 24px 60px rgba(8, 28, 18, 0.28);
@@ -598,7 +599,7 @@ h2 {
   position: relative;
   z-index: 1;
   padding: 8px 0 4px;
-  background: white;
+  background: var(--white);
 }
 
 .logo-marquee { overflow: hidden; }
@@ -657,7 +658,7 @@ h2 {
   border: 1px solid var(--line);
   border-radius: 10px;
   overflow: hidden;
-  background: white;
+  background: var(--white);
 }
 
 .service-card {
@@ -778,7 +779,7 @@ h2 {
   height: 42px;
   border-radius: 50%;
   border: 1px solid var(--line);
-  background: white;
+  background: var(--white);
   cursor: pointer;
 }
 .benefit-arrows button:hover { border-color: var(--green); color: var(--green-deep); }
@@ -807,7 +808,7 @@ h2 {
   padding: 40px 36px 36px;
   border: 1px solid var(--line);
   border-radius: 12px;
-  background: white;
+  background: var(--white);
   box-shadow: 0 16px 40px rgba(16, 40, 30, 0.06);
 }
 
@@ -976,7 +977,7 @@ h2 {
   height: 76px;
   margin-bottom: 22px;
   border-radius: 50%;
-  background: #e8f3c4;
+  background: var(--tint-green);
   color: #8aaa45;
 }
 .pillar-icon svg,
@@ -1189,7 +1190,7 @@ h2 {
     align-items: flex-start;
     gap: 0;
     padding: 8px 20px 16px;
-    background: white;
+    background: var(--white);
     border-bottom: 1px solid var(--line);
   }
   .site-header.is-open .site-nav { display: flex; }
@@ -1351,7 +1352,7 @@ body.modal-open { overflow: hidden; }
 }
 .swal-backdrop.is-closing { opacity: 0; transition: opacity 0.16s ease; }
 .swal {
-  width: min(420px, 100%); padding: 32px 28px 24px; text-align: center; background: #fff; border-radius: 20px;
+  width: min(420px, 100%); padding: 32px 28px 24px; text-align: center; background: var(--white); border-radius: 20px;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.32); animation: swal-pop 0.26s cubic-bezier(0.2, 0.9, 0.3, 1.2);
 }
 .swal-icon {
@@ -1368,7 +1369,7 @@ body.modal-open { overflow: hidden; }
 .swal-btn:active { transform: scale(0.98); }
 .swal-confirm { background: var(--lime); color: #10281e; }
 .swal-confirm:hover, .swal-confirm:focus-visible { background: #0c3f2c; color: #f4f7e8; outline: none; }
-.swal-cancel { background: #fff; border-color: #cdd4cf; color: var(--text); }
+.swal-cancel { background: var(--white); border-color: #cdd4cf; color: var(--text); }
 .swal-cancel:hover, .swal-cancel:focus-visible { background: #d94a4a; border-color: #d94a4a; color: #fff; outline: none; }
 .swal-confirm.swal-danger { background: #d94a4a; color: #fff; }
 .swal-confirm.swal-danger:hover, .swal-confirm.swal-danger:focus-visible { background: #a93232; color: #fff; }

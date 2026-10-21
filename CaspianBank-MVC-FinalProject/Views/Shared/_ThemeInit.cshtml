@@ -1,0 +1,10 @@
+@* Tema ilk rəngdə qoyulur (səhifə ağdan qaraya yanıb-sönməsin): seçilmiş tema (localStorage) və ya sistemin teması. Düymələr wwwroot/js/theme.js-dədir *@
+<script>
+    (function () {
+        try {
+            var theme = localStorage.getItem("cb-theme");
+            if (!theme && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) { theme = "dark"; }
+            if (theme === "dark") { document.documentElement.setAttribute("data-theme", "dark"); }
+        } catch (e) { /* brauzer saxlama icazə vermirsə ağ tema qalır */ }
+    })();
+</script>
