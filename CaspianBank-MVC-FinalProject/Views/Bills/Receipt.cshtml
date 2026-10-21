@@ -20,17 +20,17 @@
             <span class="rc-check" aria-hidden="true">
                 <svg viewBox="0 0 52 52" width="56" height="56" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle class="rc-ring" cx="26" cy="26" r="22" /><path class="rc-tick" d="m16 27 7 7 14-16" /></svg>
             </span>
-            <h1 id="rc-title">Payment received</h1>
-            <strong class="rc-amount num">@Model.Amount.ToString("N2", inv)<small>AZN</small></strong>
+            <h1 id="rc-title">@T["Payment received"]</h1>
+            <strong class="rc-amount num">@Model.Amount.ToString("N2", inv)<small>@T["AZN"]</small></strong>
             <span class="rc-date">@local.ToString("dd MMM yyyy, HH:mm", inv)</span>
         </div>
 
         <div class="rc-tear" aria-hidden="true"></div>
 
         <dl class="rc-list">
-            <div><dt>Status</dt><dd><span class="badge-pill is-ok">Completed</span></dd></div>
+            <div><dt>@T["Status"]</dt><dd><span class="badge-pill is-ok">@T["Completed"]</span></dd></div>
             <div>
-                <dt>Provider</dt>
+                <dt>@T["Provider"]</dt>
                 <dd>
                     <span class="bill-provider-cell is-end">
                         @if (!string.IsNullOrEmpty(Model.LogoUrl))
@@ -44,46 +44,46 @@
             <div><dt>@identifierLabel</dt><dd class="num">@Model.Identifier</dd></div>
             @if (!string.IsNullOrEmpty(Model.SubscriberName))
             {
-                <div><dt>@(loan ? "Loan owner" : (mobile ? "Number owner" : "Subscriber"))</dt><dd>@Model.SubscriberName</dd></div>
+                <div><dt>@(loan ? T["Loan owner"] : (mobile ? T["Number owner"] : T["Subscriber"]))</dt><dd>@Model.SubscriberName</dd></div>
             }
-            <div><dt>Paid from</dt><dd>@Model.CardLabel</dd></div>
+            <div><dt>@T["Paid from"]</dt><dd>@Model.CardLabel</dd></div>
             @if (loan)
             {
-                <div><dt>Principal</dt><dd class="num">@Money(Model.Principal ?? 0m)</dd></div>
-                <div><dt>Interest</dt><dd class="num">@Money(Model.Interest ?? 0m)</dd></div>
+                <div><dt>@T["Principal"]</dt><dd class="num">@Money(Model.Principal ?? 0m)</dd></div>
+                <div><dt>@T["Interest"]</dt><dd class="num">@Money(Model.Interest ?? 0m)</dd></div>
                 @if ((Model.Penalty ?? 0m) > 0)
                 {
-                    <div><dt>Penalty</dt><dd class="num">@Money(Model.Penalty ?? 0m)</dd></div>
+                    <div><dt>@T["Penalty"]</dt><dd class="num">@Money(Model.Penalty ?? 0m)</dd></div>
                 }
             }
             else
             {
                 @if (Model.DebtCleared > 0)
                 {
-                    <div><dt>Debt paid</dt><dd class="num">@Money(Model.DebtCleared)</dd></div>
+                    <div><dt>@T["Debt paid"]</dt><dd class="num">@Money(Model.DebtCleared)</dd></div>
                 }
                 @if (Model.CreditAdded > 0)
                 {
-                    <div><dt>@(mobile ? "Added to the number" : "Added to the balance")</dt><dd class="num">@Money(Model.CreditAdded)</dd></div>
+                    <div><dt>@(mobile ? T["Added to the number"] : T["Added to the balance"])</dt><dd class="num">@Money(Model.CreditAdded)</dd></div>
                 }
                 @if (Model.RemainingDebt > 0)
                 {
-                    <div><dt>Debt left</dt><dd class="num">@Money(Model.RemainingDebt)</dd></div>
+                    <div><dt>@T["Debt left"]</dt><dd class="num">@Money(Model.RemainingDebt)</dd></div>
                 }
                 else if (Model.BalanceAfter > 0)
                 {
-                    <div><dt>@(mobile ? "Number balance now" : "Balance now")</dt><dd class="num">@Money(Model.BalanceAfter)</dd></div>
+                    <div><dt>@(mobile ? T["Number balance now"] : T["Balance now"])</dt><dd class="num">@Money(Model.BalanceAfter)</dd></div>
                 }
             }
             @if (Model.CashbackEarned > 0)
             {
-                <div><dt>Cashback earned</dt><dd class="num">+@Money(Model.CashbackEarned)</dd></div>
+                <div><dt>@T["Cashback earned"]</dt><dd class="num">+@Money(Model.CashbackEarned)</dd></div>
             }
-            <div class="rc-total"><dt>Total paid</dt><dd class="num">@Money(Model.Amount)</dd></div>
-            <div><dt>Card balance after</dt><dd class="num">@Money(Model.CardBalanceAfter)</dd></div>
+            <div class="rc-total"><dt>@T["Total paid"]</dt><dd class="num">@Money(Model.Amount)</dd></div>
+            <div><dt>@T["Card balance after"]</dt><dd class="num">@Money(Model.CardBalanceAfter)</dd></div>
             <div>
-                <dt>Reference</dt>
-                <dd class="num">@Model.Reference <button type="button" class="btn-copy no-print" data-copy="@Model.Reference" data-copy-label="Reference">Copy</button></dd>
+                <dt>@T["Reference"]</dt>
+                <dd class="num">@Model.Reference <button type="button" class="btn-copy no-print" data-copy="@Model.Reference" data-copy-label="Reference">@T["Copy"]</button></dd>
             </div>
         </dl>
 
@@ -94,12 +94,12 @@
 
         <div class="rc-zigzag" aria-hidden="true"></div>
 
-        <p class="rc-foot">Caspian Bank · 28 Nizami Street, Baku<br />Keep this receipt for your records.</p>
+        <p class="rc-foot">@T["Caspian Bank · 28 Nizami Street, Baku"]<br />@T["Keep this receipt for your records."]</p>
     </section>
 
     <div class="rc-actions no-print">
-        <button type="button" class="btn btn-secondary" id="rc-print">Save as PDF</button>
-        <button type="button" class="btn btn-secondary" id="rc-share" data-share="@shareText">Share</button>
-        <a class="btn btn-primary" asp-controller="Bills" asp-action="Index">Back to payments</a>
+        <button type="button" class="btn btn-secondary" id="rc-print">@T["Save as PDF"]</button>
+        <button type="button" class="btn btn-secondary" id="rc-share" data-share="@shareText">@T["Share"]</button>
+        <a class="btn btn-primary" asp-controller="Bills" asp-action="Index">@T["Back to payments"]</a>
     </div>
 </main>
