@@ -13,11 +13,11 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.Settings
         public string FooterDescription { get; set; } =
             "Cards, transfers, and a loan request from the same login. The desk in Baku stays on the account from the first day.";
 
-        // Sosial şəbəkə linkləri (Settings). Admin dəyişənə qədər şəbəkələrin ana səhifəsi göstərilir; boş qoyularsa ikon görünmür
-        public string InstagramUrl { get; set; } = "https://www.instagram.com/";
-        public string FacebookUrl { get; set; } = "https://www.facebook.com/";
-        public string TwitterUrl { get; set; } = "https://x.com/";
-        public string LinkedInUrl { get; set; } = "https://www.linkedin.com/";
+        // Sosial şəbəkə linkləri (Settings). Admin dəyişənə qədər bu ünvanlar göstərilir; boş qoyularsa ikon görünmür
+        public string InstagramUrl { get; set; } = "https://www.instagram.com/efendiyev.006/";
+        public string FacebookUrl { get; set; } = "https://www.facebook.com/code.edu.az/";
+        public string TwitterUrl { get; set; } = "https://code.edu.az/";
+        public string LinkedInUrl { get; set; } = "https://www.linkedin.com/school/code.edu.az/";
 
         // tel: ünvanında boşluq olmasın
         public string PhoneHref => new string(PhoneNumber.Where(c => char.IsDigit(c) || c == '+').ToArray());
