@@ -1,26 +1,101 @@
+@model CaspianBank_MVC_FinalProject.ViewModels.Reports.AdminReportsPageVM
+@using System.Globalization
 @{
     ViewData["Title"] = "Reports";
+    var inv = CultureInfo.InvariantCulture;
+    var canResolve = User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Security);
+
+    string StatusLabel(string status)
+    {
+        switch (status)
+        {
+            case "Pending": return "Pending";
+            case "Reviewed": return "Reviewed";
+            case "ActionTaken": return "Action taken";
+            case "Dismissed": return "Dismissed";
+            default: return status;
+        }
+    }
+
+    string StatusBadge(string status)
+    {
+        switch (status)
+        {
+            case "Pending": return "badge-pending";
+            case "ActionTaken": return "badge-info";
+            case "Reviewed": return "badge-success";
+            default: return "badge-neutral";
+        }
+    }
+
+    string PageUrl(int page)
+    {
+        return Url.Action("Index", "Reports", new { area = "Admin", status = Model.Status, search = Model.Search, page }) ?? "#";
+    }
 }
 <main id="content" class="page">
     <header class="page-head">
         <p class="eyebrow">Fraud</p>
         <h1>Suspicious transaction reports</h1>
-        <p class="lede">Review what customers flagged. Taking action restricts the linked account.</p>
+        <p class="lede">Review what customers flagged. "Take action" freezes the account that received the money; if the money did not go to a Caspian customer, it blocks the reported card.</p>
     </header>
 
-    @* Hələlik statik dizayn (nümunə sətirlər) *@
+    @if (TempData["Success"] is string success)
+    {
+        <p class="flash flash-ok" role="status">@success</p>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <p class="flash flash-error" role="alert">@error</p>
+    }
+    @if (Model.Unavailable)
+    {
+        <p class="flash flash-error" role="alert">The reports can't be loaded right now. Please try again in a moment.</p>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <p class="flash flash-error" role="alert">@Model.Error</p>
+    }
+
+    <div class="stat-grid cols-3">
+        <article class="stat @(Model.PendingCount > 0 ? "is-strong" : "")">
+            <p class="stat-label">Waiting for a look</p>
+            <p class="stat-value">@Model.PendingCount.ToString("N0", inv)</p>
+            <p class="hint">Pending reports</p>
+        </article>
+        <article class="stat">
+            <p class="stat-label">Handled this week</p>
+            <p class="stat-value">@Model.ResolvedThisWeek.ToString("N0", inv)</p>
+            <p class="hint">Reviewed, acted on or dismissed in the last 7 days</p>
+        </article>
+        <article class="stat">
+            <p class="stat-label">In this list</p>
+            <p class="stat-value">@Model.Total.ToString("N0", inv)</p>
+            <p class="hint">Matching the filter below</p>
+        </article>
+    </div>
+
     <section class="surface surface-tight">
-        <div class="toolbar filters">
+        <form method="get" asp-area="Admin" asp-controller="Reports" asp-action="Index" class="toolbar filters">
+            <div class="field grow">
+                <label for="search">Search</label>
+                <input class="input" id="search" name="search" type="search" placeholder="Customer, email, code or reason" value="@Model.Search" autocomplete="off" />
+            </div>
             <div class="field">
                 <label for="status">Status</label>
-                <select class="select" data-wheel id="status">
-                    <option value="all">All</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Action Taken">Action taken</option>
-                    <option value="Dismissed">Dismissed</option>
+                <select class="select" data-wheel id="status" name="status">
+                    <option value="Pending" selected="@(Model.Status == "Pending")">Pending</option>
+                    <option value="Reviewed" selected="@(Model.Status == "Reviewed")">Reviewed</option>
+                    <option value="ActionTaken" selected="@(Model.Status == "ActionTaken")">Action taken</option>
+                    <option value="Dismissed" selected="@(Model.Status == "Dismissed")">Dismissed</option>
+                    <option value="All" selected="@(Model.Status == "All")">All</option>
                 </select>
             </div>
-        </div>
+            <div class="field">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" type="submit">Filter</button>
+            </div>
+        </form>
 
         <div class="table-wrap">
             <table class="data-table">
@@ -29,48 +104,89 @@
                         <th>Reporter</th>
                         <th>Transaction</th>
                         <th>Reason</th>
-                        <th>Date</th>
+                        <th>Reported</th>
                         <th>Status</th>
                         <th class="actions"><span class="sr-only">Actions</span></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>Aysel Karimova</td>
-                        <td>TX-204918</td>
-                        <td>POS charge in Ganja while the card was with me in Baku.</td>
-                        <td>06 Oct 2026, 09:41</td>
-                        <td><span class="badge badge-pending">Pending</span></td>
-                        <td class="actions">
-                            <button type="button" class="btn btn-secondary btn-sm">Mark reviewed</button>
-                            <button type="button" class="btn btn-danger btn-sm"
-                                    data-confirm-title="Restrict the linked account?"
-                                    data-confirm-text="Taking action restricts Aysel Karimova account. Reference TX-204918."
-                                    data-confirm-yes="Take action" data-confirm-danger="true">Take action</button>
-                            <button type="button" class="btn btn-secondary btn-sm"
-                                    data-confirm-title="Dismiss this report?"
-                                    data-confirm-text="The report will be closed with no change to the account."
-                                    data-confirm-yes="Dismiss">Dismiss</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Elvin Qasimov</td>
-                        <td>TX-198332</td>
-                        <td>Three contactless payments I do not recognise.</td>
-                        <td>01 Oct 2026, 13:05</td>
-                        <td><span class="badge badge-info">Action Taken</span></td>
-                        <td class="actions"></td>
-                    </tr>
-                    <tr>
-                        <td>Nigar Aliyeva</td>
-                        <td>TX-188104</td>
-                        <td>Duplicate supermarket charge on the same afternoon.</td>
-                        <td>25 Sep 2026, 09:12</td>
-                        <td><span class="badge badge-neutral">Dismissed</span></td>
-                        <td class="actions"></td>
-                    </tr>
+                    @foreach (var report in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-area="Admin" asp-controller="Users" asp-action="Detail" asp-route-id="@report.ReporterId"><strong>@report.ReporterName</strong></a>
+                                <div class="hint">@report.ReporterEmail</div>
+                            </td>
+                            <td>
+                                <strong class="num">@report.TransactionReference</strong>
+                                <div class="hint">@report.Description · @report.Amount.ToString("N2", inv) AZN</div>
+                                <div class="hint">@report.TransactionAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)</div>
+                            </td>
+                            <td>@report.Reason</td>
+                            <td>@report.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)</td>
+                            <td>
+                                <span class="badge @StatusBadge(report.Status)">@StatusLabel(report.Status)</span>
+                                @if (report.Status != "Pending")
+                                {
+                                    <div class="hint">@report.ResolvedByName · @report.ResolvedAt?.ToLocalTime().ToString("dd MMM yyyy", inv)</div>
+                                    @if (!string.IsNullOrEmpty(report.ActionTaken))
+                                    {
+                                        <div class="hint">@report.ActionTaken</div>
+                                    }
+                                    @if (!string.IsNullOrEmpty(report.ResolutionNote))
+                                    {
+                                        <div class="hint">“@report.ResolutionNote”</div>
+                                    }
+                                }
+                            </td>
+                            <td class="actions">
+                                @if (report.Status == "Pending" && canResolve)
+                                {
+                                    <span class="row-actions">
+                                        <form method="post" asp-area="Admin" asp-controller="Reports" asp-action="Resolve" class="inline-form">
+                                            <input type="hidden" name="id" value="@report.Id" />
+                                            <input type="hidden" name="outcome" value="Review" />
+                                            <input type="hidden" name="returnStatus" value="@Model.Status" />
+                                            <button type="submit" class="btn btn-secondary btn-sm">Mark reviewed</button>
+                                        </form>
+                                        <form method="post" asp-area="Admin" asp-controller="Reports" asp-action="Resolve" class="inline-form">
+                                            <input type="hidden" name="id" value="@report.Id" />
+                                            <input type="hidden" name="outcome" value="Dismiss" />
+                                            <input type="hidden" name="returnStatus" value="@Model.Status" />
+                                            <button type="submit" class="btn btn-secondary btn-sm"
+                                                    data-confirm-title="Dismiss this report?"
+                                                    data-confirm-text="The report will be closed with no change to any account."
+                                                    data-confirm-yes="Dismiss"
+                                                    data-confirm-no="Cancel">Dismiss</button>
+                                        </form>
+                                        <form method="post" asp-area="Admin" asp-controller="Reports" asp-action="Resolve" class="inline-form">
+                                            <input type="hidden" name="id" value="@report.Id" />
+                                            <input type="hidden" name="outcome" value="Action" />
+                                            <input type="hidden" name="returnStatus" value="@Model.Status" />
+                                            <input class="input input-sm" name="note" maxlength="300" placeholder="Why? (required)" aria-label="Reason for action on report @report.Id" />
+                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                    data-confirm-title="Take action?"
+                                                    data-confirm-text="@(report.ProposedAction ?? "Action will be taken on this report.")"
+                                                    data-confirm-yes="Take action"
+                                                    data-confirm-no="Cancel">Take action</button>
+                                        </form>
+                                    </span>
+                                    @if (!string.IsNullOrEmpty(report.ProposedAction))
+                                    {
+                                        <div class="hint">@report.ProposedAction</div>
+                                    }
+                                }
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Items.Any())
+                    {
+                        <tr><td colspan="6">Nothing here. @(Model.Status == "Pending" ? "No report is waiting for a look." : "No reports found.")</td></tr>
+                    }
                 </tbody>
             </table>
         </div>
     </section>
+
+    <partial name="_Pager" model="new CaspianBank_MVC_FinalProject.ViewModels.Common.PagerVM { Page = Model.Page, PageSize = Model.PageSize, TotalCount = Model.Total, TotalPages = Model.TotalPages, Url = PageUrl }" />
 </main>

@@ -1,25 +1,33 @@
+using CaspianBank_MVC_FinalProject.ViewModels.Reports;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace CaspianBank_MVC_FinalProject.Controllers
 {
     // Şübhəli əməliyyatı bildirmək (dizayn: CaspianBank-Frontend/report-transaction.html). History cədvəlindəki "Report" düyməsi bura gətirir.
-    // Hələlik yalnız görünüşdür: əməliyyatın məlumatı linkdən gəlir və göstərilir, göndərmə düyməsi söndürülüb (fraud komandasının admin tərəfi yazılanda qoşulacaq)
+    // Qaydalar (öz əməliyyatı, bir dəfə bildirmək, səbəbin uzunluğu) API-dədir; burada yalnız forma, uğur mesajı və öz bildirişlərinin siyahısı var
     [Authorize]
     [Route("App/Report")]
-    public class ReportController : Controller
+    public class ReportController : ApiControllerBase
     {
+        public ReportController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
+            : base(httpClientFactory, configuration)
+        {
+        }
+
         [HttpGet("")]
-        public IActionResult Index(string? reference, string? description, decimal? amount, DateTime? date)
+        public IActionResult Index(int? transactionId, string? reference, string? description, decimal? amount, DateTime? date)
         {
             // Link olmadan açılıbsa History-yə qaytarılır: bildiriləcək əməliyyat yoxdur
-            if (string.IsNullOrWhiteSpace(reference))
+            if (!transactionId.HasValue || string.IsNullOrWhiteSpace(reference))
             {
                 return RedirectToAction("Index", "History");
             }
 
-            return View(new ReportPreview
+            return View(new ReportFormVM
             {
+                TransactionId = transactionId.Value,
                 Reference = reference.Trim(),
                 Description = string.IsNullOrWhiteSpace(description) ? "Card transaction" : description.Trim(),
                 Amount = amount,
@@ -27,13 +35,38 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             });
         }
 
-        // Linkdən gələn məlumat yalnız ekranda göstərilir, heç yerə yazılmır
-        public class ReportPreview
+        [HttpPost("")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Submit(ReportFormVM form)
         {
-            public string Reference { get; set; } = string.Empty;
-            public string Description { get; set; } = string.Empty;
-            public decimal? Amount { get; set; }
-            public DateTime? Date { get; set; }
+            var (report, errors, status) = await PostAsync<MyReportUIVM>("api/reports", new
+            {
+                transactionId = form.TransactionId,
+                reason = form.Reason
+            });
+            if (status == HttpStatusCode.Unauthorized)
+            {
+                return await SessionExpiredAsync();
+            }
+            if (report is null)
+            {
+                form.Error = string.Join(" ", errors);
+                return View("Index", form);
+            }
+
+            TempData["Success"] = "Thank you. Your report about " + report.TransactionReference + " was sent. We will look at it and tell you the result.";
+            return RedirectToAction(nameof(List));
+        }
+
+        [HttpGet("List")]
+        public async Task<IActionResult> List()
+        {
+            var (items, status) = await GetAsync<List<MyReportUIVM>>("api/reports");
+            if (status == HttpStatusCode.Unauthorized)
+            {
+                return await SessionExpiredAsync();
+            }
+            return View(new MyReportsPageVM { Items = items ?? new List<MyReportUIVM>(), Unavailable = items is null });
         }
     }
 }
