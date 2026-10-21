@@ -21,6 +21,7 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.Deposits
         public decimal Principal { get; set; }
         public decimal ExpectedInterest { get; set; }
         public decimal AccruedInterest { get; set; }
+        public List<DepositPostingUIVM> Postings { get; set; } = new();
         public decimal TotalAtMaturity { get; set; }
         public int ProgressPercent { get; set; }
         public int DaysLeft { get; set; }
@@ -30,6 +31,13 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.Deposits
         public DateTime? PaidAt { get; set; }
         public string SourceCardLabel { get; set; } = string.Empty;
         public string PayoutCardLabel { get; set; } = string.Empty;
+    }
+
+    public class DepositPostingUIVM
+    {
+        public int Number { get; set; }
+        public decimal Amount { get; set; }
+        public DateTime PostedAt { get; set; }
     }
 
     public class DepositsOverviewUIVM

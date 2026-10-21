@@ -19,6 +19,7 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.Bank
         public decimal ReservePercent { get; set; }
         public decimal RequiredReserve { get; set; }
         public decimal AvailableForLoans { get; set; }
+        public bool InDebt { get; set; }
         public decimal MonthIn { get; set; }
         public decimal MonthOut { get; set; }
         public string MonthLabel { get; set; } = string.Empty;

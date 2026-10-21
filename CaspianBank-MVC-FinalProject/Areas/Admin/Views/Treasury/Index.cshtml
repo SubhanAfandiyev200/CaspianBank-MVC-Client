@@ -21,7 +21,9 @@
         ("DepositReceived", "Deposit received"),
         ("DepositReturned", "Deposit returned"),
         ("DepositInterest", "Deposit interest paid"),
-        ("Cashback", "Cashback paid")
+        ("Cashback", "Cashback paid"),
+        ("OperatingCost", "Operating costs"),
+        ("ProfitTax", "Profit tax")
     };
 
     string KindLabel(string code)
@@ -56,6 +58,11 @@
     @if (!string.IsNullOrEmpty(Model.Error))
     {
         <p class="flash flash-error" role="alert">@Model.Error</p>
+    }
+
+    @if (Model.InDebt)
+    {
+        <p class="flash flash-error" role="alert">The bank is in debt: the treasury is below zero (@Money(Model.Balance)). Deposits are still paid back to customers, but no new loans can be paid out until the balance is positive again.</p>
     }
 
     <div class="stat-grid cols-3">
