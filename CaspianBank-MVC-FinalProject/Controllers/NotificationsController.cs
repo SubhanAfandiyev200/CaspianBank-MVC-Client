@@ -51,6 +51,26 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // Canlı gələn bildiriş API-dən ingiliscə gəlir: brauzer onu göstərməzdən əvvəl seçilmiş dilə tərcümə etdirir.
+        // Mətnlər URL-ə yox, sorğunun gövdəsinə yazılır (məbləğ və adlar ünvanda qalmasın)
+        [HttpPost("Translate")]
+        [IgnoreAntiforgeryToken]
+        public IActionResult Translate([FromBody] NoteTextVM model)
+        {
+            var translator = HttpContext.RequestServices.GetRequiredService<CaspianBank_MVC_FinalProject.Services.ITranslator>();
+            return Json(new
+            {
+                title = translator[model.Title ?? string.Empty],
+                message = translator[model.Message ?? string.Empty]
+            });
+        }
+
+        public class NoteTextVM
+        {
+            public string? Title { get; set; }
+            public string? Message { get; set; }
+        }
+
         [HttpPost("MarkAll")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> MarkAll()

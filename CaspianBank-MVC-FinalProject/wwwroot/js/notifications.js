@@ -97,8 +97,25 @@
     }, 7000);
   }
 
-  function onNotification(payload) {
-    const n = payload.notification;
+  // API bildirişi ingiliscə göndərir: göstərməzdən əvvəl serverdən seçilmiş dildəki mətni alırıq (alınmasa ingiliscə qalır)
+  async function translated(n) {
+    try {
+      const response = await fetch("/App/Notifications/Translate", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: n.title, message: n.message })
+      });
+      if (!response.ok) return n;
+      const text = await response.json();
+      return Object.assign({}, n, { title: text.title || n.title, message: text.message || n.message });
+    } catch (error) {
+      return n;
+    }
+  }
+
+  async function onNotification(payload) {
+    const n = await translated(payload.notification);
     setCount(payload.unreadCount);
     prependTo(list, emptyEl, noteHtml(n), MAX_IN_BELL);
     prependTo(pageList, document.querySelector("[data-note-page-empty]"), noteHtml(n), 0);

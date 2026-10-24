@@ -22,7 +22,7 @@
                     <span class="note-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">@Html.Raw(NotificationUi.IconPaths(item.Category))</svg></span>
                     <span>
                         <span class="spread"><span class="note-title">@T[item.Title]</span><time datetime="@item.CreatedAt.ToString("o")">@NotificationUi.Ago(item.CreatedAt, T)</time></span>
-                        <span class="note-body">@item.Message</span>
+                        <span class="note-body">@T[item.Message]</span>
                     </span>
                 </a>
             }
