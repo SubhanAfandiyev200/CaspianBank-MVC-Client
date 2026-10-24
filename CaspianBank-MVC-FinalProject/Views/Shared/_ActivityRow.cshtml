@@ -40,12 +40,12 @@
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">@Html.Raw(Icon(Model))</svg>
     </div>
     <div>
-        <div class="activity-desc">@Model.Description</div>
+        <div class="activity-desc">@T.Describe(Model.Description)</div>
         <div class="activity-meta">
             @Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)
             @if (showCard && !string.IsNullOrEmpty(Model.CardLabel))
             {
-                <span> · @Model.CardLabel</span>
+                <span> · @T.CardLabel(Model.CardLabel)</span>
             }
             @if (!string.IsNullOrEmpty(Model.Note))
             {

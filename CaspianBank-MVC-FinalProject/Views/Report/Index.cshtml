@@ -33,7 +33,7 @@
 
             <dl class="summary">
                 <div><dt>@T["Reference"]</dt><dd class="num">@Model.Reference</dd></div>
-                <div><dt>@T["Description"]</dt><dd>@Model.Description</dd></div>
+                <div><dt>@T["Description"]</dt><dd>@T.Describe(Model.Description)</dd></div>
                 @if (Model.Amount.HasValue)
                 {
                     <div><dt>@T["Amount"]</dt><dd class="num">@Model.Amount.Value.ToString("N2", inv) AZN</dd></div>

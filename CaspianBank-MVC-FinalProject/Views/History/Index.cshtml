@@ -191,7 +191,7 @@
                             <tr>
                                 <td>@t.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)</td>
                                 <td>
-                                    <span class="tx-line"><span class="tx-mark @(t.IsIncome ? "is-in" : "")" aria-hidden="true"></span><span>@t.Description@if (!string.IsNullOrEmpty(t.Note)){<small class="hint"> · “@t.Note”</small>}</span></span>
+                                    <span class="tx-line"><span class="tx-mark @(t.IsIncome ? "is-in" : "")" aria-hidden="true"></span><span>@T.Describe(t.Description)@if (!string.IsNullOrEmpty(t.Note)){<small class="hint"> · “@t.Note”</small>}</span></span>
                                 </td>
                                 <td>
                                     @if (card is not null)

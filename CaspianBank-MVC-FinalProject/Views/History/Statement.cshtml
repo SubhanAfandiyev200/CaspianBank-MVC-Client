@@ -62,7 +62,7 @@
                             <tr>
                                 <td>@t.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)</td>
                                 <td>
-                                    @t.Description
+                                    @T.Describe(t.Description)
                                     @if (!string.IsNullOrEmpty(t.Note))
                                     {
                                         <span class="st-note">“@t.Note”</span>

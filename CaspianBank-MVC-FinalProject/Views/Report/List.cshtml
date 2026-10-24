@@ -68,7 +68,7 @@
                                 <td>@item.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)</td>
                                 <td>
                                     <strong class="num">@item.TransactionReference</strong>
-                                    <div class="hint">@item.Description · @item.Amount.ToString("N2", inv) AZN</div>
+                                    <div class="hint">@T.Describe(item.Description) · @item.Amount.ToString("N2", inv) AZN</div>
                                 </td>
                                 <td>@item.Reason</td>
                                 <td>

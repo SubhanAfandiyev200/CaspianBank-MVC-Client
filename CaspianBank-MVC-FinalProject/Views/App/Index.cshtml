@@ -7,12 +7,12 @@
     var fullName = User.Identity?.Name ?? string.Empty;
     var firstName = fullName.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "there";
     var hour = DateTime.Now.Hour;
-    var hello = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening";
+    var hello = T.Greeting(hour);
 }
 <main id="content" class="page">
     <header class="page-head">
         <p class="eyebrow">@T["Cards"]</p>
-        <h1 id="dash-title">@hello, @firstName</h1>
+        <h1 id="dash-title">@hello, @T.Person(firstName)</h1>
     </header>
 
     <partial name="_Flash" />
