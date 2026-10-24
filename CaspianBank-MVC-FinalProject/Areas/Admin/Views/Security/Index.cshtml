@@ -11,7 +11,8 @@
         ("RapidTransfers", "Many transfers in a short time"),
         ("DailyVolume", "High amount in one day"),
         ("NewAccountOutflow", "New account sending money"),
-        ("AccountLockout", "Locked after wrong passwords")
+        ("AccountLockout", "Locked after wrong passwords"),
+        ("DeceasedIdentity", "Registration with a deceased citizen's ID")
     };
 
     string KindLabel(string code)
@@ -140,8 +141,16 @@
                         <tr>
                             <td>@alert.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)</td>
                             <td>
+                                @if (string.IsNullOrEmpty(alert.CustomerId))
+                                {
+                                    <strong>@T["No account"]</strong>
+                                    <div class="hint">@T["A visitor, not a customer"]</div>
+                                }
+                                else
+                                {
                                 <a asp-area="Admin" asp-controller="Users" asp-action="Detail" asp-route-id="@alert.CustomerId"><strong>@alert.CustomerName</strong></a>
                                 <div class="hint">@alert.Email</div>
+                                }
                                 @if (alert.AccountRestricted)
                                 {
                                     <span class="badge badge-danger">@T["Account frozen"]</span>
@@ -178,7 +187,7 @@
                                             <input class="input input-sm" name="note" maxlength="300" placeholder="@T["Note (optional)"]" aria-label="Note for alert @alert.Id" />
                                             <button type="submit" class="btn btn-secondary btn-sm">@T["Mark safe"]</button>
                                         </form>
-                                        @if (!alert.AccountRestricted)
+                                        @if (!alert.AccountRestricted && !string.IsNullOrEmpty(alert.CustomerId))
                                         {
                                             <form method="post" asp-area="Admin" asp-controller="Security" asp-action="Resolve" class="inline-form">
                                                 <input type="hidden" name="id" value="@alert.Id" />
