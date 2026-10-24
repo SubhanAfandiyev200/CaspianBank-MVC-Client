@@ -1,4 +1,4 @@
-@*
+﻿@*
     İşçinin kredit səhifəsi: müraciətçinin reyestr məlumatı, iş yerləri, başqa banklardakı kreditlər, qaydalara görə rəqəmlər, qərar.
     Rədd səbəbi daxilidir: müştəri ümumi mətn görür. Bütün qaydalar və hesablamalar API-dədir.
 *@
@@ -23,33 +23,33 @@
     var sendsOn = twoStep && !isSuperAdmin;   // kredit şöbəsinin təsdiqi Super Admin-ə gedir; Super Admin-in təsdiqi son təsdiqdir
 }
 <main id="content" class="page">
-    <a class="back" asp-area="Admin" asp-controller="Loans" asp-action="Index">All loans</a>
+    <a class="back" asp-area="Admin" asp-controller="Loans" asp-action="Index">@T["All loans"]</a>
 
     <header class="page-head crud-head">
         <div>
-            <p class="eyebrow">Credit · @LoanUi.PurposeText(loan.Purpose)</p>
+            <p class="eyebrow">@T["Credit · {0}", LoanUi.PurposeText(loan.Purpose)]</p>
             <h1>@loan.ContractNumber</h1>
             <p class="lede">
-                <span class="badge @LoanUi.StatusBadge(loan.Status)">@LoanUi.StaffStatusText(loan.Status)</span>
+                <span class="badge @LoanUi.StatusBadge(loan.Status)">@T[LoanUi.StaffStatusText(loan.Status)]</span>
                 @who.Name @who.Surname asked for <strong>@LoanUi.Money(loan.RequestedAmount)</strong> over @loan.TermMonths months.
             </p>
         </div>
         <span class="row-actions">
-            <a class="btn btn-back" asp-area="Admin" asp-controller="Loans" asp-action="Index">Go Back</a>
+            <a class="btn btn-back" asp-area="Admin" asp-controller="Loans" asp-action="Index">@T["Go Back"]</a>
         </span>
     </header>
 
     @if (TempData["Success"] is string success)
     {
-        <p class="flash flash-ok" role="status">@success</p>
+        <p class="flash flash-ok" role="status">@T[success]</p>
     }
     @if (TempData["Error"] is string error)
     {
-        <p class="flash flash-error" role="alert">@error</p>
+        <p class="flash flash-error" role="alert">@T[error]</p>
     }
     @if (!string.IsNullOrEmpty(Model.Error))
     {
-        <p class="flash flash-error" role="alert">@Model.Error</p>
+        <p class="flash flash-error" role="alert">@T[Model.Error]</p>
     }
 
     @* ---------- Qara siyahı: iki təsdiq ---------- *@
@@ -60,22 +60,22 @@
         <section class="approval-banner @(Model.Stage == "FinalApproval" ? "is-final" : "")" role="status">
             @if (Model.Stage == "FinalApproval")
             {
-                <strong>Waiting for the Super Admin's approval</strong>
-                <span>@Model.FirstApprovedBy approved @LoanUi.Money(Model.FirstApprovedAmount ?? loan.RequestedAmount) on @LoanUi.Date(Model.FirstApprovedAt?.ToLocalTime()) for @who.Name @who.Surname, who is on the blacklist.@(isSuperAdmin ? " Do you approve it too?" : " The money is sent only after the Super Admin approves it too.")</span>
+                <strong>@T["Waiting for the Super Admin's approval"]</strong>
+                <span>@T["{0} approved {1} on {2} for {3} {4}, who is on the blacklist.", Model.FirstApprovedBy, LoanUi.Money(Model.FirstApprovedAmount ?? loan.RequestedAmount), LoanUi.Date(Model.FirstApprovedAt?.ToLocalTime()), who.Name, who.Surname] @T[isSuperAdmin ? "Do you approve it too?" : "The money is sent only after the Super Admin approves it too."]</span>
             }
             else if (Model.Stage == "FirstApproval")
             {
-                <strong>Customer on the blacklist: two approvals are needed</strong>
+                <strong>@T["Customer on the blacklist: two approvals are needed"]</strong>
                 <span>@(isSuperAdmin ? "As the Super Admin your approval is final: you can approve it directly. If the loan staff approves first, it comes to you for the final approval." : "The loan staff approves first, then the Super Admin. The money is sent only after both approve.")</span>
             }
             else
             {
-                <strong>Customer on the blacklist: two approvals were needed</strong>
-                <span>@(step1Done ? "Approved by " + Model.FirstApprovedBy + " (loan staff)" : "Decided at the first step")@(step2Done ? " and then by " + (Model.ReviewedBy ?? "the Super Admin") + "." : ".")</span>
+                <strong>@T["Customer on the blacklist: two approvals were needed"]</strong>
+                <span>@(step1Done ? T["Approved by {0} (loan staff)", Model.FirstApprovedBy] : T["Decided at the first step"])@(step2Done ? " " + T["and then by {0}.", Model.ReviewedBy ?? T["the Super Admin"]] : ".")</span>
             }
             <ul class="approval-steps">
-                <li class="@(step1Done ? "is-done" : (Model.Stage == "FirstApproval" ? "is-current" : ""))">1. Loan staff @(step1Done ? "approved" : "")</li>
-                <li class="@(step2Done ? "is-done" : (Model.Stage == "FinalApproval" ? "is-current" : ""))">2. Super Admin @(step2Done ? "approved" : "")</li>
+                <li class="@(step1Done ? "is-done" : (Model.Stage == "FirstApproval" ? "is-current" : ""))">1. @T["Loan staff"] @(step1Done ? T["approved"] : "")</li>
+                <li class="@(step2Done ? "is-done" : (Model.Stage == "FinalApproval" ? "is-current" : ""))">2. @T["Super Admin"] @(step2Done ? T["approved"] : "")</li>
             </ul>
         </section>
     }
@@ -83,14 +83,14 @@
     <div class="stack-lg">
         @* ---------- Müraciətçi ---------- *@
         <section class="surface">
-            <h2>Applicant</h2>
+            <h2>@T["Applicant"]</h2>
             @if (who.IsBlacklisted)
             {
-                <p class="flash flash-error" role="alert">This citizen is on the bank's blacklist@(string.IsNullOrEmpty(who.BlacklistReason) ? "." : ": " + who.BlacklistReason)</p>
+                <p class="flash flash-error" role="alert">@T["This citizen is on the bank's blacklist"]@(string.IsNullOrEmpty(who.BlacklistReason) ? "." : ": " + who.BlacklistReason)</p>
             }
             @if (who.AccountRestricted)
             {
-                <p class="flash flash-error" role="alert">The customer's account is restricted.</p>
+                <p class="flash flash-error" role="alert">@T["The customer's account is restricted."]</p>
             }
             <div class="citizen-card">
                 <div class="citizen-photo">
@@ -101,43 +101,43 @@
                 </div>
                 <div class="citizen-info">
                     <strong>@who.Name @who.Surname@(string.IsNullOrEmpty(who.FatherName) ? "" : " " + who.FatherName)</strong>
-                    <span>FIN @(who.Fin ?? "—") · born @LoanUi.Date(who.BirthDate) (@who.Age years old)</span>
+                    <span>@T["FIN"] @(who.Fin ?? "—") · @T["born {0} ({1} years old)", LoanUi.Date(who.BirthDate), who.Age]</span>
                     <span>@(string.IsNullOrEmpty(who.ResidenceAddress) ? "No address on record" : who.ResidenceAddress)</span>
-                    <span>@(who.PhoneNumber ?? "No phone") · @(who.Email ?? "No email")</span>
+                    <span>@(who.PhoneNumber ?? T["No phone"]) · @(who.Email ?? T["No email"])</span>
                 </div>
             </div>
         </section>
 
         @* ---------- Müraciət ---------- *@
         <section class="surface">
-            <h2>Application</h2>
+            <h2>@T["Application"]</h2>
             <dl class="detail-list">
-                <div><dt>Requested amount</dt><dd class="num">@LoanUi.Money(loan.RequestedAmount)</dd></div>
+                <div><dt>@T["Requested amount"]</dt><dd class="num">@LoanUi.Money(loan.RequestedAmount)</dd></div>
                 @if (loan.ApprovedAmount.HasValue)
                 {
-                    <div><dt>Approved amount</dt><dd class="num">@LoanUi.Money(loan.ApprovedAmount.Value)</dd></div>
+                    <div><dt>@T["Approved amount"]</dt><dd class="num">@LoanUi.Money(loan.ApprovedAmount.Value)</dd></div>
                 }
-                <div><dt>Term</dt><dd>@loan.TermMonths months</dd></div>
-                <div><dt>Interest rate</dt><dd>@LoanUi.Percent(loan.AnnualInterestRate) a year</dd></div>
-                <div><dt>Monthly payment</dt><dd class="num">@LoanUi.Money(loan.MonthlyPayment) (for @LoanUi.Money(loan.ApprovedAmount ?? loan.RequestedAmount))</dd></div>
-                <div><dt>Purpose</dt><dd>@LoanUi.PurposeText(loan.Purpose)@(string.IsNullOrEmpty(loan.PurposeNote) ? "" : " · " + loan.PurposeNote)</dd></div>
-                <div><dt>Money goes to</dt><dd>@loan.TargetCardLabel</dd></div>
-                <div><dt>Submitted</dt><dd>@LoanUi.Date(loan.CreatedAt.ToLocalTime())</dd></div>
+                <div><dt>@T["Term"]</dt><dd>@T["{0} months", loan.TermMonths]</dd></div>
+                <div><dt>@T["Interest rate"]</dt><dd>@T["{0} a year", LoanUi.Percent(loan.AnnualInterestRate)]</dd></div>
+                <div><dt>@T["Monthly payment"]</dt><dd class="num">@T["{0} (for {1})", LoanUi.Money(loan.MonthlyPayment), LoanUi.Money(loan.ApprovedAmount ?? loan.RequestedAmount)]</dd></div>
+                <div><dt>@T["Purpose"]</dt><dd>@T[LoanUi.PurposeText(loan.Purpose)]@(string.IsNullOrEmpty(loan.PurposeNote) ? "" : " · " + loan.PurposeNote)</dd></div>
+                <div><dt>@T["Money goes to"]</dt><dd>@loan.TargetCardLabel</dd></div>
+                <div><dt>@T["Submitted"]</dt><dd>@LoanUi.Date(loan.CreatedAt.ToLocalTime())</dd></div>
                 @if (Model.ReviewedAt.HasValue)
                 {
-                    <div><dt>Reviewed</dt><dd>@LoanUi.Date(Model.ReviewedAt.Value.ToLocalTime())@(string.IsNullOrEmpty(Model.ReviewedBy) ? "" : " by " + Model.ReviewedBy)</dd></div>
+                    <div><dt>@T["Reviewed"]</dt><dd>@LoanUi.Date(Model.ReviewedAt.Value.ToLocalTime())@(string.IsNullOrEmpty(Model.ReviewedBy) ? "" : " " + T["by {0}", Model.ReviewedBy])</dd></div>
                 }
                 @if (!string.IsNullOrEmpty(Model.RejectReason))
                 {
-                    <div><dt>Reject reason</dt><dd>@Model.RejectReason <span class="hint">(internal, the customer does not see it)</span></dd></div>
+                    <div><dt>@T["Reject reason"]</dt><dd>@Model.RejectReason <span class="hint">(internal, the customer does not see it)</span></dd></div>
                 }
             </dl>
         </section>
 
         @* ---------- Qaydalara görə rəqəmlər ---------- *@
         <section class="surface">
-            <h2>What the rules say</h2>
-            <p class="hint">These numbers help the decision. You can approve a different amount.</p>
+            <h2>@T["What the rules say"]</h2>
+            <p class="hint">@T["These numbers help the decision. You can approve a different amount."]</p>
 
             @if (rules.Warnings.Count > 0)
             {
@@ -150,16 +150,16 @@
             }
 
             <div class="stat-grid cols-3">
-                <div class="stat"><div class="stat-label">Current income</div><div class="stat-value">@LoanUi.Money(rules.CurrentIncome)</div></div>
-                <div class="stat"><div class="stat-label">Delay factor</div><div class="stat-value">@(rules.DelayMultiplier) × salary</div><p class="hint">@totals.TotalDelays delay@(totals.TotalDelays == 1 ? "" : "s") at other banks</p></div>
-                <div class="stat"><div class="stat-label">Max by income</div><div class="stat-value">@LoanUi.Money(rules.MaxByIncome)</div></div>
+                <div class="stat"><div class="stat-label">@T["Current income"]</div><div class="stat-value">@LoanUi.Money(rules.CurrentIncome)</div></div>
+                <div class="stat"><div class="stat-label">@T["Delay factor"]</div><div class="stat-value">@(rules.DelayMultiplier) × @T["salary"]</div><p class="hint">@T["{0} delay(s) at other banks", totals.TotalDelays]</p></div>
+                <div class="stat"><div class="stat-label">@T["Max by income"]</div><div class="stat-value">@LoanUi.Money(rules.MaxByIncome)</div></div>
             </div>
             <div class="stat-grid cols-3">
-                <div class="stat"><div class="stat-label">Max by payment limit</div><div class="stat-value">@(rules.MaxByPaymentLimit.HasValue ? LoanUi.Money(rules.MaxByPaymentLimit.Value) : "—")</div>@if (rules.PaymentLimitPercent.HasValue){<p class="hint">payments up to @LoanUi.Percent(rules.PaymentLimitPercent.Value) of income</p>}</div>
-                <div class="stat is-strong"><div class="stat-label">Suggested maximum</div><div class="stat-value">@LoanUi.Money(rules.SuggestedMax)</div></div>
-                <div class="stat"><div class="stat-label">Payments vs income</div><div class="stat-value">@LoanUi.Percent(rules.PaymentToIncomePercent)</div><p class="hint">with this loan (existing payments @LoanUi.Money(rules.ExistingMonthlyPayments) + @LoanUi.Money(rules.RequestedMonthlyPayment))</p></div>
+                <div class="stat"><div class="stat-label">@T["Max by payment limit"]</div><div class="stat-value">@(rules.MaxByPaymentLimit.HasValue ? LoanUi.Money(rules.MaxByPaymentLimit.Value) : "—")</div>@if (rules.PaymentLimitPercent.HasValue){<p class="hint">@T["payments up to {0} of income", LoanUi.Percent(rules.PaymentLimitPercent.Value)]</p>}</div>
+                <div class="stat is-strong"><div class="stat-label">@T["Suggested maximum"]</div><div class="stat-value">@LoanUi.Money(rules.SuggestedMax)</div></div>
+                <div class="stat"><div class="stat-label">@T["Payments vs income"]</div><div class="stat-value">@LoanUi.Percent(rules.PaymentToIncomePercent)</div><p class="hint">@T["with this loan (existing payments {0} + {1})", LoanUi.Money(rules.ExistingMonthlyPayments), LoanUi.Money(rules.RequestedMonthlyPayment)]</p></div>
             </div>
-            <p class="hint">Open Caspian loans: @rules.ActiveLoanCount of @rules.MaxActiveLoans allowed. Amounts allowed: @LoanUi.Money(rules.MinAmount) to @LoanUi.Money(rules.MaxAmount).</p>
+            <p class="hint">@T["Open Caspian loans: {0} of {1} allowed. Amounts allowed: {2} to {3}.", rules.ActiveLoanCount, rules.MaxActiveLoans, LoanUi.Money(rules.MinAmount), LoanUi.Money(rules.MaxAmount)]</p>
         </section>
 
         @* ---------- Qərar ---------- *@
@@ -170,15 +170,15 @@
                 {
                     @* Super Admin-in son təsdiqi: məbləği kredit şöbəsi təyin edib, burada dəyişmir *@
                     <form asp-area="Admin" asp-controller="Loans" asp-action="Approve" asp-route-id="@loan.Id" method="post" class="surface form-stack form-card">
-                        <h2>Final approval</h2>
+                        <h2>@T["Final approval"]</h2>
                         <input type="hidden" name="approvedAmount" value="@finalAmount.ToString("0.00", inv)" />
-                        <p>@Model.FirstApprovedBy approved <strong>@LoanUi.Money(finalAmount)</strong> for a customer on the blacklist. Do you approve it too?</p>
+                        <p>@T["{0} approved", Model.FirstApprovedBy] <strong>@LoanUi.Money(finalAmount)</strong> @T["for a customer on the blacklist. Do you approve it too?"]</p>
                         <p class="hint">@(finalAmount == loan.RequestedAmount ? "The money goes to the customer's card right away." : "The amount is smaller than requested, so it becomes an offer the customer has to accept.")</p>
                         <div class="row-actions">
                             <button type="submit" class="btn btn-primary"
-                                    data-confirm-title="Give the final approval?"
+                                    data-confirm-title="@T["Give the final approval?"]"
                                     data-confirm-text="@(LoanUi.Money(finalAmount)) will be approved for @who.Name @who.Surname, who is on the blacklist."
-                                    data-confirm-yes="Approve">Approve</button>
+                                    data-confirm-yes="@T["Approve"]">@T["Approve"]</button>
                         </div>
                     </form>
                 }
@@ -187,7 +187,7 @@
                 <form asp-area="Admin" asp-controller="Loans" asp-action="Approve" asp-route-id="@loan.Id" method="post" class="surface form-stack form-card">
                     <h2>@(sendsOn ? "Approve and send to the Super Admin" : "Approve")</h2>
                     <div class="field">
-                        <label for="approved-amount">Amount to approve (AZN)</label>
+                        <label for="approved-amount">@T["Amount to approve (AZN)"]</label>
                         <input class="input" id="approved-amount" name="approvedAmount" inputmode="decimal" autocomplete="off" value="@approveValue" />
                         <p class="hint">@(sendsOn ? "This customer is on the blacklist: the money is not sent yet. The Super Admin gets a request and decides at the end." : twoStep ? "This customer is on the blacklist. As the Super Admin your approval is the final one: the money is sent right away if the amount is the same as requested." : "Same as requested: the money goes to the customer's card right away. A smaller amount becomes an offer the customer has to accept.")</p>
                     </div>
@@ -195,17 +195,17 @@
                         <button type="submit" class="btn btn-primary"
                                 data-confirm-title="@(sendsOn ? "Send to the Super Admin?" : "Approve this loan?")"
                                 data-confirm-text="@(sendsOn ? "You approve the amount in the field. The Super Admin must approve it too before any money is sent." : "The amount in the field will be approved for " + who.Name + " " + who.Surname + ".")"
-                                data-confirm-yes="Approve">Approve</button>
+                                data-confirm-yes="@T["Approve"]">@T["Approve"]</button>
                         <button type="button" class="btn btn-secondary"
                                 onclick="document.getElementById('approved-amount').value=this.dataset.value"
-                                data-value="@rules.SuggestedApproval.ToString("0.00", inv)">Use suggested (@LoanUi.Money(rules.SuggestedApproval))</button>
+                                data-value="@rules.SuggestedApproval.ToString("0.00", inv)">@T["Use suggested ({0})", LoanUi.Money(rules.SuggestedApproval)]</button>
                     </div>
                 </form>
                 }
                 else
                 {
                     <section class="surface form-card">
-                        <h2>Approve</h2>
+                        <h2>@T["Approve"]</h2>
                         <p class="hint">@(Model.Stage == "FirstApproval" ? "This customer is on the blacklist. The loan staff must approve first, then the Super Admin gives the final approval." : "Only the Super Admin can give the final approval for this customer.")</p>
                     </section>
                 }
@@ -213,17 +213,17 @@
                 @if (canReject)
                 {
                 <form asp-area="Admin" asp-controller="Loans" asp-action="Reject" asp-route-id="@loan.Id" method="post" class="surface form-stack form-card">
-                    <h2>Reject</h2>
+                    <h2>@T["Reject"]</h2>
                     <div class="field">
-                        <label for="reject-reason">Reason (internal)</label>
+                        <label for="reject-reason">@T["Reason (internal)"]</label>
                         <textarea class="textarea" id="reject-reason" name="reason" rows="4" maxlength="500">@Model.RejectReasonText</textarea>
                         <p class="hint">The customer only sees "We can't approve this application right now".</p>
                     </div>
                     <div class="row-actions">
                         <button type="submit" class="btn btn-danger"
-                                data-confirm-title="Reject this application?"
-                                data-confirm-text="The customer will be told the application was not approved."
-                                data-confirm-yes="Reject" data-confirm-danger="true">Reject</button>
+                                data-confirm-title="@T["Reject this application?"]"
+                                data-confirm-text="@T["The customer will be told the application was not approved."]"
+                                data-confirm-yes="@T["Reject"]" data-confirm-danger="true">@T["Reject"]</button>
                     </div>
                 </form>
                 }
@@ -232,24 +232,24 @@
 
         @* ---------- İş yerləri ---------- *@
         <section class="surface surface-tight">
-            <div class="toolbar"><h2>Employment</h2></div>
+            <div class="toolbar"><h2>@T["Employment"]</h2></div>
             <div class="table-wrap">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Workplace</th>
-                            <th>Position</th>
-                            <th class="num">Salary</th>
-                            <th>From</th>
-                            <th>To</th>
-                            <th>Left because</th>
+                            <th>@T["Workplace"]</th>
+                            <th>@T["Position"]</th>
+                            <th class="num">@T["Salary"]</th>
+                            <th>@T["From"]</th>
+                            <th>@T["To"]</th>
+                            <th>@T["Left because"]</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var job in Model.Employments)
                         {
                             <tr>
-                                <td>@job.Workplace @if (job.IsCurrent){<span class="badge badge-success">Current</span>}</td>
+                                <td>@job.Workplace @if (job.IsCurrent){<span class="badge badge-success">@T["Current"]</span>}</td>
                                 <td>@job.Position</td>
                                 <td class="num">@LoanUi.Money(job.MonthlySalary)</td>
                                 <td>@LoanUi.Date(job.StartDate)</td>
@@ -259,7 +259,7 @@
                         }
                         @if (Model.Employments.Count == 0)
                         {
-                            <tr><td colspan="6">No employment on record.</td></tr>
+                            <tr><td colspan="6">@T["No employment on record."]</td></tr>
                         }
                     </tbody>
                 </table>
@@ -269,22 +269,22 @@
         @* ---------- Başqa banklardakı kreditlər ---------- *@
         <section class="surface surface-tight">
             <div class="toolbar">
-                <h2>Loans at other banks</h2>
-                <p class="hint">@totals.OpenCount open · borrowed @LoanUi.Money(totals.TotalBorrowed) · paid @LoanUi.Money(totals.TotalPaid) · still owed @LoanUi.Money(totals.TotalRemaining) · overdue @LoanUi.Money(totals.TotalOverdue) · @totals.TotalDelays delays · @totals.CourtCount in court · monthly payments @LoanUi.Money(totals.OpenMonthlyPayments)</p>
+                <h2>@T["Loans at other banks"]</h2>
+                <p class="hint">@T["{0} open · borrowed {1} · paid {2} · still owed {3} · overdue {4} · {5} delays · {6} in court · monthly payments {7}", totals.OpenCount, LoanUi.Money(totals.TotalBorrowed), LoanUi.Money(totals.TotalPaid), LoanUi.Money(totals.TotalRemaining), LoanUi.Money(totals.TotalOverdue), totals.TotalDelays, totals.CourtCount, LoanUi.Money(totals.OpenMonthlyPayments)]</p>
             </div>
             <div class="table-wrap">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Bank</th>
-                            <th>Purpose</th>
-                            <th class="num">Borrowed</th>
-                            <th class="num">Paid</th>
-                            <th class="num">Left</th>
-                            <th class="num">Monthly</th>
-                            <th>Period</th>
-                            <th>Delays</th>
-                            <th>State</th>
+                            <th>@T["Bank"]</th>
+                            <th>@T["Purpose"]</th>
+                            <th class="num">@T["Borrowed"]</th>
+                            <th class="num">@T["Paid"]</th>
+                            <th class="num">@T["Left"]</th>
+                            <th class="num">@T["Monthly"]</th>
+                            <th>@T["Period"]</th>
+                            <th>@T["Delays"]</th>
+                            <th>@T["State"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -297,40 +297,40 @@
                                 <td class="num">@LoanUi.Money(other.PaidAmount)</td>
                                 <td class="num">@LoanUi.Money(other.RemainingAmount)</td>
                                 <td class="num">@LoanUi.Money(other.MonthlyPayment)</td>
-                                <td>@LoanUi.Date(other.StartDate) – @(other.EndDate.HasValue ? LoanUi.Date(other.EndDate.Value) : "open")</td>
+                                <td>@LoanUi.Date(other.StartDate) – @(other.EndDate.HasValue ? LoanUi.Date(other.EndDate.Value) : T["open"])</td>
                                 <td>
                                     @if (other.DelayCount == 0)
                                     {
-                                        <span class="hint">none</span>
+                                        <span class="hint">@T["none"]</span>
                                     }
                                     else
                                     {
-                                        <span>@other.DelayCount (longest @other.MaxDelayDays days)</span>
+                                        <span>@T["{0} (longest {1} days)", other.DelayCount, other.MaxDelayDays]</span>
                                     }
                                     @if (other.OverdueAmount > 0)
                                     {
-                                        <div class="hint">overdue @LoanUi.Money(other.OverdueAmount)</div>
+                                        <div class="hint">@T["overdue {0}", LoanUi.Money(other.OverdueAmount)]</div>
                                     }
                                 </td>
                                 <td>
                                     @if (other.WentToCourt)
                                     {
-                                        <span class="badge badge-danger">Court</span>
+                                        <span class="badge badge-danger">@T["Court"]</span>
                                     }
                                     else if (other.IsClosed)
                                     {
-                                        <span class="badge badge-neutral">Closed</span>
+                                        <span class="badge badge-neutral">@T["Closed"]</span>
                                     }
                                     else
                                     {
-                                        <span class="badge badge-success">Open</span>
+                                        <span class="badge badge-success">@T["Open"]</span>
                                     }
                                 </td>
                             </tr>
                         }
                         @if (Model.ExternalLoans.Count == 0)
                         {
-                            <tr><td colspan="9">No loans at other banks on record.</td></tr>
+                            <tr><td colspan="9">@T["No loans at other banks on record."]</td></tr>
                         }
                     </tbody>
                 </table>
@@ -339,17 +339,17 @@
 
         @* ---------- Caspian-dakı digər kreditlər ---------- *@
         <section class="surface surface-tight">
-            <div class="toolbar"><h2>Other Caspian loans</h2></div>
+            <div class="toolbar"><h2>@T["Other Caspian loans"]</h2></div>
             <div class="table-wrap">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Loan</th>
-                            <th>Status</th>
-                            <th class="num">Amount</th>
-                            <th class="num">Still to repay</th>
-                            <th class="num">Monthly</th>
-                            <th>Overdue</th>
+                            <th>@T["Loan"]</th>
+                            <th>@T["Status"]</th>
+                            <th class="num">@T["Amount"]</th>
+                            <th class="num">@T["Still to repay"]</th>
+                            <th class="num">@T["Monthly"]</th>
+                            <th>@T["Overdue"]</th>
                             <th class="actions"></th>
                         </tr>
                     </thead>
@@ -359,10 +359,10 @@
                             <tr>
                                 <td>@other.ContractNumber<div class="hint">@LoanUi.Date(other.CreatedAt.ToLocalTime())</div></td>
                                 <td>
-                                    <span class="badge @LoanUi.StatusBadge(other.Status)">@LoanUi.StaffStatusText(other.Status)</span>
+                                    <span class="badge @LoanUi.StatusBadge(other.Status)">@T[LoanUi.StaffStatusText(other.Status)]</span>
                                     @if (other.ClosedEarly)
                                     {
-                                        <div class="hint">paid off early</div>
+                                        <div class="hint">@T["paid off early"]</div>
                                     }
                                 </td>
                                 <td class="num">@LoanUi.Money(other.Amount)</td>
@@ -371,19 +371,19 @@
                                 <td>
                                     @if (other.OverdueInstallments > 0)
                                     {
-                                        <span class="badge badge-danger">@other.OverdueInstallments late · @LoanUi.Money(other.OverdueAmount)</span>
+                                        <span class="badge badge-danger">@T["{0} late · {1}", other.OverdueInstallments, LoanUi.Money(other.OverdueAmount)]</span>
                                     }
                                     else
                                     {
-                                        <span class="hint">none</span>
+                                        <span class="hint">@T["none"]</span>
                                     }
                                 </td>
-                                <td class="actions"><a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Loans" asp-action="Detail" asp-route-id="@other.Id">Detail</a></td>
+                                <td class="actions"><a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Loans" asp-action="Detail" asp-route-id="@other.Id">@T["Detail"]</a></td>
                             </tr>
                         }
                         @if (Model.CaspianLoans.Count == 0)
                         {
-                            <tr><td colspan="7">No other Caspian loans.</td></tr>
+                            <tr><td colspan="7">@T["No other Caspian loans."]</td></tr>
                         }
                     </tbody>
                 </table>
@@ -394,18 +394,18 @@
         @if (loan.Installments.Count > 0)
         {
             <section class="surface surface-tight">
-                <div class="toolbar"><h2>Payment schedule</h2></div>
+                <div class="toolbar"><h2>@T["Payment schedule"]</h2></div>
                 <div class="table-wrap">
                     <table class="data-table">
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Due date</th>
-                                <th class="num">Principal</th>
-                                <th class="num">Interest</th>
-                                <th class="num">Payment</th>
-                                <th class="num">Penalty</th>
-                                <th>Status</th>
+                                <th>@T["Due date"]</th>
+                                <th class="num">@T["Principal"]</th>
+                                <th class="num">@T["Interest"]</th>
+                                <th class="num">@T["Payment"]</th>
+                                <th class="num">@T["Penalty"]</th>
+                                <th>@T["Status"]</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -413,12 +413,12 @@
                             {
                                 <tr>
                                     <td>@item.Number</td>
-                                    <td>@LoanUi.Date(item.DueDate)@(item.DaysOverdue > 0 ? " · " + item.DaysOverdue + " days late" : "")</td>
+                                    <td>@LoanUi.Date(item.DueDate)@(item.DaysOverdue > 0 ? " · " + T["{0} days late", item.DaysOverdue] : "")</td>
                                     <td class="num">@LoanUi.Money(item.Principal)</td>
                                     <td class="num">@LoanUi.Money(item.Interest)</td>
                                     <td class="num">@LoanUi.Money(item.Payment)</td>
                                     <td class="num">@(item.Penalty > 0 ? LoanUi.Money(item.Penalty) : "—")</td>
-                                    <td><span class="badge @LoanUi.InstallmentBadge(item.Status)">@LoanUi.InstallmentText(item.Status)</span></td>
+                                    <td><span class="badge @LoanUi.InstallmentBadge(item.Status)">@T[LoanUi.InstallmentText(item.Status)]</span></td>
                                 </tr>
                             }
                         </tbody>
@@ -430,16 +430,16 @@
         @if (loan.Payments.Count > 0)
         {
             <section class="surface surface-tight">
-                <div class="toolbar"><h2>Payments received</h2></div>
+                <div class="toolbar"><h2>@T["Payments received"]</h2></div>
                 <div class="table-wrap">
                     <table class="data-table">
                         <thead>
                             <tr>
-                                <th>Date</th>
-                                <th>Type</th>
-                                <th>Card</th>
-                                <th class="num">Amount</th>
-                                <th>Reference</th>
+                                <th>@T["Date"]</th>
+                                <th>@T["Type"]</th>
+                                <th>@T["Card"]</th>
+                                <th class="num">@T["Amount"]</th>
+                                <th>@T["Reference"]</th>
                             </tr>
                         </thead>
                         <tbody>

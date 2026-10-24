@@ -1,4 +1,4 @@
-@model CaspianBank_MVC_FinalProject.ViewModels.Security.SecurityPageVM
+﻿@model CaspianBank_MVC_FinalProject.ViewModels.Security.SecurityPageVM
 @using System.Globalization
 @{
     ViewData["Title"] = "Suspicious activity";
@@ -50,89 +50,89 @@
 }
 <main id="content" class="page">
     <header class="page-head">
-        <p class="eyebrow">Controls</p>
-        <h1>Suspicious activity</h1>
-        <p class="lede">The system watches transfers and sign-ins and raises an alert when something looks unusual. Nothing is blocked automatically: look at each alert, then mark it safe or freeze the account.</p>
+        <p class="eyebrow">@T["Controls"]</p>
+        <h1>@T["Suspicious activity"]</h1>
+        <p class="lede">@T["The system watches transfers and sign-ins and raises an alert when something looks unusual. Nothing is blocked automatically: look at each alert, then mark it safe or freeze the account."]</p>
     </header>
 
     @if (TempData["Success"] is string success)
     {
-        <p class="flash flash-ok" role="status">@success</p>
+        <p class="flash flash-ok" role="status">@T[success]</p>
     }
     @if (TempData["Error"] is string error)
     {
-        <p class="flash flash-error" role="alert">@error</p>
+        <p class="flash flash-error" role="alert">@T[error]</p>
     }
     @if (Model.Unavailable)
     {
-        <p class="flash flash-error" role="alert">The alerts can't be loaded right now. Please try again in a moment.</p>
+        <p class="flash flash-error" role="alert">@T["The alerts can't be loaded right now. Please try again in a moment."]</p>
     }
     @if (!string.IsNullOrEmpty(Model.Error))
     {
-        <p class="flash flash-error" role="alert">@Model.Error</p>
+        <p class="flash flash-error" role="alert">@T[Model.Error]</p>
     }
 
     <div class="stat-grid cols-3">
         <article class="stat @(Model.OpenCount > 0 ? "is-strong" : "")">
-            <p class="stat-label">Need a look</p>
+            <p class="stat-label">@T["Need a look"]</p>
             <p class="stat-value">@Model.OpenCount.ToString("N0", inv)</p>
-            <p class="hint">Open alerts</p>
+            <p class="hint">@T["Open alerts"]</p>
         </article>
         <article class="stat">
-            <p class="stat-label">High priority</p>
+            <p class="stat-label">@T["High priority"]</p>
             <p class="stat-value">@Model.OpenHighCount.ToString("N0", inv)</p>
-            <p class="hint">Open alerts marked high</p>
+            <p class="hint">@T["Open alerts marked high"]</p>
         </article>
         <article class="stat">
-            <p class="stat-label">Handled this week</p>
+            <p class="stat-label">@T["Handled this week"]</p>
             <p class="stat-value">@Model.ResolvedThisWeek.ToString("N0", inv)</p>
-            <p class="hint">Marked safe or frozen in the last 7 days</p>
+            <p class="hint">@T["Marked safe or frozen in the last 7 days"]</p>
         </article>
     </div>
 
     <section class="surface surface-tight">
         <form method="get" asp-area="Admin" asp-controller="Security" asp-action="Index" class="toolbar filters">
             <div class="field grow">
-                <label for="search">Search</label>
-                <input class="input" id="search" name="search" type="search" placeholder="Customer, email, code or detail" value="@Model.Search" autocomplete="off" />
+                <label for="search">@T["Search"]</label>
+                <input class="input" id="search" name="search" type="search" placeholder="@T["Customer, email, code or detail"]" value="@Model.Search" autocomplete="off" />
             </div>
             <div class="field">
-                <label for="status">Status</label>
+                <label for="status">@T["Status"]</label>
                 <select class="select" data-wheel id="status" name="status">
-                    <option value="Open" selected="@(Model.Status == "Open")">Need a look</option>
-                    <option value="Dismissed" selected="@(Model.Status == "Dismissed")">Marked safe</option>
-                    <option value="Frozen" selected="@(Model.Status == "Frozen")">Account frozen</option>
-                    <option value="All" selected="@(Model.Status == "All")">All</option>
+                    <option value="Open" selected="@(Model.Status == "Open")">@T["Need a look"]</option>
+                    <option value="Dismissed" selected="@(Model.Status == "Dismissed")">@T["Marked safe"]</option>
+                    <option value="Frozen" selected="@(Model.Status == "Frozen")">@T["Account frozen"]</option>
+                    <option value="All" selected="@(Model.Status == "All")">@T["All"]</option>
                 </select>
             </div>
             <div class="field">
-                <label for="severity">Priority</label>
+                <label for="severity">@T["Priority"]</label>
                 <select class="select" data-wheel id="severity" name="severity">
-                    <option value="" selected="@string.IsNullOrEmpty(Model.Severity)">Any</option>
-                    <option value="High" selected="@(Model.Severity == "High")">High</option>
-                    <option value="Medium" selected="@(Model.Severity == "Medium")">Medium</option>
+                    <option value="" selected="@string.IsNullOrEmpty(Model.Severity)">@T["Any"]</option>
+                    <option value="High" selected="@(Model.Severity == "High")">@T["High"]</option>
+                    <option value="Medium" selected="@(Model.Severity == "Medium")">@T["Medium"]</option>
                 </select>
             </div>
             <div class="field">
-                <label for="kind">Type</label>
+                <label for="kind">@T["Type"]</label>
                 <select class="select" data-wheel id="kind" name="kind">
-                    <option value="" selected="@string.IsNullOrEmpty(Model.Kind)">Any</option>
+                    <option value="" selected="@string.IsNullOrEmpty(Model.Kind)">@T["Any"]</option>
                     @foreach (var item in kinds)
                     {
-                        <option value="@item.Code" selected="@(Model.Kind == item.Code)">@item.Label</option>
+                        <option value="@item.Code" selected="@(Model.Kind == item.Code)">@T[item.Label]</option>
                     }
                 </select>
             </div>
             <div class="field">
                 <label>&nbsp;</label>
-                <button class="btn btn-primary" type="submit">Filter</button>
+                <button class="btn btn-primary" type="submit">@T["Filter"]</button>
             </div>
         </form>
 
         <div class="table-wrap">
             <table class="data-table">
                 <thead>
-                    <tr><th>When</th><th>Customer</th><th>Alert</th><th>Status</th><th class="actions"></th></tr>
+                    <tr><th>@T["When"]</th><th>@T["Customer"]</th><th>@T["Alert"]</th><th>@T["Status"]</th><th class="actions"></th></tr>
                 </thead>
                 <tbody>
                     @foreach (var alert in Model.Items)
@@ -144,20 +144,20 @@
                                 <div class="hint">@alert.Email</div>
                                 @if (alert.AccountRestricted)
                                 {
-                                    <span class="badge badge-danger">Account frozen</span>
+                                    <span class="badge badge-danger">@T["Account frozen"]</span>
                                 }
                             </td>
                             <td>
                                 <span class="badge @(alert.Severity == "High" ? "badge-danger" : "badge-neutral")">@(alert.Severity == "High" ? "High" : "Medium")</span>
-                                <strong>@KindLabel(alert.Kind)</strong>
-                                <div>@alert.Description</div>
+                                <strong>@T[KindLabel(alert.Kind)]</strong>
+                                <div>@T[alert.Description]</div>
                                 @if (alert.Amount.HasValue)
                                 {
                                     <div class="hint num">@Money(alert.Amount.Value)</div>
                                 }
                             </td>
                             <td>
-                                <span class="badge @StatusBadge(alert.Status)">@StatusLabel(alert.Status)</span>
+                                <span class="badge @StatusBadge(alert.Status)">@T[StatusLabel(alert.Status)]</span>
                                 @if (alert.Status != "Open")
                                 {
                                     <div class="hint">@alert.ResolvedByName · @alert.ResolvedAt?.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)</div>
@@ -175,8 +175,8 @@
                                             <input type="hidden" name="id" value="@alert.Id" />
                                             <input type="hidden" name="outcome" value="Dismiss" />
                                             <input type="hidden" name="returnStatus" value="@Model.Status" />
-                                            <input class="input input-sm" name="note" maxlength="300" placeholder="Note (optional)" aria-label="Note for alert @alert.Id" />
-                                            <button type="submit" class="btn btn-secondary btn-sm">Mark safe</button>
+                                            <input class="input input-sm" name="note" maxlength="300" placeholder="@T["Note (optional)"]" aria-label="Note for alert @alert.Id" />
+                                            <button type="submit" class="btn btn-secondary btn-sm">@T["Mark safe"]</button>
                                         </form>
                                         @if (!alert.AccountRestricted)
                                         {
@@ -184,12 +184,12 @@
                                                 <input type="hidden" name="id" value="@alert.Id" />
                                                 <input type="hidden" name="outcome" value="Freeze" />
                                                 <input type="hidden" name="returnStatus" value="@Model.Status" />
-                                                <input class="input input-sm" name="note" maxlength="300" placeholder="Why freeze? (required)" aria-label="Reason to freeze for alert @alert.Id" />
+                                                <input class="input input-sm" name="note" maxlength="300" placeholder="@T["Why freeze? (required)"]" aria-label="Reason to freeze for alert @alert.Id" />
                                                 <button type="submit" class="btn btn-danger btn-sm"
-                                                        data-confirm-title="Freeze this account?"
+                                                        data-confirm-title="@T["Freeze this account?"]"
                                                         data-confirm-text="@alert.CustomerName will not be able to sign in or move money until the account is restored."
-                                                        data-confirm-yes="Freeze account"
-                                                        data-confirm-no="Cancel">Freeze</button>
+                                                        data-confirm-yes="@T["Freeze account"]"
+                                                        data-confirm-no="@T["Cancel"]">@T["Freeze"]</button>
                                             </form>
                                         }
                                     </span>
@@ -199,7 +199,7 @@
                     }
                     @if (!Model.Items.Any())
                     {
-                        <tr><td colspan="5">Nothing here. @(Model.Status == "Open" ? "No alert needs a look right now." : "No alerts found.")</td></tr>
+                        <tr><td colspan="5">@T["Nothing here."] @T[Model.Status == "Open" ? "No alert needs a look right now." : "No alerts found."]</td></tr>
                     }
                 </tbody>
             </table>
@@ -207,13 +207,13 @@
     </section>
 
     <section class="surface form-card">
-        <h2>What the system watches</h2>
+        <h2>@T["What the system watches"]</h2>
         <ul class="dep-notes">
-            <li><strong>Large transfer:</strong> one transfer of 3,000 AZN or more (8,000 AZN or more is high). Transfers between a customer's own cards are not counted.</li>
-            <li><strong>Many transfers in a short time:</strong> 5 transfers to other people in 10 minutes.</li>
-            <li><strong>High amount in one day:</strong> 15,000 AZN or more sent to other people in one day (high).</li>
-            <li><strong>New account sending money:</strong> an account younger than 7 days sending 1,000 AZN or more.</li>
-            <li><strong>Locked after wrong passwords:</strong> a customer account locked for a few minutes after repeated wrong passwords.</li>
+            <li><strong>@T["Large transfer:"]</strong> @T["one transfer of 3,000 AZN or more (8,000 AZN or more is high). Transfers between a customer's own cards are not counted."]</li>
+            <li><strong>@T["Many transfers in a short time:"]</strong> 5 transfers to other people in 10 minutes.</li>
+            <li><strong>@T["High amount in one day:"]</strong> 15,000 AZN or more sent to other people in one day (high).</li>
+            <li><strong>@T["New account sending money:"]</strong> @T["an account younger than 7 days sending 1,000 AZN or more."]</li>
+            <li><strong>@T["Locked after wrong passwords:"]</strong> @T["a customer account locked for a few minutes after repeated wrong passwords."]</li>
         </ul>
     </section>
 
