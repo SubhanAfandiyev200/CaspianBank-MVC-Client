@@ -87,7 +87,7 @@
     if (tile.dataset.category === "Mobile") {
       identifierHint.textContent = tile.dataset.name + " numbers start with " + (tile.dataset.prefixes || "") + ". Example: " + tile.dataset.hint;
     } else if (tile.dataset.category === LOAN) {
-      identifierHint.textContent = "The payment code is on the loan page. Example: " + tile.dataset.hint;
+      identifierHint.textContent = cbt("The payment code is on the loan page. Example: {0}", tile.dataset.hint);
     } else {
       // "10 digits" -> "10-digit"
       const digits = (tile.dataset.hint || "").replace(/(\d+)\s*digits?/i, "$1-digit");

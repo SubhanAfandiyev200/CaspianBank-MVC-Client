@@ -91,13 +91,13 @@
                                 continue;
                             }
                             <div class="bill-group">
-                                <p class="bill-group-title">@group.Title</p>
+                                <p class="bill-group-title">@T[group.Title]</p>
                                 <div class="provider-grid bill-grid">
                                     @foreach (var p in inGroup)
                                     {
                                         <button type="button" class="@(selected is not null && p.Id == selected.Id ? "is-active" : "")"
-                                                data-provider="@p.Id" data-category="@p.Category" data-name="@p.Name"
-                                                data-label="@p.IdentifierLabel" data-hint="@p.IdentifierHint" data-prefixes="@p.PrefixesText"
+                                                data-provider="@p.Id" data-category="@p.Category" data-name="@T[p.Name]"
+                                                data-label="@T[p.IdentifierLabel]" data-hint="@p.IdentifierHint" data-prefixes="@p.PrefixesText"
                                                 data-min="@p.MinPayment.ToString(inv)" data-max="@p.MaxPayment.ToString(inv)"
                                                 aria-pressed="@(selected is not null && p.Id == selected.Id ? "true" : "false")">
                                             @if (!string.IsNullOrEmpty(p.LogoUrl))
@@ -108,7 +108,7 @@
                                             {
                                                 <span class="provider-mark">@T["KR"]</span>
                                             }
-                                            <span>@p.Name</span>
+                                            <span>@T[p.Name]</span>
                                         </button>
                                     }
                                 </div>
@@ -167,8 +167,8 @@
                     </label>
 
                     <button type="submit" class="btn btn-primary btn-lg" id="bill-submit" data-once
-                            data-confirm-title="Confirm payment" data-confirm-text="" data-confirm-yes="Pay"
-                            disabled="@(cards.Count == 0)">Pay</button>
+                            data-confirm-title="@T["Confirm payment"]" data-confirm-text="" data-confirm-yes="@T["Pay"]"
+                            disabled="@(cards.Count == 0)">@T["Pay"]</button>
                 </div>
             </form>
 
@@ -250,9 +250,9 @@
                                             }
                                             <form method="post" asp-action="DeleteRecurring" asp-route-id="@item.Id">
                                                 <button type="submit" class="btn btn-danger btn-sm"
-                                                        data-confirm-title="Remove this monthly payment?"
-                                                        data-confirm-text="It will not be taken from your card again. Payments already made stay in your history."
-                                                        data-confirm-yes="Remove" data-confirm-danger="true">Remove</button>
+                                                        data-confirm-title="@T["Remove this monthly payment?"]"
+                                                        data-confirm-text="@T["It will not be taken from your card again. Payments already made stay in your history."]"
+                                                        data-confirm-yes="@T["Remove"]" data-confirm-danger="true">@T["Remove"]</button>
                                             </form>
                                         </span>
                                     </td>
