@@ -1,43 +1,43 @@
-@model CaspianBank_MVC_FinalProject.ViewModels.Bills.BillProviderEditVM
+﻿@model CaspianBank_MVC_FinalProject.ViewModels.Bills.BillProviderEditVM
 @{
     ViewData["Title"] = "Bill provider · Edit";
 }
 <main id="content" class="page">
-    <a class="back" asp-area="Admin" asp-controller="BillProviders" asp-action="Index">All providers</a>
+    <a class="back" asp-area="Admin" asp-controller="BillProviders" asp-action="Index">@T["All providers"]</a>
 
     <header class="page-head">
-        <p class="eyebrow">Bank · Payments</p>
-        <h1>Edit provider</h1>
-        <p class="lede">Change the name, hide the provider from customers or upload a new logo. Leave the logo as it is to keep the current one.</p>
+        <p class="eyebrow">@T["Bank · Payments"]</p>
+        <h1>@T["Edit provider"]</h1>
+        <p class="lede">@T["Change the name, hide the provider from customers or upload a new logo. Leave the logo as it is to keep the current one."]</p>
     </header>
 
     <form method="post" asp-area="Admin" asp-controller="BillProviders" asp-action="Edit" asp-route-id="@Model.Id" enctype="multipart/form-data" class="narrow stack-lg" novalidate>
         <section class="surface form-stack">
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
             <div class="field">
-                <label>Category</label>
-                <p class="hint">@Model.Category</p>
+                <label>@T["Category"]</label>
+                <p class="hint">@T[Model.Category]</p>
             </div>
             <div class="field">
-                <label asp-for="Name">Name</label>
-                <input class="input" asp-for="Name" maxlength="50" placeholder="Provider name" autocomplete="off" />
+                <label asp-for="Name">@T["Name"]</label>
+                <input class="input" asp-for="Name" maxlength="50" placeholder="@T["Provider name"]" autocomplete="off" />
                 <span asp-validation-for="Name" class="field-error"></span>
             </div>
             <div class="field">
                 <label class="check">
                     <input asp-for="IsActive" type="checkbox" />
-                    <span>Show this provider on the Bills page. Customers cannot pay a hidden provider.</span>
+                    <span>@T["Show this provider on the Bills page. Customers cannot pay a hidden provider."]</span>
                 </label>
             </div>
             <div class="field">
-                <label asp-for="Logo">Logo</label>
+                <label asp-for="Logo">@T["Logo"]</label>
                 <div class="file-drop" data-file-drop>
                     <input class="file-drop-input" asp-for="Logo" type="file" accept="image/png,image/jpeg,image/webp" />
                     <div class="file-drop-box">
                         <span class="file-drop-preview" data-file-preview>
                             @if (!string.IsNullOrEmpty(Model.CurrentLogo))
                             {
-                                <img src="@Model.CurrentLogo" alt="Current logo" />
+                                <img src="@Model.CurrentLogo" alt="@T["Current logo"]" />
                             }
                             else
                             {
@@ -45,8 +45,8 @@
                             }
                         </span>
                         <span class="file-drop-text">
-                            <strong data-file-title>Current logo</strong>
-                            <span data-file-hint>Click here or drag a new one in. A square PNG, JPEG or WebP, up to 2 MB.</span>
+                            <strong data-file-title>@T["Current logo"]</strong>
+                            <span data-file-hint>@T["Click here or drag a new one in. A square PNG, JPEG or WebP, up to 2 MB."]</span>
                         </span>
                     </div>
                 </div>
@@ -55,8 +55,8 @@
         </section>
 
         <div class="rv-actions">
-            <a class="btn btn-secondary btn-cancel" asp-area="Admin" asp-controller="BillProviders" asp-action="Index">Cancel</a>
-            <button class="btn btn-primary" type="submit">Save changes</button>
+            <a class="btn btn-secondary btn-cancel" asp-area="Admin" asp-controller="BillProviders" asp-action="Index">@T["Cancel"]</a>
+            <button class="btn btn-primary" type="submit">@T["Save changes"]</button>
         </div>
     </form>
 </main>

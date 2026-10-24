@@ -1,4 +1,4 @@
-@model CaspianBank_MVC_FinalProject.ViewModels.Staff.StaffPageVM
+﻿@model CaspianBank_MVC_FinalProject.ViewModels.Staff.StaffPageVM
 @{
     ViewData["Title"] = "Staff";
 
@@ -22,39 +22,39 @@
 <main id="content" class="page">
     <header class="page-head crud-head">
         <div>
-            <p class="eyebrow">Operations</p>
-            <h1>Staff and roles</h1>
-            <p class="lede">Add a staff member, change what they can do, or switch an account off when someone leaves. Only the super admin can open this page.</p>
+            <p class="eyebrow">@T["Operations"]</p>
+            <h1>@T["Staff and roles"]</h1>
+            <p class="lede">@T["Add a staff member, change what they can do, or switch an account off when someone leaves. Only the super admin can open this page."]</p>
         </div>
     </header>
 
     @if (TempData["Success"] is string success)
     {
-        <p class="flash flash-ok" role="status">@success</p>
+        <p class="flash flash-ok" role="status">@T[success]</p>
     }
     @if (TempData["InviteLink"] is string inviteLink)
     {
-        <p class="flash" role="status">Email is not set up on this machine, so here is the link to give to the new person: <a href="@inviteLink">@inviteLink</a></p>
+        <p class="flash" role="status">@T["Email is not set up on this machine, so here is the link to give to the new person:"] <a href="@inviteLink">@inviteLink</a></p>
     }
     @if (TempData["Error"] is string error)
     {
-        <p class="flash flash-error" role="alert">@error</p>
+        <p class="flash flash-error" role="alert">@T[error]</p>
     }
     @if (Model.Unavailable)
     {
-        <p class="flash flash-error" role="alert">The staff list can't be loaded right now. Please try again in a moment.</p>
+        <p class="flash flash-error" role="alert">@T["The staff list can't be loaded right now. Please try again in a moment."]</p>
     }
 
     <div class="layout-2">
         <section class="surface surface-tight">
-            <div class="toolbar"><h2>Team</h2></div>
+            <div class="toolbar"><h2>@T["Team"]</h2></div>
             <div class="table-wrap">
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Role</th>
-                            <th>Status</th>
+                            <th>@T["Name"]</th>
+                            <th>@T["Role"]</th>
+                            <th>@T["Status"]</th>
                             <th class="actions"></th>
                         </tr>
                     </thead>
@@ -83,24 +83,24 @@
                                                         <option value="@role" selected="@(role == person.Role)">@RoleLabel(role)</option>
                                                     }
                                                 </select>
-                                                <button type="submit" class="btn btn-secondary btn-sm">Change role</button>
+                                                <button type="submit" class="btn btn-secondary btn-sm">@T["Change role"]</button>
                                             </form>
                                             @if (person.IsActive)
                                             {
                                                 <form method="post" asp-area="Admin" asp-controller="Staff" asp-action="Deactivate" class="inline-form">
                                                     <input type="hidden" name="id" value="@person.Id" />
                                                     <button type="submit" class="btn btn-danger btn-sm"
-                                                            data-confirm-title="Deactivate this account?"
+                                                            data-confirm-title="@T["Deactivate this account?"]"
                                                             data-confirm-text="@person.Name @person.Surname will be signed out and will not be able to sign in until you switch the account on again."
-                                                            data-confirm-yes="Deactivate"
-                                                            data-confirm-no="Cancel">Deactivate</button>
+                                                            data-confirm-yes="@T["Deactivate"]"
+                                                            data-confirm-no="@T["Cancel"]">@T["Deactivate"]</button>
                                                 </form>
                                             }
                                             else
                                             {
                                                 <form method="post" asp-area="Admin" asp-controller="Staff" asp-action="Activate" class="inline-form">
                                                     <input type="hidden" name="id" value="@person.Id" />
-                                                    <button type="submit" class="btn btn-secondary btn-sm">Activate</button>
+                                                    <button type="submit" class="btn btn-secondary btn-sm">@T["Activate"]</button>
                                                 </form>
                                             }
                                         </span>
@@ -114,37 +114,37 @@
         </section>
 
         <form class="surface form-stack form-card" method="post" asp-area="Admin" asp-controller="Staff" asp-action="Add" novalidate>
-            <h2>Add a staff member</h2>
+            <h2>@T["Add a staff member"]</h2>
 
             @if (!string.IsNullOrEmpty(Model.Error))
             {
-                <p class="flash flash-error" role="alert">@Model.Error</p>
+                <p class="flash flash-error" role="alert">@T[Model.Error]</p>
             }
 
             <div class="field">
-                <label for="staff-name">First name</label>
+                <label for="staff-name">@T["First name"]</label>
                 <input class="input" id="staff-name" name="Name" maxlength="40" autocomplete="off" value="@form.Name" />
             </div>
             <div class="field">
-                <label for="staff-surname">Last name</label>
+                <label for="staff-surname">@T["Last name"]</label>
                 <input class="input" id="staff-surname" name="Surname" maxlength="40" autocomplete="off" value="@form.Surname" />
             </div>
             <div class="field">
-                <label for="staff-email">Work email</label>
+                <label for="staff-email">@T["Work email"]</label>
                 <input class="input" id="staff-email" name="Email" type="email" maxlength="100" autocomplete="off" value="@form.Email" />
             </div>
             <div class="field">
-                <label for="staff-role">Role</label>
+                <label for="staff-role">@T["Role"]</label>
                 <select class="select" data-wheel id="staff-role" name="Role">
                     @foreach (var role in roles)
                     {
                         <option value="@role" selected="@(role == form.Role)">@RoleLabel(role)</option>
                     }
                 </select>
-                <p class="hint">Administrators can do everything except give or remove roles. Accountants decide loans and card rules, customer support helps customers, security handles suspicious reports and freezes.</p>
+                <p class="hint">@T["Administrators can do everything except give or remove roles. Accountants decide loans and card rules, customer support helps customers, security handles suspicious reports and freezes."]</p>
             </div>
             <p class="hint">The new person gets an email with a link to choose their own password. The link works for 30 minutes; after that they can use "Forgot password" on the login page.</p>
-            <button class="btn btn-primary" type="submit">Add staff member</button>
+            <button class="btn btn-primary" type="submit">@T["Add staff member"]</button>
         </form>
     </div>
 </main>

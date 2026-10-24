@@ -1,4 +1,4 @@
-@model CaspianBank_MVC_FinalProject.ViewModels.Support.TicketPageVM
+﻿@model CaspianBank_MVC_FinalProject.ViewModels.Support.TicketPageVM
 @using System.Globalization
 @{
     ViewData["Title"] = "Contact tickets";
@@ -11,42 +11,42 @@
 }
 <main id="content" class="page">
     <header class="page-head">
-        <p class="eyebrow">Support</p>
-        <h1>Contact tickets</h1>
-        <p class="lede">Messages from customers. Open one to reply. @Model.PendingCount waiting for an answer.</p>
+        <p class="eyebrow">@T["Support"]</p>
+        <h1>@T["Contact tickets"]</h1>
+        <p class="lede">@T["Messages from customers. Open one to reply. {0} waiting for an answer.", Model.PendingCount]</p>
     </header>
 
     @if (TempData["Success"] is string success)
     {
-        <p class="flash flash-ok" role="status">@success</p>
+        <p class="flash flash-ok" role="status">@T[success]</p>
     }
     @if (TempData["Error"] is string error)
     {
-        <p class="flash flash-error" role="alert">@error</p>
+        <p class="flash flash-error" role="alert">@T[error]</p>
     }
     @if (Model.Unavailable)
     {
-        <p class="flash flash-error" role="alert">The messages can't be loaded right now. Please try again in a moment.</p>
+        <p class="flash flash-error" role="alert">@T["The messages can't be loaded right now. Please try again in a moment."]</p>
     }
 
     <section class="surface surface-tight">
         <form method="get" asp-area="Admin" asp-controller="Tickets" asp-action="Index" class="toolbar filters">
             <div class="field grow">
-                <label for="search">Search</label>
-                <input class="input" id="search" name="search" type="search" placeholder="Subject, customer name or email" value="@Model.Search" autocomplete="off" />
+                <label for="search">@T["Search"]</label>
+                <input class="input" id="search" name="search" type="search" placeholder="@T["Subject, customer name or email"]" value="@Model.Search" autocomplete="off" />
             </div>
             <div class="field">
-                <label for="status">Status</label>
+                <label for="status">@T["Status"]</label>
                 <select class="select" data-wheel id="status" name="status">
-                    <option value="" selected="@string.IsNullOrEmpty(Model.Status)">All</option>
-                    <option value="Pending" selected="@(Model.Status == "Pending")">Pending</option>
-                    <option value="Answered" selected="@(Model.Status == "Answered")">Answered</option>
-                    <option value="Closed" selected="@(Model.Status == "Closed")">Closed</option>
+                    <option value="" selected="@string.IsNullOrEmpty(Model.Status)">@T["All"]</option>
+                    <option value="Pending" selected="@(Model.Status == "Pending")">@T["Pending"]</option>
+                    <option value="Answered" selected="@(Model.Status == "Answered")">@T["Answered"]</option>
+                    <option value="Closed" selected="@(Model.Status == "Closed")">@T["Closed"]</option>
                 </select>
             </div>
             <div class="field">
                 <label>&nbsp;</label>
-                <button class="btn btn-primary" type="submit">Filter</button>
+                <button class="btn btn-primary" type="submit">@T["Filter"]</button>
             </div>
         </form>
 
@@ -54,10 +54,10 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Customer</th>
-                        <th>Subject</th>
-                        <th>Last activity</th>
-                        <th>Status</th>
+                        <th>@T["Customer"]</th>
+                        <th>@T["Subject"]</th>
+                        <th>@T["Last activity"]</th>
+                        <th>@T["Status"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -76,15 +76,15 @@
                             <td>
                                 @if (item.Status == "Answered")
                                 {
-                                    <span class="badge badge-success">Answered</span>
+                                    <span class="badge badge-success">@T["Answered"]</span>
                                 }
                                 else if (item.Status == "Closed")
                                 {
-                                    <span class="badge badge-neutral">Closed</span>
+                                    <span class="badge badge-neutral">@T["Closed"]</span>
                                 }
                                 else
                                 {
-                                    <span class="badge badge-pending">Pending</span>
+                                    <span class="badge badge-pending">@T["Pending"]</span>
                                 }
                             </td>
                         </tr>
@@ -92,7 +92,7 @@
                     @if (!Model.Items.Any())
                     {
                         <tr>
-                            <td colspan="4">No messages found.</td>
+                            <td colspan="4">@T["No messages found."]</td>
                         </tr>
                     }
                 </tbody>

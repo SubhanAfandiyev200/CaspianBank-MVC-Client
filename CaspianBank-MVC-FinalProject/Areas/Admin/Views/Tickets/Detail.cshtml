@@ -1,4 +1,4 @@
-@model CaspianBank_MVC_FinalProject.ViewModels.Support.TicketDetailVM
+﻿@model CaspianBank_MVC_FinalProject.ViewModels.Support.TicketDetailVM
 @using System.Globalization
 @{
     ViewData["Title"] = Model.Subject;
@@ -6,57 +6,57 @@
     var closed = Model.Status == "Closed";
 }
 <main id="content" class="page">
-    <a class="back" asp-area="Admin" asp-controller="Tickets" asp-action="Index">All tickets</a>
+    <a class="back" asp-area="Admin" asp-controller="Tickets" asp-action="Index">@T["All tickets"]</a>
 
     <header class="page-head spread">
         <div>
-            <p class="eyebrow">Support</p>
+            <p class="eyebrow">@T["Support"]</p>
             <h1>@Model.Subject</h1>
             <p class="lede">
                 @if (Model.Status == "Answered")
                 {
-                    <span class="badge badge-success">Answered</span>
+                    <span class="badge badge-success">@T["Answered"]</span>
                 }
                 else if (closed)
                 {
-                    <span class="badge badge-neutral">Closed</span>
+                    <span class="badge badge-neutral">@T["Closed"]</span>
                 }
                 else
                 {
-                    <span class="badge badge-pending">Pending</span>
+                    <span class="badge badge-pending">@T["Pending"]</span>
                 }
                 @Model.CustomerName · @Model.CustomerEmail ·
-                <a asp-area="Admin" asp-controller="Users" asp-action="Detail" asp-route-id="@Model.CustomerId">Open customer</a>
+                <a asp-area="Admin" asp-controller="Users" asp-action="Detail" asp-route-id="@Model.CustomerId">@T["Open customer"]</a>
             </p>
         </div>
         @if (!closed)
         {
             <form method="post" asp-area="Admin" asp-controller="Tickets" asp-action="Close" asp-route-id="@Model.Id">
                 <button type="submit" class="btn btn-secondary"
-                        data-confirm-title="Close this conversation?"
-                        data-confirm-text="The customer is told it was closed and has to write a new message to ask more."
-                        data-confirm-yes="Close">Close conversation</button>
+                        data-confirm-title="@T["Close this conversation?"]"
+                        data-confirm-text="@T["The customer is told it was closed and has to write a new message to ask more."]"
+                        data-confirm-yes="@T["Close"]">@T["Close conversation"]</button>
             </form>
         }
     </header>
 
     @if (TempData["Success"] is string success)
     {
-        <p class="flash flash-ok" role="status">@success</p>
+        <p class="flash flash-ok" role="status">@T[success]</p>
     }
     @if (TempData["Error"] is string tempError)
     {
         <p class="flash flash-error" role="alert">@tempError</p>
     }
 
-    <section class="surface chat" aria-label="Conversation">
+    <section class="surface chat" aria-label="@T["Conversation"]">
         <div class="chat-log" role="log">
             @foreach (var message in Model.Messages)
             {
                 @* Müştərinin mesajı sağda (is-user), işçinin cavabı solda: işçi öz cavablarını "bank tərəfi" kimi görür *@
                 <div class="chat-msg @(message.IsStaff ? "" : "is-user")">
                     <div class="chat-bubble">
-                        <small class="hint">@message.AuthorName@(message.IsStaff ? " · staff" : " · customer") · @message.CreatedAt.ToLocalTime().ToString("dd MMM, HH:mm", inv)</small>
+                        <small class="hint">@message.AuthorName@(message.IsStaff ? " · " + T["staff"] : " · " + T["customer"]) · @message.CreatedAt.ToLocalTime().ToString("dd MMM, HH:mm", inv)</small>
                         <div style="white-space: pre-wrap">@message.Body</div>
                     </div>
                 </div>
@@ -67,19 +67,19 @@
         {
             @if (!string.IsNullOrEmpty(Model.Error))
             {
-                <p class="flash flash-error" role="alert">@Model.Error</p>
+                <p class="flash flash-error" role="alert">@T[Model.Error]</p>
             }
             <form method="post" asp-area="Admin" asp-controller="Tickets" asp-action="Reply" asp-route-id="@Model.Id" class="form-stack" novalidate>
                 <div class="field">
-                    <label for="reply">Your reply</label>
+                    <label for="reply">@T["Your reply"]</label>
                     <textarea class="input" id="reply" name="message" rows="4" maxlength="2000" placeholder="Write the answer for @Model.CustomerName">@Model.Draft</textarea>
                 </div>
-                <button class="btn btn-primary" type="submit" data-once>Send reply</button>
+                <button class="btn btn-primary" type="submit" data-once>@T["Send reply"]</button>
             </form>
         }
         else
         {
-            <p class="hint">This conversation is closed.</p>
+            <p class="hint">@T["This conversation is closed."]</p>
         }
     </section>
 </main>
