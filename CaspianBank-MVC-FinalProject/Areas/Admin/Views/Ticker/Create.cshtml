@@ -11,12 +11,14 @@
         <p class="lede">@T["A short phrase for the moving line under the Home headline."]</p>
     </header>
 
+    <partial name="_LangTabs" />
+
     <form method="post" asp-area="Admin" asp-controller="Ticker" asp-action="Create" class="narrow stack-lg" novalidate>
         <section class="surface form-stack">
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
             <div class="field">
                 <label asp-for="Text">@T["Text"]</label>
-                <input class="input" asp-for="Text" maxlength="100" placeholder="@T["Ticker text"]" autocomplete="off" />
+                <input data-translatable class="input" asp-for="Text" maxlength="100" placeholder="@T["Ticker text"]" autocomplete="off" />
                 <span asp-validation-for="Text" class="field-error"></span>
             </div>
         </section>

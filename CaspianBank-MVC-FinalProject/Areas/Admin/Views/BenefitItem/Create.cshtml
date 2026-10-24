@@ -12,42 +12,45 @@
     </header>
 
 
+    <partial name="_LangTabs" />
+
+
     <form method="post" asp-area="Admin" asp-controller="BenefitItem" asp-action="Create" class="narrow stack-lg" novalidate>
         <section class="surface form-stack">
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
             <div class="field">
                 <label asp-for="Label">@T["Label"]</label>
-                <input class="input" asp-for="Label" maxlength="100" placeholder="@T["Small text above the title"]" autocomplete="off" />
+                <input data-translatable class="input" asp-for="Label" maxlength="100" placeholder="@T["Small text above the title"]" autocomplete="off" />
                 <span asp-validation-for="Label" class="field-error"></span>
             </div>
             <div class="field">
                 <label asp-for="Title">@T["Title"]</label>
-                <input class="input" asp-for="Title" maxlength="200" placeholder="@T["Card title"]" autocomplete="off" />
+                <input data-translatable class="input" asp-for="Title" maxlength="200" placeholder="@T["Card title"]" autocomplete="off" />
                 <span asp-validation-for="Title" class="field-error"></span>
             </div>
             <div class="field">
                 <label asp-for="Description">@T["Description"]</label>
-                <textarea class="textarea" asp-for="Description" maxlength="300" rows="3" placeholder="@T["One or two sentences."]"></textarea>
+                <textarea data-translatable class="textarea" asp-for="Description" maxlength="300" rows="3" placeholder="@T["One or two sentences."]"></textarea>
                 <span asp-validation-for="Description" class="field-error"></span>
             </div>
             <div class="field">
                 <label asp-for="Text1">@T["First line"]</label>
-                <input class="input" asp-for="Text1" maxlength="200" autocomplete="off" />
+                <input data-translatable class="input" asp-for="Text1" maxlength="200" autocomplete="off" />
                 <span asp-validation-for="Text1" class="field-error"></span>
             </div>
             <div class="field">
                 <label asp-for="Text2">@T["Second line"]</label>
-                <input class="input" asp-for="Text2" maxlength="200" autocomplete="off" />
+                <input data-translatable class="input" asp-for="Text2" maxlength="200" autocomplete="off" />
                 <span asp-validation-for="Text2" class="field-error"></span>
             </div>
             <div class="field">
                 <label asp-for="Text3">@T["Third line"]</label>
-                <input class="input" asp-for="Text3" maxlength="200" autocomplete="off" />
+                <input data-translatable class="input" asp-for="Text3" maxlength="200" autocomplete="off" />
                 <span asp-validation-for="Text3" class="field-error"></span>
             </div>
             <div class="field">
                 <label asp-for="ButtonText">@T["Button text"]</label>
-                <input class="input" asp-for="ButtonText" maxlength="100" placeholder="@T["Open an account"]" autocomplete="off" />
+                <input data-translatable class="input" asp-for="ButtonText" maxlength="100" placeholder="@T["Open an account"]" autocomplete="off" />
                 <span asp-validation-for="ButtonText" class="field-error"></span>
             </div>
             <div class="field">
