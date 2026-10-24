@@ -8,16 +8,16 @@
     {
         var digits = new string((raw ?? string.Empty).Where(char.IsDigit).ToArray());
         if (digits.StartsWith('0')) digits = digits.Substring(1);
-        if (digits.Length != 9) return string.IsNullOrEmpty(raw) ? "Not set" : raw;
+        if (digits.Length != 9) return string.IsNullOrEmpty(raw) ? T["Not set"] : raw;
         return "+994 " + digits.Substring(0, 2) + " " + digits.Substring(2, 3) + " " + digits.Substring(5, 2) + " " + digits.Substring(7, 2);
     }
 }
 @* Müştərinin profili: yalnız ad, soyad, FİN, telefon, email və şəkil (ağ-qara). Şəkil reyestrdəndir, dəyişdirilmir. *@
 <main id="content" class="page">
     <header class="page-head">
-        <p class="eyebrow">Account</p>
-        <h1>Profile</h1>
-        <p class="lede">Your details as they appear in the state registry.</p>
+        <p class="eyebrow">@T["Account"]</p>
+        <h1>@T["Profile"]</h1>
+        <p class="lede">@T["Your details as they appear in the state registry."]</p>
     </header>
 
     <partial name="_Flash" />
@@ -25,9 +25,9 @@
     @if (Model.Unavailable || Model.Profile is null)
     {
         <div class="empty">
-            <h3>We can't load your profile</h3>
-            <p>The service is unavailable right now. Please try again in a moment.</p>
-            <a class="btn btn-secondary" asp-action="Index">Try again</a>
+            <h3>@T["We can't load your profile"]</h3>
+            <p>@T["The service is unavailable right now. Please try again in a moment."]</p>
+            <a class="btn btn-secondary" asp-action="Index">@T["Try again"]</a>
         </div>
     }
     else
@@ -43,11 +43,11 @@
             <div class="profile-body">
                 <h2>@p.Name @p.Surname</h2>
                 <dl class="profile-list">
-                    <div><dt>First name</dt><dd>@p.Name</dd></div>
-                    <div><dt>Last name</dt><dd>@p.Surname</dd></div>
-                    <div><dt>FIN code</dt><dd>@(string.IsNullOrEmpty(p.Fin) ? "Not set" : p.Fin)</dd></div>
-                    <div><dt>Phone</dt><dd>@Phone(p.PhoneNumber)</dd></div>
-                    <div><dt>Email</dt><dd>@(string.IsNullOrEmpty(p.Email) ? "Not set" : p.Email)</dd></div>
+                    <div><dt>@T["First name"]</dt><dd>@p.Name</dd></div>
+                    <div><dt>@T["Last name"]</dt><dd>@p.Surname</dd></div>
+                    <div><dt>@T["FIN code"]</dt><dd>@(string.IsNullOrEmpty(p.Fin) ? T["Not set"] : p.Fin)</dd></div>
+                    <div><dt>@T["Phone"]</dt><dd>@Phone(p.PhoneNumber)</dd></div>
+                    <div><dt>@T["Email"]</dt><dd>@(string.IsNullOrEmpty(p.Email) ? T["Not set"] : p.Email)</dd></div>
                 </dl>
             </div>
         </section>

@@ -357,8 +357,8 @@
       input.value = button.getAttribute("data-name");
       heading.textContent = button.getAttribute("data-name");
       copy.textContent = fee > 0
-        ? "The opening fee is " + money(fee) + ", taken from the card you choose."
-        : "There is no opening fee for this card. Confirm to add it.";
+        ? cbt("The opening fee is {0}, taken from the card you choose.", money(fee))
+        : cbt("There is no opening fee for this card. Confirm to add it.");
       form.hidden = false;
       checkBalance();
       form.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -443,10 +443,10 @@
       expiryOk = end >= new Date();
     }
     const checks = [
-      [amountInput, Number.isFinite(amount) && amount >= 1 && amount <= 5000 && Math.round(amount * 100) / 100 === amount, "Enter an amount between 1 and 5,000 AZN."],
-      [numberInput, luhn(digits), "Enter a valid card number."],
-      [expiryInput, expiryOk, "Enter the expiry as MM/YY. It must not have passed."],
-      [cvvInput, /^\d{3,4}$/.test(cvvInput.value), "Enter the 3 or 4 digit CVV."]
+      [amountInput, Number.isFinite(amount) && amount >= 1 && amount <= 5000 && Math.round(amount * 100) / 100 === amount, cbt("Enter an amount between 1 and 5,000 AZN.")],
+      [numberInput, luhn(digits), cbt("Enter a valid card number.")],
+      [expiryInput, expiryOk, cbt("Enter the expiry as MM/YY. It must not have passed.")],
+      [cvvInput, /^\d{3,4}$/.test(cvvInput.value), cbt("Enter the 3 or 4 digit CVV.")]
     ];
     let ok = true;
     checks.forEach(([input, valid, message]) => {
@@ -512,12 +512,11 @@
     }
 
     function setMode(next) {
-      // Cashback kartı yalnız öz kartlarına göndərə bilir
-      mode = isCashback() ? "own" : next;
+      mode = next;
       modeInput.value = mode;
       ownBtn.classList.toggle("is-active", mode === "own");
       otherBtn.classList.toggle("is-active", mode === "other");
-      otherBtn.disabled = isCashback();
+      otherBtn.disabled = false;
       cashbackHint.hidden = !isCashback();
       ownField.hidden = mode !== "own";
       otherField.hidden = mode !== "other";
@@ -529,16 +528,60 @@
       return Number.isFinite(n) && n > 0 ? round2(n) : null;
     }
 
-    // Komissiya hər köçürməyə tətbiq olunur: göndərən kartın limitindən yuxarı olan hissəyə (server də eyni hesablayır)
-    function commissionFor(amount, limit, pct) {
-      return amount > limit ? round2((amount - limit) * pct / 100) : 0;
+    // Aylıq limit: komissiya yalnız bu ay artıq göndərilənlə (used) birlikdə limiti aşan hissəyə tutulur (server də eyni hesablayır)
+    function chargeableFor(used, amount, limit) {
+      return Math.max(0, used + amount - limit) - Math.max(0, used - limit);
+    }
+
+    function commissionFor(used, amount, limit, pct) {
+      return round2(chargeableFor(used, amount, limit) * pct / 100);
     }
 
     // Komissiya daxil olmaqla balansa sığan ən böyük məbləğ
-    function maxAmount(balance, limit, pct) {
+    function maxAmount(balance, used, limit, pct) {
       const rate = pct / 100;
-      if (balance <= limit) return Math.floor(balance * 100) / 100;
-      return Math.floor(((balance + limit * rate) / (1 + rate)) * 100) / 100;
+      const room = Math.max(0, limit - used);
+      if (balance <= room) return Math.floor(balance * 100) / 100;
+      return Math.floor(((balance + room * rate) / (1 + rate)) * 100) / 100;
+    }
+
+    // Kart nömrəsinin ilk 6 rəqəmi (BIN) → bank adı və loqosu (çip nömrə sahəsinin üstündə)
+    const bankChip = byId("bank-chip");
+    const bankLogo = byId("bank-chip-logo");
+    const bankName = byId("bank-chip-name");
+    const bankCache = new Map();
+    let bankBin = "";
+    function showBank(bank) {
+      if (!bank) {
+        bankChip.hidden = true;
+        return;
+      }
+      bankName.textContent = bank.name;
+      bankLogo.classList.toggle("is-caspian", !!bank.isCaspian);
+      bankLogo.style.backgroundImage = !bank.isCaspian && bank.logoUrl ? "url('" + bank.logoUrl + "')" : "";
+      bankChip.hidden = false;
+    }
+    async function lookupBank(digits) {
+      const bin = digits.slice(0, 6);
+      if (bin.length < 6 || mode !== "other") {
+        bankBin = "";
+        showBank(null);
+        return;
+      }
+      if (bin === bankBin) return;
+      bankBin = bin;
+      if (bankCache.has(bin)) {
+        showBank(bankCache.get(bin));
+        return;
+      }
+      try {
+        const response = await fetch(transferForm.getAttribute("data-bank-url") + "?bin=" + bin, { credentials: "same-origin" });
+        const bank = response.ok ? await response.json() : null;
+        bankCache.set(bin, bank);
+        if (bin === bankBin) showBank(bank);
+      } catch (e) {
+        if (bin === bankBin) showBank(null);
+      }
     }
 
     function paintNumber(digits) {
@@ -560,6 +603,8 @@
       const limit = from ? Number(from.getAttribute("data-limit")) : 0;
       const pct = from ? Number(from.getAttribute("data-pct")) : 0;
       const balance = from ? Number(from.getAttribute("data-balance")) : 0;
+      const used = from ? Number(from.getAttribute("data-used") || 0) : 0;
+      const room = Math.max(0, limit - used);
       const amount = parseAmount();
 
       // Önizləmə kartı göndərənin kartı kimi görünür (növü və bazadakı dizaynı)
@@ -584,15 +629,15 @@
         digits = numberInput.value.replace(/\D/g, "").slice(0, 16);
       }
       paintNumber(digits);
+      lookupBank(digits);
       byId("live-holder").textContent = holder;
 
       // Öz kartlarım rejimində başqa kart yoxdursa boş açılan siyahı əvəzinə izah göstərilir
       const noTarget = mode === "own" && ownTargets === 0;
       ownEmpty.hidden = !noTarget;
       ownPick.hidden = noTarget;
-      if (ownEmptyOther) ownEmptyOther.hidden = isCashback();
-
-      const fee = amount === null ? 0 : commissionFor(amount, limit, pct);
+      
+      const fee = amount === null ? 0 : commissionFor(used, amount, limit, pct);
       const shown = amount === null ? 0 : amount;
       byId("live-amount").textContent = money(shown);
       byId("live-order-amount").textContent = money(shown);
@@ -602,12 +647,12 @@
 
       // Limit göstəricisi: məbləğ komissiyasız limitə nisbətən nə qədərdir
       if (limit > 0) {
-        const ratio = Math.min(1, shown / limit);
+        const ratio = Math.min(1, (used + shown) / limit);
         meterFill.style.width = (ratio * 100) + "%";
-        meterFill.classList.toggle("is-over", shown > limit);
-        meterText.textContent = shown > limit
-          ? "Above the " + money(limit) + " commission-free limit"
-          : "Commission-free up to " + money(limit);
+        meterFill.classList.toggle("is-over", used + shown > limit);
+        meterText.textContent = used + shown > limit
+          ? cbt("Above this month's {0} commission-free limit", money(limit))
+          : cbt("Commission-free this month: {0} left of {1}", money(room - shown), money(limit));
       } else {
         meterFill.style.width = "0%";
         meterFill.classList.remove("is-over");
@@ -615,16 +660,16 @@
       }
 
       hint.textContent = !from ? "" : limit > 0
-        ? "Commission-free up to " + money(limit) + ". " + String(pct) + "% applies to the part above that. Available: " + money(balance) + "."
-        : "No commission on " + tier + " transfers. Available: " + money(balance) + ".";
+        ? cbt("Each month the first {0} you send from this card is commission-free ({1} left). {2}% applies to the rest. Available: {3}.", money(limit), money(room), String(pct), money(balance))
+        : cbt("No commission on {0} transfers. Available: {1}.", tier, money(balance));
 
       // Məbləğ balansa (komissiya ilə) sığmırsa sahədə xəta çıxır. Server də eyni yoxlayır, bu yalnız rahatlıq üçündür
-      const max = from ? maxAmount(balance, limit, pct) : 0;
+      const max = from ? maxAmount(balance, used, limit, pct) : 0;
       let amountProblem = "";
       if (amount !== null && amount > 100000) {
-        amountProblem = "The most you can send at once is " + money(100000) + ".";
+        amountProblem = cbt("The most you can send at once is {0}.", money(100000));
       } else if (amount !== null && from && round2(amount + fee) > balance) {
-        amountProblem = max > 0 ? "Not enough balance. The most you can send from this card is " + money(max) + "." : "This card has no balance to send.";
+        amountProblem = max > 0 ? cbt("Not enough balance. The most you can send from this card is {0}.", money(max)) : cbt("This card has no balance to send.");
       }
       amountError.hidden = !amountProblem;
       amountError.textContent = amountProblem;
@@ -632,10 +677,10 @@
 
       // Düymə hazır olana qədər söndürülür, nəyin çatışmadığı düymənin altında yazılır
       let waiting = "";
-      if (noTarget) waiting = isCashback() ? "Add another card to continue." : "Add another card or send to another customer to continue.";
-      else if (mode === "other" && digits.length !== 16) waiting = "Enter the recipient's 16-digit card number.";
-      else if (amount === null) waiting = "Enter an amount to continue.";
-      else if (amountProblem) waiting = "Fix the amount to continue.";
+      if (noTarget) waiting = cbt("Add another card or send to another customer to continue.");
+      else if (mode === "other" && digits.length !== 16) waiting = cbt("Enter the recipient's 16-digit card number.");
+      else if (amount === null) waiting = cbt("Enter an amount to continue.");
+      else if (amountProblem) waiting = cbt("Fix the amount to continue.");
       reviewBtn.disabled = waiting !== "";
       reviewHint.textContent = waiting;
 
@@ -683,7 +728,7 @@
     byId("amount-max")?.addEventListener("click", () => {
       const from = fromOption();
       if (!from) return;
-      const max = maxAmount(Number(from.getAttribute("data-balance")), Number(from.getAttribute("data-limit")), Number(from.getAttribute("data-pct")));
+      const max = maxAmount(Number(from.getAttribute("data-balance")), Number(from.getAttribute("data-used") || 0), Number(from.getAttribute("data-limit")), Number(from.getAttribute("data-pct")));
       amountInput.value = max > 0 ? String(max) : "";
       paint();
     });

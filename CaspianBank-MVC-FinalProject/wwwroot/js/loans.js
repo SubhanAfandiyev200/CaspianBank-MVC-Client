@@ -39,17 +39,17 @@
       const months = parseInt(term.value, 10);
       if (!Number.isFinite(principal) || principal <= 0 || !months) {
         monthlyOut.textContent = "—";
-        noteOut.textContent = "Enter an amount to see the monthly payment at " + rate + "% a year.";
+        noteOut.textContent = cbt("Enter an amount to see the monthly payment at {0}% a year.", rate);
         return;
       }
       if (principal < min || principal > max) {
         monthlyOut.textContent = "—";
-        noteOut.textContent = "The amount must be between " + money(min) + " and " + money(max) + ".";
+        noteOut.textContent = cbt("The amount must be between {0} and {1}.", money(min), money(max));
         return;
       }
       const payment = monthlyPayment(principal, rate, months);
       monthlyOut.textContent = money(payment);
-      noteOut.textContent = "Over " + months + " months you repay about " + money(payment * months) + " in total (" + rate + "% a year). The bank may approve a smaller amount.";
+      noteOut.textContent = cbt("Over {0} months you repay about {1} in total ({2}% a year). The bank may approve a smaller amount.", months, money(payment * months), rate);
     }
 
     amount?.addEventListener("input", paintQuote);
@@ -71,6 +71,7 @@
     const typeInput = document.getElementById("pay-type");
     const submit = document.getElementById("pay-submit");
     const amountInput = document.getElementById("pay-amount");
+    const partInput = document.getElementById("pay-part");
     const partialNote = document.getElementById("pay-partial-note");
     const buttons = [...pay.querySelectorAll("[data-pay-type]")];
     const panels = [...pay.querySelectorAll("[data-pay-panel]")];
@@ -93,19 +94,26 @@
       let label = "Pay";
       let text = "";
       if (type === "Installment") {
-        label = "Pay " + dueText + " AZN";
-        text = dueText + " AZN will be taken from your card.";
+        const part = toNumber(partInput ? partInput.value : "");
+        const due = parseFloat(dueText.replace(/,/g, ""));
+        if (Number.isFinite(part) && part > 0 && part < due) {
+          label = cbt("Pay {0}", money(part));
+          text = cbt("{0} will be taken from your card. You still owe {1} of this payment.", money(part), money(due - part));
+        } else {
+          label = cbt("Pay {0} AZN", dueText);
+          text = cbt("{0} AZN will be taken from your card.", dueText);
+        }
       } else if (type === "FullEarly") {
-        label = "Pay off " + payoffText + " AZN";
-        text = payoffText + " AZN will be taken from your card and the loan will be closed.";
+        label = cbt("Pay off {0} AZN", payoffText);
+        text = cbt("{0} AZN will be taken from your card and the loan will be closed.", payoffText);
       } else {
         const value = toNumber(amountInput ? amountInput.value : "");
         if (Number.isFinite(value) && value > 0) {
-          label = "Pay " + money(value);
-          text = money(value) + " will be taken from your card and your monthly payment goes down.";
+          label = cbt("Pay {0}", money(value));
+          text = cbt("{0} will be taken from your card and your monthly payment goes down.", money(value));
         } else {
-          label = "Pay early";
-          text = "The amount you enter will be taken from your card.";
+          label = cbt("Pay early");
+          text = cbt("The amount you enter will be taken from your card.");
         }
       }
       submit.textContent = label;
@@ -121,16 +129,16 @@
       if (!Number.isFinite(value) || value <= 0) {
         partialNote.textContent = baseNote;
       } else if (value < minEarly) {
-        partialNote.textContent = "The smallest early payment is " + money(minEarly) + ".";
+        partialNote.textContent = cbt("The smallest early payment is {0}.", money(minEarly));
       } else if (value >= outstanding) {
-        partialNote.textContent = "That is more than what is left. Use \"Pay off in full\" instead.";
+        partialNote.textContent = cbt("That is more than what is left. Use \"Pay off in full\" instead.");
       } else if (value >= outstanding * minPercent / 100) {
         const next = Math.max(minRate, rate - reduction);
         partialNote.textContent = next < rate
-          ? "Your rate will drop from " + rate + "% to " + next + "%."
-          : "Your rate is already the lowest it can be (" + minRate + "%).";
+          ? cbt("Your rate will drop from {0}% to {1}%.", rate, next)
+          : cbt("Your rate is already the lowest it can be ({0}%).", minRate);
       } else {
-        partialNote.textContent = "Your monthly payment will go down. Pay " + money(outstanding * minPercent / 100) + " or more to lower the rate too.";
+        partialNote.textContent = cbt("Your monthly payment will go down. Pay {0} or more to lower the rate too.", money(outstanding * minPercent / 100));
       }
       paint();
     }
@@ -143,6 +151,7 @@
       });
     });
     amountInput?.addEventListener("input", paintPartial);
+    partInput?.addEventListener("input", paint);
     paint();
   }
 })();

@@ -16,6 +16,7 @@
             case "TopUp":
                 return "<path d=\"M12 5v14M5 12h14\"/>";
             case "TransferOut":
+            case "TopUpOut":
                 return "<path d=\"M7 17 17 7M9 7h8v8\"/>";
             case "TransferIn":
                 return "<path d=\"M17 7 7 17M15 17H7V9\"/>";
@@ -24,6 +25,10 @@
                 return "<path d=\"M4 10h16M6 10v8M10 10v8M14 10v8M18 10v8M3 20h18M12 4 3 9h18z\"/>";
             case "BillPayment":
                 return "<path d=\"M13 3 5 14h6l-1 7 8-11h-6z\"/>";
+            case "DepositOpen":
+            case "DepositPayout":
+            case "DepositInterest":
+                return "<path d=\"M4 9h16v10H4zM8 9V6h8v3M12 12v4M10 14h4\"/>";
             case "Cashback":
                 return "<circle cx=\"12\" cy=\"12\" r=\"8\"/><path d=\"m9 15 6-6M9.5 9.5h.01M14.5 14.5h.01\"/>";
             default:
@@ -36,12 +41,12 @@
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">@Html.Raw(Icon(Model))</svg>
     </div>
     <div>
-        <div class="activity-desc">@Model.Description</div>
+        <div class="activity-desc">@T.Describe(Model.Description)</div>
         <div class="activity-meta">
             @Model.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)
             @if (showCard && !string.IsNullOrEmpty(Model.CardLabel))
             {
-                <span> · @Model.CardLabel</span>
+                <span> · @T.CardLabel(Model.CardLabel)</span>
             }
             @if (!string.IsNullOrEmpty(Model.Note))
             {
@@ -51,6 +56,6 @@
     </div>
     <div class="activity-amount">
         <div class="@(Model.IsIncome ? "amount-in" : "amount-out") num">@(Model.IsIncome ? "+" : "−")@Model.Amount.ToString("N2", inv) AZN</div>
-        <div class="activity-meta num">Balance @Model.BalanceAfter.ToString("N2", inv)</div>
+        <div class="activity-meta num">@T["Balance {0}", Model.BalanceAfter.ToString("N2", inv)]</div>
     </div>
 </article>

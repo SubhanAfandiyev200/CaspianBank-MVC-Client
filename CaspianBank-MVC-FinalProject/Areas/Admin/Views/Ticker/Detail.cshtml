@@ -1,24 +1,24 @@
-@model HomeTickerDetailVM
+﻿@model HomeTickerDetailVM
 @{
     ViewData["Title"] = "Ticker · Detail";
 }
 <main id="content" class="page">
-    <a class="back" asp-area="Admin" asp-controller="Ticker" asp-action="Index">All ticker texts</a>
+    <a class="back" asp-area="Admin" asp-controller="Ticker" asp-action="Index">@T["All ticker texts"]</a>
 
     <header class="page-head crud-head">
         <div>
-            <p class="eyebrow">UI · Home page</p>
-            <h1>Ticker text</h1>
-            <p class="lede">One phrase from the moving line on the Home page.</p>
+            <p class="eyebrow">@T["UI · Home page"]</p>
+            <h1>@T["Ticker text"]</h1>
+            <p class="lede">@T["One phrase from the moving line on the Home page."]</p>
         </div>
         <span class="row-actions">
-            <a class="btn btn-secondary" asp-area="Admin" asp-controller="Ticker" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
-            <a class="btn btn-back" asp-area="Admin" asp-controller="Ticker" asp-action="Index">Go Back</a>
+            <a class="btn btn-secondary" asp-area="Admin" asp-controller="Ticker" asp-action="Edit" asp-route-id="@Model.Id">@T["Edit"]</a>
+            <a class="btn btn-back" asp-area="Admin" asp-controller="Ticker" asp-action="Index">@T["Go Back"]</a>
             <form method="post" asp-area="Admin" asp-controller="Ticker" asp-action="Delete" asp-route-id="@Model.Id">
                 <button type="submit" class="btn btn-danger"
-                        data-confirm-title="Delete this text?"
-                        data-confirm-text="It will disappear from the moving line on the Home page."
-                        data-confirm-yes="Delete" data-confirm-danger="true">Delete</button>
+                        data-confirm-title="@T["Delete this text?"]"
+                        data-confirm-text="@T["It will disappear from the moving line on the Home page."]"
+                        data-confirm-yes="@T["Delete"]" data-confirm-danger="true">@T["Delete"]</button>
             </form>
         </span>
     </header>
@@ -26,8 +26,8 @@
     <div class="narrow stack-lg">
         <section class="surface">
             <dl class="detail-list">
-                <div><dt>Id</dt><dd>@Model.Id</dd></div>
-                <div><dt>Text</dt><dd>@Model.Text.Trim()</dd></div>
+                <div><dt>@T["Id"]</dt><dd>@Model.Id</dd></div>
+                <div><dt>@T["Text"]</dt><dd>@Model.Text.Trim()</dd></div>
             </dl>
         </section>
     </div>

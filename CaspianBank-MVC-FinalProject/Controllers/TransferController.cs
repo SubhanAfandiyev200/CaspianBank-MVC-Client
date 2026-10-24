@@ -32,6 +32,25 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             return unauthorized ? await SessionExpiredAsync() : View(model);
         }
 
+        // Kart nömrəsinin ilk 6 rəqəmi yazılanda bank adı və loqosu (formadakı çip üçün). Tapılmazsa 404
+        [HttpGet("Bank")]
+        public async Task<IActionResult> Bank(string? bin)
+        {
+            var digits = new string((bin ?? string.Empty).Where(char.IsDigit).ToArray());
+            if (digits.Length < 6) return NotFound();
+
+            var (bank, status) = await GetAsync<BankLookupUIVM>("api/banks/lookup?bin=" + digits[..6]);
+            if (status == HttpStatusCode.Unauthorized) return Unauthorized();
+            if (bank is null) return NotFound();
+
+            return Json(new
+            {
+                name = bank.Name,
+                isCaspian = bank.IsCaspian,
+                logoUrl = ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], bank.LogoUrl)
+            });
+        }
+
         // 1-ci addım: API yoxlayır (qaydalar, komissiya, alıcının gizlədilmiş adı), pul köçürülmür
         [HttpPost("Review")]
         [ValidateAntiForgeryToken]
@@ -98,6 +117,9 @@ namespace CaspianBank_MVC_FinalProject.Controllers
 
             var (tiers, _) = await GetAsync<List<CardTierUIVM>>("api/card-tiers");
             form.Tiers = tiers ?? new List<CardTierUIVM>();
+
+            var (limits, _) = await GetAsync<List<CardLimitUIVM>>("api/transfers/limits");
+            form.Limits = limits ?? new List<CardLimitUIVM>();
             return (form, false);
         }
 

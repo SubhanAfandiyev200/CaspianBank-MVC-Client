@@ -73,14 +73,24 @@ namespace CaspianBank_MVC_FinalProject.Controllers
 
             if (isLoan)
             {
-                // Kredit kodu ilə: yalnız cari aylıq ödəniş, məbləği API özü hesablayır
+                // Kredit kodu ilə: cari aylıq ödəniş. Məbləğ boşdursa hamısı ödənilir, yazılıbsa hissə-hissə (API yoxlayır)
+                decimal loanAmount = 0m;
+                if (!string.IsNullOrWhiteSpace(form.Amount) && !TryParseAmount(form.Amount, out loanAmount))
+                {
+                    return await ShowPageAsync(form, "Enter a valid amount.");
+                }
                 var (loanReceipt, loanErrors, loanStatus) = await PostAsync<LoanReceiptUIVM>("api/loans/pay-by-code", new
                 {
                     contractNumber = (form.Identifier ?? string.Empty).Trim().ToUpperInvariant(),
                     cardId = form.CardId,
+                    amount = loanAmount,
                     requestId = form.RequestId
                 });
                 receipt = loanReceipt is null ? null : FromLoanReceipt(loanReceipt);
+                if (receipt is not null)
+                {
+                    receipt.LogoUrl = (await SiteSettingsLoader.LoadAsync(HttpContext, HttpContext.RequestServices.GetRequiredService<IHttpClientFactory>(), Configuration)).Logo;
+                }
                 errors = loanErrors;
                 status = loanStatus;
             }
@@ -258,11 +268,13 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             {
                 provider.LogoUrl = ApiUrl.ToAbsolute(baseUrl, provider.LogoUrl);
             }
+            var siteLogo = (await SiteSettingsLoader.LoadAsync(HttpContext, HttpContext.RequestServices.GetRequiredService<IHttpClientFactory>(), Configuration)).Logo;
             providers.Add(new BillProviderUIVM
             {
                 Id = LoanProviderId,
                 Code = "loan",
                 Name = "Caspian loan",
+                LogoUrl = siteLogo,
                 Category = "Loan",
                 IdentifierLabel = "Loan code",
                 IdentifierHint = "KR-2026-000123",
@@ -281,7 +293,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             model.Recurring = recurring ?? new List<RecurringPaymentUIVM>();
             foreach (var item in model.Recurring)
             {
-                item.LogoUrl = ApiUrl.ToAbsolute(baseUrl, item.LogoUrl);
+                item.LogoUrl = item.Category == "Loan" ? siteLogo : ApiUrl.ToAbsolute(baseUrl, item.LogoUrl);
             }
 
             var (cards, _) = await GetAsync<List<CardUIVM>>("api/cards");

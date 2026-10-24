@@ -80,18 +80,18 @@
 
     if (recurringText) {
       recurringText.textContent = tile.dataset.category === LOAN
-        ? "Pay this loan automatically every month. The installment is taken from the card you selected on its due date, the last day of the month, so there is never a late fee."
-        : "Make this a monthly payment. It runs on the 1st, from the card you selected.";
+        ? cbt("Pay this loan automatically every month. The installment is taken from the card you selected on its due date, the last day of the month, so there is never a late fee.")
+        : cbt("Make this a monthly payment. It runs on the 1st, from the card you selected.");
     }
 
     if (tile.dataset.category === "Mobile") {
       identifierHint.textContent = tile.dataset.name + " numbers start with " + (tile.dataset.prefixes || "") + ". Example: " + tile.dataset.hint;
     } else if (tile.dataset.category === LOAN) {
-      identifierHint.textContent = "The payment code is on the loan page. Example: " + tile.dataset.hint;
+      identifierHint.textContent = cbt("The payment code is on the loan page. Example: {0}", tile.dataset.hint);
     } else {
       // "10 digits" -> "10-digit"
       const digits = (tile.dataset.hint || "").replace(/(\d+)\s*digits?/i, "$1-digit");
-      identifierHint.textContent = "Enter the " + digits + " subscriber code.";
+      identifierHint.textContent = cbt("Enter the {0} subscriber code.", digits);
     }
   }
 
@@ -114,7 +114,7 @@
 
     const text = identifier.value.trim();
     if (!text) {
-      showError(isLoan() ? "Enter the loan code." : "Enter the number or subscriber code.");
+      showError(isLoan() ? cbt("Enter the loan code.") : cbt("Enter the number or subscriber code."));
       identifier.focus();
       return;
     }
@@ -138,18 +138,18 @@
         return;
       }
       if (!response.ok) {
-        showError("We can't check this right now. Please try again.");
+        showError(cbt("We can't check this right now. Please try again."));
         return;
       }
 
       const data = await response.json();
       if (!data.ok) {
-        showError(data.error || "We can't check this right now. Please try again.");
+        showError(data.error ? cbt(data.error) : cbt("We can't check this right now. Please try again."));
         return;
       }
       render(data.lookup, false);
     } catch (error) {
-      showError("We can't reach the service. Please try again.");
+      showError(cbt("We can't reach the service. Please try again."));
     } finally {
       checkButton.disabled = false;
       checkButton.textContent = "Check";
@@ -188,13 +188,13 @@
     const mobile = data.category === "Mobile";
     let badge;
     if (data.debt > 0) {
-      badge = el("span", "badge badge-danger", (data.category === LOAN ? "Due " : "Debt ") + money(data.debt));
+      badge = el("span", "badge badge-danger", cbt(data.category === LOAN ? "Due {0}" : "Debt {0}", money(data.debt)));
     } else if (mobile) {
-      badge = el("span", "badge badge-neutral", "Balance " + money(data.credit));
+      badge = el("span", "badge badge-neutral", cbt("Balance {0}", money(data.credit)));
     } else if (data.credit > 0) {
-      badge = el("span", "badge badge-success", "Prepaid " + money(data.credit));
+      badge = el("span", "badge badge-success", cbt("Prepaid {0}", money(data.credit)));
     } else {
-      badge = el("span", "badge badge-success", "No debt");
+      badge = el("span", "badge badge-success", cbt("No debt"));
     }
     head.append(badge);
     found.append(head);
@@ -204,14 +204,14 @@
       row(list, "Package", data.packageName);
     }
     if (data.monthlyFee) {
-      row(list, "Monthly fee", money(data.monthlyFee), "num");
+      row(list, cbt("Monthly fee"), money(data.monthlyFee), "num");
     }
     if (data.lastChargePeriod && data.lastChargeAmount !== null && data.lastChargeAmount !== undefined) {
       const usage = data.lastChargeUsage && data.unitName ? plain(data.lastChargeUsage) + " " + data.unitName + " · " : "";
-      row(list, "Last bill", periodText(data.lastChargePeriod) + " · " + usage + money(data.lastChargeAmount), "num");
+      row(list, cbt("Last bill"), periodText(data.lastChargePeriod) + " · " + usage + money(data.lastChargeAmount), "num");
     }
     if (!mobile && data.credit > 0 && data.debt <= 0) {
-      row(list, "Prepaid balance", money(data.credit), "num");
+      row(list, cbt("Prepaid balance"), money(data.credit), "num");
     }
     if (list.children.length > 0) found.append(list);
     found.hidden = false;
@@ -221,7 +221,8 @@
 
   // ---------- ödəniş addımı ----------
   function setupPay(data, keepAmount) {
-    const fixed = !!data.fixedAmount;
+    // Kreditdə məbləğ yazmaq olar (boş və ya tam borc = hamısı, azdırsa hissə-hissə: qalanı başqa kartdan ödənir)
+    const fixed = !!data.fixedAmount && !isLoan();
     amountField.hidden = fixed;
     amountInput.disabled = fixed;
 
@@ -232,7 +233,7 @@
     chipsBox.textContent = "";
     if (!fixed) {
       const amounts = [];
-      if (data.debt > 0) amounts.push({ value: data.debt, label: "Debt " + plain(data.debt) });
+      if (data.debt > 0) amounts.push({ value: data.debt, label: (isLoan() ? "All due " : "Debt ") + plain(data.debt) });
       [5, 10, 20, 50].forEach((value) => {
         if (value >= data.minPayment && value <= data.maxPayment && !amounts.some((item) => Math.abs(item.value - value) < 0.005)) {
           amounts.push({ value, label: String(value) });
@@ -247,7 +248,9 @@
         });
         chipsBox.append(chip);
       });
-      amountHint.textContent = "Between " + plain(data.minPayment) + " and " + plain(data.maxPayment) + " AZN.";
+      amountHint.textContent = isLoan()
+        ? cbt("You can pay a part now and the rest later, even from another card.")
+        : cbt("Between {0} and {1} AZN.", plain(data.minPayment), plain(data.maxPayment));
     } else {
       amountHint.textContent = "";
     }
@@ -265,7 +268,7 @@
   function paintPay() {
     if (!current || !submit) return;
 
-    const fixed = !!current.fixedAmount;
+    const fixed = !!current.fixedAmount && !isLoan();
     const value = fixed ? current.debt : toNumber(amountInput.value);
     const valid = Number.isFinite(value) && value > 0;
 
@@ -273,7 +276,7 @@
 
     // Seçilmiş məbləğə uyğun chip işıqlanır
     [...chipsBox.children].forEach((chip) => {
-      const chipValue = toNumber(chip.textContent.replace("Debt ", ""));
+      const chipValue = toNumber(chip.textContent.replace("Debt ", "").replace("All due ", ""));
       chip.classList.toggle("is-active", valid && Math.abs(chipValue - value) < 0.005);
     });
 
@@ -283,7 +286,7 @@
       return;
     }
 
-    submit.textContent = "Pay " + money(value);
+    submit.textContent = cbt("Pay {0}", money(value));
     let text = money(value) + " will be taken from your card";
     if (current.category === LOAN) {
       text += " and paid to loan " + current.identifier + ".";
@@ -339,15 +342,15 @@
     if (!current) {
       event.preventDefault();
       event.stopPropagation();
-      showError("Check the number first.");
+      showError(cbt("Check the number first."));
       return;
     }
-    if (!current.fixedAmount) {
+    if (!(current.fixedAmount && !isLoan())) {
       const value = toNumber(amountInput.value);
       if (!Number.isFinite(value) || value <= 0) {
         event.preventDefault();
         event.stopPropagation();
-        amountHint.textContent = "Enter an amount.";
+        amountHint.textContent = cbt("Enter an amount.");
         amountInput.focus();
       }
     }

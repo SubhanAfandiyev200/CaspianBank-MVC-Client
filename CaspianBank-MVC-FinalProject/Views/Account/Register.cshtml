@@ -8,39 +8,39 @@
 <main class="auth-shell">
     <section class="auth-card auth-wide">
         @await Component.InvokeAsync("SiteLogo")
-        <a class="back" asp-controller="Home" asp-action="Index">← Back to home</a>
-        <h1>Open an account</h1>
-        <p class="lede">Enter your details exactly as they appear on your ID card. We check them against the state registry.</p>
+        <a class="back" asp-controller="Home" asp-action="Index">@T["← Back to home"]</a>
+        <h1>@T["Open an account"]</h1>
+        <p class="lede">@T["Enter your details exactly as they appear on your ID card. We check them against the state registry."]</p>
         <form id="identity-form" class="form-stack mt-5" asp-controller="Account" asp-action="Register" method="post" novalidate>
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
             <div class="form-row">
                 <div class="field">
-                    <label for="fin">FIN code</label>
-                    <input class="input" id="fin" asp-for="Fin" maxlength="7" autocapitalize="characters" spellcheck="false" autocomplete="off" placeholder="7 characters" />
+                    <label for="fin">@T["FIN code"]</label>
+                    <input class="input" id="fin" asp-for="Fin" maxlength="7" autocapitalize="characters" spellcheck="false" autocomplete="off" placeholder="@T["7 characters"]" />
                 </div>
                 <div class="field">
-                    <label for="idcard">ID card number</label>
-                    <input class="input" id="idcard" asp-for="IdCardNumber" maxlength="11" autocapitalize="characters" spellcheck="false" autocomplete="off" placeholder="AZE12345678" />
+                    <label for="idcard">@T["ID card number"]</label>
+                    <input class="input" id="idcard" asp-for="IdCardNumber" maxlength="11" autocapitalize="characters" spellcheck="false" autocomplete="off" placeholder="@T["AZE12345678"]" />
                 </div>
             </div>
             <div class="form-row">
                 <div class="field">
-                    <label for="first-name">First name</label>
+                    <label for="first-name">@T["First name"]</label>
                     <input class="input" id="first-name" asp-for="Name" autocomplete="off" />
                 </div>
                 <div class="field">
-                    <label for="last-name">Last name</label>
+                    <label for="last-name">@T["Last name"]</label>
                     <input class="input" id="last-name" asp-for="Surname" autocomplete="off" />
                 </div>
             </div>
-            <button class="btn btn-primary btn-block" type="submit">Continue</button>
+            <button class="btn btn-primary btn-block" type="submit">@T["Continue"]</button>
             <div class="auth-links auth-links-center">
-                <a asp-controller="Account" asp-action="Login" data-carry-email>Already have an account? Log in</a>
+                <a asp-controller="Account" asp-action="Login" data-carry-email>@T["Already have an account? Log in"]</a>
             </div>
         </form>
         <p class="auth-foot">
-            <a asp-controller="Home" asp-action="Index" asp-fragment="contact">Contact us</a>
-            <span>Caspian Bank · Baku</span>
+            <a asp-controller="Home" asp-action="Index" asp-fragment="contact">@T["Contact us"]</a>
+            <span>@T["Caspian Bank · Baku"]</span>
         </p>
     </section>
 </main>

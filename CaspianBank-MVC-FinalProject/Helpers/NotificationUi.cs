@@ -23,27 +23,31 @@ namespace CaspianBank_MVC_FinalProject.Helpers
                     return "<path d=\"M4 6h16v10H7l-3 3z\"/>";
                 case "Bill":
                     return "<path d=\"M13 3 5 14h6l-1 7 8-11h-6z\"/>";
+                case "Deposit":
+                    return "<path d=\"M4 9h16v10H4zM8 9V6h8v3M12 12v4M10 14h4\"/>";
                 default:
                     return "<path d=\"M6 17h12l-1.5-2V11a4.5 4.5 0 0 0-9 0v4z\"/><path d=\"M10 20a2 2 0 0 0 4 0\"/>";
             }
         }
 
         // "just now", "5 min ago", "3 h ago", sonra tarix. Bazada vaxt UTC saxlanılır
-        public static string Ago(DateTime createdAtUtc)
+        public static string Ago(DateTime createdAtUtc, CaspianBank_MVC_FinalProject.Services.ITranslator? t = null)
         {
             var utc = createdAtUtc.Kind == DateTimeKind.Utc ? createdAtUtc : DateTime.SpecifyKind(createdAtUtc, DateTimeKind.Utc);
             var span = DateTime.UtcNow - utc;
             if (span.TotalSeconds < 45)
             {
-                return "just now";
+                return t is null ? "just now" : t["just now"];
             }
             if (span.TotalMinutes < 60)
             {
-                return Math.Max(1, (int)Math.Round(span.TotalMinutes)) + " min ago";
+                var minutes = Math.Max(1, (int)Math.Round(span.TotalMinutes));
+                return t is null ? minutes + " min ago" : t["{0} min ago", minutes];
             }
             if (span.TotalHours < 24)
             {
-                return (int)span.TotalHours + " h ago";
+                var hours = (int)span.TotalHours;
+                return t is null ? hours + " h ago" : t["{0} h ago", hours];
             }
             return utc.ToLocalTime().ToString("dd MMM, HH:mm", CultureInfo.InvariantCulture);
         }

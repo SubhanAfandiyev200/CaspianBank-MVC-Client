@@ -1,7 +1,7 @@
-@model LoanReviewPageVM
+﻿@model LoanReviewPageVM
 @{
     ViewData["Title"] = "Loans";
-    var statuses = new[] { "Pending", "Offered", "Active", "Court", "Closed", "Rejected", "Declined" };
+    var statuses = new[] { "Pending", "AwaitingSuperAdmin", "Offered", "Active", "Court", "Closed", "Rejected", "Declined" };
 
     string PageUrl(int page)
     {
@@ -11,45 +11,45 @@
 <main id="content" class="page">
     <header class="page-head crud-head">
         <div>
-            <p class="eyebrow">Credit</p>
-            <h1>Loan approvals</h1>
-            <p class="lede">Review applications, open the applicant's file and approve or reject. @Model.PendingCount waiting for a decision.</p>
+            <p class="eyebrow">@T["Credit"]</p>
+            <h1>@T["Loan approvals"]</h1>
+            <p class="lede">@T["Review applications, open the applicant's file and approve or reject. {0} waiting for a decision.", Model.PendingCount]@(Model.AwaitingSuperAdminCount > 0 ? " " + T["{0} waiting for the Super Admin.", Model.AwaitingSuperAdminCount] : "")</p>
         </div>
     </header>
 
     @if (TempData["Success"] is string success)
     {
-        <p class="flash flash-ok" role="status">@success</p>
+        <p class="flash flash-ok" role="status">@T[success]</p>
     }
     @if (TempData["Error"] is string error)
     {
-        <p class="flash flash-error" role="alert">@error</p>
+        <p class="flash flash-error" role="alert">@T[error]</p>
     }
 
     @if (Model.Unavailable)
     {
-        <p class="flash flash-error" role="alert">The loan list can't be loaded right now. Please try again in a moment.</p>
+        <p class="flash flash-error" role="alert">@T["The loan list can't be loaded right now. Please try again in a moment."]</p>
     }
 
     <section class="surface surface-tight">
         <form method="get" asp-area="Admin" asp-controller="Loans" asp-action="Index" class="toolbar filters">
             <div class="field grow">
-                <label for="search">Search</label>
-                <input class="input" id="search" name="search" type="search" placeholder="Name, FIN or payment code" value="@Model.Search" />
+                <label for="search">@T["Search"]</label>
+                <input class="input" id="search" name="search" type="search" placeholder="@T["Name, FIN or payment code"]" value="@Model.Search" />
             </div>
             <div class="field">
-                <label for="status">Status</label>
+                <label for="status">@T["Status"]</label>
                 <select class="select" data-wheel id="status" name="status">
-                    <option value="" selected="@string.IsNullOrEmpty(Model.Status)">All</option>
+                    <option value="" selected="@string.IsNullOrEmpty(Model.Status)">@T["All"]</option>
                     @foreach (var status in statuses)
                     {
-                        <option value="@status" selected="@(Model.Status == status)">@LoanUi.StaffStatusText(status)</option>
+                        <option value="@status" selected="@(Model.Status == status)">@T[LoanUi.StaffStatusText(status)]</option>
                     }
                 </select>
             </div>
             <div class="field">
                 <label>&nbsp;</label>
-                <button class="btn btn-primary" type="submit">Filter</button>
+                <button class="btn btn-primary" type="submit">@T["Filter"]</button>
             </div>
         </form>
 
@@ -57,13 +57,13 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Applicant</th>
-                        <th>Loan</th>
-                        <th class="num">Amount</th>
-                        <th>Purpose</th>
-                        <th>Term</th>
-                        <th>Submitted</th>
-                        <th>Status</th>
+                        <th>@T["Applicant"]</th>
+                        <th>@T["Loan"]</th>
+                        <th class="num">@T["Amount"]</th>
+                        <th>@T["Purpose"]</th>
+                        <th>@T["Term"]</th>
+                        <th>@T["Submitted"]</th>
+                        <th>@T["Status"]</th>
                         <th class="actions"></th>
                     </tr>
                 </thead>
@@ -73,23 +73,23 @@
                         <tr>
                             <td>
                                 <strong>@item.ApplicantName</strong>
-                                <div class="hint">FIN @(item.Fin ?? "—")</div>
+                                <div class="hint">@T["FIN"] @(item.Fin ?? "—")</div>
                             </td>
                             <td>@item.ContractNumber</td>
                             <td class="num">
                                 @LoanUi.Money(item.RequestedAmount)
                                 @if (item.ApprovedAmount.HasValue && item.ApprovedAmount.Value != item.RequestedAmount)
                                 {
-                                    <div class="hint">approved @LoanUi.Money(item.ApprovedAmount.Value)</div>
+                                    <div class="hint">@T["approved {0}", LoanUi.Money(item.ApprovedAmount.Value)]</div>
                                 }
                             </td>
-                            <td>@LoanUi.PurposeText(item.Purpose)</td>
-                            <td>@item.TermMonths months</td>
+                            <td>@T[LoanUi.PurposeText(item.Purpose)]</td>
+                            <td>@T["{0} months", item.TermMonths]</td>
                             <td>@LoanUi.Date(item.CreatedAt.ToLocalTime())</td>
-                            <td><span class="badge @LoanUi.StatusBadge(item.Status)">@LoanUi.StaffStatusText(item.Status)</span></td>
+                            <td><span class="badge @LoanUi.StatusBadge(item.Status)">@T[LoanUi.StaffStatusText(item.Status)]</span>@if (item.RequiresSuperAdmin) {<span class="badge badge-blacklist" title="@T["Blacklisted customer: the loan staff and the Super Admin must both approve"]">@T["Blacklisted"]</span>}</td>
                             <td class="actions">
                                 <span class="row-actions">
-                                    <a class="btn @(item.Status == "Pending" ? "btn-primary" : "btn-detail") btn-sm" asp-area="Admin" asp-controller="Loans" asp-action="Detail" asp-route-id="@item.Id">@(item.Status == "Pending" ? "Review" : "Detail")</a>
+                                    <a class="btn @(item.Status == "Pending" || item.Status == "AwaitingSuperAdmin" ? "btn-primary" : "btn-detail") btn-sm" asp-area="Admin" asp-controller="Loans" asp-action="Detail" asp-route-id="@item.Id">@(item.Status == "Pending" || item.Status == "AwaitingSuperAdmin" ? "Review" : "Detail")</a>
                                 </span>
                             </td>
                         </tr>
@@ -97,7 +97,7 @@
                     @if (!Model.Items.Any())
                     {
                         <tr>
-                            <td colspan="8">No loans found.</td>
+                            <td colspan="8">@T["No loans found."]</td>
                         </tr>
                     }
                 </tbody>

@@ -6,9 +6,9 @@
 <main class="auth-shell">
     <section class="auth-card">
         @await Component.InvokeAsync("SiteLogo")
-        <a class="back" asp-controller="Home" asp-action="Index">← Back to home</a>
-        <h1>Log in</h1>
-        <p class="lede">Enter the password for your Caspian account.</p>
+        <a class="back" asp-controller="Home" asp-action="Index">@T["← Back to home"]</a>
+        <h1>@T["Log in"]</h1>
+        <p class="lede">@T["Enter the password for your Caspian account."]</p>
         <form id="login-form" class="form-stack mt-5" asp-controller="Account" asp-action="Login" method="post" novalidate>
             <input type="hidden" asp-for="ReturnUrl" />
             @if (TempData["Info"] is string info)
@@ -17,22 +17,22 @@
             }
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
             <div class="field">
-                <label for="email">Email</label>
+                <label for="email">@T["Email"]</label>
                 <input class="input" id="email" asp-for="Email" type="email" autocomplete="username" />
             </div>
             <div class="field">
-                <label for="password">Password</label>
+                <label for="password">@T["Password"]</label>
                 <input class="input" id="password" asp-for="Password" type="password" data-password autocomplete="current-password" />
             </div>
-            <button class="btn btn-primary btn-block" type="submit">Log in</button>
+            <button class="btn btn-primary btn-block" type="submit">@T["Log in"]</button>
             <div class="auth-links">
-                <a asp-controller="Account" asp-action="ForgotPassword" data-carry-email>Forgot password?</a>
-                <a asp-controller="Account" asp-action="Register" data-carry-email>Create an account</a>
+                <a asp-controller="Account" asp-action="ForgotPassword" data-carry-email>@T["Forgot password?"]</a>
+                <a asp-controller="Account" asp-action="Register" data-carry-email>@T["Create an account"]</a>
             </div>
         </form>
         <p class="auth-foot">
-            <a asp-controller="Home" asp-action="Index" asp-fragment="contact">Contact us</a>
-            <span>Caspian Bank · Baku</span>
+            <a asp-controller="Home" asp-action="Index" asp-fragment="contact">@T["Contact us"]</a>
+            <span>@T["Caspian Bank · Baku"]</span>
         </p>
     </section>
 </main>

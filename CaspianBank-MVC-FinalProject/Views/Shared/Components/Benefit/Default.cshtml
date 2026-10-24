@@ -3,13 +3,13 @@
 <section class="benefits" aria-labelledby="benefits-title">
     <div class="section-intro split benefits-head">
         <div>
-            <p class="eyebrow"><span aria-hidden="true">✱ </span><span>@Model.BenefitSection.Label</span></p>
-            <h2 id="benefits-title">@Model.BenefitSection.Title</h2>
+            <p class="eyebrow"><span aria-hidden="true">✱ </span><span>@T[Model.BenefitSection.Label]</span></p>
+            <h2 id="benefits-title">@T[Model.BenefitSection.Title]</h2>
         </div>
-        <p class="lede">@Model.BenefitSection.Description</p>
+        <p class="lede">@T[Model.BenefitSection.Description]</p>
         <div class="benefit-arrows">
-            <button type="button" id="benefit-prev" aria-label="Previous">←</button>
-            <button type="button" id="benefit-next" aria-label="Next">→</button>
+            <button type="button" id="benefit-prev" aria-label="@T["Previous"]">←</button>
+            <button type="button" id="benefit-next" aria-label="@T["Next"]">→</button>
         </div>
     </div>
     <div class="benefit-viewport" id="benefit-viewport">
@@ -17,18 +17,18 @@
             @foreach (var item in Model.BenefitItems)
             {
                 <article class="benefit-card">
-                    <p class="eyebrow">@item.Label</p>
-                    <h3>@item.Title</h3>
-                    <p>@item.Description</p>
+                    <p class="eyebrow">@T[item.Label]</p>
+                    <h3>@T[item.Title]</h3>
+                    <p>@T[item.Description]</p>
                     <ul>
-                        <li>@item.Text1</li>
-                        <li>@item.Text2</li>
-                        <li>@item.Text3</li>
+                        <li>@T[item.Text1]</li>
+                        <li>@T[item.Text2]</li>
+                        <li>@T[item.Text3]</li>
                     </ul>
-                    <a class="btn btn-lime btn-go" href="@NavLinks.FromDb(item.ButtonUrl, User.Identity?.IsAuthenticated == true)"><span class="btn-go-label">@item.ButtonText</span></a>
+                    <a class="btn btn-lime btn-go" href="@NavLinks.FromDb(item.ButtonUrl, User.Identity?.IsAuthenticated == true)"><span class="btn-go-label">@T[item.ButtonText]</span></a>
                 </article>
             }
         </div>
     </div>
-    <div class="drag-hint" id="drag-hint" aria-hidden="true">Drag</div>
+    <div class="drag-hint" id="drag-hint" aria-hidden="true">@T["Drag"]</div>
 </section>

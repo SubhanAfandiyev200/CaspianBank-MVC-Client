@@ -1,0 +1,147 @@
+﻿@model CaspianBank_MVC_FinalProject.ViewModels.Deposits.DepositPageVM
+@using System.Globalization
+@{
+    ViewData["Title"] = "Deposits";
+    var inv = CultureInfo.InvariantCulture;
+    var canEdit = User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Accountant);
+
+    string Money(decimal value) { return value.ToString("N2", inv) + " AZN"; }
+    string Num(decimal value) { return value.ToString("0.##", inv); }
+
+    string PageUrl(int page)
+    {
+        return Url.Action("Index", "Deposits", new { area = "Admin", search = Model.Search, status = Model.Status, page }) ?? "#";
+    }
+}
+<main id="content" class="page">
+    <header class="page-head">
+        <p class="eyebrow">@T["Bank"]</p>
+        <h1>@T["Deposits"]</h1>
+        <p class="lede">@T["Term deposits of the customers. The money is locked until the term ends, then the amount and the interest return to the customer's card automatically."]</p>
+    </header>
+
+    @if (TempData["Success"] is string success)
+    {
+        <p class="flash flash-ok" role="status">@T[success]</p>
+    }
+    @if (TempData["Error"] is string error)
+    {
+        <p class="flash flash-error" role="alert">@T[error]</p>
+    }
+    @if (Model.Unavailable)
+    {
+        <p class="flash flash-error" role="alert">@T["The deposits can't be loaded right now. Please try again in a moment."]</p>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <p class="flash flash-error" role="alert">@T[Model.Error]</p>
+    }
+
+    <div class="stat-grid cols-3">
+        <article class="stat">
+            <p class="stat-label">@T["Open deposits"]</p>
+            <p class="stat-value">@Model.ActiveCount.ToString("N0", inv)</p>
+            <p class="hint">@T["Locked now: {0}", Money(Model.ActivePrincipal)]</p>
+        </article>
+        <article class="stat">
+            <p class="stat-label">@T["Interest still to pay"]</p>
+            <p class="stat-value">@Money(Model.ExpectedInterest)</p>
+            <p class="hint">@T["Paid out at the end of each term"]</p>
+        </article>
+        <article class="stat">
+            <p class="stat-label">@T["Interest paid so far"]</p>
+            <p class="stat-value">@Money(Model.PaidInterest)</p>
+            <p class="hint">@T["Counted as an expense of the month it was paid"]</p>
+        </article>
+    </div>
+
+    <section class="surface surface-tight">
+        <div class="toolbar"><h2>@T["Terms and rates"]</h2></div>
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr><th>@T["Term"]</th><th>@T["Yearly rate, %"]</th><th>@T["Smallest, AZN"]</th><th>@T["Largest, AZN"]</th><th>@T["Open to customers"]</th>@if (canEdit) { <th></th> }</tr>
+                </thead>
+                <tbody>
+                    @foreach (var plan in Model.Plans)
+                    {
+                        var formId = "plan-" + plan.Id;
+                        <tr>
+                            <td><strong>@T["{0} months", plan.TermMonths]</strong></td>
+                            @if (canEdit)
+                            {
+                                <td><input class="input" form="@formId" name="rate" value="@Num(plan.AnnualRate)" inputmode="decimal" size="5" aria-label="Yearly rate for @plan.TermMonths months" /></td>
+                                <td><input class="input" form="@formId" name="min" value="@Num(plan.MinAmount)" inputmode="decimal" size="8" aria-label="Smallest amount for @plan.TermMonths months" /></td>
+                                <td><input class="input" form="@formId" name="max" value="@Num(plan.MaxAmount)" inputmode="decimal" size="9" aria-label="Largest amount for @plan.TermMonths months" /></td>
+                                <td><label><input type="checkbox" form="@formId" name="active" value="true" checked="@plan.IsActive" /> @T["Yes"]</label></td>
+                                <td>
+                                    <form id="@formId" method="post" asp-area="Admin" asp-controller="Deposits" asp-action="UpdatePlan" asp-route-id="@plan.Id">
+                                        <button class="btn btn-primary btn-sm" type="submit">@T["Save"]</button>
+                                    </form>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>@Num(plan.AnnualRate)</td>
+                                <td>@Num(plan.MinAmount)</td>
+                                <td>@Num(plan.MaxAmount)</td>
+                                <td>@(plan.IsActive ? "Yes" : "No")</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="hint" style="padding: 12px 16px;">@T["A change applies to new deposits only. A customer's rate is fixed when the deposit is opened. Turning a term off hides it from customers."]</p>
+    </section>
+
+    <section class="surface surface-tight">
+        <form method="get" asp-area="Admin" asp-controller="Deposits" asp-action="Index" class="toolbar filters">
+            <div class="field grow">
+                <label for="search">@T["Search"]</label>
+                <input class="input" id="search" name="search" type="search" placeholder="@T["Customer name, email or deposit code"]" value="@Model.Search" autocomplete="off" />
+            </div>
+            <div class="field">
+                <label for="status">@T["Status"]</label>
+                <select class="select" data-wheel id="status" name="status">
+                    <option value="" selected="@string.IsNullOrEmpty(Model.Status)">@T["All"]</option>
+                    <option value="Active" selected="@(Model.Status == "Active")">@T["Locked"]</option>
+                    <option value="Paid" selected="@(Model.Status == "Paid")">@T["Paid out"]</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" type="submit">@T["Filter"]</button>
+            </div>
+        </form>
+
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr><th>@T["Customer"]</th><th>@T["Amount"]</th><th>@T["Term and rate"]</th><th>@T["Interest"]</th><th>@T["Opened"]</th><th>@T["Ends"]</th><th>@T["Status"]</th><th>@T["Code"]</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td><strong>@item.CustomerName</strong><div class="hint">@item.Email</div></td>
+                            <td class="num">@Money(item.Principal)</td>
+                            <td>@T["{0} months · {1}%", item.TermMonths, Num(item.AnnualRate)]</td>
+                            <td class="num">@Money(item.ExpectedInterest)</td>
+                            <td>@item.StartedAt.ToLocalTime().ToString("dd MMM yyyy", inv)</td>
+                            <td>@item.MaturesAt.ToLocalTime().ToString("dd MMM yyyy", inv)</td>
+                            <td><span class="badge @(item.Status == "Paid" ? "badge-success" : "badge-info")">@(item.Status == "Paid" ? "Paid out" : "Locked")</span></td>
+                            <td class="num">@item.Reference</td>
+                        </tr>
+                    }
+                    @if (!Model.Items.Any())
+                    {
+                        <tr><td colspan="8">@T["No deposits found."]</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <partial name="_Pager" model="new CaspianBank_MVC_FinalProject.ViewModels.Common.PagerVM { Page = Model.Page, PageSize = Model.PageSize, TotalCount = Model.Total, TotalPages = Model.TotalPages, Url = PageUrl }" />
+</main>

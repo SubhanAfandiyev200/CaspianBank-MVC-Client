@@ -83,11 +83,11 @@
     const paint = () => {
       if (left <= 0) {
         resend.disabled = false;
-        resend.textContent = "Resend code";
+        resend.textContent = cbt("Resend code");
         return;
       }
       resend.disabled = true;
-      resend.textContent = "Resend code in 0:" + String(left).padStart(2, "0");
+      resend.textContent = cbt("Resend code in 0:{0}", String(left).padStart(2, "0"));
     };
     paint();
     const timer = setInterval(() => {

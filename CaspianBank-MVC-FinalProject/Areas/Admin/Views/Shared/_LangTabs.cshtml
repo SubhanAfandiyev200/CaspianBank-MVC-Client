@@ -1,0 +1,11 @@
+@* Redaktə səhifəsində dil seçimi: EN əsas (ingilis) mətndir, AZ və RU həmin mətnin tərcüməsidir. İş wwwroot/js/lang-edit.js-dədir *@
+<div class="lang-tabs" data-lang-tabs>
+    <div class="lang-tabs-row" role="group" aria-label="@T["Language of the text"]">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.6 2.7 3.9 5.7 3.9 9s-1.3 6.3-3.9 9c-2.6-2.7-3.9-5.7-3.9-9S9.4 5.7 12 3z" /></svg>
+        <button type="button" class="is-on" data-lang="en" title="English">EN</button>
+        <button type="button" data-lang="az" title="Azərbaycanca">AZ</button>
+        <button type="button" data-lang="ru" title="Русский">RU</button>
+        <span class="hint">@T["Pick a language to add or update the text in that language."]</span>
+    </div>
+    <p class="lang-tabs-status" data-lang-status role="status" aria-live="polite"></p>
+</div>

@@ -52,7 +52,7 @@
   function reply(question) {
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve("I can't answer yet: the assistant is still a design preview. Soon you will be able to ask me about cards, transfers, fees and loans right here.");
+        resolve(cbt("I can't answer yet: the assistant is still a design preview. Soon you will be able to ask me about cards, transfers, fees and loans right here."));
       }, 900);
     });
   }
@@ -72,7 +72,7 @@
     try {
       answer = await reply(question);
     } catch (error) {
-      answer = "Something went wrong. Please try again.";
+      answer = cbt("Something went wrong. Please try again.");
     }
     typing.remove();
     addMessage(answer, false);

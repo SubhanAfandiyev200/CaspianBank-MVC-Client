@@ -1,0 +1,220 @@
+@*
+    Müddətli depozitlər. Qaydalar API-dədir: müddət bitməmiş pulu çıxarmaq olmur, müddət bitəndə əsas məbləğ və faiz seçilən karta özü qayıdır.
+    Aşağıdakı canlı hesab (wwwroot/js/deposits.js) yalnız göstərişdir, həqiqi hesablamanı API edir.
+*@
+@model CaspianBank_MVC_FinalProject.ViewModels.Deposits.DepositIndexVM
+@using System.Globalization
+@{
+    Layout = "_AppLayout";
+    ViewData["Title"] = "Deposits";
+    var inv = CultureInfo.InvariantCulture;
+    var plans = Model.Overview.Plans;
+    var form = Model.Form;
+
+    // Pul çıxacaq kart: bloklanmamış istənilən kart. Pul qayıdacaq kart: Cashback olmayan
+    var payers = Model.Cards.Where(c => !c.IsBlocked).ToList();
+    var receivers = payers.Where(c => !c.Tier.Equals("Cashback", StringComparison.OrdinalIgnoreCase)).ToList();
+
+    var chosenPlan = plans.FirstOrDefault(p => p.Id == form.PlanId) ?? plans.OrderByDescending(p => p.TermMonths).FirstOrDefault(p => p.TermMonths <= 12) ?? plans.FirstOrDefault();
+    var payCard = payers.FirstOrDefault(c => c.Id == form.SourceCardId) ?? payers.OrderByDescending(c => c.Balance).FirstOrDefault();
+    var payoutCard = receivers.FirstOrDefault(c => c.Id == form.PayoutCardId) ?? receivers.FirstOrDefault();
+
+    var active = Model.Overview.Deposits.Where(d => d.Status == "Active").ToList();
+    var done = Model.Overview.Deposits.Where(d => d.Status == "Paid").ToList();
+    var next = active.OrderBy(d => d.MaturesAt).FirstOrDefault();
+
+    string Money(decimal value) { return value.ToString("N2", inv) + " AZN"; }
+    string Rate(decimal value) { return value.ToString("0.##", inv) + "%"; }
+    string Term(int months) { return months % 12 == 0 ? (months / 12) + (months == 12 ? " year" : " years") : months + " months"; }
+}
+<main id="content" class="page page-activity">
+    <header class="page-head">
+        <p class="eyebrow">@T["Savings"]</p>
+        <h1>@T["Deposits"]</h1>
+        <p class="lede">@T["Lock your money for a fixed term and earn interest. The money stays with the bank until the term ends, then it returns to your card together with the interest."]</p>
+    </header>
+
+    <partial name="_Flash" />
+
+    @if (Model.ApiUnavailable)
+    {
+        <div class="empty">
+            <h3>@T["We can't load your deposits"]</h3>
+            <p>@T["The service is unavailable right now. Please try again in a moment."]</p>
+            <a class="btn btn-secondary" asp-action="Index">@T["Try again"]</a>
+        </div>
+    }
+    else
+    {
+        <div class="pulse-row">
+            <article class="pulse"><span>@T["Saved in deposits"]</span><strong class="num">@Money(Model.Overview.ActivePrincipal)</strong></article>
+            <article class="pulse"><span>@T["Interest you will earn"]</span><strong class="num">@Money(Model.Overview.ActiveExpectedInterest)</strong></article>
+            <article class="pulse">
+                <span>@T["Next payout"]</span>
+                <strong class="num">@(next is null ? "—" : Money(next.TotalAtMaturity))</strong>
+                @if (next is not null)
+                {
+                    <small class="hint">@next.MaturesAt.ToLocalTime().ToString("dd MMM yyyy", inv) · @(next.DaysLeft == 1 ? T["in 1 day"] : T["in {0} days", next.DaysLeft])</small>
+                }
+            </article>
+        </div>
+
+        <div class="layout-2">
+            <form class="surface form-stack form-card" asp-controller="Deposits" asp-action="Open" method="post" id="deposit-form" novalidate>
+                <h2>@T["Open a deposit"]</h2>
+
+                @if (!string.IsNullOrEmpty(Model.Error))
+                {
+                    <p class="flash flash-error" role="alert">@T[Model.Error]</p>
+                }
+
+                @if (plans.Count == 0)
+                {
+                    <p class="hint">@T["New deposits are not available right now."]</p>
+                }
+                else if (receivers.Count == 0)
+                {
+                    <div class="empty-inline">
+                        <div class="empty-inline-copy">
+                            <strong>@T["You need an active card"]</strong>
+                            <p>@T["The money and the interest return to one of your cards (not the Cashback card)."]</p>
+                            <div class="empty-inline-actions"><a class="btn btn-secondary btn-sm" href="@NavLinks.AddCard">@T["Add a card"]</a></div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <input type="hidden" name="RequestId" value="@form.RequestId" />
+                    <input type="hidden" name="PlanId" id="dep-plan" value="@chosenPlan?.Id" />
+
+                    <div class="field">
+                        <span class="field-label" id="dep-term-label">@T["Term"]</span>
+                        <div class="dep-plans" role="group" aria-labelledby="dep-term-label">
+                            @foreach (var plan in plans)
+                            {
+                                <button type="button" class="dep-plan @(chosenPlan is not null && plan.Id == chosenPlan.Id ? "is-active" : "")"
+                                        data-plan="@plan.Id" data-months="@plan.TermMonths" data-rate="@plan.AnnualRate.ToString(inv)"
+                                        data-min="@plan.MinAmount.ToString(inv)" data-max="@plan.MaxAmount.ToString(inv)">
+                                    <strong>@Term(plan.TermMonths)</strong>
+                                    <span>@Rate(plan.AnnualRate) a year</span>
+                                </button>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="dep-amount">@T["Amount"]</label>
+                        <div class="amount-box" id="dep-amount-box">
+                            <input class="amount-input" id="dep-amount" name="Amount" inputmode="decimal" placeholder="0.00" maxlength="12" autocomplete="off" value="@form.Amount" />
+                            <span class="amount-cur">@T["AZN"]</span>
+                        </div>
+                        <p class="field-error" id="dep-error" role="alert" hidden></p>
+                        <p class="hint" id="dep-limits"></p>
+                    </div>
+
+                    <div class="field">
+                        <label for="dep-source">@T["Take the money from"]</label>
+                        <select class="select" id="dep-source" name="SourceCardId" data-card-pick>
+                            @foreach (var card in payers)
+                            {
+                                <option value="@card.Id" selected="@(payCard is not null && card.Id == payCard.Id)"
+                                        data-tier="@card.Tier" data-last4="@card.Last4" data-money="@Money(card.Balance)"
+                                        data-balance="@card.Balance.ToString(inv)"
+                                        data-design="@card.DesignImage">@card.Tier · •••• @card.Last4 · @Money(card.Balance)</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label for="dep-payout">@T["Return the money to"]</label>
+                        <select class="select" id="dep-payout" name="PayoutCardId" data-card-pick>
+                            @foreach (var card in receivers)
+                            {
+                                <option value="@card.Id" selected="@(payoutCard is not null && card.Id == payoutCard.Id)"
+                                        data-tier="@card.Tier" data-last4="@card.Last4" data-money="@Money(card.Balance)"
+                                        data-design="@card.DesignImage">@card.Tier · •••• @card.Last4 · @Money(card.Balance)</option>
+                            }
+                        </select>
+                    </div>
+
+                    <dl class="detail-list dep-sum">
+                        <div><dt>@T["Interest"]</dt><dd class="num" id="dep-interest">@T["0.00 AZN"]</dd></div>
+                        <div><dt>@T["You get back"]</dt><dd class="num"><strong id="dep-total">@T["0.00 AZN"]</strong></dd></div>
+                        <div><dt>@T["On"]</dt><dd id="dep-date">—</dd></div>
+                    </dl>
+
+                    <p class="hint">@T["You can't take the money out before the term ends. Make sure you won't need it."]</p>
+
+                    <button type="submit" class="btn btn-primary btn-lg" id="dep-submit" data-once
+                            data-confirm-title="@T["Open this deposit?"]"
+                            data-confirm-text=""
+                            data-confirm-yes="@T["Open deposit"]"
+                            data-confirm-no="@T["Cancel"]">@T["Open deposit"]</button>
+                }
+            </form>
+
+            <section class="surface form-card">
+                <h2>@T["How it works"]</h2>
+                <ul class="dep-notes">
+                    <li>@T["The interest is simple: amount × yearly rate × months ÷ 12."]</li>
+                    <li>@T["Every month the interest for that month is added to your deposit, so you can follow it here. The money itself is paid out only when the term ends."]</li>
+                    <li>@T["The amount leaves your card today and is locked for the whole term."]</li>
+                    <li>@T["When the term ends, the money and the interest return to the card you chose. If that card is blocked then, we use another active card of yours."]</li>
+                    <li>@T["You can open as many deposits as you like."]</li>
+                </ul>
+            </section>
+        </div>
+
+        <section class="surface form-card">
+            <div class="toolbar"><h2>@T["Your deposits"]</h2></div>
+            @if (Model.Overview.Deposits.Count == 0)
+            {
+                <p class="hint">@T["You have no deposits yet. Open your first one above."]</p>
+            }
+            else
+            {
+                <div class="dep-list">
+                    @foreach (var deposit in active.Concat(done))
+                    {
+                        var isActive = deposit.Status == "Active";
+                        <article class="dep-card @(isActive ? "" : "is-done")">
+                            <div class="dep-top">
+                                <div>
+                                    <strong class="num">@Money(deposit.Principal)</strong>
+                                    <span class="hint">@Term(deposit.TermMonths) · @Rate(deposit.AnnualRate) a year</span>
+                                </div>
+                                <span class="badge-pill @(isActive ? "" : "is-ok")">@(isActive ? T["Locked"] : T["Paid out"])</span>
+                            </div>
+                            <div class="limit-meter-bar" aria-hidden="true"><span style="width:@(deposit.ProgressPercent)%"></span></div>
+                            <dl class="dep-meta">
+                                <div><dt>@T["Started"]</dt><dd>@deposit.StartedAt.ToLocalTime().ToString("dd MMM yyyy", inv)</dd></div>
+                                <div><dt>@(isActive ? T["Ends"] : T["Paid"])</dt><dd>@((isActive ? deposit.MaturesAt : deposit.PaidAt ?? deposit.MaturesAt).ToLocalTime().ToString("dd MMM yyyy", inv))@(isActive ? " · " + (deposit.DaysLeft == 1 ? T["1 day left"] : T["{0} days left", deposit.DaysLeft]) : "")</dd></div>
+                                <div><dt>@(isActive ? T["Interest added so far"] : T["Interest paid"])</dt><dd class="num">@Money(isActive ? deposit.AccruedInterest : deposit.ExpectedInterest)</dd></div>
+                                <div><dt>@(isActive ? T["You will get"] : T["Total returned"])</dt><dd class="num"><strong>@Money(deposit.TotalAtMaturity)</strong></dd></div>
+                                <div><dt>@T["Paid from"]</dt><dd>@deposit.SourceCardLabel</dd></div>
+                                <div><dt>@T["Returns to"]</dt><dd>@deposit.PayoutCardLabel</dd></div>
+                            </dl>
+                            @if (deposit.Postings.Count > 0 && isActive)
+                            {
+                                <details class="dep-months">
+                                    <summary>@T["Interest added month by month ({0} of {1})", deposit.Postings.Count, deposit.TermMonths]</summary>
+                                    <ul>
+                                        @foreach (var posting in deposit.Postings)
+                                        {
+                                            <li><span>@T["Month {0}", posting.Number] · @posting.PostedAt.ToLocalTime().ToString("dd MMM yyyy", inv)</span><strong class="num">+@Money(posting.Amount)</strong></li>
+                                        }
+                                    </ul>
+                                </details>
+                            }
+                            <span class="hint num">@deposit.Reference</span>
+                        </article>
+                    }
+                </div>
+            }
+        </section>
+    }
+</main>
+
+@section Scripts {
+    <script src="~/js/deposits.js" asp-append-version="true"></script>
+}

@@ -1,13 +1,31 @@
 using CaspianBank_MVC_FinalProject.Handlers;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Jurnal (Serilog): konsola və layihə qovluğundakı logs/ qovluğuna (gündə bir fayl, 14 gün). Səviyyələr appsettings.json-dakı "Serilog" bölməsindədir
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(context.Configuration)
+    .Enrich.FromLogContext()
+    .WriteTo.Console()
+    .WriteTo.File(
+        Path.Combine(context.HostingEnvironment.ContentRootPath, "logs", "mvc-.log"),
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 14,
+        shared: true,
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}"));
+
 // Add services to the container.
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options => options.Filters.Add<CaspianBank_MVC_FinalProject.Helpers.TranslateModelErrorsFilter>());
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<BearerTokenHandler>();
+
+// Saytın dilləri: tərcümələr verilənlər bazasından (API) gəlir, yaddaşda saxlanılır; səhifələrdə @T["English text"]
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<CaspianBank_MVC_FinalProject.Services.ITranslationStore, CaspianBank_MVC_FinalProject.Services.TranslationStore>();
+builder.Services.AddScoped<CaspianBank_MVC_FinalProject.Services.ITranslator, CaspianBank_MVC_FinalProject.Services.Translator>();
 
 // API-yə gedən sorğulara cookie-dəki JWT avtomatik əlavə olunur
 builder.Services.AddHttpClient("CaspianApi", client =>
@@ -76,6 +94,18 @@ else
 {
     app.UseStaticFiles();
 }
+
+// Hər sorğu bir sətirdə: metod, yol, status, müddət, giriş edənin adı yox, id-si
+app.UseSerilogRequestLogging(options =>
+{
+    options.EnrichDiagnosticContext = (diagnosticContext, httpContext) =>
+    {
+        diagnosticContext.Set("UserId", httpContext.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "anonymous");
+    };
+});
+
+// Hər sorğuda dil seçilir (cookie, brauzerin dili) və tərcümə lüğəti sorğuya qoyulur
+app.UseMiddleware<CaspianBank_MVC_FinalProject.Services.LanguageMiddleware>();
 
 app.UseRouting();
 

@@ -17,16 +17,16 @@ namespace CaspianBank_MVC_FinalProject.Controllers
         }
 
         // Header-dəki kiçik şəkil: müştərinin şəklinə yönləndirir (cookie-də saxlanmır, ona görə köhnə sessiyada da işləyir).
-        // Brauzer cavabı 1 saat yadda saxlayır, hər səhifədə API-yə getmir. Şəkli yoxdursa 404: header ikonu qalır
+        // Brauzer cavabı 1 dəqiqə yadda saxlayır, hər səhifədə API-yə getmir. Şəkil faylı dəyişəndə köhnəsi qalmasın deyə ünvana dəqiqə nömrəsi əlavə olunur. Şəkli yoxdursa 404: header ikonu qalır
         [HttpGet("Avatar")]
-        [ResponseCache(Duration = 3600, Location = ResponseCacheLocation.Client)]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Client)]
         public async Task<IActionResult> Avatar()
         {
             var (profile, _) = await GetAsync<ProfileUIVM>("api/account/profile");
             if (profile is null || string.IsNullOrEmpty(profile.PhotoUrl))
                 return NotFound();
 
-            return Redirect(ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], profile.PhotoUrl));
+            return Redirect(ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], profile.PhotoUrl) + "?v=" + DateTimeOffset.UtcNow.ToUnixTimeSeconds() / 60);
         }
 
         [HttpGet("")]

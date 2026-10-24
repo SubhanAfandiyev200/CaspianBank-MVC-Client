@@ -1,8 +1,8 @@
-@model CaspianBank_MVC_FinalProject.Controllers.ReportController.ReportPreview
+@model CaspianBank_MVC_FinalProject.ViewModels.Reports.ReportFormVM
 @using System.Globalization
 @*
     Şübhəli əməliyyatı bildir: dizayn CaspianBank-Frontend/report-transaction.html-dir.
-    Hələlik statik görünüşdür: yazı sahəsi və göndərmə düyməsi söndürülüb, fraud komandası tərəfi (Admin/Reports) yazılanda işləyəcək.
+    Əməliyyatın məlumatı History-dən linklə gəlir; səbəb yazılıb göndərilir, qaydaları (öz əməliyyatı, bir dəfə) API yoxlayır.
 *@
 @{
     Layout = "_AppLayout";
@@ -10,40 +10,50 @@
     var inv = CultureInfo.InvariantCulture;
 }
 <main id="content" class="page">
-    <a class="back" asp-controller="History" asp-action="Index">Back to history</a>
+    <a class="back" asp-controller="History" asp-action="Index">@T["Back to history"]</a>
 
     <header class="page-head">
-        <p class="eyebrow">Fraud</p>
-        <h1>Report a suspicious transaction</h1>
-        <p class="lede">Tell us what looks wrong. The transaction stays visible while we review it.</p>
+        <p class="eyebrow">@T["Fraud"]</p>
+        <h1>@T["Report a suspicious transaction"]</h1>
+        <p class="lede">@T["Tell us what looks wrong. The transaction stays visible while we review it."]</p>
     </header>
 
-    <p class="demo-note"><span>Preview: reporting opens soon. The form below can't be sent yet.</span></p>
-
     <div class="narrow stack-lg">
-        <section class="surface">
+        <form class="surface" method="post" asp-controller="Report" asp-action="Submit" novalidate>
+            @if (!string.IsNullOrEmpty(Model.Error))
+            {
+                <p class="flash flash-error" role="alert">@T[Model.Error]</p>
+            }
+
+            <input type="hidden" name="TransactionId" value="@Model.TransactionId" />
+            <input type="hidden" name="Reference" value="@Model.Reference" />
+            <input type="hidden" name="Description" value="@Model.Description" />
+            <input type="hidden" name="Amount" value="@(Model.Amount?.ToString(inv))" />
+            <input type="hidden" name="Date" value="@(Model.Date?.ToString("o"))" />
+
             <dl class="summary">
-                <div><dt>Reference</dt><dd class="num">@Model.Reference</dd></div>
-                <div><dt>Description</dt><dd>@Model.Description</dd></div>
+                <div><dt>@T["Reference"]</dt><dd class="num">@Model.Reference</dd></div>
+                <div><dt>@T["Description"]</dt><dd>@T.Describe(Model.Description)</dd></div>
                 @if (Model.Amount.HasValue)
                 {
-                    <div><dt>Amount</dt><dd class="num">@Model.Amount.Value.ToString("N2", inv) AZN</dd></div>
+                    <div><dt>@T["Amount"]</dt><dd class="num">@Model.Amount.Value.ToString("N2", inv) AZN</dd></div>
                 }
                 @if (Model.Date.HasValue)
                 {
-                    <div><dt>Date</dt><dd>@Model.Date.Value.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)</dd></div>
+                    <div><dt>@T["Date"]</dt><dd>@Model.Date.Value.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)</dd></div>
                 }
             </dl>
 
             <div class="field mt-5">
-                <label for="report-reason">Reason</label>
-                <textarea class="textarea" id="report-reason" maxlength="500" placeholder="What made this transaction suspicious?" disabled></textarea>
+                <label for="report-reason">@T["Reason"]</label>
+                <textarea class="textarea" id="report-reason" name="Reason" maxlength="500" placeholder="@T["What made this transaction suspicious?"]">@Model.Reason</textarea>
+                <p class="hint">@T["At least 10 characters. You can report a transaction once."]</p>
             </div>
 
             <div class="modal-actions">
-                <a class="btn btn-secondary" asp-controller="History" asp-action="Index">Cancel</a>
-                <button type="button" class="btn btn-primary" disabled>Submit report</button>
+                <a class="btn btn-secondary" asp-controller="History" asp-action="Index">@T["Cancel"]</a>
+                <button type="submit" class="btn btn-primary" data-once>@T["Submit report"]</button>
             </div>
-        </section>
+        </form>
     </div>
 </main>

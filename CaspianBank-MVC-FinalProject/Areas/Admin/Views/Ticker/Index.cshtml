@@ -1,24 +1,24 @@
-@model IEnumerable<HomeTickerVM>
+﻿@model IEnumerable<HomeTickerVM>
 @{
     ViewData["Title"] = "Ticker";
 }
 <main id="content" class="page">
     <header class="page-head crud-head">
         <div>
-            <p class="eyebrow">UI · Home page</p>
-            <h1>Ticker</h1>
-            <p class="lede">The short phrases that move across the line under the Home headline.</p>
+            <p class="eyebrow">@T["UI · Home page"]</p>
+            <h1>@T["Ticker"]</h1>
+            <p class="lede">@T["The short phrases that move across the line under the Home headline."]</p>
         </div>
-        <a class="btn btn-primary" asp-area="Admin" asp-controller="Ticker" asp-action="Create">Create</a>
+        <a class="btn btn-primary" asp-area="Admin" asp-controller="Ticker" asp-action="Create">@T["Create"]</a>
     </header>
 
     @if (TempData["Success"] is string success)
     {
-        <p class="flash flash-ok" role="status">@success</p>
+        <p class="flash flash-ok" role="status">@T[success]</p>
     }
     @if (TempData["Error"] is string error)
     {
-        <p class="flash flash-error" role="alert">@error</p>
+        <p class="flash flash-error" role="alert">@T[error]</p>
     }
 
     <section class="surface surface-tight">
@@ -26,9 +26,9 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th class="num">Id</th>
-                        <th>Text</th>
-                        <th class="actions">Operations</th>
+                        <th class="num">@T["Id"]</th>
+                        <th>@T["Text"]</th>
+                        <th class="actions">@T["Operations"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -39,13 +39,13 @@
                             <td>@item.Text.Trim()</td>
                             <td class="actions">
                                 <span class="row-actions">
-                                    <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Ticker" asp-action="Detail" asp-route-id="@item.Id">Detail</a>
-                                    <a class="btn btn-secondary btn-sm" asp-area="Admin" asp-controller="Ticker" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                    <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Ticker" asp-action="Detail" asp-route-id="@item.Id">@T["Detail"]</a>
+                                    <a class="btn btn-secondary btn-sm" asp-area="Admin" asp-controller="Ticker" asp-action="Edit" asp-route-id="@item.Id">@T["Edit"]</a>
                                     <form method="post" asp-area="Admin" asp-controller="Ticker" asp-action="Delete" asp-route-id="@item.Id">
                                         <button type="submit" class="btn btn-danger btn-sm"
-                                                data-confirm-title="Delete this text?"
-                                                data-confirm-text="It will disappear from the moving line on the Home page."
-                                                data-confirm-yes="Delete" data-confirm-danger="true">Delete</button>
+                                                data-confirm-title="@T["Delete this text?"]"
+                                                data-confirm-text="@T["It will disappear from the moving line on the Home page."]"
+                                                data-confirm-yes="@T["Delete"]" data-confirm-danger="true">@T["Delete"]</button>
                                     </form>
                                 </span>
                             </td>
@@ -54,7 +54,7 @@
                     @if (!Model.Any())
                     {
                         <tr>
-                            <td colspan="3">No ticker texts yet. Create the first one.</td>
+                            <td colspan="3">@T["No ticker texts yet. Create the first one."]</td>
                         </tr>
                     }
                 </tbody>

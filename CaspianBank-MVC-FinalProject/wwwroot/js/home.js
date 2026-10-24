@@ -25,7 +25,7 @@
     const input = document.getElementById("footer-email");
     // TODO: POST { email: input.value } to the mailing-list endpoint.
     input.value = "";
-    input.placeholder = "Noted. We will write when there is something to say.";
+    input.placeholder = cbt("Noted. We will write when there is something to say.");
   });
 
   const homeNav = document.querySelector(".nav-home");

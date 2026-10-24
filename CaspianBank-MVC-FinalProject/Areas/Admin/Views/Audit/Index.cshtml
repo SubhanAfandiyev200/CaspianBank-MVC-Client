@@ -16,7 +16,19 @@
         ("BillProviderChanged", "Bill provider changed"),
         ("SettingChanged", "Setting changed"),
         ("TicketAnswered", "Message answered"),
-        ("TicketClosed", "Message closed")
+        ("TicketClosed", "Message closed"),
+        ("DepositPlanChanged", "Deposit term changed"),
+        ("StaffAdded", "Staff member added"),
+        ("StaffRoleChanged", "Staff role changed"),
+        ("StaffDeactivated", "Staff account switched off"),
+        ("StaffActivated", "Staff account switched on"),
+        ("SecurityAlertDismissed", "Security alert marked safe"),
+        ("SecurityAlertFrozen", "Security alert: account frozen"),
+        ("TreasuryMonthClosed", "Treasury month closed"),
+        ("ReportReviewed", "Report marked reviewed"),
+        ("ReportActionTaken", "Report: action taken"),
+        ("ReportDismissed", "Report dismissed"),
+        ("BankRulesChanged", "Bank rules changed")
     };
 
     string ActionLabel(string code)
@@ -31,9 +43,14 @@
         {
             case "AccountRestricted":
             case "LoanRejected":
+            case "SecurityAlertFrozen":
+            case "StaffDeactivated":
                 return "badge-danger";
             case "AccountRestored":
             case "LoanApproved":
+            case "SecurityAlertDismissed":
+            case "StaffActivated":
+            case "StaffAdded":
                 return "badge-success";
             case "LoanOffered":
                 return "badge-info";
@@ -57,47 +74,47 @@
 }
 <main id="content" class="page">
     <header class="page-head">
-        <p class="eyebrow">Controls</p>
-        <h1>Audit log</h1>
-        <p class="lede">A record of staff decisions and account changes: who did what, to whom and when. Entries can't be edited or deleted.</p>
+        <p class="eyebrow">@T["Controls"]</p>
+        <h1>@T["Audit log"]</h1>
+        <p class="lede">@T["A record of staff decisions and account changes: who did what, to whom and when. Entries can't be edited or deleted."]</p>
     </header>
 
     @if (Model.Unavailable)
     {
-        <p class="flash flash-error" role="alert">The audit log can't be loaded right now. Please try again in a moment.</p>
+        <p class="flash flash-error" role="alert">@T["The audit log can't be loaded right now. Please try again in a moment."]</p>
     }
     @if (!string.IsNullOrEmpty(Model.Error))
     {
-        <p class="flash flash-error" role="alert">@Model.Error</p>
+        <p class="flash flash-error" role="alert">@T[Model.Error]</p>
     }
 
     <section class="surface surface-tight">
         <form method="get" asp-area="Admin" asp-controller="Audit" asp-action="Index" class="toolbar filters">
             <div class="field grow">
-                <label for="search">Search</label>
-                <input class="input" id="search" name="search" type="search" placeholder="Staff, target or detail" value="@Model.Search" autocomplete="off" />
+                <label for="search">@T["Search"]</label>
+                <input class="input" id="search" name="search" type="search" placeholder="@T["Staff, target or detail"]" value="@Model.Search" autocomplete="off" />
             </div>
             <div class="field">
-                <label for="action">Action</label>
+                <label for="action">@T["Action"]</label>
                 <select class="select" data-wheel id="action" name="kind">
-                    <option value="" selected="@string.IsNullOrEmpty(Model.Action)">All actions</option>
+                    <option value="" selected="@string.IsNullOrEmpty(Model.Action)">@T["All actions"]</option>
                     @foreach (var item in actions)
                     {
-                        <option value="@item.Code" selected="@(Model.Action == item.Code)">@item.Label</option>
+                        <option value="@item.Code" selected="@(Model.Action == item.Code)">@T[item.Label]</option>
                     }
                 </select>
             </div>
             <div class="field">
-                <label for="from">From</label>
+                <label for="from">@T["From"]</label>
                 <input class="input" id="from" name="from" type="date" min="2020-01-01" max="@today" value="@Model.From?.ToString("yyyy-MM-dd", inv)" />
             </div>
             <div class="field">
-                <label for="to">To</label>
+                <label for="to">@T["To"]</label>
                 <input class="input" id="to" name="to" type="date" min="2020-01-01" max="@today" value="@Model.To?.ToString("yyyy-MM-dd", inv)" />
             </div>
             <div class="field">
                 <label>&nbsp;</label>
-                <button class="btn btn-primary" type="submit">Filter</button>
+                <button class="btn btn-primary" type="submit">@T["Filter"]</button>
             </div>
         </form>
 
@@ -105,11 +122,11 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Time</th>
-                        <th>Staff</th>
-                        <th>Action</th>
-                        <th>Target</th>
-                        <th>Details</th>
+                        <th>@T["Time"]</th>
+                        <th>@T["Staff"]</th>
+                        <th>@T["Action"]</th>
+                        <th>@T["Target"]</th>
+                        <th>@T["Details"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -121,10 +138,10 @@
                                 <strong>@item.ActorName</strong>
                                 @if (!string.IsNullOrEmpty(item.ActorRole))
                                 {
-                                    <div class="hint">@item.ActorRole</div>
+                                    <div class="hint">@T[item.ActorRole]</div>
                                 }
                             </td>
-                            <td><span class="badge @ActionBadge(item.Action)">@ActionLabel(item.Action)</span></td>
+                            <td><span class="badge @ActionBadge(item.Action)">@T[ActionLabel(item.Action)]</span></td>
                             <td>@item.TargetLabel</td>
                             <td>@item.Details</td>
                         </tr>
@@ -132,7 +149,7 @@
                     @if (!Model.Items.Any())
                     {
                         <tr>
-                            <td colspan="5">No entries found.</td>
+                            <td colspan="5">@T["No entries found."]</td>
                         </tr>
                     }
                 </tbody>

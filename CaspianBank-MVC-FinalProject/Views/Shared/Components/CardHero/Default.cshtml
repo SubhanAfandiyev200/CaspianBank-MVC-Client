@@ -13,11 +13,11 @@
     <span class="spark spark-a" aria-hidden="true"></span>
     <span class="spark spark-b" aria-hidden="true"></span>
     <div class="hero-copy">
-        <p class="eyebrow"><span aria-hidden="true">✱ </span><span>@label</span></p>
-        <h1>@title</h1>
-        <p class="lede">@description</p>
+        <p class="eyebrow"><span aria-hidden="true">✱ </span><span>@T[label]</span></p>
+        <h1>@T[title]</h1>
+        <p class="lede">@T[description]</p>
         <a class="btn btn-lime btn-go" id="hero-form" href="@NavLinks.OpenAccount(User.Identity?.IsAuthenticated == true)">
-            <span class="btn-go-label">Get your card</span>
+            <span class="btn-go-label">@T["Get your card"]</span>
         </a>
     </div>
     <div class="hero-visual">
@@ -33,9 +33,9 @@
                         <span class="fan-shine" aria-hidden="true"></span>
                         <span class="fan-top">
                             <span class="fan-brand">
-                                <span class="fan-mark" aria-hidden="true"></span><span class="fan-bank">Caspian</span>
+                                <span class="fan-mark" aria-hidden="true"></span><span class="fan-bank">@T["Caspian"]</span>
                             </span>
-                            <span class="fan-tier">@design.Title</span>
+                            <span class="fan-tier">@T[design.Title]</span>
                             <svg class="fan-wave" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
                                  stroke-width="1.7" stroke-linecap="round" aria-hidden="true">
                                 <path d="M8 8.2c1.6 1.5 1.6 6.1 0 7.6" />
@@ -45,7 +45,7 @@
                         </span>
                         <span class="fan-chip" aria-hidden="true"></span>
                         <span class="fan-mask">•••• @masks[i % masks.Length]</span>
-                        <span class="fan-issuer">Caspian Bank</span>
+                        <span class="fan-issuer">@T["Caspian Bank"]</span>
                     </article>
                 }
             }
@@ -59,7 +59,7 @@
                         <span class="fan-shine" aria-hidden="true"></span>
                         <span class="fan-top">
                             <span class="fan-brand">
-                                <span class="fan-mark" aria-hidden="true"></span><span class="fan-bank">Caspian</span>
+                                <span class="fan-mark" aria-hidden="true"></span><span class="fan-bank">@T["Caspian"]</span>
                             </span>
                             <span class="fan-tier">@tier</span>
                             <svg class="fan-wave" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
@@ -71,7 +71,7 @@
                         </span>
                         <span class="fan-chip" aria-hidden="true"></span>
                         <span class="fan-mask">•••• @mask</span>
-                        <span class="fan-issuer">Caspian Bank</span>
+                        <span class="fan-issuer">@T["Caspian Bank"]</span>
                     </article>
                 }
             }

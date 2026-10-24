@@ -1,4 +1,4 @@
-@model CaspianBank_MVC_FinalProject.ViewModels.Users.UserPageVM
+﻿@model CaspianBank_MVC_FinalProject.ViewModels.Users.UserPageVM
 @{
     ViewData["Title"] = "Users";
 
@@ -9,41 +9,41 @@
 }
 <main id="content" class="page">
     <header class="page-head">
-        <p class="eyebrow">Operations</p>
-        <h1>Users</h1>
-        <p class="lede">Search the customer book, open a profile, or restrict an account. @Model.RestrictedCount restricted at the moment.</p>
+        <p class="eyebrow">@T["Operations"]</p>
+        <h1>@T["Users"]</h1>
+        <p class="lede">@T["Search the customer book, open a profile, or restrict an account. {0} restricted at the moment.", Model.RestrictedCount]</p>
     </header>
 
     @if (TempData["Success"] is string success)
     {
-        <p class="flash flash-ok" role="status">@success</p>
+        <p class="flash flash-ok" role="status">@T[success]</p>
     }
     @if (TempData["Error"] is string error)
     {
-        <p class="flash flash-error" role="alert">@error</p>
+        <p class="flash flash-error" role="alert">@T[error]</p>
     }
     @if (Model.Unavailable)
     {
-        <p class="flash flash-error" role="alert">The customer list can't be loaded right now. Please try again in a moment.</p>
+        <p class="flash flash-error" role="alert">@T["The customer list can't be loaded right now. Please try again in a moment."]</p>
     }
 
     <section class="surface surface-tight">
         <form method="get" asp-area="Admin" asp-controller="Users" asp-action="Index" class="toolbar filters">
             <div class="field grow">
-                <label for="search">Search</label>
-                <input class="input" id="search" name="search" type="search" placeholder="Name, email, phone or FIN" value="@Model.Search" autocomplete="off" />
+                <label for="search">@T["Search"]</label>
+                <input class="input" id="search" name="search" type="search" placeholder="@T["Name, email, phone, FIN, ID or card number"]" value="@Model.Search" autocomplete="off" />
             </div>
             <div class="field">
-                <label for="status">Status</label>
+                <label for="status">@T["Status"]</label>
                 <select class="select" data-wheel id="status" name="status">
-                    <option value="" selected="@string.IsNullOrEmpty(Model.Status)">All</option>
-                    <option value="Active" selected="@(Model.Status == "Active")">Active</option>
-                    <option value="Restricted" selected="@(Model.Status == "Restricted")">Restricted</option>
+                    <option value="" selected="@string.IsNullOrEmpty(Model.Status)">@T["All"]</option>
+                    <option value="Active" selected="@(Model.Status == "Active")">@T["Active"]</option>
+                    <option value="Restricted" selected="@(Model.Status == "Restricted")">@T["Restricted"]</option>
                 </select>
             </div>
             <div class="field">
                 <label>&nbsp;</label>
-                <button class="btn btn-primary" type="submit">Filter</button>
+                <button class="btn btn-primary" type="submit">@T["Filter"]</button>
             </div>
         </form>
 
@@ -51,13 +51,13 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone</th>
-                        <th class="num">Cards</th>
-                        <th class="num">Total balance</th>
-                        <th>Registered</th>
-                        <th>Status</th>
+                        <th>@T["Name"]</th>
+                        <th>@T["Email"]</th>
+                        <th>@T["Phone"]</th>
+                        <th class="num">@T["Cards"]</th>
+                        <th class="num">@T["Total balance"]</th>
+                        <th>@T["Registered"]</th>
+                        <th>@T["Status"]</th>
                         <th class="actions"></th>
                     </tr>
                 </thead>
@@ -67,7 +67,7 @@
                         <tr>
                             <td>
                                 <strong>@item.FullName</strong>
-                                <div class="hint">FIN @(item.Fin ?? "—")</div>
+                                <div class="hint">@T["FIN"] @(item.Fin ?? "—")</div>
                             </td>
                             <td>@item.Email</td>
                             <td>@(item.Phone ?? "—")</td>
@@ -77,16 +77,16 @@
                             <td>
                                 @if (item.IsRestricted)
                                 {
-                                    <span class="badge badge-danger">Restricted</span>
+                                    <span class="badge badge-danger">@T["Restricted"]</span>
                                 }
                                 else
                                 {
-                                    <span class="badge badge-success">Active</span>
+                                    <span class="badge badge-success">@T["Active"]</span>
                                 }
                             </td>
                             <td class="actions">
                                 <span class="row-actions">
-                                    <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Users" asp-action="Detail" asp-route-id="@item.Id">View</a>
+                                    <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Users" asp-action="Detail" asp-route-id="@item.Id">@T["View"]</a>
                                 </span>
                             </td>
                         </tr>
@@ -94,7 +94,7 @@
                     @if (!Model.Items.Any())
                     {
                         <tr>
-                            <td colspan="8">No customers found.</td>
+                            <td colspan="8">@T["No customers found."]</td>
                         </tr>
                     }
                 </tbody>

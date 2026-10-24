@@ -1,0 +1,195 @@
+/* Caspian Bank — qara tema. Yalnız <html data-theme="dark"> olanda işləyir; əsas rənglər style.css və home.css-in dəyişənləridir,
+   burada həmin dəyişənlər qaranlıq paletlə əvəzlənir, sonra dəyişənlə həll olunmayan yerlər (şəkil, qradiyent, sabit rəng) düzəldilir. */
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* style.css tokenləri */
+  --color-primary: #1f8a5f;
+  --color-primary-hover: #26a06f;
+  --color-primary-pressed: #176d4b;
+  --color-primary-ink: #6fd3a6;
+  --color-primary-soft: #17402f;
+  --color-lime: #c5d86d;
+  --color-lime-deep: #b7cc5c;
+  --color-accent: #6fd3a6;
+  --color-accent-soft: #17402f;
+  --color-bg: #0c2a1f;
+  --color-surface: #123a2b;
+  --color-text: #e8eeea;
+  --color-text-secondary: #a6b3ab;
+  --color-text-tertiary: #7d8b83;
+  --color-border: #1e4d3a;
+  --color-border-strong: #2a6048;
+  --color-danger: #f09a9a;
+  --color-danger-soft: #3a2222;
+  --color-out: #ee9d9d;
+  --color-info: #86c6dc;
+  --color-info-soft: #15272e;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 18px 40px rgba(0, 0, 0, 0.45);
+  --tint-green: #17402f;
+  --tint-neutral: #153828;
+  --tint-red: #3a2222;
+  --ink-danger: #f3a3a3;
+  --ink-ok: #8fe0b4;
+  --ink-pending: #d6e79a;
+  --ink-danger-strong: #ff9d94;
+  --cat-1: #2fae7c;
+  --cat-2: #c5d86d;
+  --cat-3: #5aa7c2;
+  --cat-4: #d99a55;
+  --cat-5: #a68ad0;
+
+  /* home.css tokenləri */
+  --white: #0f3022;
+  --paper: #0c2a1f;
+  --text: #e8eeea;
+  --muted: #a6b3ab;
+  --line: #1e4d3a;
+  --shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  --green: #2e9f70;
+  --green-bright: #3fbf88;
+}
+
+/* Qaranlıqda sənədin özü */
+:root[data-theme="dark"] body:not(.body-public) { background: var(--color-bg); color: var(--color-text); }
+:root[data-theme="dark"] body.body-public {
+  background-color: #0a2a1d;
+  background-image:
+    radial-gradient(880px 520px at 50% -12%, #15402e 0%, rgba(21, 64, 46, 0) 62%),
+    radial-gradient(620px 420px at 86% 18%, rgba(197, 216, 109, 0.16) 0%, transparent 58%),
+    radial-gradient(480px 360px at 10% 86%, rgba(27, 138, 90, 0.3) 0%, transparent 62%);
+  color: var(--color-text);
+}
+:root[data-theme="dark"] .auth-card { background: rgba(18, 58, 43, 0.94); }
+:root[data-theme="dark"] a.back { background: rgba(18, 58, 43, 0.7); }
+:root[data-theme="dark"] ::selection { background: #24493a; color: #ffffff; }
+:root[data-theme="dark"] input::placeholder,
+:root[data-theme="dark"] textarea::placeholder { color: #6c7a72; }
+:root[data-theme="dark"] .input-number::placeholder { color: #55625b; }
+:root[data-theme="dark"] img.invert-dark { filter: invert(1) hue-rotate(180deg); }
+
+/* ---------- Tema və dil düymələri (bütün səhifələrdə) ---------- */
+.site-controls { display: inline-flex; align-items: center; gap: 8px; }
+.site-controls-floating { position: fixed; top: 14px; right: 14px; z-index: 50; }
+.theme-toggle,
+.lang-switch summary {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px; height: 36px; min-width: 36px; padding: 0 10px;
+  border: 1px solid var(--color-border-strong, #cdd4cf); border-radius: 10px; background: var(--color-surface, #fff); color: var(--color-text-secondary, #5e6862);
+  font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; list-style: none; transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+.lang-switch summary::-webkit-details-marker { display: none; }
+.theme-toggle:hover,
+.lang-switch summary:hover { color: var(--color-primary-ink, #0f5c3f); border-color: var(--color-primary, #0f5c3f); }
+.theme-toggle .icon-moon { display: none; }
+:root[data-theme="dark"] .theme-toggle .icon-sun { display: none; }
+:root[data-theme="dark"] .theme-toggle .icon-moon { display: block; }
+.lang-switch { position: relative; }
+.lang-switch[open] summary { border-color: var(--color-primary, #0f5c3f); }
+.lang-menu {
+  position: absolute; right: 0; top: calc(100% + 6px); min-width: 150px; margin: 0; padding: 6px; list-style: none; z-index: 60;
+  border: 1px solid var(--color-border, #e3e7e4); border-radius: 12px; background: var(--color-surface, #fff); box-shadow: 0 14px 34px rgba(0, 0, 0, 0.18);
+}
+.lang-menu a { display: flex; justify-content: space-between; gap: 12px; padding: 8px 10px; border-radius: 8px; color: var(--color-text, #141816); text-decoration: none; font-size: 14px; }
+.lang-menu a:hover { background: var(--tint-green, #eef6d8); }
+.lang-menu a.is-active { font-weight: 700; color: var(--color-primary-ink, #0f5c3f); }
+.site-header .site-controls { margin-left: auto; margin-right: 8px; }
+
+/* ---------- Ana səhifə (home.css) ---------- */
+:root[data-theme="dark"] .service-card h3,
+:root[data-theme="dark"] .service-icon,
+:root[data-theme="dark"] .benefit-arrows button:hover { color: #6fd3a6; }
+:root[data-theme="dark"] .stat .ring-figure,
+:root[data-theme="dark"] .stats .ring-figure { color: #e8f3c4; }
+:root[data-theme="dark"] .logo-track li { color: #d5dfd9; }
+:root[data-theme="dark"] .dash-top {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, rgba(0, 0, 0, 0) 1px), linear-gradient(165deg, #15402f 0%, #0e2c20 100%);
+}
+:root[data-theme="dark"] .cd-balance .badge-pill.is-bad { color: #8a1f1f; }
+:root[data-theme="dark"] .flash-ok { border-color: #2b5a45; }
+:root[data-theme="dark"] .flash-error { border-color: #5a2f2f; }
+
+/* ---------- Qradiyentli fonlar (dəyişənlə həll olunmayanlar) ---------- */
+:root[data-theme="dark"] .page-activity .page-head {
+  background: radial-gradient(480px 140px at 100% 0%, rgba(197, 216, 109, 0.14), transparent 68%), linear-gradient(180deg, #143a2b, #103021);
+}
+:root[data-theme="dark"] .rc-top { background: radial-gradient(260px 120px at 50% 0%, rgba(197, 216, 109, 0.14), transparent 70%), var(--color-surface); }
+:root[data-theme="dark"] .rc-zigzag {
+  background: linear-gradient(135deg, var(--color-surface) 6px, transparent 0) 0 0 / 16px 12px repeat-x,
+              linear-gradient(225deg, var(--color-surface) 6px, transparent 0) 0 0 / 16px 12px repeat-x;
+}
+:root[data-theme="dark"] .cd-visual { background: radial-gradient(420px 220px at 50% 0%, rgba(197, 216, 109, 0.12), transparent 72%), linear-gradient(180deg, #143a2b, #103021); }
+:root[data-theme="dark"] .pay-preview { background: linear-gradient(180deg, #143a2b 0%, #103021 100%); }
+:root[data-theme="dark"] .loan-banner { background: radial-gradient(260px 90px at 100% 0%, rgba(197, 216, 109, 0.14), transparent 70%), #143a2b; }
+:root[data-theme="dark"] .skeleton { background: linear-gradient(90deg, #153828 25%, #1e4a37 37%, #153828 63%); background-size: 400% 100%; }
+:root[data-theme="dark"] .topnav { background: #0e3a29; }
+
+/* ---------- Köməkçi paneli (chat-widget.css öz dəyişənlərindən istifadə edir) ---------- */
+:root[data-theme="dark"] .cw {
+  --cw-primary: #1f8a5f;
+  --cw-ink: #e8eeea;
+  --cw-muted: #a6b3ab;
+  --cw-faint: #7d8b83;
+  --cw-border: #1e4d3a;
+  --cw-bg: #0c2a1f;
+  --cw-surface: #123a2b;
+}
+:root[data-theme="dark"] .cw-head { background: radial-gradient(260px 90px at 100% 0%, rgba(197, 216, 109, 0.14), transparent 70%), var(--cw-surface); }
+:root[data-theme="dark"] .cw-chip:hover { background: #17402f; }
+:root[data-theme="dark"] .cw-input:focus { background: #0f3022; }
+:root[data-theme="dark"] .cw-backdrop { background: rgba(0, 0, 0, 0.55); }
+
+/* ---------- Açılan seçicilər (tarix və təkər) ---------- */
+:root[data-theme="dark"] .wheel-pop { background: rgba(18, 58, 43, 0.97); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.55); }
+:root[data-theme="dark"] .wheel-highlight { background: rgba(111, 211, 166, 0.14); }
+:root[data-theme="dark"] .auth-card .back { background: rgba(18, 58, 43, 0.7); }
+:root[data-theme="dark"] .add-card { background: rgba(255, 255, 255, 0.04); border-color: rgba(255, 255, 255, 0.2); }
+
+/* ---------- Başlıqdakı dil və tema düymələri (tünd yaşıl zolaqda) ---------- */
+.site-header .site-controls,
+.topnav .site-controls { margin: 0; gap: 8px; }
+.site-header .theme-toggle,
+.site-header .lang-switch summary,
+.topnav .theme-toggle,
+.topnav .lang-switch summary {
+  background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.38); color: #f4f7f2;
+}
+.site-header .theme-toggle:hover,
+.site-header .lang-switch summary:hover,
+.site-header .lang-switch[open] summary,
+.topnav .theme-toggle:hover,
+.topnav .lang-switch summary:hover,
+.topnav .lang-switch[open] summary {
+  background: #c5d86d; border-color: #c5d86d; color: #10281e;
+}
+.lang-switch summary svg,
+.theme-toggle svg { flex: none; display: block; width: 16px; height: 16px; min-width: 16px; }
+.theme-toggle svg { width: 18px; height: 18px; min-width: 18px; }
+
+/* ---------- Loqo zolağı: şəklin ağ fonu görünməsin ---------- */
+.brand-img { mix-blend-mode: multiply; }
+:root[data-theme="dark"] .brand-img { filter: invert(1) hue-rotate(180deg); mix-blend-mode: screen; }
+
+/* ---------- Etibar göstəriciləri: rəqəmlər qaranlıqda oxunsun ---------- */
+:root[data-theme="dark"] .ring-face { fill: #0c2a1f; }
+:root[data-theme="dark"] .stat .ring-figure,
+:root[data-theme="dark"] .stats .ring-figure,
+:root[data-theme="dark"] .ring-figure { color: #e8f3c4; }
+/* Hərəkət edən zolaq öz qatını yaradır, ona görə blend yalnız zolağın öz fonu ilə işləyir: fon partners ilə eyni olmalıdır */
+.logo-track { background: var(--white); }
+
+/* ---------- Kredit müraciəti: aylıq ödəniş qutusu ---------- */
+:root[data-theme="dark"] .loan-quote {
+  background: radial-gradient(180px 80px at 100% 0%, rgba(197, 216, 109, 0.14), transparent 70%), #164431;
+  border: 1px solid var(--color-border);
+}
+:root[data-theme="dark"] .loan-quote strong { color: var(--color-text); }
+:root[data-theme="dark"] .loan-quote span { color: var(--color-text-secondary); }
+:root[data-theme="dark"] .loan-quote small { color: var(--color-text-secondary); }
+
+/* ---------- Qara siyahı: iki təsdiq ---------- */
+:root[data-theme="dark"] .badge-awaiting { background: #4a3708; color: #ffd978; border-color: #8a6a1a; }
+:root[data-theme="dark"] .approval-banner { background: #3b2f0d; color: #ffe29a; border-color: #8a6a1a; }
+:root[data-theme="dark"] .approval-banner.is-final { background: #3d1a18; color: #ffb4ab; border-color: #8c2a24; }
+:root[data-theme="dark"] .approval-steps li { background: rgba(255, 255, 255, 0.1); }

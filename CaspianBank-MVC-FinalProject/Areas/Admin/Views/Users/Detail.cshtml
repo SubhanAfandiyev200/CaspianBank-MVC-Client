@@ -1,4 +1,4 @@
-@model CaspianBank_MVC_FinalProject.ViewModels.Users.UserDetailVM
+﻿@model CaspianBank_MVC_FinalProject.ViewModels.Users.UserDetailVM
 @using System.Globalization
 @{
     ViewData["Title"] = Model.FullName;
@@ -8,11 +8,11 @@
     string Money(decimal value) { return value.ToString("N2", inv) + " AZN"; }
 }
 <main id="content" class="page">
-    <a class="back" asp-area="Admin" asp-controller="Users" asp-action="Index">All users</a>
+    <a class="back" asp-area="Admin" asp-controller="Users" asp-action="Index">@T["All users"]</a>
 
     <header class="page-head spread">
         <div>
-            <p class="eyebrow">Customer</p>
+            <p class="eyebrow">@T["Customer"]</p>
             <h1>@Model.FullName</h1>
             <p class="lede">@Model.Email@(string.IsNullOrEmpty(Model.Phone) ? "" : " · " + Model.Phone)</p>
         </div>
@@ -20,16 +20,16 @@
         {
             <form method="post" asp-area="Admin" asp-controller="Users" asp-action="Unrestrict" asp-route-id="@Model.Id">
                 <button type="submit" class="btn btn-primary"
-                        data-confirm-title="Restore this account?"
+                        data-confirm-title="@T["Restore this account?"]"
                         data-confirm-text="@Model.FullName will be able to sign in and move money again."
-                        data-confirm-yes="Unfreeze">Unfreeze account</button>
+                        data-confirm-yes="@T["Unfreeze"]">@T["Unfreeze account"]</button>
             </form>
         }
     </header>
 
     @if (TempData["Success"] is string success)
     {
-        <p class="flash flash-ok" role="status">@success</p>
+        <p class="flash flash-ok" role="status">@T[success]</p>
     }
     @if (TempData["Error"] is string tempError)
     {
@@ -40,7 +40,7 @@
         @if (Model.IsRestricted)
         {
             <p class="flash flash-error" role="status">
-                <strong>This account is restricted.</strong>
+                <strong>@T["This account is restricted."]</strong>
                 @(string.IsNullOrEmpty(Model.RestrictionReason) ? "" : "Reason: " + Model.RestrictionReason + ".")
                 @(Model.RestrictedBy is null ? "" : " By " + Model.RestrictedBy)@(Model.RestrictedAt.HasValue ? " on " + Model.RestrictedAt.Value.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv) + "." : "")
                 The customer can't sign in, send money, pay bills or take a loan.
@@ -48,19 +48,19 @@
         }
 
         <div class="meta-grid">
-            <div class="meta-item"><span>Status</span><strong>@(Model.IsRestricted ? "Restricted" : "Active")</strong></div>
-            <div class="meta-item"><span>Registered</span><strong>@LoanUi.Date(Model.RegisteredAt.ToLocalTime())</strong></div>
-            <div class="meta-item"><span>FIN</span><strong>@(Model.Fin ?? "—")</strong></div>
-            <div class="meta-item"><span>Date of birth</span><strong>@LoanUi.Date(Model.BirthDate)</strong></div>
-            <div class="meta-item"><span>Total sent</span><strong>@Money(Model.TotalSent)</strong></div>
-            <div class="meta-item"><span>Bills paid</span><strong>@Money(Model.BillPaymentTotal)</strong><small class="hint">@Model.BillPaymentCount payment@(Model.BillPaymentCount == 1 ? "" : "s")</small></div>
+            <div class="meta-item"><span>@T["Status"]</span><strong>@(Model.IsRestricted ? "Restricted" : "Active")</strong></div>
+            <div class="meta-item"><span>@T["Registered"]</span><strong>@LoanUi.Date(Model.RegisteredAt.ToLocalTime())</strong></div>
+            <div class="meta-item"><span>@T["FIN"]</span><strong>@(Model.Fin ?? "—")</strong></div>
+            <div class="meta-item"><span>@T["Date of birth"]</span><strong>@LoanUi.Date(Model.BirthDate)</strong></div>
+            <div class="meta-item"><span>@T["Total sent"]</span><strong>@Money(Model.TotalSent)</strong></div>
+            <div class="meta-item"><span>@T["Bills paid"]</span><strong>@Money(Model.BillPaymentTotal)</strong><small class="hint">@T["{0} payment(s)", Model.BillPaymentCount]</small></div>
         </div>
 
         <section class="surface surface-tight">
-            <div class="toolbar"><h2>Cards</h2></div>
+            <div class="toolbar"><h2>@T["Cards"]</h2></div>
             @if (Model.Cards.Count == 0)
             {
-                <p class="hint pad">No cards yet.</p>
+                <p class="hint pad">@T["No cards yet."]</p>
             }
             else
             {
@@ -71,15 +71,15 @@
                             <span class="plastic-art" aria-hidden="true"></span>
                             <span class="plastic-shine" aria-hidden="true"></span>
                             <div class="plastic-top">
-                                <span class="plastic-brand"><span class="plastic-mark" aria-hidden="true"></span><span class="plastic-bank">Caspian</span></span>
-                                <span class="plastic-tier">@card.Tier@(card.IsBlocked ? " · blocked" : "")</span>
+                                <span class="plastic-brand"><span class="plastic-mark" aria-hidden="true"></span><span class="plastic-bank">@T["Caspian"]</span></span>
+                                <span class="plastic-tier">@card.Tier@(card.IsBlocked ? " · " + T["blocked"] : "")</span>
                             </div>
                             <div class="plastic-mid"><span class="plastic-chip" aria-hidden="true"></span></div>
                             <p class="plastic-number">•••• @card.Last4</p>
                             <div class="plastic-bottom">
-                                <span class="plastic-issuer">Caspian Bank</span>
-                                <div><span class="plastic-k">Valid</span><span class="plastic-v">@card.Expiry</span></div>
-                                <div><span class="plastic-k">Balance</span><span class="plastic-v num">@Money(card.Balance)</span></div>
+                                <span class="plastic-issuer">@T["Caspian Bank"]</span>
+                                <div><span class="plastic-k">@T["Valid"]</span><span class="plastic-v">@card.Expiry</span></div>
+                                <div><span class="plastic-k">@T["Balance"]</span><span class="plastic-v num">@Money(card.Balance)</span></div>
                             </div>
                         </div>
                     }
@@ -88,29 +88,29 @@
         </section>
 
         <section class="surface surface-tight">
-            <div class="toolbar"><h2>Loans</h2></div>
+            <div class="toolbar"><h2>@T["Loans"]</h2></div>
             <div class="table-wrap">
                 <table class="data-table">
-                    <thead><tr><th>Contract</th><th>Status</th><th class="num">Amount</th><th class="num">Principal left</th><th class="actions"></th></tr></thead>
+                    <thead><tr><th>@T["Contract"]</th><th>@T["Status"]</th><th class="num">@T["Amount"]</th><th class="num">@T["Principal left"]</th><th class="actions"></th></tr></thead>
                     <tbody>
                         @foreach (var loan in Model.Loans)
                         {
                             <tr>
                                 <td>@loan.ContractNumber</td>
-                                <td><span class="badge @LoanUi.StatusBadge(loan.Status)">@LoanUi.StaffStatusText(loan.Status)</span></td>
+                                <td><span class="badge @LoanUi.StatusBadge(loan.Status)">@T[LoanUi.StaffStatusText(loan.Status)]</span></td>
                                 <td class="num">@Money(loan.Amount)</td>
                                 <td class="num">@Money(loan.OutstandingPrincipal)</td>
                                 <td class="actions">
                                     @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Accountant))
                                     {
-                                        <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Loans" asp-action="Detail" asp-route-id="@loan.Id">Open</a>
+                                        <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Loans" asp-action="Detail" asp-route-id="@loan.Id">@T["Open"]</a>
                                     }
                                 </td>
                             </tr>
                         }
                         @if (Model.Loans.Count == 0)
                         {
-                            <tr><td colspan="5">No loans.</td></tr>
+                            <tr><td colspan="5">@T["No loans."]</td></tr>
                         }
                     </tbody>
                 </table>
@@ -118,10 +118,10 @@
         </section>
 
         <section class="surface surface-tight">
-            <div class="toolbar"><h2>Recent activity</h2></div>
+            <div class="toolbar"><h2>@T["Recent activity"]</h2></div>
             <div class="table-wrap">
                 <table class="data-table">
-                    <thead><tr><th>Date</th><th>Description</th><th>Card</th><th class="num">Amount</th></tr></thead>
+                    <thead><tr><th>@T["Date"]</th><th>@T["Description"]</th><th>@T["Card"]</th><th class="num">@T["Amount"]</th></tr></thead>
                     <tbody>
                         @foreach (var item in Model.RecentActivity)
                         {
@@ -134,7 +134,7 @@
                         }
                         @if (Model.RecentActivity.Count == 0)
                         {
-                            <tr><td colspan="4">No activity yet.</td></tr>
+                            <tr><td colspan="4">@T["No activity yet."]</td></tr>
                         }
                     </tbody>
                 </table>
@@ -144,21 +144,21 @@
         @if (canRestrict && !Model.IsRestricted)
         {
             <section class="surface">
-                <h2>Restrict this account</h2>
-                <p class="hint">A restricted customer can't sign in, send money, pay bills, top up or take a loan until the account is restored. Write why, so the next person knows.</p>
+                <h2>@T["Restrict this account"]</h2>
+                <p class="hint">@T["A restricted customer can't sign in, send money, pay bills, top up or take a loan until the account is restored. Write why, so the next person knows."]</p>
                 @if (!string.IsNullOrEmpty(Model.Error))
                 {
-                    <p class="flash flash-error" role="alert">@Model.Error</p>
+                    <p class="flash flash-error" role="alert">@T[Model.Error]</p>
                 }
                 <form method="post" asp-area="Admin" asp-controller="Users" asp-action="Restrict" asp-route-id="@Model.Id" class="form-stack">
                     <div class="field">
-                        <label for="reason">Reason</label>
-                        <textarea class="input" id="reason" name="reason" rows="3" maxlength="300" placeholder="For example: reported card fraud, waiting for ID check">@Model.ReasonDraft</textarea>
+                        <label for="reason">@T["Reason"]</label>
+                        <textarea class="input" id="reason" name="reason" rows="3" maxlength="300" placeholder="@T["For example: reported card fraud, waiting for ID check"]">@Model.ReasonDraft</textarea>
                     </div>
                     <button type="submit" class="btn btn-danger"
-                            data-confirm-title="Restrict this account?"
+                            data-confirm-title="@T["Restrict this account?"]"
                             data-confirm-text="@Model.FullName will be unable to sign in or move money until the account is restored."
-                            data-confirm-yes="Restrict account" data-confirm-danger="true">Restrict account</button>
+                            data-confirm-yes="@T["Restrict account"]" data-confirm-danger="true">@T["Restrict account"]</button>
                 </form>
             </section>
         }

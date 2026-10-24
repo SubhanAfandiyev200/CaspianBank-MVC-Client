@@ -1,0 +1,3 @@
+@* Səhifə skriptləri üçün tərcümə lüğəti ("js:" açarları) və cbt() köməkçisi. Bütün səhifə skriptlərindən ƏVVƏL yüklənməlidir *@
+<script>window.I18N = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(T.ForScripts(), new System.Text.Json.JsonSerializerOptions { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping }).Replace("<", "\u003c"));</script>
+<script src="~/js/i18n.js" asp-append-version="true"></script>

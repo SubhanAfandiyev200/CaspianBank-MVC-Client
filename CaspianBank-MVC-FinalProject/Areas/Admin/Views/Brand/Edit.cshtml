@@ -1,33 +1,33 @@
-@model BrandEditVM
+﻿@model BrandEditVM
 @{
     ViewData["Title"] = "Brand · Edit";
 }
 <main id="content" class="page">
-    <a class="back" asp-area="Admin" asp-controller="Brand" asp-action="Index">All brands</a>
+    <a class="back" asp-area="Admin" asp-controller="Brand" asp-action="Index">@T["All brands"]</a>
 
     <header class="page-head">
-        <p class="eyebrow">UI · Home page</p>
-        <h1>Edit brand</h1>
-        <p class="lede">Change the name or the logo. Leave the logo as it is to keep the current one.</p>
+        <p class="eyebrow">@T["UI · Home page"]</p>
+        <h1>@T["Edit brand"]</h1>
+        <p class="lede">@T["Change the name or the logo. Leave the logo as it is to keep the current one."]</p>
     </header>
 
     <form method="post" asp-area="Admin" asp-controller="Brand" asp-action="Edit" asp-route-id="@Model.Id" enctype="multipart/form-data" class="narrow stack-lg" novalidate>
         <section class="surface form-stack">
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
             <div class="field">
-                <label asp-for="Name">Name</label>
-                <input class="input" asp-for="Name" maxlength="100" placeholder="Brand name" autocomplete="off" />
+                <label asp-for="Name">@T["Name"]</label>
+                <input class="input" asp-for="Name" maxlength="100" placeholder="@T["Brand name"]" autocomplete="off" />
                 <span asp-validation-for="Name" class="field-error"></span>
             </div>
             <div class="field">
-                <label asp-for="Image">Logo</label>
+                <label asp-for="Image">@T["Logo"]</label>
                 <div class="file-drop" data-file-drop>
                     <input class="file-drop-input" asp-for="Image" type="file" accept="image/png,image/jpeg,image/webp" />
                     <div class="file-drop-box">
                         <span class="file-drop-preview" data-file-preview>
                             @if (!string.IsNullOrEmpty(Model.CurrentImage))
                             {
-                                <img src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], Model.CurrentImage)" alt="Current logo" />
+                                <img src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], Model.CurrentImage)" alt="@T["Current logo"]" />
                             }
                             else
                             {
@@ -35,8 +35,8 @@
                             }
                         </span>
                         <span class="file-drop-text">
-                            <strong data-file-title>Current logo</strong>
-                            <span data-file-hint>Click here or drag a new one in. PNG, JPEG or WebP, up to 2 MB.</span>
+                            <strong data-file-title>@T["Current logo"]</strong>
+                            <span data-file-hint>@T["Click here or drag a new one in. PNG, JPEG or WebP, up to 2 MB."]</span>
                         </span>
                     </div>
                 </div>
@@ -45,8 +45,8 @@
         </section>
 
         <div class="rv-actions">
-            <a class="btn btn-secondary btn-cancel" asp-area="Admin" asp-controller="Brand" asp-action="Index">Cancel</a>
-            <button class="btn btn-primary" type="submit">Save changes</button>
+            <a class="btn btn-secondary btn-cancel" asp-area="Admin" asp-controller="Brand" asp-action="Index">@T["Cancel"]</a>
+            <button class="btn btn-primary" type="submit">@T["Save changes"]</button>
         </div>
     </form>
 </main>

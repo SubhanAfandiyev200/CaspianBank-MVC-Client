@@ -10,6 +10,12 @@ namespace CaspianBank_MVC_FinalProject.Helpers
             return key == Logo;
         }
 
+        // Saytın mətnidir, dilə görə tərcümə olunur (Edit səhifəsində EN | AZ | RU seçimi çıxır). URL, email, telefon və s. tərcümə olunmur
+        public static bool IsTranslatable(string key)
+        {
+            return key == "FooterTitle" || key == "FooterDescription";
+        }
+
         // Uzun mətn olduğu üçün çox sətirli sahədə redaktə olunur
         public static bool IsLong(string key)
         {
@@ -44,6 +50,10 @@ namespace CaspianBank_MVC_FinalProject.Helpers
                     return "X (Twitter) link";
                 case "LinkedInUrl":
                     return "LinkedIn link";
+                case "MapLatitude":
+                    return "Map latitude";
+                case "MapLongitude":
+                    return "Map longitude";
                 default:
                     return key;
             }
@@ -74,6 +84,10 @@ namespace CaspianBank_MVC_FinalProject.Helpers
                 case "TwitterUrl":
                 case "LinkedInUrl":
                     return "Where the icon in the footer opens. Write the full link, for example https://www.instagram.com/caspianbank.";
+                case "MapLatitude":
+                    return "The map on the Contact us page. The latitude of the office, with a dot, for example 40.3730. In Google Maps right-click the place and copy the first number.";
+                case "MapLongitude":
+                    return "The map on the Contact us page. The longitude of the office, with a dot, for example 49.8370. In Google Maps right-click the place and copy the second number. Keep the Address setting in step with the map.";
                 default:
                     return string.Empty;
             }

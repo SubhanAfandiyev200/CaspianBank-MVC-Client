@@ -1,0 +1,86 @@
+﻿@model CaspianBank_MVC_FinalProject.ViewModels.Bank.BankRulesVM
+@{
+    ViewData["Title"] = "Bank rules";
+}
+<main id="content" class="page">
+    <header class="page-head">
+        <p class="eyebrow">@T["Bank"]</p>
+        <h1>@T["Bank rules"]</h1>
+        <p class="lede">@T["The numbers the bank works by. Finance rules apply right away. Loan rules apply only to new loans: a loan that is already signed keeps its own rate and penalties. Every change is written to the audit log."]</p>
+    </header>
+
+    @if (TempData["Success"] is string success)
+    {
+        <p class="flash flash-ok" role="status">@T[success]</p>
+    }
+    @if (Model.Unavailable)
+    {
+        <p class="flash flash-error" role="alert">@T["The bank rules can't be loaded right now. Please try again in a moment."]</p>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <p class="flash flash-error" role="alert">@T[Model.Error]</p>
+    }
+
+    @if (!Model.Unavailable)
+    {
+        <form method="post" asp-area="Admin" asp-controller="BankRules" asp-action="Index" novalidate class="layout-2">
+            <section class="surface form-stack form-card">
+                <h2>@T["Finance"]</h2>
+                <div class="field">
+                    <label for="reserve">@T["Required reserve, %"]</label>
+                    <input class="input" id="reserve" name="ReservePercent" inputmode="decimal" value="@Model.ReservePercent" />
+                    <p class="hint">@T["Share of the customers' money (cards and deposits) the bank must keep in the treasury. A loan is paid out only while the treasury stays above it."]</p>
+                </div>
+                <div class="field">
+                    <label for="tax">@T["Profit tax, %"]</label>
+                    <input class="input" id="tax" name="ProfitTaxPercent" inputmode="decimal" value="@Model.ProfitTaxPercent" />
+                    <p class="hint">@T["Taken from the monthly profit when the month is closed. No tax on a loss."]</p>
+                </div>
+                <div class="field">
+                    <label for="opex">@T["Operating costs per month, AZN"]</label>
+                    <input class="input" id="opex" name="OperatingCostMonthly" inputmode="decimal" value="@Model.OperatingCostMonthly" />
+                    <p class="hint">@T["Salaries, rent and servers. Taken from the treasury when the month is closed."]</p>
+                </div>
+                <div class="field">
+                    <label for="interbank">@T["Most for one transfer to another bank, AZN"]</label>
+                    <input class="input" id="interbank" name="MaxInterbankAmount" inputmode="decimal" value="@Model.MaxInterbankAmount" />
+                </div>
+            </section>
+
+            <section class="surface form-stack form-card">
+                <h2>@T["Loans (new loans only)"]</h2>
+                <div class="field">
+                    <label for="min-loan">@T["Smallest loan, AZN"]</label>
+                    <input class="input" id="min-loan" name="MinLoanAmount" inputmode="decimal" value="@Model.MinLoanAmount" />
+                </div>
+                <div class="field">
+                    <label for="max-loan">@T["Largest loan, AZN"]</label>
+                    <input class="input" id="max-loan" name="MaxLoanAmount" inputmode="decimal" value="@Model.MaxLoanAmount" />
+                </div>
+                <div class="field">
+                    <label for="rate">@T["Yearly rate, %"]</label>
+                    <input class="input" id="rate" name="AnnualInterestRate" inputmode="decimal" value="@Model.AnnualInterestRate" />
+                    <p class="hint">@T["Deposit rates are lower than this one: the bank earns the difference. Deposit rates are on the Deposits page."]</p>
+                </div>
+                <div class="field">
+                    <label for="fixed">@T["Fixed late penalty, AZN"]</label>
+                    <input class="input" id="fixed" name="FixedPenalty" inputmode="decimal" value="@Model.FixedPenalty" />
+                </div>
+                <div class="field">
+                    <label for="daily">@T["Late penalty per day, %"]</label>
+                    <input class="input" id="daily" name="DailyPenaltyPercent" inputmode="decimal" value="@Model.DailyPenaltyPercent" />
+                </div>
+                <div class="field">
+                    <label for="active">@T["Open loans per customer"]</label>
+                    <input class="input" id="active" name="MaxActiveLoans" inputmode="numeric" value="@Model.MaxActiveLoans" />
+                </div>
+                <div class="field">
+                    <label for="offer">@T["Days a reduced offer stays valid"]</label>
+                    <input class="input" id="offer" name="OfferValidDays" inputmode="numeric" value="@Model.OfferValidDays" />
+                </div>
+                <button class="btn btn-primary" type="submit" data-once>@T["Save rules"]</button>
+            </section>
+        </form>
+    }
+</main>

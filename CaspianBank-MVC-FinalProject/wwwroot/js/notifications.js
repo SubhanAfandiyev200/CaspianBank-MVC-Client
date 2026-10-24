@@ -25,6 +25,7 @@
     Staff: '<path d="M4 6h16v10H7l-3 3z"/>',
     Support: '<path d="M4 6h16v10H7l-3 3z"/>',
     Bill: '<path d="M13 3 5 14h6l-1 7 8-11h-6z"/>',
+    Deposit: '<path d="M4 9h16v10H4zM8 9V6h8v3M12 12v4M10 14h4"/>',
     Default: '<path d="M6 17h12l-1.5-2V11a4.5 4.5 0 0 0-9 0v4z"/><path d="M10 20a2 2 0 0 0 4 0"/>'
   };
 
@@ -37,9 +38,9 @@
   function ago(iso) {
     const then = new Date(iso);
     const seconds = (Date.now() - then.getTime()) / 1000;
-    if (seconds < 45) return "just now";
-    if (seconds < 3600) return Math.max(1, Math.round(seconds / 60)) + " min ago";
-    if (seconds < 86400) return Math.floor(seconds / 3600) + " h ago";
+    if (seconds < 45) return cbt("just now");
+    if (seconds < 3600) return cbt("{0} min ago", Math.max(1, Math.round(seconds / 60)));
+    if (seconds < 86400) return cbt("{0} h ago", Math.floor(seconds / 3600));
     return then.toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
   }
 
@@ -56,7 +57,7 @@
     return '<a class="note' + (n.isRead ? "" : " is-unread") + '" href="' + esc(openUrl(n)) + '">'
       + '<span class="note-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + icon + "</svg></span>"
       + "<span>"
-      + '<span class="spread"><span class="note-title">' + esc(n.title) + '</span><time datetime="' + esc(n.createdAt) + '">' + esc(ago(n.createdAt)) + "</time></span>"
+      + '<span class="spread"><span class="note-title">' + esc(cbt(n.title)) + '</span><time datetime="' + esc(n.createdAt) + '">' + esc(ago(n.createdAt)) + "</time></span>"
       + '<span class="note-body">' + esc(n.message) + "</span>"
       + "</span></a>";
   }
@@ -96,8 +97,25 @@
     }, 7000);
   }
 
-  function onNotification(payload) {
-    const n = payload.notification;
+  // API bildirişi ingiliscə göndərir: göstərməzdən əvvəl serverdən seçilmiş dildəki mətni alırıq (alınmasa ingiliscə qalır)
+  async function translated(n) {
+    try {
+      const response = await fetch("/App/Notifications/Translate", {
+        method: "POST",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ title: n.title, message: n.message })
+      });
+      if (!response.ok) return n;
+      const text = await response.json();
+      return Object.assign({}, n, { title: text.title || n.title, message: text.message || n.message });
+    } catch (error) {
+      return n;
+    }
+  }
+
+  async function onNotification(payload) {
+    const n = await translated(payload.notification);
     setCount(payload.unreadCount);
     prependTo(list, emptyEl, noteHtml(n), MAX_IN_BELL);
     prependTo(pageList, document.querySelector("[data-note-page-empty]"), noteHtml(n), 0);

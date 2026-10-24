@@ -1,21 +1,23 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="@T.Lang">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0F5C3F" />
+    <partial name="_ThemeInit" />
     <link rel="icon" type="image/svg+xml" href="~/img/logo/favicon.svg" />
-    <title>Caspian Bank</title>
+    <title>@T["Caspian Bank"]</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/chat-widget.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/theme-dark.css" asp-append-version="true" />
 </head>
 
 <body>
-    <a class="skip" href="#main">Skip to content</a>
+    <a class="skip" href="#main">@T["Skip to content"]</a>
 
     @await Component.InvokeAsync("Header")
 
@@ -25,6 +27,8 @@
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/Draggable.min.js"></script>
+    <partial name="_I18nScript" />
+    <script src="~/js/theme.js" asp-append-version="true"></script>
     <script src="~/js/confirm-dialog.js" asp-append-version="true"></script>
     <script src="~/js/home.js" asp-append-version="true"></script>
     <partial name="_ChatWidget" />

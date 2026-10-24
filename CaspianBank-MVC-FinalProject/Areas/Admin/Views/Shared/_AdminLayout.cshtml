@@ -26,46 +26,49 @@
     }
 }
 <!DOCTYPE html>
-<html lang="en">
+<html lang="@T.Lang">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0F5C3F" />
+    <partial name="_ThemeInit" />
     <link rel="icon" type="image/svg+xml" href="~/img/logo/favicon.svg" />
-    <title>@(ViewData["Title"] ?? "Admin") · Caspian Bank</title>
+    <title>@string.Join(" · ", ((ViewData["Title"] as string) ?? "Admin").Split(" · ").Select(part => T[part])) · Caspian Bank</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/theme-dark.css" asp-append-version="true" />
 </head>
 <body class="body-admin">
-    <a class="skip" href="#content">Skip to content</a>
+    <a class="skip" href="#content">@T["Skip to content"]</a>
     <header class="topnav">
         <div class="topnav-inner">
             @await Component.InvokeAsync("SiteLogo", new { area = "Admin", controller = "BankDashboard", action = "Index" })
-            <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="Open menu"><span></span><span></span><span></span></button>
+            <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="@T["Open menu"]"><span></span><span></span><span></span></button>
             <div class="topnav-panel">
-                <nav class="main-nav admin-areas" aria-label="Administration">
-                    <a class="nav-link @(isUi ? "is-active" : "")" asp-area="Admin" asp-controller="UiDashboard" asp-action="Index">UI</a>
-                    <a class="nav-link @(isUi ? "" : "is-active")" asp-area="Admin" asp-controller="BankDashboard" asp-action="Index">Bank</a>
+                <nav class="main-nav admin-areas" aria-label="@T["Administration"]">
+                    <a class="nav-link @(isUi ? "is-active" : "")" asp-area="Admin" asp-controller="UiDashboard" asp-action="Index">@T["UI"]</a>
+                    <a class="nav-link @(isUi ? "" : "is-active")" asp-area="Admin" asp-controller="BankDashboard" asp-action="Index">@T["Bank"]</a>
                 </nav>
                 <div class="nav-tools">
+                    <partial name="_SiteControls" />
                     @* Bildiriş zəngi: son bildirişlər API-dən gəlir, yenilər SignalR ilə canlı əlavə olunur (wwwroot/js/notifications.js) *@
                     @await Component.InvokeAsync("NotificationBell", new { area = "Admin" })
                     <span class="profile-btn" title="@string.Join(", ", roles)">
                         <span class="avatar">@initials</span>
                         <span>
                             <span class="profile-name">@name</span>
-                            <span class="profile-role">@roleLabel</span>
+                            <span class="profile-role">@T[roleLabel]</span>
                         </span>
                     </span>
                     <form class="header-auth" asp-area="" asp-controller="Account" asp-action="Logout" method="post">
-                        <button class="btn-logout" type="submit" data-confirm-title="Log out?" data-confirm-text="You will need to log in again to open your account." data-confirm-yes="Log out" aria-label="Log out">
+                        <button class="btn-logout" type="submit" data-confirm-title="@T["Log out?"]" data-confirm-text="@T["You will need to log in again to open your account."]" data-confirm-yes="@T["Log out"]" aria-label="@T["Log out"]">
                             <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
                                 <path d="M10 7V5a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7a2 2 0 0 1-2-2v-2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" />
                                 <path d="M4 12h11M12 8.5 15.5 12 12 15.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
-                            <span class="btn-logout-label">Log out</span>
+                            <span class="btn-logout-label">@T["Log out"]</span>
                         </button>
                     </form>
                 </div>
@@ -73,47 +76,58 @@
         </div>
     </header>
 
-    <aside class="admin-side" aria-label="Sections">
+    <aside class="admin-side" aria-label="@T["Sections"]">
         @if (isUi)
         {
             @* UI bölməsi: modellər üzrə (hamısını qoymaq lazım deyil, yeni modelin səhifəsini yazanda bura bir sətir əlavə et) *@
-            <p class="eyebrow">UI</p>
-            <a class="@On("UiDashboard")" asp-area="Admin" asp-controller="UiDashboard" asp-action="Index">Dashboard</a>
-            <a class="@On("CardHero")" asp-area="Admin" asp-controller="CardHero" asp-action="Detail">Hero text</a>
-            <a class="@On("Brand")" asp-area="Admin" asp-controller="Brand" asp-action="Index">Brands</a>
-            <a class="@On("Ticker")" asp-area="Admin" asp-controller="Ticker" asp-action="Index">Ticker</a>
-            <a class="@On("BenefitSection")" asp-area="Admin" asp-controller="BenefitSection" asp-action="Detail">Benefits heading</a>
-            <a class="@On("BenefitItem")" asp-area="Admin" asp-controller="BenefitItem" asp-action="Index">Benefit items</a>
-            <a class="@On("ServiceSection")" asp-area="Admin" asp-controller="ServiceSection" asp-action="Detail">Services heading</a>
-            <a class="@On("ServiceItem")" asp-area="Admin" asp-controller="ServiceItem" asp-action="Index">Service cards</a>
-            <a class="@On("About")" asp-area="Admin" asp-controller="About" asp-action="Detail">About text</a>
-            <a class="@On("AboutPillar")" asp-area="Admin" asp-controller="AboutPillar" asp-action="Index">About pillars</a>
-            <a class="@On("CardDesign")" asp-area="Admin" asp-controller="CardDesign" asp-action="Index">Card designs</a>
-            <a class="@On("CardTier")" asp-area="Admin" asp-controller="CardTier" asp-action="Index">Card types</a>
-            <a class="@On("Setting")" asp-area="Admin" asp-controller="Setting" asp-action="Index">Settings</a>
+            <p class="eyebrow">@T["UI"]</p>
+            <a class="@On("UiDashboard")" asp-area="Admin" asp-controller="UiDashboard" asp-action="Index">@T["Dashboard"]</a>
+            <a class="@On("CardHero")" asp-area="Admin" asp-controller="CardHero" asp-action="Detail">@T["Hero text"]</a>
+            <a class="@On("Brand")" asp-area="Admin" asp-controller="Brand" asp-action="Index">@T["Brands"]</a>
+            <a class="@On("Ticker")" asp-area="Admin" asp-controller="Ticker" asp-action="Index">@T["Ticker"]</a>
+            <a class="@On("BenefitSection")" asp-area="Admin" asp-controller="BenefitSection" asp-action="Detail">@T["Benefits heading"]</a>
+            <a class="@On("BenefitItem")" asp-area="Admin" asp-controller="BenefitItem" asp-action="Index">@T["Benefit items"]</a>
+            <a class="@On("ServiceSection")" asp-area="Admin" asp-controller="ServiceSection" asp-action="Detail">@T["Services heading"]</a>
+            <a class="@On("ServiceItem")" asp-area="Admin" asp-controller="ServiceItem" asp-action="Index">@T["Service cards"]</a>
+            <a class="@On("About")" asp-area="Admin" asp-controller="About" asp-action="Detail">@T["About text"]</a>
+            <a class="@On("AboutPillar")" asp-area="Admin" asp-controller="AboutPillar" asp-action="Index">@T["About pillars"]</a>
+            <a class="@On("CardDesign")" asp-area="Admin" asp-controller="CardDesign" asp-action="Index">@T["Card designs"]</a>
+            <a class="@On("CardTier")" asp-area="Admin" asp-controller="CardTier" asp-action="Index">@T["Card types"]</a>
+            <a class="@On("Setting")" asp-area="Admin" asp-controller="Setting" asp-action="Index">@T["Settings"]</a>
+            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin))
+            {
+                <a class="@On("Translations")" asp-area="Admin" asp-controller="Translations" asp-action="Index">@T["Translations"]</a>
+            }
         }
         else
         {
-            <p class="eyebrow">Bank</p>
-            <a class="@On("BankDashboard")" asp-area="Admin" asp-controller="BankDashboard" asp-action="Index">Dashboard</a>
-            <a class="@On("Users")" asp-area="Admin" asp-controller="Users" asp-action="Index">Users</a>
-            <a class="@On("Loans")" asp-area="Admin" asp-controller="Loans" asp-action="Index">Loans</a>
+            <p class="eyebrow">@T["Bank"]</p>
+            <a class="@On("BankDashboard")" asp-area="Admin" asp-controller="BankDashboard" asp-action="Index">@T["Dashboard"]</a>
+            <a class="@On("Users")" asp-area="Admin" asp-controller="Users" asp-action="Index">@T["Users"]</a>
+            <a class="@On("Loans")" asp-area="Admin" asp-controller="Loans" asp-action="Index">@T["Loans"]</a>
+            <a class="@On("Deposits")" asp-area="Admin" asp-controller="Deposits" asp-action="Index">@T["Deposits"]</a>
+            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Accountant))
+            {
+                <a class="@On("Treasury")" asp-area="Admin" asp-controller="Treasury" asp-action="Index">@T["Treasury"]</a>
+                <a class="@On("BankRules")" asp-area="Admin" asp-controller="BankRules" asp-action="Index">@T["Bank rules"]</a>
+            }
             @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin))
             {
-                <a class="@On("BillProviders")" asp-area="Admin" asp-controller="BillProviders" asp-action="Index">Bill providers</a>
+                <a class="@On("BillProviders")" asp-area="Admin" asp-controller="BillProviders" asp-action="Index">@T["Bill providers"]</a>
             }
-            <a class="@On("Reports")" asp-area="Admin" asp-controller="Reports" asp-action="Index">Reports</a>
+            <a class="@On("Reports")" asp-area="Admin" asp-controller="Reports" asp-action="Index">@T["Reports"]</a>
             @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.CustomerSupport))
             {
-                <a class="@On("Tickets")" asp-area="Admin" asp-controller="Tickets" asp-action="Index">Contact Tickets</a>
+                <a class="@On("Tickets")" asp-area="Admin" asp-controller="Tickets" asp-action="Index">@T["Contact Tickets"]</a>
             }
             @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Security))
             {
-                <a class="@On("Audit")" asp-area="Admin" asp-controller="Audit" asp-action="Index">Audit Log</a>
+                <a class="@On("Security")" asp-area="Admin" asp-controller="Security" asp-action="Index">@T["Suspicious activity"]</a>
+                <a class="@On("Audit")" asp-area="Admin" asp-controller="Audit" asp-action="Index">@T["Audit Log"]</a>
             }
             @if (User.IsInRole(AppRoles.SuperAdmin))
             {
-                <a class="@On("Staff")" asp-area="Admin" asp-controller="Staff" asp-action="Index">Staff</a>
+                <a class="@On("Staff")" asp-area="Admin" asp-controller="Staff" asp-action="Index">@T["Staff"]</a>
             }
         }
     </aside>
@@ -122,16 +136,19 @@
 
     <footer class="site-footer">
         <div class="site-footer-inner">
-            <span>Caspian Bank · Operations</span>
-            <span>Internal use</span>
+            <span>@T["Caspian Bank · Operations"]</span>
+            <span>@T["Internal use"]</span>
         </div>
     </footer>
 
+    <script src="~/js/theme.js" asp-append-version="true"></script>
     <script src="~/js/confirm-dialog.js" asp-append-version="true"></script>
     <script src="~/js/file-drop.js" asp-append-version="true"></script>
+    <script src="~/js/i18n.js" asp-append-version="true"></script>
     <script src="~/js/wheel-select.js" asp-append-version="true"></script>
     <script src="~/js/wheel-date.js" asp-append-version="true"></script>
     <script src="~/js/admin.js" asp-append-version="true"></script>
+    <script src="~/js/lang-edit.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@@8.0.7/dist/browser/signalr.min.js"></script>
     <script src="~/js/notifications.js" asp-append-version="true"></script>
 </body>

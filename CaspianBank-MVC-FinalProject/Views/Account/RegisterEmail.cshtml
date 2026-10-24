@@ -7,20 +7,20 @@
 <main class="auth-shell">
     <section class="auth-card">
         @await Component.InvokeAsync("SiteLogo")
-        <a class="back" asp-controller="Account" asp-action="Register">← Back</a>
-        <h1>Your email</h1>
-        <p class="lede">We send a 6-digit code to this address to confirm it is yours. You will use it to log in.</p>
+        <a class="back" asp-controller="Account" asp-action="Register">@T["← Back"]</a>
+        <h1>@T["Your email"]</h1>
+        <p class="lede">@T["We send a 6-digit code to this address to confirm it is yours. You will use it to log in."]</p>
         <form class="form-stack mt-5" asp-controller="Account" asp-action="RegisterEmail" method="post" novalidate>
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
             <div class="field">
-                <label for="email">Email</label>
+                <label for="email">@T["Email"]</label>
                 <input class="input" id="email" asp-for="Email" type="email" autocomplete="email" placeholder="name@email.com" />
             </div>
-            <button class="btn btn-primary btn-block" type="submit">Send code</button>
+            <button class="btn btn-primary btn-block" type="submit">@T["Send code"]</button>
         </form>
         <p class="auth-foot">
-            <a asp-controller="Home" asp-action="Index" asp-fragment="contact">Contact us</a>
-            <span>Caspian Bank · Baku</span>
+            <a asp-controller="Home" asp-action="Index" asp-fragment="contact">@T["Contact us"]</a>
+            <span>@T["Caspian Bank · Baku"]</span>
         </p>
     </section>
 </main>

@@ -33,6 +33,7 @@ namespace CaspianBank_MVC_FinalProject.Helpers
             switch (status)
             {
                 case "Pending":
+                case "AwaitingSuperAdmin":
                     return "Under review";
                 case "Offered":
                     return "Offer waiting";
@@ -58,6 +59,8 @@ namespace CaspianBank_MVC_FinalProject.Helpers
             {
                 case "Pending":
                     return "badge-pending";
+                case "AwaitingSuperAdmin":
+                    return "badge-awaiting";
                 case "Offered":
                     return "badge-info";
                 case "Active":
@@ -80,6 +83,8 @@ namespace CaspianBank_MVC_FinalProject.Helpers
             {
                 case "Pending":
                     return "Pending";
+                case "AwaitingSuperAdmin":
+                    return "Awaiting Super Admin";
                 case "Offered":
                     return "Offered";
                 case "Active":

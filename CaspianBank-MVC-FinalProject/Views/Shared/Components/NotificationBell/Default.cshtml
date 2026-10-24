@@ -9,25 +9,25 @@
         : Url.Action("Index", "Notifications", new { area = "" });
 }
 <div class="dropdown notif-bell" data-bell data-ticket-url="@Url.Action("Ticket", "Notifications", new { area = "" })">
-    <button class="icon-btn" type="button" data-bell-toggle aria-haspopup="true" aria-expanded="false" aria-label="Notifications">
+    <button class="icon-btn" type="button" data-bell-toggle aria-haspopup="true" aria-expanded="false" aria-label="@T["Notifications"]">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17h12l-1.5-2V11a4.5 4.5 0 0 0-9 0v4z" /><path d="M10 20a2 2 0 0 0 4 0" /></svg>
         <span class="notif-count" data-bell-count @(Model.UnreadCount > 0 ? null : "hidden")>@NotificationUi.CountText(Model.UnreadCount)</span>
     </button>
     <div class="dropdown-panel notes-panel">
-        <div class="panel-head"><strong>Notifications</strong><span class="hint" data-bell-live>Live</span></div>
+        <div class="panel-head"><strong>@T["Notifications"]</strong><span class="hint" data-bell-live>@T["Live"]</span></div>
         <div class="note-list" data-bell-list>
             @foreach (var item in Model.Items)
             {
                 <a class="note @(item.IsRead ? "" : "is-unread")" href="@NotificationUi.OpenUrl(item)">
                     <span class="note-icon"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">@Html.Raw(NotificationUi.IconPaths(item.Category))</svg></span>
                     <span>
-                        <span class="spread"><span class="note-title">@item.Title</span><time datetime="@item.CreatedAt.ToString("o")">@NotificationUi.Ago(item.CreatedAt)</time></span>
-                        <span class="note-body">@item.Message</span>
+                        <span class="spread"><span class="note-title">@T[item.Title]</span><time datetime="@item.CreatedAt.ToString("o")">@NotificationUi.Ago(item.CreatedAt, T)</time></span>
+                        <span class="note-body">@T[item.Message]</span>
                     </span>
                 </a>
             }
-            <p class="note-empty" data-bell-empty @(Model.Items.Count > 0 ? "hidden" : null)>No notifications yet.</p>
+            <p class="note-empty" data-bell-empty @(Model.Items.Count > 0 ? "hidden" : null)>@T["No notifications yet."]</p>
         </div>
-        <a class="panel-foot" href="@allUrl">View all</a>
+        <a class="panel-foot" href="@allUrl">@T["View all"]</a>
     </div>
 </div>

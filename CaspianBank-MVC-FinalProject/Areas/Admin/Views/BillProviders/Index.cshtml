@@ -1,4 +1,4 @@
-@model IEnumerable<CaspianBank_MVC_FinalProject.ViewModels.Bills.BillProviderVM>
+﻿@model IEnumerable<CaspianBank_MVC_FinalProject.ViewModels.Bills.BillProviderVM>
 @{
     ViewData["Title"] = "Bill providers";
 
@@ -24,19 +24,19 @@
 <main id="content" class="page">
     <header class="page-head crud-head">
         <div>
-            <p class="eyebrow">Bank · Payments</p>
-            <h1>Bill providers</h1>
-            <p class="lede">The companies customers can pay: their name, logo and whether they are shown on the Bills page. The rules (phone prefixes, code lengths, prices) are fixed.</p>
+            <p class="eyebrow">@T["Bank · Payments"]</p>
+            <h1>@T["Bill providers"]</h1>
+            <p class="lede">@T["The companies customers can pay: their name, logo and whether they are shown on the Bills page. The rules (phone prefixes, code lengths, prices) are fixed."]</p>
         </div>
     </header>
 
     @if (TempData["Success"] is string success)
     {
-        <p class="flash flash-ok" role="status">@success</p>
+        <p class="flash flash-ok" role="status">@T[success]</p>
     }
     @if (TempData["Error"] is string error)
     {
-        <p class="flash flash-error" role="alert">@error</p>
+        <p class="flash flash-error" role="alert">@T[error]</p>
     }
 
     <section class="surface surface-tight">
@@ -44,12 +44,12 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th class="num">Id</th>
-                        <th>Logo</th>
-                        <th>Name</th>
-                        <th>Category</th>
-                        <th>Shown to customers</th>
-                        <th class="actions">Operations</th>
+                        <th class="num">@T["Id"]</th>
+                        <th>@T["Logo"]</th>
+                        <th>@T["Name"]</th>
+                        <th>@T["Category"]</th>
+                        <th>@T["Shown to customers"]</th>
+                        <th class="actions">@T["Operations"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -64,20 +64,20 @@
                                 }
                             </td>
                             <td>@item.Name</td>
-                            <td>@CategoryText(item.Category)</td>
+                            <td>@T[CategoryText(item.Category)]</td>
                             <td>
                                 @if (item.IsActive)
                                 {
-                                    <span class="badge badge-success">Shown</span>
+                                    <span class="badge badge-success">@T["Shown"]</span>
                                 }
                                 else
                                 {
-                                    <span class="badge badge-neutral">Hidden</span>
+                                    <span class="badge badge-neutral">@T["Hidden"]</span>
                                 }
                             </td>
                             <td class="actions">
                                 <span class="row-actions">
-                                    <a class="btn btn-secondary btn-sm" asp-area="Admin" asp-controller="BillProviders" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                    <a class="btn btn-secondary btn-sm" asp-area="Admin" asp-controller="BillProviders" asp-action="Edit" asp-route-id="@item.Id">@T["Edit"]</a>
                                 </span>
                             </td>
                         </tr>
@@ -85,7 +85,7 @@
                     @if (!Model.Any())
                     {
                         <tr>
-                            <td colspan="6">No providers found. Run the bills seed script (Repository/Data/Seed/bills.sql) on an empty database.</td>
+                            <td colspan="6">@T["No providers found. Run the bills seed script (Repository/Data/Seed/bills.sql) on an empty database."]</td>
                         </tr>
                     }
                 </tbody>

@@ -1,0 +1,88 @@
+@model CaspianBank_MVC_FinalProject.ViewModels.Reports.MyReportsPageVM
+@using System.Globalization
+@{
+    Layout = "_AppLayout";
+    ViewData["Title"] = "My reports";
+    var inv = CultureInfo.InvariantCulture;
+
+    string StatusLabel(string status)
+    {
+        switch (status)
+        {
+            case "Pending": return "Being reviewed";
+            case "Reviewed": return "Reviewed";
+            case "ActionTaken": return "Action taken";
+            case "Dismissed": return "No problem found";
+            default: return status;
+        }
+    }
+
+    string StatusBadge(string status)
+    {
+        switch (status)
+        {
+            case "Pending": return "badge-pending";
+            case "ActionTaken": return "badge-info";
+            default: return "badge-neutral";
+        }
+    }
+}
+<main id="content" class="page">
+    <a class="back" asp-controller="History" asp-action="Index">@T["Back to history"]</a>
+
+    <header class="page-head">
+        <p class="eyebrow">@T["Fraud"]</p>
+        <h1>@T["My reports"]</h1>
+        <p class="lede">@T["Transactions you reported as suspicious and what we decided."]</p>
+    </header>
+
+    <partial name="_Flash" />
+
+    @if (Model.Unavailable)
+    {
+        <div class="empty">
+            <h3>@T["We can't load your reports"]</h3>
+            <p>@T["The service is unavailable right now. Please try again in a moment."]</p>
+        </div>
+    }
+    else if (Model.Items.Count == 0)
+    {
+        <div class="empty">
+            <h3>@T["No reports yet"]</h3>
+            <p>@T["If a payment looks wrong, open your history and press Report next to it."]</p>
+            <a class="btn btn-primary" asp-controller="History" asp-action="Index">@T["Open history"]</a>
+        </div>
+    }
+    else
+    {
+        <section class="surface surface-tight">
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr><th>@T["Reported"]</th><th>@T["Transaction"]</th><th>@T["Your reason"]</th><th>@T["Status"]</th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>@item.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)</td>
+                                <td>
+                                    <strong class="num">@item.TransactionReference</strong>
+                                    <div class="hint">@T.Describe(item.Description) · @item.Amount.ToString("N2", inv) AZN</div>
+                                </td>
+                                <td>@item.Reason</td>
+                                <td>
+                                    <span class="badge @StatusBadge(item.Status)">@T[StatusLabel(item.Status)]</span>
+                                    @if (item.ResolvedAt.HasValue)
+                                    {
+                                        <div class="hint">@item.ResolvedAt.Value.ToLocalTime().ToString("dd MMM yyyy", inv)</div>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    }
+</main>

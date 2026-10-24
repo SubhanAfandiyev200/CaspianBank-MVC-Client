@@ -42,7 +42,7 @@
     pop.innerHTML =
       '<div class="wheel-frame is-single"><div class="wheel-highlight" aria-hidden="true"></div>'
       + '<div class="wheel" tabindex="0" role="listbox"></div></div>'
-      + '<button type="button" class="btn btn-primary btn-block wheel-done">Done</button>';
+      + '<button type="button" class="btn btn-primary btn-block wheel-done">' + (window.cbt ? cbt("Done") : "Done") + '</button>';
     document.body.appendChild(pop);
     const wheel = pop.querySelector(".wheel");
     const done = pop.querySelector(".wheel-done");

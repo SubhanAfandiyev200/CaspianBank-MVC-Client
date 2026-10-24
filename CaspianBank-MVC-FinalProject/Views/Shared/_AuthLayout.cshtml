@@ -1,20 +1,25 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="@T.Lang">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#0F5C3F" />
+    <partial name="_ThemeInit" />
     <link rel="icon" type="image/svg+xml" href="~/img/logo/favicon.svg" />
     <meta name="referrer" content="no-referrer" />
-    <title>@(ViewData["Title"] ?? "Log in") · Caspian Bank</title>
+    <title>@T[ViewData["Title"]?.ToString() ?? "Log in"] · Caspian Bank</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/chat-widget.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/theme-dark.css" asp-append-version="true" />
 </head>
 <body class="body-public">
+    <partial name="_SiteControls" view-data="@(new ViewDataDictionary(ViewData) { { "Floating", true } })" />
         @RenderBody()
+    <partial name="_I18nScript" />
+    <script src="~/js/theme.js" asp-append-version="true"></script>
     <partial name="_ChatWidget" />
     <script src="~/js/chat-widget.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)

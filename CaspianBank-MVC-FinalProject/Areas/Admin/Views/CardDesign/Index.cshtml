@@ -1,24 +1,24 @@
-@model IEnumerable<CardDesignVM>
+﻿@model IEnumerable<CardDesignVM>
 @{
     ViewData["Title"] = "Card designs";
 }
 <main id="content" class="page">
     <header class="page-head crud-head">
         <div>
-            <p class="eyebrow">UI · Cards</p>
-            <h1>Card designs</h1>
-            <p class="lede">The faces of the cards: the fan on Home and the cards customers hold. Up to 3 designs can be shown on Home.</p>
+            <p class="eyebrow">@T["UI · Cards"]</p>
+            <h1>@T["Card designs"]</h1>
+            <p class="lede">@T["The faces of the cards: the fan on Home and the cards customers hold. Up to 3 designs can be shown on Home."]</p>
         </div>
-        <a class="btn btn-primary" asp-area="Admin" asp-controller="CardDesign" asp-action="Create">Create</a>
+        <a class="btn btn-primary" asp-area="Admin" asp-controller="CardDesign" asp-action="Create">@T["Create"]</a>
     </header>
 
     @if (TempData["Success"] is string success)
     {
-        <p class="flash flash-ok" role="status">@success</p>
+        <p class="flash flash-ok" role="status">@T[success]</p>
     }
     @if (TempData["Error"] is string error)
     {
-        <p class="flash flash-error" role="alert">@error</p>
+        <p class="flash flash-error" role="alert">@T[error]</p>
     }
 
     <section class="surface surface-tight">
@@ -26,12 +26,12 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th class="num">Id</th>
-                        <th>Design</th>
-                        <th>Title</th>
-                        <th class="num">Order</th>
-                        <th>On Home</th>
-                        <th class="actions">Operations</th>
+                        <th class="num">@T["Id"]</th>
+                        <th>@T["Design"]</th>
+                        <th>@T["Title"]</th>
+                        <th class="num">@T["Order"]</th>
+                        <th>@T["On Home"]</th>
+                        <th class="actions">@T["Operations"]</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -45,22 +45,22 @@
                             <td>
                                 @if (item.ShowOnHome)
                                 {
-                                    <span class="badge badge-success">Shown</span>
+                                    <span class="badge badge-success">@T["Shown"]</span>
                                 }
                                 else
                                 {
-                                    <span class="badge badge-neutral">Hidden</span>
+                                    <span class="badge badge-neutral">@T["Hidden"]</span>
                                 }
                             </td>
                             <td class="actions">
                                 <span class="row-actions">
-                                    <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="CardDesign" asp-action="Detail" asp-route-id="@item.Id">Detail</a>
-                                    <a class="btn btn-secondary btn-sm" asp-area="Admin" asp-controller="CardDesign" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                    <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="CardDesign" asp-action="Detail" asp-route-id="@item.Id">@T["Detail"]</a>
+                                    <a class="btn btn-secondary btn-sm" asp-area="Admin" asp-controller="CardDesign" asp-action="Edit" asp-route-id="@item.Id">@T["Edit"]</a>
                                     <form method="post" asp-area="Admin" asp-controller="CardDesign" asp-action="Delete" asp-route-id="@item.Id">
                                         <button type="submit" class="btn btn-danger btn-sm"
-                                                data-confirm-title="Delete this design?"
-                                                data-confirm-text="A design used by a card type or by customer cards cannot be deleted."
-                                                data-confirm-yes="Delete" data-confirm-danger="true">Delete</button>
+                                                data-confirm-title="@T["Delete this design?"]"
+                                                data-confirm-text="@T["A design used by a card type or by customer cards cannot be deleted."]"
+                                                data-confirm-yes="@T["Delete"]" data-confirm-danger="true">@T["Delete"]</button>
                                     </form>
                                 </span>
                             </td>
@@ -69,7 +69,7 @@
                     @if (!Model.Any())
                     {
                         <tr>
-                            <td colspan="6">No designs yet. Create the first one.</td>
+                            <td colspan="6">@T["No designs yet. Create the first one."]</td>
                         </tr>
                     }
                 </tbody>

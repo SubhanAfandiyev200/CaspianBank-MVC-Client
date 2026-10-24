@@ -53,10 +53,10 @@
     event.preventDefault();
     const form = button.form;
     const ok = await confirmDialog({
-      title: button.getAttribute("data-confirm-title") || "Are you sure?",
+      title: button.getAttribute("data-confirm-title") || (window.cbt ? cbt("Are you sure?") : "Are you sure?"),
       text: button.getAttribute("data-confirm-text") || "",
-      yes: button.getAttribute("data-confirm-yes") || "Yes",
-      no: button.getAttribute("data-confirm-no") || "Cancel",
+      yes: button.getAttribute("data-confirm-yes") || (window.cbt ? cbt("Yes") : "Yes"),
+      no: button.getAttribute("data-confirm-no") || (window.cbt ? cbt("Cancel") : "Cancel"),
       danger: button.hasAttribute("data-confirm-danger")
     });
     if (ok && form) {
