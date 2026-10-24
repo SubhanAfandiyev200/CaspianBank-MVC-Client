@@ -3611,3 +3611,7 @@ a.header-user:focus-visible { outline: 2px solid var(--color-lime); outline-offs
 /* Admin yan paneli: sürüşdürmək olur, amma ağ sürüşdürmə zolağı görünmür */
 .admin-side { scrollbar-width: none; -ms-overflow-style: none; }
 .admin-side::-webkit-scrollbar { display: none; }
+
+/* Cədvəllərin üfüqi sürüşdürmə zolağı görünmür (sürüşdürmə işləyir) */
+.table-wrap { scrollbar-width: none; -ms-overflow-style: none; }
+.table-wrap::-webkit-scrollbar { display: none; }
