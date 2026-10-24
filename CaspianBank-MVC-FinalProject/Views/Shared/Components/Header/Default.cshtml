@@ -30,6 +30,7 @@
                 <a href="#services">@T["Services"]</a>
                 <a href="@NavLinks.SupportLink(signedIn)">@T["Contact Us"]</a>
             </nav>
+            <div class="header-right">
             <partial name="_SiteControls" />
             @if (User.Identity?.IsAuthenticated == true)
             {
@@ -46,7 +47,7 @@
                                 <img class="header-user-photo" src="@Url.Action("Avatar", "Profile")" alt="" onerror="this.remove()" />
                             }
                         </span>
-                        <span class="header-user-name">@User.Identity.Name</span>
+                        <span class="header-user-name">@T.Person(User.Identity.Name)</span>
                     </a>
                     <button class="btn-logout" type="submit" data-confirm-title="@T["Log out?"]" data-confirm-text="@T["You will need to log in again to open your account."]" data-confirm-yes="@T["Log out"]">
                         <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
@@ -61,6 +62,7 @@
             {
                 <a class="btn btn-lime btn-go" href="@NavLinks.OpenAccount(signedIn)"><span class="btn-go-label">@T["Open account"]</span></a>
             }
+            </div>
         </div>
         <div class="mega" id="mega">
             <div class="mega-inner">
