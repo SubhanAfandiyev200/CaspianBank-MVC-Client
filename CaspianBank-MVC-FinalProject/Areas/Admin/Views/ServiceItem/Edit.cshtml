@@ -11,6 +11,8 @@
         <p class="lede">@T["Change the title, the description or the icon. Leave the icon as it is to keep the current one. The number stays the same, because the card opens a fixed part of the app."]</p>
     </header>
 
+    <partial name="_LangTabs" />
+
     <form method="post" asp-area="Admin" asp-controller="ServiceItem" asp-action="Edit" asp-route-id="@Model.Id" enctype="multipart/form-data" class="narrow stack-lg" novalidate>
         <section class="surface form-stack">
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
@@ -20,12 +22,12 @@
             </div>
             <div class="field">
                 <label asp-for="Title">@T["Title"]</label>
-                <input class="input" asp-for="Title" maxlength="100" placeholder="@T["Card title"]" autocomplete="off" />
+                <input data-translatable class="input" asp-for="Title" maxlength="100" placeholder="@T["Card title"]" autocomplete="off" />
                 <span asp-validation-for="Title" class="field-error"></span>
             </div>
             <div class="field">
                 <label asp-for="Description">@T["Description"]</label>
-                <textarea class="textarea" asp-for="Description" maxlength="300" rows="3" placeholder="@T["One or two sentences."]"></textarea>
+                <textarea data-translatable class="textarea" asp-for="Description" maxlength="300" rows="3" placeholder="@T["One or two sentences."]"></textarea>
                 <span asp-validation-for="Description" class="field-error"></span>
             </div>
             <div class="field">
