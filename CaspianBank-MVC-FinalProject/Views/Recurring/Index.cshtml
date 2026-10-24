@@ -172,10 +172,10 @@
                                     }
                                     <form method="post" asp-controller="Recurring" asp-action="Delete" asp-route-id="@item.Id" class="inline-form">
                                         <button type="submit" class="btn btn-danger btn-sm"
-                                                data-confirm-title="Delete this monthly transfer?"
-                                                data-confirm-text="Nothing more will be sent. Transfers already made stay in your history."
-                                                data-confirm-yes="Delete"
-                                                data-confirm-no="Cancel">Delete</button>
+                                                data-confirm-title="@T["Delete this monthly transfer?"]"
+                                                data-confirm-text="@T["Nothing more will be sent. Transfers already made stay in your history."]"
+                                                data-confirm-yes="@T["Delete"]"
+                                                data-confirm-no="@T["Cancel"]">@T["Delete"]</button>
                                     </form>
                                 </div>
                             </article>

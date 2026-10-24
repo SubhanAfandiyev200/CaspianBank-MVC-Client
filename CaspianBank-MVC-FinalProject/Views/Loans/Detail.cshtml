@@ -103,13 +103,13 @@
                     </div>
                     <div class="row-actions">
                         <button type="submit" class="btn btn-primary" data-once
-                                data-confirm-title="Accept this offer?"
-                                data-confirm-text="@(LoanUi.Money(granted)) will be sent to your card and the loan starts today."
-                                data-confirm-yes="Accept">Accept offer</button>
+                                data-confirm-title="@T["Accept this offer?"]"
+                                data-confirm-text="@T["{0} will be sent to your card and the loan starts today.", LoanUi.Money(granted)]"
+                                data-confirm-yes="@T["Accept"]">@T["Accept offer"]</button>
                         <button type="submit" class="btn btn-secondary" formaction="@Url.Action("Decline", "Loans", new { id = loan.Id })"
-                                data-confirm-title="Decline this offer?"
-                                data-confirm-text="The application will be closed. You can apply again later."
-                                data-confirm-yes="Decline" data-confirm-danger="true">Decline</button>
+                                data-confirm-title="@T["Decline this offer?"]"
+                                data-confirm-text="@T["The application will be closed. You can apply again later."]"
+                                data-confirm-yes="@T["Decline"]" data-confirm-danger="true">@T["Decline"]</button>
                     </div>
                 </form>
             }
@@ -234,9 +234,9 @@
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-lg" id="pay-submit" data-once
-                            data-confirm-title="Confirm payment"
-                            data-confirm-text="@LoanUi.Money(loan.Due.Total) will be taken from your card."
-                            data-confirm-yes="Pay">Pay @LoanUi.Money(loan.Due.Total)</button>
+                            data-confirm-title="@T["Confirm payment"]"
+                            data-confirm-text="@T["{0} will be taken from your card.", LoanUi.Money(loan.Due.Total)]"
+                            data-confirm-yes="@T["Pay"]">@T["Pay {0}", LoanUi.Money(loan.Due.Total)]</button>
                 </form>
             }
         </section>

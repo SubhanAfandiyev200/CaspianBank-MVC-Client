@@ -33,9 +33,9 @@
         {
             <form method="post" asp-action="Close" asp-route-id="@Model.Id">
                 <button type="submit" class="btn btn-secondary"
-                        data-confirm-title="Close this conversation?"
-                        data-confirm-text="You can still read it, but you will need to write a new message to ask something else."
-                        data-confirm-yes="Close">Close conversation</button>
+                        data-confirm-title="@T["Close this conversation?"]"
+                        data-confirm-text="@T["You can still read it, but you will need to write a new message to ask something else."]"
+                        data-confirm-yes="@T["Close"]">@T["Close conversation"]</button>
             </form>
         }
     </header>
