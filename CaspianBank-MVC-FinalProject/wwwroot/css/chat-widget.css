@@ -116,3 +116,18 @@
   .cw-fab, .cw-panel, .cw-backdrop, .cw-msg { transition: none; animation: none; }
   .cw-typing span { animation: none; }
 }
+
+/* Help: email sahəsi ayrı sətirdə, şəkil düyməsi, xəta balonu */
+.cw-composer { flex-wrap: wrap; }
+.cw-email {
+  flex: 1 0 100%; box-sizing: border-box; padding: 9px 14px; border: 1px solid var(--cw-border); border-radius: 12px;
+  background: var(--cw-bg); font-family: inherit; font-size: 14px; color: var(--cw-ink);
+}
+.cw-email:focus { outline: 2px solid var(--cw-primary); outline-offset: 0; background: #fff; }
+.cw-attach {
+  width: 40px; height: 40px; flex: none; border: 1px solid var(--cw-border); border-radius: 12px; cursor: pointer; display: grid; place-items: center;
+  background: var(--cw-bg); color: var(--cw-ink);
+}
+.cw-attach:hover { border-color: var(--cw-primary); color: var(--cw-primary); }
+.cw-bubble.is-error { background: #fdecea; color: #8a1c13; }
+.cw-note { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

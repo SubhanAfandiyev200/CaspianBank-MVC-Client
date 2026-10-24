@@ -1,5 +1,6 @@
 using CaspianBank_MVC_FinalProject.Helpers;
 using CaspianBank_MVC_FinalProject.ViewModels.Cards;
+using CaspianBank_MVC_FinalProject.ViewModels.Support;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -141,6 +142,39 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             catch (HttpRequestException)
             {
                 return (false, new[] { UnavailableMessage }, null);
+            }
+        }
+
+        // Mesajdakı şəkillərin yolu bazada nisbidir (fayllar API-dən verilir): tam ünvana çevrilir
+        protected TicketDetailVM WithImages(TicketDetailVM ticket)
+        {
+            var baseUrl = Configuration["ApiSettings:BaseUrl"];
+            foreach (var message in ticket.Messages)
+            {
+                message.ImageUrl = string.IsNullOrEmpty(message.ImageUrl) ? null : ApiUrl.ToAbsolute(baseUrl, message.ImageUrl);
+            }
+            return ticket;
+        }
+
+        // POST (multipart/form-data), cavabın gövdəsi qayıdır
+        protected async Task<(T? Data, string[] Errors, HttpStatusCode? Status)> PostFormAsync<T>(string url, MultipartFormDataContent content) where T : class
+        {
+            try
+            {
+                var response = await Api.PostAsync(url, content);
+                if (response.IsSuccessStatusCode)
+                {
+                    return (await response.Content.ReadFromJsonAsync<T>(), Array.Empty<string>(), response.StatusCode);
+                }
+                return (null, await ReadErrorsAsync(response), response.StatusCode);
+            }
+            catch (HttpRequestException)
+            {
+                return (null, new[] { UnavailableMessage }, null);
+            }
+            catch (JsonException)
+            {
+                return (null, new[] { "Something went wrong. Please try again." }, null);
             }
         }
 

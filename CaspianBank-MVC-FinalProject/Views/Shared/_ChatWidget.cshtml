@@ -1,15 +1,15 @@
 @*
     Hər səhifədə (Home, müştəri səhifələri, giriş) sağ aşağıdakı "Ask Caspian" düyməsi və sağdan açılan köməkçi paneli (AI köməkçilər kimi sidebar).
-    Hələlik dizayn önizləməsidir: yazı yazılır, amma cavab verən xidmət qoşulmayıb, ona görə köməkçi bunu açıq deyir.
-    Real cavab verən hissə hazır olanda yalnız wwwroot/js/chat-widget.js-dəki "reply" funksiyası dəyişəcək.
+    Hələlik "Help" kimi işləyir: yazılan mesaj (istəsə şəkillə) işçilərə gedir (HelpController -> api/help). Qeydiyyatsız ziyarətçi email yazır, cavab ora gedir; daxil olmuş müştəriyə cavab bildirişlərinə düşür.
+    AI köməkçi qoşulanda wwwroot/js/chat-widget.js-dəki "reply" funksiyası ona yönləndiriləcək.
     Stil: wwwroot/css/chat-widget.css (Home layout-u style.css yükləmir, ona görə ayrı faylda və öz dəyişənləri ilə).
 *@
 @{
     var signedIn = User.Identity?.IsAuthenticated == true;
     var firstName = (User.Identity?.Name ?? string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault();
     var greeting = signedIn && !string.IsNullOrEmpty(firstName)
-        ? "Hi " + firstName + "! I'm the Caspian assistant. Ask me about cards, transfers, fees, loans or how to use this app."
-        : "Hi! I'm the Caspian assistant. Ask me about cards, transfers, fees, loans or how to use this app.";
+        ? T["Hi {0}! Write your question and our team will answer you in your notifications.", firstName]
+        : T["Hi! Write your question and our team will answer by email."];
 }
 <div class="cw" data-chat-widget data-greeting="@greeting">
     <button class="cw-fab" type="button" data-cw-open aria-haspopup="dialog" aria-expanded="false" aria-controls="cw-panel">
@@ -21,36 +21,36 @@
 
     <div class="cw-backdrop" data-cw-close></div>
 
-    <aside class="cw-panel" id="cw-panel" role="dialog" aria-modal="false" aria-label="@T["Caspian assistant"]" aria-hidden="true">
+    <aside class="cw-panel" id="cw-panel" role="dialog" aria-modal="false" aria-label="@T["Caspian help"]" aria-hidden="true">
         <header class="cw-head">
             <span class="cw-avatar" aria-hidden="true">C</span>
             <div class="cw-head-copy">
-                <strong>@T["Caspian assistant"]</strong>
-                <small><span class="cw-dot" aria-hidden="true"></span>@T["Preview · answers coming soon"]</small>
+                <strong>@T["Caspian help"]</strong>
+                <small><span class="cw-dot" aria-hidden="true"></span>@T["Our team replies to you"]</small>
             </div>
             <button class="cw-icon" type="button" data-cw-reset aria-label="@T["Start a new chat"]" title="@T["New chat"]">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
             </button>
-            <button class="cw-icon" type="button" data-cw-close aria-label="@T["Close the assistant"]" title="@T["Close"]">
+            <button class="cw-icon" type="button" data-cw-close aria-label="@T["Close help"]" title="@T["Close"]">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
             </button>
         </header>
 
         <div class="cw-log" role="log" aria-live="polite" data-cw-log></div>
 
-        <div class="cw-suggest" data-cw-suggest aria-label="@T["Suggested questions"]">
-            <button type="button" class="cw-chip">@T["What are the transfer fees?"]</button>
-            <button type="button" class="cw-chip">@T["How does a loan work?"]</button>
-            <button type="button" class="cw-chip">@T["How do I top up my card?"]</button>
-            <button type="button" class="cw-chip">@T["How do I block a card?"]</button>
-        </div>
 
         <form class="cw-composer" data-cw-form novalidate>
+            @Html.AntiForgeryToken()
+            @if (!signedIn)
+            {
+                <input class="cw-email" type="email" name="email" maxlength="200" autocomplete="email" placeholder="@T["Your email, so we can reply"]" aria-label="@T["Your email"]" data-cw-email />
+            }
             <textarea class="cw-input" rows="1" maxlength="500" placeholder="@T["Ask a question…"]" aria-label="@T["Your question"]" data-cw-input></textarea>
+            <label class="cw-attach" title="@T["Attach an image"]"><input type="file" accept="image/png,image/jpeg,image/webp" data-cw-image hidden /><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.5l-8.6 8.6a5.5 5.5 0 01-7.8-7.8l9-9a3.7 3.7 0 015.2 5.2l-9 9a1.8 1.8 0 01-2.6-2.6l8.2-8.2"/></svg></label>
             <button class="cw-send" type="submit" aria-label="@T["Send"]">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5.5 11.5 12 5l6.5 6.5" /></svg>
             </button>
         </form>
-        <p class="cw-note">@T["The assistant is a design preview and can't answer yet."]</p>
+        <p class="cw-note" data-cw-file>@T["You can attach one image (PNG, JPG or WebP)."]</p>
     </aside>
 </div>
