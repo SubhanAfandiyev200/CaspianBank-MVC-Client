@@ -112,7 +112,7 @@
                         <select class="select" id="loan-purpose" name="Purpose" data-wheel>
                             @foreach (var purpose in purposes)
                             {
-                                <option value="@purpose" selected="@(Model.Form.Purpose == purpose)">@LoanUi.PurposeText(purpose)</option>
+                                <option value="@purpose" selected="@(Model.Form.Purpose == purpose)">@T[LoanUi.PurposeText(purpose)]</option>
                             }
                         </select>
                     </div>
@@ -189,7 +189,7 @@
                                         }
                                     </td>
                                     <td>
-                                        <span class="badge @LoanUi.StatusBadge(loan.Status)">@LoanUi.StatusText(loan.Status)</span>
+                                        <span class="badge @LoanUi.StatusBadge(loan.Status)">@T[LoanUi.StatusText(loan.Status)]</span>
                                         @if (loan.HasOverdue)
                                         {
                                             <span class="badge badge-danger">@T["Overdue"]</span>
@@ -200,7 +200,7 @@
                                         }
                                         @if (!string.IsNullOrEmpty(loan.Message))
                                         {
-                                            <div class="hint">@loan.Message</div>
+                                            <div class="hint">@T[loan.Message]</div>
                                         }
                                     </td>
                                 </tr>

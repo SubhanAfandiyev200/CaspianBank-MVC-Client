@@ -30,10 +30,10 @@
 
     <header class="page-head crud-head">
         <div>
-            <p class="eyebrow">@LoanUi.PurposeText(loan.Purpose) loan</p>
+            <p class="eyebrow">@T[LoanUi.PurposeText(loan.Purpose)] @T["loan"]</p>
             <h1>@loan.ContractNumber</h1>
             <p class="lede">
-                <span class="badge @LoanUi.StatusBadge(loan.Status)">@LoanUi.StatusText(loan.Status)</span>
+                <span class="badge @LoanUi.StatusBadge(loan.Status)">@T[LoanUi.StatusText(loan.Status)]</span>
                 @if (loan.HasOverdue)
                 {
                     <span class="badge badge-danger">@T["Overdue"]</span>
@@ -64,7 +64,7 @@
     {
         <section class="surface form-card">
             <h2>@(loan.Status == T["Rejected"] ? T["Not approved"] : T["Offer declined"])</h2>
-            <p class="lede">@(string.IsNullOrEmpty(loan.Message) ? T["This application is closed."] : loan.Message)</p>
+            <p class="lede">@(string.IsNullOrEmpty(loan.Message) ? T["This application is closed."] : T[loan.Message])</p>
             <a class="btn btn-primary" asp-action="Index">@T["Back to loans"]</a>
         </section>
     }
@@ -248,7 +248,7 @@
             <h2>@T["Loan details"]</h2>
             <dl class="detail-list">
                 <div><dt>@T["Amount"]</dt><dd class="num">@LoanUi.Money(granted)@(loan.ApprovedAmount.HasValue && loan.ApprovedAmount.Value != loan.RequestedAmount ? " (" + T["you asked for {0}", LoanUi.Money(loan.RequestedAmount)] + ")" : "")</dd></div>
-                <div><dt>@T["Purpose"]</dt><dd>@LoanUi.PurposeText(loan.Purpose)@(string.IsNullOrEmpty(loan.PurposeNote) ? "" : " · " + loan.PurposeNote)</dd></div>
+                <div><dt>@T["Purpose"]</dt><dd>@T[LoanUi.PurposeText(loan.Purpose)]@(string.IsNullOrEmpty(loan.PurposeNote) ? "" : " · " + loan.PurposeNote)</dd></div>
                 <div><dt>@T["Term"]</dt><dd>@T["{0} months, due on the last day of each month", loan.TermMonths]</dd></div>
                 <div><dt>@T["Interest rate"]</dt><dd>@LoanUi.Percent(loan.AnnualInterestRate) a year@(loan.AnnualInterestRate != loan.InitialAnnualInterestRate ? " (started at " + LoanUi.Percent(loan.InitialAnnualInterestRate) + ")" : "")</dd></div>
                 <div><dt>@T["Total to repay"]</dt><dd class="num">@LoanUi.Money(loan.TotalRepayment)</dd></div>
@@ -299,7 +299,7 @@
                                 {
                                     <td class="num">@(item.Penalty > 0 ? LoanUi.Money(item.Penalty) : "—")</td>
                                 }
-                                <td><span class="badge @LoanUi.InstallmentBadge(item.Status)">@LoanUi.InstallmentText(item.Status)</span></td>
+                                <td><span class="badge @LoanUi.InstallmentBadge(item.Status)">@T[LoanUi.InstallmentText(item.Status)]</span></td>
                             </tr>
                         }
                     </tbody>
