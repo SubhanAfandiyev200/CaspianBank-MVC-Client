@@ -26,7 +26,14 @@
                     <span class="badge badge-pending">@T["Pending"]</span>
                 }
                 @Model.CustomerName · @Model.CustomerEmail ·
-                <a asp-area="Admin" asp-controller="Users" asp-action="Detail" asp-route-id="@Model.CustomerId">@T["Open customer"]</a>
+                @if (Model.IsGuest)
+                {
+                    <span class="badge badge-neutral">@T["Visitor, not registered"]</span>
+                }
+                else
+                {
+                    <a asp-area="Admin" asp-controller="Users" asp-action="Detail" asp-route-id="@Model.CustomerId">@T["Open customer"]</a>
+                }
             </p>
         </div>
         @if (!closed)
@@ -58,6 +65,10 @@
                     <div class="chat-bubble">
                         <small class="hint">@message.AuthorName@(message.IsStaff ? " · " + T["staff"] : " · " + T["customer"]) · @message.CreatedAt.ToLocalTime().ToString("dd MMM, HH:mm", inv)</small>
                         <div style="white-space: pre-wrap">@message.Body</div>
+                        @if (!string.IsNullOrEmpty(message.ImageUrl))
+                        {
+                            <a href="@message.ImageUrl" target="_blank" rel="noopener"><img src="@message.ImageUrl" alt="@T["Attached image"]" style="display:block;max-width:240px;max-height:240px;margin-top:8px;border-radius:10px" /></a>
+                        }
                     </div>
                 </div>
             }

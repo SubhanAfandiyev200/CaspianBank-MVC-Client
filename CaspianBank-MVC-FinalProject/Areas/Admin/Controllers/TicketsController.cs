@@ -1,3 +1,4 @@
+using CaspianBank_MVC_FinalProject.Helpers;
 using CaspianBank_MVC_FinalProject.Controllers;
 using CaspianBank_MVC_FinalProject.ViewModels.Support;
 using Microsoft.AspNetCore.Authorization;
@@ -6,9 +7,9 @@ using System.Net;
 
 namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
 {
-    // BANK bölməsi: müştərilərin mesajları. Yalnız CustomerSupport, Admin və SuperAdmin. Qaydalar API-dədir (api/admin/tickets)
+    // BANK bölməsi: müştərilərin və ziyarətçilərin mesajları (Help). Hələlik bütün işçi rolları görür. Qaydalar API-dədir (api/admin/tickets)
     [Area("Admin")]
-    [Authorize(Roles = "CustomerSupport,Admin,SuperAdmin")]
+    [Authorize(Roles = AppRoles.Staff)]
     public class TicketsController : ApiControllerBase
     {
         private const int PageSize = 20;
@@ -60,7 +61,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
                 TempData["Error"] = "We can't load this message right now. Please try again.";
                 return RedirectToAction(nameof(Index));
             }
-            return View(ticket);
+            return View(WithImages(ticket));
         }
 
         [HttpPost]
@@ -83,7 +84,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
                 }
                 current.Error = string.Join(" ", errors);
                 current.Draft = message;
-                return View("Detail", current);
+                return View("Detail", WithImages(current));
             }
 
             TempData["Success"] = "Your reply was sent to " + ticket.CustomerName + ".";

@@ -116,7 +116,7 @@
                 <a class="@On("BillProviders")" asp-area="Admin" asp-controller="BillProviders" asp-action="Index">@T["Bill providers"]</a>
             }
             <a class="@On("Reports")" asp-area="Admin" asp-controller="Reports" asp-action="Index">@T["Reports"]</a>
-            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.CustomerSupport))
+            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.CustomerSupport) || User.IsInRole(AppRoles.Accountant) || User.IsInRole(AppRoles.Security))
             {
                 <a class="@On("Tickets")" asp-area="Admin" asp-controller="Tickets" asp-action="Index">@T["Contact Tickets"]</a>
             }
