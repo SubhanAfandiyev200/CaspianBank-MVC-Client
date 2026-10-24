@@ -1,53 +1,53 @@
-@model CardDesignDetailVM
+﻿@model CardDesignDetailVM
 @{
     ViewData["Title"] = "Card design · Detail";
 }
 <main id="content" class="page">
-    <a class="back" asp-area="Admin" asp-controller="CardDesign" asp-action="Index">All designs</a>
+    <a class="back" asp-area="Admin" asp-controller="CardDesign" asp-action="Index">@T["All designs"]</a>
 
     <header class="page-head crud-head">
         <div>
-            <p class="eyebrow">UI · Cards</p>
+            <p class="eyebrow">@T["UI · Cards"]</p>
             <h1>@Model.Title</h1>
-            <p class="lede">One card face used on Home and on the cards customers hold.</p>
+            <p class="lede">@T["One card face used on Home and on the cards customers hold."]</p>
         </div>
         <span class="row-actions">
-            <a class="btn btn-secondary" asp-area="Admin" asp-controller="CardDesign" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
-            <a class="btn btn-back" asp-area="Admin" asp-controller="CardDesign" asp-action="Index">Go Back</a>
+            <a class="btn btn-secondary" asp-area="Admin" asp-controller="CardDesign" asp-action="Edit" asp-route-id="@Model.Id">@T["Edit"]</a>
+            <a class="btn btn-back" asp-area="Admin" asp-controller="CardDesign" asp-action="Index">@T["Go Back"]</a>
             <form method="post" asp-area="Admin" asp-controller="CardDesign" asp-action="Delete" asp-route-id="@Model.Id">
                 <button type="submit" class="btn btn-danger"
-                        data-confirm-title="Delete this design?"
-                        data-confirm-text="A design used by a card type or by customer cards cannot be deleted."
-                        data-confirm-yes="Delete" data-confirm-danger="true">Delete</button>
+                        data-confirm-title="@T["Delete this design?"]"
+                        data-confirm-text="@T["A design used by a card type or by customer cards cannot be deleted."]"
+                        data-confirm-yes="@T["Delete"]" data-confirm-danger="true">@T["Delete"]</button>
             </form>
         </span>
     </header>
 
     <div class="narrow stack-lg">
         <section class="surface">
-            <p class="hint">How the card looks on Home and in the App (sample data)</p>
+            <p class="hint">@T["How the card looks on Home and in the App (sample data)"]</p>
             <partial name="_CardPreview" model="new CardDesignPreviewVM { Title = Model.Title, Image = Model.Image, Large = true }" />
         </section>
 
         <section class="surface">
             <dl class="detail-list">
-                <div><dt>Id</dt><dd>@Model.Id</dd></div>
-                <div><dt>Title</dt><dd>@Model.Title</dd></div>
-                <div><dt>Order</dt><dd>@Model.DisplayOrder</dd></div>
+                <div><dt>@T["Id"]</dt><dd>@Model.Id</dd></div>
+                <div><dt>@T["Title"]</dt><dd>@Model.Title</dd></div>
+                <div><dt>@T["Order"]</dt><dd>@Model.DisplayOrder</dd></div>
                 <div>
-                    <dt>On Home</dt>
+                    <dt>@T["On Home"]</dt>
                     <dd>
                         @if (Model.ShowOnHome)
                         {
-                            <span class="badge badge-success">Shown</span>
+                            <span class="badge badge-success">@T["Shown"]</span>
                         }
                         else
                         {
-                            <span class="badge badge-neutral">Hidden</span>
+                            <span class="badge badge-neutral">@T["Hidden"]</span>
                         }
                     </dd>
                 </div>
-                <div><dt>Image path</dt><dd>@Model.Image</dd></div>
+                <div><dt>@T["Image path"]</dt><dd>@Model.Image</dd></div>
             </dl>
         </section>
     </div>

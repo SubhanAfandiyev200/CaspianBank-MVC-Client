@@ -1,4 +1,4 @@
-@model CaspianBank_MVC_FinalProject.ViewModels.Translations.TranslationsPageVM
+﻿@model CaspianBank_MVC_FinalProject.ViewModels.Translations.TranslationsPageVM
 @using System.Globalization
 @{
     ViewData["Title"] = "Translations";
@@ -11,59 +11,59 @@
 }
 <main id="content" class="page">
     <header class="page-head">
-        <p class="eyebrow">Languages</p>
-        <h1>Translations</h1>
+        <p class="eyebrow">@T["Languages"]</p>
+        <h1>@T["Translations"]</h1>
         <p class="lede">Every text on the customer site is stored in English. Write the Azerbaijani and Russian version next to it; an empty field shows the English text. Words in {0}, {1} are filled in by the page (amounts, dates, names) and must be kept as they are.</p>
     </header>
 
     @if (TempData["Success"] is string success)
     {
-        <p class="flash flash-ok" role="status">@success</p>
+        <p class="flash flash-ok" role="status">@T[success]</p>
     }
     @if (TempData["Error"] is string error)
     {
-        <p class="flash flash-error" role="alert">@error</p>
+        <p class="flash flash-error" role="alert">@T[error]</p>
     }
     @if (Model.Unavailable)
     {
-        <p class="flash flash-error" role="alert">The translations can't be loaded right now. Please try again in a moment.</p>
+        <p class="flash flash-error" role="alert">@T["The translations can't be loaded right now. Please try again in a moment."]</p>
     }
     @if (!string.IsNullOrEmpty(Model.Error))
     {
-        <p class="flash flash-error" role="alert">@Model.Error</p>
+        <p class="flash flash-error" role="alert">@T[Model.Error]</p>
     }
 
     <section class="surface surface-tight">
         <form method="get" asp-area="Admin" asp-controller="Translations" asp-action="Index" class="toolbar filters">
             <div class="field grow">
-                <label for="search">Search</label>
-                <input class="input" id="search" name="search" type="search" placeholder="English text or a translation" value="@Model.Search" autocomplete="off" />
+                <label for="search">@T["Search"]</label>
+                <input class="input" id="search" name="search" type="search" placeholder="@T["English text or a translation"]" value="@Model.Search" autocomplete="off" />
             </div>
             <div class="field">
-                <label for="onlyMissing">Show</label>
+                <label for="onlyMissing">@T["Show"]</label>
                 <select class="select" data-wheel id="onlyMissing" name="onlyMissing">
-                    <option value="false" selected="@(!Model.OnlyMissing)">All texts</option>
-                    <option value="true" selected="@Model.OnlyMissing">Only missing a translation</option>
+                    <option value="false" selected="@(!Model.OnlyMissing)">@T["All texts"]</option>
+                    <option value="true" selected="@Model.OnlyMissing">@T["Only missing a translation"]</option>
                 </select>
             </div>
             <div class="field">
                 <label>&nbsp;</label>
-                <button class="btn btn-primary" type="submit">Filter</button>
+                <button class="btn btn-primary" type="submit">@T["Filter"]</button>
             </div>
         </form>
         <p class="hint">@Model.Total.ToString("N0", inv) text(s) in this list. JavaScript texts start with "js:".</p>
     </section>
 
     <section class="surface">
-        <h2>Add a text</h2>
-        <p class="hint">Use this for a text that is not in the list yet. The English text must match the one in the page exactly.</p>
+        <h2>@T["Add a text"]</h2>
+        <p class="hint">@T["Use this for a text that is not in the list yet. The English text must match the one in the page exactly."]</p>
         <form method="post" asp-area="Admin" asp-controller="Translations" asp-action="Save" class="form-grid">
             <div class="field">
-                <label for="new-key">English text</label>
+                <label for="new-key">@T["English text"]</label>
                 <input class="input" id="new-key" name="key" maxlength="400" required />
             </div>
             <div class="field">
-                <label for="new-az">Azərbaycanca</label>
+                <label for="new-az">@T["Azərbaycanca"]</label>
                 <input class="input" id="new-az" name="az" maxlength="2000" />
             </div>
             <div class="field">
@@ -72,7 +72,7 @@
             </div>
             <div class="field">
                 <label>&nbsp;</label>
-                <button class="btn btn-primary" type="submit">Add</button>
+                <button class="btn btn-primary" type="submit">@T["Add"]</button>
             </div>
         </form>
     </section>
@@ -82,10 +82,10 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>English</th>
-                        <th>Azərbaycanca</th>
+                        <th>@T["English"]</th>
+                        <th>@T["Azərbaycanca"]</th>
                         <th>Русский</th>
-                        <th class="actions"><span class="sr-only">Save</span></th>
+                        <th class="actions"><span class="sr-only">@T["Save"]</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -106,14 +106,14 @@
                                     <input type="hidden" name="search" value="@Model.Search" />
                                     <input type="hidden" name="onlyMissing" value="@(Model.OnlyMissing ? "true" : "false")" />
                                     <input type="hidden" name="page" value="@Model.Page" />
-                                    <button type="submit" class="btn btn-secondary btn-sm">Save</button>
+                                    <button type="submit" class="btn btn-secondary btn-sm">@T["Save"]</button>
                                 </form>
                             </td>
                         </tr>
                     }
                     @if (!Model.Items.Any())
                     {
-                        <tr><td colspan="4">Nothing here. @(Model.OnlyMissing ? "Every text has a translation." : "No texts found.")</td></tr>
+                        <tr><td colspan="4">@T["Nothing here."] @T[Model.OnlyMissing ? "Every text has a translation." : "No texts found."]</td></tr>
                     }
                 </tbody>
             </table>

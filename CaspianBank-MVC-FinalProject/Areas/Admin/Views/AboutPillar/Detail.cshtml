@@ -1,24 +1,24 @@
-@model AboutPillarDetailVM
+﻿@model AboutPillarDetailVM
 @{
     ViewData["Title"] = "About pillar · Detail";
 }
 <main id="content" class="page">
-    <a class="back" asp-area="Admin" asp-controller="AboutPillar" asp-action="Index">All pillars</a>
+    <a class="back" asp-area="Admin" asp-controller="AboutPillar" asp-action="Index">@T["All pillars"]</a>
 
     <header class="page-head crud-head">
         <div>
-            <p class="eyebrow">UI · Home page</p>
+            <p class="eyebrow">@T["UI · Home page"]</p>
             <h1>@Model.Title</h1>
-            <p class="lede">One column of the About block on the Home page.</p>
+            <p class="lede">@T["One column of the About block on the Home page."]</p>
         </div>
         <span class="row-actions">
-            <a class="btn btn-secondary" asp-area="Admin" asp-controller="AboutPillar" asp-action="Edit" asp-route-id="@Model.Id">Edit</a>
-            <a class="btn btn-back" asp-area="Admin" asp-controller="AboutPillar" asp-action="Index">Go Back</a>
+            <a class="btn btn-secondary" asp-area="Admin" asp-controller="AboutPillar" asp-action="Edit" asp-route-id="@Model.Id">@T["Edit"]</a>
+            <a class="btn btn-back" asp-area="Admin" asp-controller="AboutPillar" asp-action="Index">@T["Go Back"]</a>
             <form method="post" asp-area="Admin" asp-controller="AboutPillar" asp-action="Delete" asp-route-id="@Model.Id">
                 <button type="submit" class="btn btn-danger"
-                        data-confirm-title="Delete this pillar?"
-                        data-confirm-text="It will disappear from the About block on the Home page."
-                        data-confirm-yes="Delete" data-confirm-danger="true">Delete</button>
+                        data-confirm-title="@T["Delete this pillar?"]"
+                        data-confirm-text="@T["It will disappear from the About block on the Home page."]"
+                        data-confirm-yes="@T["Delete"]" data-confirm-danger="true">@T["Delete"]</button>
             </form>
         </span>
     </header>
@@ -26,12 +26,12 @@
     <div class="narrow stack-lg">
         <section class="surface">
             <dl class="detail-list">
-                <div><dt>Id</dt><dd>@Model.Id</dd></div>
-                <div><dt>Title</dt><dd>@Model.Title</dd></div>
-                <div><dt>Description</dt><dd>@Model.Description</dd></div>
-                <div><dt>Image path</dt><dd>@Model.Image</dd></div>
+                <div><dt>@T["Id"]</dt><dd>@Model.Id</dd></div>
+                <div><dt>@T["Title"]</dt><dd>@Model.Title</dd></div>
+                <div><dt>@T["Description"]</dt><dd>@Model.Description</dd></div>
+                <div><dt>@T["Image path"]</dt><dd>@Model.Image</dd></div>
                 <div>
-                    <dt>Image</dt>
+                    <dt>@T["Image"]</dt>
                     <dd><img src="@ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], Model.Image)" alt="@Model.Title" style="display:block;height:64px;width:auto;max-width:200px;object-fit:contain" /></dd>
                 </div>
             </dl>

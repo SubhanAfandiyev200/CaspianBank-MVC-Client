@@ -1,4 +1,4 @@
-@model AboutDetailVM
+﻿@model AboutDetailVM
 @{
     ViewData["Title"] = "About text";
     var pillars = Model.Pillars;
@@ -6,32 +6,32 @@
 <main id="content" class="page">
     <header class="page-head crud-head">
         <div>
-            <p class="eyebrow">UI · Home page</p>
-            <h1>About text</h1>
-            <p class="lede">The heading text of the About block and its video. The three columns under it are managed in <a asp-area="Admin" asp-controller="AboutPillar" asp-action="Index">About pillars</a>.</p>
+            <p class="eyebrow">@T["UI · Home page"]</p>
+            <h1>@T["About text"]</h1>
+            <p class="lede">@T["The heading text of the About block and its video. The three columns under it are managed in"] <a asp-area="Admin" asp-controller="AboutPillar" asp-action="Index">@T["About pillars"]</a>.</p>
         </div>
         <span class="row-actions">
-            <a class="btn btn-secondary" asp-area="Admin" asp-controller="About" asp-action="Edit">Edit text</a>
-            <a class="btn btn-secondary" asp-area="Admin" asp-controller="About" asp-action="EditVideo">Change video</a>
+            <a class="btn btn-secondary" asp-area="Admin" asp-controller="About" asp-action="Edit">@T["Edit text"]</a>
+            <a class="btn btn-secondary" asp-area="Admin" asp-controller="About" asp-action="EditVideo">@T["Change video"]</a>
         </span>
     </header>
 
     @if (TempData["Success"] is string success)
     {
-        <p class="flash flash-ok" role="status">@success</p>
+        <p class="flash flash-ok" role="status">@T[success]</p>
     }
     @if (TempData["Error"] is string error)
     {
-        <p class="flash flash-error" role="alert">@error</p>
+        <p class="flash flash-error" role="alert">@T[error]</p>
     }
 
     <div class="narrow stack-lg">
         <section class="surface">
             <dl class="detail-list">
-                <div><dt>Label</dt><dd>@Model.Label</dd></div>
-                <div><dt>Title</dt><dd>@Model.Title</dd></div>
-                <div><dt>Description</dt><dd>@Model.Description</dd></div>
-                <div><dt>Video path</dt><dd>@Model.VideoPath</dd></div>
+                <div><dt>@T["Label"]</dt><dd>@Model.Label</dd></div>
+                <div><dt>@T["Title"]</dt><dd>@Model.Title</dd></div>
+                <div><dt>@T["Description"]</dt><dd>@Model.Description</dd></div>
+                <div><dt>@T["Video path"]</dt><dd>@Model.VideoPath</dd></div>
             </dl>
             @if (!string.IsNullOrEmpty(Model.VideoPath))
             {
@@ -40,22 +40,22 @@
         </section>
 
         <section class="surface surface-tight">
-            <div class="toolbar"><h2>Pillars (@pillars.Count)</h2></div>
+            <div class="toolbar"><h2>@T["Pillars ({0})", pillars.Count]</h2></div>
             <div class="table-wrap">
                 <table class="data-table">
-                    <thead><tr><th class="num">Id</th><th>Title</th><th class="actions">Operations</th></tr></thead>
+                    <thead><tr><th class="num">@T["Id"]</th><th>@T["Title"]</th><th class="actions">@T["Operations"]</th></tr></thead>
                     <tbody>
                         @foreach (var pillar in pillars)
                         {
                             <tr>
                                 <td class="num">@pillar.Id</td>
                                 <td>@pillar.Title</td>
-                                <td class="actions"><a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="AboutPillar" asp-action="Detail" asp-route-id="@pillar.Id">Detail</a></td>
+                                <td class="actions"><a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="AboutPillar" asp-action="Detail" asp-route-id="@pillar.Id">@T["Detail"]</a></td>
                             </tr>
                         }
                         @if (pillars.Count == 0)
                         {
-                            <tr><td colspan="3">No pillars yet.</td></tr>
+                            <tr><td colspan="3">@T["No pillars yet."]</td></tr>
                         }
                     </tbody>
                 </table>

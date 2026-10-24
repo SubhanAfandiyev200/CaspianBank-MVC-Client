@@ -1,29 +1,29 @@
-@model HomeTickerEditVM
+﻿@model HomeTickerEditVM
 @{
     ViewData["Title"] = "Ticker · Edit";
 }
 <main id="content" class="page">
-    <a class="back" asp-area="Admin" asp-controller="Ticker" asp-action="Index">All ticker texts</a>
+    <a class="back" asp-area="Admin" asp-controller="Ticker" asp-action="Index">@T["All ticker texts"]</a>
 
     <header class="page-head">
-        <p class="eyebrow">UI · Home page</p>
-        <h1>Edit ticker text</h1>
-        <p class="lede">Change the phrase that moves across the line on the Home page.</p>
+        <p class="eyebrow">@T["UI · Home page"]</p>
+        <h1>@T["Edit ticker text"]</h1>
+        <p class="lede">@T["Change the phrase that moves across the line on the Home page."]</p>
     </header>
 
     <form method="post" asp-area="Admin" asp-controller="Ticker" asp-action="Edit" asp-route-id="@Model.Id" class="narrow stack-lg" novalidate>
         <section class="surface form-stack">
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
             <div class="field">
-                <label asp-for="Text">Text</label>
-                <input class="input" asp-for="Text" maxlength="100" placeholder="Ticker text" autocomplete="off" />
+                <label asp-for="Text">@T["Text"]</label>
+                <input class="input" asp-for="Text" maxlength="100" placeholder="@T["Ticker text"]" autocomplete="off" />
                 <span asp-validation-for="Text" class="field-error"></span>
             </div>
         </section>
 
         <div class="rv-actions">
-            <a class="btn btn-secondary btn-cancel" asp-area="Admin" asp-controller="Ticker" asp-action="Index">Cancel</a>
-            <button class="btn btn-primary" type="submit">Save changes</button>
+            <a class="btn btn-secondary btn-cancel" asp-area="Admin" asp-controller="Ticker" asp-action="Index">@T["Cancel"]</a>
+            <button class="btn btn-primary" type="submit">@T["Save changes"]</button>
         </div>
     </form>
 </main>
