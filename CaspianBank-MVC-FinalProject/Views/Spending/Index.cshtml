@@ -84,20 +84,20 @@
                     {
                         <div class="spend-col">
                             <span class="spend-total num">@(month.Total > 0m ? month.Total.ToString("N0", inv) : "")</span>
-                            <div class="spend-bar" style="height:@(Height(month.Total, maxTotal))%" title="@month.Label: @Money(month.Total)">
+                            <div class="spend-bar" style="height:@(Height(month.Total, maxTotal))%" title="@T.Month(month.Label): @Money(month.Total)">
                                 @foreach (var category in month.Categories.Where(c => c.Amount > 0m))
                                 {
-                                    <span class="spend-seg @Tone(category.Code)" style="height:@(Height(category.Amount, month.Total))%" title="@category.Name: @Money(category.Amount)"></span>
+                                    <span class="spend-seg @Tone(category.Code)" style="height:@(Height(category.Amount, month.Total))%" title="@T[category.Name]: @Money(category.Amount)"></span>
                                 }
                             </div>
-                            <span class="spend-label">@month.Label</span>
+                            <span class="spend-label">@T.Month(month.Label)</span>
                         </div>
                     }
                 </div>
                 <ul class="spend-legend">
                     @foreach (var category in current.Categories)
                     {
-                        <li><span class="spend-dot @Tone(category.Code)" aria-hidden="true"></span>@category.Name</li>
+                        <li><span class="spend-dot @Tone(category.Code)" aria-hidden="true"></span>@T[category.Name]</li>
                     }
                 </ul>
             }
@@ -116,7 +116,7 @@
                     {
                         <div class="spend-row">
                             <div class="spend-row-top">
-                                <span><span class="spend-dot @Tone(category.Code)" aria-hidden="true"></span>@category.Name</span>
+                                <span><span class="spend-dot @Tone(category.Code)" aria-hidden="true"></span>@T[category.Name]</span>
                                 <span class="num">@Money(category.Amount) <small class="hint">@((category.Amount / current.Total * 100m).ToString("0", inv))%</small></span>
                             </div>
                             <div class="limit-meter-bar" aria-hidden="true"><span class="@Tone(category.Code)" style="width:@(Height(category.Amount, current.Total))%"></span></div>

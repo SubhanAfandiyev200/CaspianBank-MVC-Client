@@ -8,7 +8,7 @@
     {
         var digits = new string((raw ?? string.Empty).Where(char.IsDigit).ToArray());
         if (digits.StartsWith('0')) digits = digits.Substring(1);
-        if (digits.Length != 9) return string.IsNullOrEmpty(raw) ? "Not set" : raw;
+        if (digits.Length != 9) return string.IsNullOrEmpty(raw) ? T["Not set"] : raw;
         return "+994 " + digits.Substring(0, 2) + " " + digits.Substring(2, 3) + " " + digits.Substring(5, 2) + " " + digits.Substring(7, 2);
     }
 }

@@ -215,7 +215,7 @@
                                         </span>
                                     </td>
                                     <td class="num">
-                                        @(isLoanRow ? "Monthly payment" : Money(item.Amount))
+                                        @(isLoanRow ? T["Monthly payment"] : Money(item.Amount))
                                         <small class="hint">@T["from {0}", item.CardLabel]</small>
                                     </td>
                                     <td>

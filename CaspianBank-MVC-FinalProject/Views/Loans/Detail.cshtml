@@ -330,7 +330,7 @@
                             <tr>
                                 <td>@LoanUi.Date(payment.PaidAt.ToLocalTime())</td>
                                 <td>
-                                    @LoanUi.PaymentTypeText(payment.Type)
+                                    @T[LoanUi.PaymentTypeText(payment.Type)]
                                     @if (payment.InterestRateAfter.HasValue)
                                     {
                                         <div class="hint">@T["rate now {0}", LoanUi.Percent(payment.InterestRateAfter.Value)]</div>

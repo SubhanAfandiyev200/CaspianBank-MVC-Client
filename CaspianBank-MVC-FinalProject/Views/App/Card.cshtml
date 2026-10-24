@@ -85,7 +85,7 @@
                             <dt>@T["Card number"]</dt>
                             <dd class="num">
                                 @string.Join(" ", Enumerable.Range(0, card.CardNumber.Length / 4).Select(i => card.CardNumber.Substring(i * 4, 4)))
-                                <button type="button" class="btn-copy" data-copy="@card.CardNumber" data-copy-label="Card number">@T["Copy"]</button>
+                                <button type="button" class="btn-copy" data-copy="@card.CardNumber" data-copy-label="@T["Card number"]">@T["Copy"]</button>
                             </dd>
                         </div>
                         <div><dt>@T["Expires"]</dt><dd>@card.Expiry</dd></div>

@@ -88,6 +88,28 @@ namespace CaspianBank_MVC_FinalProject.Helpers
             return space <= 0 ? t[label] : t[label.Substring(0, space)] + label.Substring(space);
         }
 
+        // "Oct 2026" kimi ay yazılarını seçilmiş dilin ay adı ilə göstərir (az: okt 2026, ru: окт 2026). Format tanınmazsa olduğu kimi qalır
+        public static string Month(this ITranslator t, string? label)
+        {
+            if (string.IsNullOrEmpty(label) || t.Lang == "en")
+            {
+                return label ?? string.Empty;
+            }
+            if (!DateTime.TryParseExact(label, "MMM yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var date))
+            {
+                return label;
+            }
+            try
+            {
+                var culture = new System.Globalization.CultureInfo(t.Lang == "az" ? "az-Latn-AZ" : "ru-RU");
+                return date.ToString("MMM yyyy", culture);
+            }
+            catch (System.Globalization.CultureNotFoundException)
+            {
+                return label;
+            }
+        }
+
         // Salamlama: günün vaxtına görə
         public static string Greeting(this ITranslator t, int hour)
         {
