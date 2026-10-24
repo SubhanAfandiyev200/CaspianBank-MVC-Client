@@ -10,6 +10,12 @@ namespace CaspianBank_MVC_FinalProject.Helpers
             return key == Logo;
         }
 
+        // Saytın mətnidir, dilə görə tərcümə olunur (Edit səhifəsində EN | AZ | RU seçimi çıxır). URL, email, telefon və s. tərcümə olunmur
+        public static bool IsTranslatable(string key)
+        {
+            return key == "FooterTitle" || key == "FooterDescription";
+        }
+
         // Uzun mətn olduğu üçün çox sətirli sahədə redaktə olunur
         public static bool IsLong(string key)
         {

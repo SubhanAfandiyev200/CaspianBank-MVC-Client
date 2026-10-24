@@ -50,6 +50,10 @@
     }
     else
     {
+        @if (SettingLabels.IsTranslatable(Model.Key))
+        {
+            <partial name="_LangTabs" />
+        }
         <form method="post" asp-area="Admin" asp-controller="Setting" asp-action="Edit" asp-route-id="@Model.Id" class="narrow stack-lg" novalidate>
             <section class="surface form-stack">
                 <div asp-validation-summary="ModelOnly" class="field-error"></div>
@@ -57,11 +61,11 @@
                     <label asp-for="Value">@SettingLabels.For(Model.Key)</label>
                     @if (SettingLabels.IsLong(Model.Key))
                     {
-                        <textarea class="textarea" asp-for="Value" maxlength="500" rows="4"></textarea>
+                        <textarea class="textarea" asp-for="Value" maxlength="500" rows="4" data-translatable="@(SettingLabels.IsTranslatable(Model.Key) ? "true" : null)"></textarea>
                     }
                     else
                     {
-                        <input class="input" asp-for="Value" maxlength="500" autocomplete="off" />
+                        <input class="input" asp-for="Value" maxlength="500" autocomplete="off" data-translatable="@(SettingLabels.IsTranslatable(Model.Key) ? "true" : null)" />
                     }
                     <span asp-validation-for="Value" class="field-error"></span>
                 </div>
