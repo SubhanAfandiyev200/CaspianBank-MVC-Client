@@ -1,4 +1,4 @@
-@model CaspianBank_MVC_FinalProject.ViewModels.Bank.TreasuryPageVM
+﻿@model CaspianBank_MVC_FinalProject.ViewModels.Bank.TreasuryPageVM
 @using System.Globalization
 @{
     ViewData["Title"] = "Treasury";
@@ -46,67 +46,67 @@
 }
 <main id="content" class="page">
     <header class="page-head">
-        <p class="eyebrow">Bank</p>
-        <h1>Treasury</h1>
-        <p class="lede">The bank's own money and every movement of it. A loan can be paid out only while the treasury stays above the required reserve. Entries can't be edited.</p>
+        <p class="eyebrow">@T["Bank"]</p>
+        <h1>@T["Treasury"]</h1>
+        <p class="lede">@T["The bank's own money and every movement of it. A loan can be paid out only while the treasury stays above the required reserve. Entries can't be edited."]</p>
     </header>
 
     @if (Model.Unavailable)
     {
-        <p class="flash flash-error" role="alert">The treasury can't be loaded right now. Please try again in a moment.</p>
+        <p class="flash flash-error" role="alert">@T["The treasury can't be loaded right now. Please try again in a moment."]</p>
     }
     @if (!string.IsNullOrEmpty(Model.Error))
     {
-        <p class="flash flash-error" role="alert">@Model.Error</p>
+        <p class="flash flash-error" role="alert">@T[Model.Error]</p>
     }
 
     @if (Model.InDebt)
     {
-        <p class="flash flash-error" role="alert">The bank is in debt: the treasury is below zero (@Money(Model.Balance)). Deposits are still paid back to customers, but no new loans can be paid out until the balance is positive again.</p>
+        <p class="flash flash-error" role="alert">@T["The bank is in debt: the treasury is below zero ({0}). Deposits are still paid back to customers, but no new loans can be paid out until the balance is positive again.", Money(Model.Balance)]</p>
     }
 
     <div class="stat-grid cols-3">
         <article class="stat is-strong">
-            <p class="stat-label">Treasury balance</p>
+            <p class="stat-label">@T["Treasury balance"]</p>
             <p class="stat-value">@Money(Model.Balance)</p>
-            <p class="hint">The bank's own money right now</p>
+            <p class="hint">@T["The bank's own money right now"]</p>
         </article>
         <article class="stat">
-            <p class="stat-label">Required reserve</p>
+            <p class="stat-label">@T["Required reserve"]</p>
             <p class="stat-value">@Money(Model.RequiredReserve)</p>
-            <p class="hint">@Model.ReservePercent.ToString("0.##", inv)% of @Money(Model.CustomerMoney) (cards and deposits)</p>
+            <p class="hint">@T["{0}% of {1} (cards and deposits)", Model.ReservePercent.ToString("0.##", inv), Money(Model.CustomerMoney)]</p>
         </article>
         <article class="stat">
-            <p class="stat-label">Available for loans</p>
+            <p class="stat-label">@T["Available for loans"]</p>
             <p class="stat-value">@Money(Model.AvailableForLoans)</p>
-            <p class="hint">Balance minus the required reserve</p>
+            <p class="hint">@T["Balance minus the required reserve"]</p>
         </article>
     </div>
 
     <div class="stat-grid cols-3">
         <article class="stat">
-            <p class="stat-label">Came in (@Model.MonthLabel)</p>
+            <p class="stat-label">@T["Came in ({0})", Model.MonthLabel]</p>
             <p class="stat-value">@Money(Model.MonthIn)</p>
-            <p class="hint">Fees, commissions, loan repayments, deposits</p>
+            <p class="hint">@T["Fees, commissions, loan repayments, deposits"]</p>
         </article>
         <article class="stat">
-            <p class="stat-label">Went out (@Model.MonthLabel)</p>
+            <p class="stat-label">@T["Went out ({0})", Model.MonthLabel]</p>
             <p class="stat-value">@Money(Model.MonthOut)</p>
-            <p class="hint">Loans, deposit returns and interest, cashback</p>
+            <p class="hint">@T["Loans, deposit returns and interest, cashback"]</p>
         </article>
         <article class="stat">
-            <p class="stat-label">Net (@Model.MonthLabel)</p>
+            <p class="stat-label">@T["Net ({0})", Model.MonthLabel]</p>
             <p class="stat-value">@Signed(Model.MonthIn - Model.MonthOut)</p>
-            <p class="hint">Operating costs and tax are on the dashboard</p>
+            <p class="hint">@T["Operating costs and tax are on the dashboard"]</p>
         </article>
     </div>
 
     <section class="surface surface-tight">
         <form method="get" asp-area="Admin" asp-controller="Treasury" asp-action="Index" class="toolbar filters">
             <div class="field">
-                <label for="kind">Type</label>
+                <label for="kind">@T["Type"]</label>
                 <select class="select" data-wheel id="kind" name="kind">
-                    <option value="" selected="@string.IsNullOrEmpty(Model.Kind)">All types</option>
+                    <option value="" selected="@string.IsNullOrEmpty(Model.Kind)">@T["All types"]</option>
                     @foreach (var item in kinds)
                     {
                         <option value="@item.Code" selected="@(Model.Kind == item.Code)">@item.Label</option>
@@ -114,23 +114,23 @@
                 </select>
             </div>
             <div class="field">
-                <label for="from">From</label>
+                <label for="from">@T["From"]</label>
                 <input class="input" id="from" name="from" type="date" min="2020-01-01" max="@today" value="@Model.From?.ToString("yyyy-MM-dd", inv)" />
             </div>
             <div class="field">
-                <label for="to">To</label>
+                <label for="to">@T["To"]</label>
                 <input class="input" id="to" name="to" type="date" min="2020-01-01" max="@today" value="@Model.To?.ToString("yyyy-MM-dd", inv)" />
             </div>
             <div class="field">
                 <label>&nbsp;</label>
-                <button class="btn btn-primary" type="submit">Filter</button>
+                <button class="btn btn-primary" type="submit">@T["Filter"]</button>
             </div>
         </form>
 
         <div class="table-wrap">
             <table class="data-table">
                 <thead>
-                    <tr><th>Time</th><th>Type</th><th>Details</th><th class="num">Amount</th><th class="num">Treasury after</th><th>Code</th></tr>
+                    <tr><th>@T["Time"]</th><th>@T["Type"]</th><th>@T["Details"]</th><th class="num">@T["Amount"]</th><th class="num">@T["Treasury after"]</th><th>@T["Code"]</th></tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model.Items)
@@ -146,7 +146,7 @@
                     }
                     @if (!Model.Items.Any())
                     {
-                        <tr><td colspan="6">No entries found.</td></tr>
+                        <tr><td colspan="6">@T["No entries found."]</td></tr>
                     }
                 </tbody>
             </table>
