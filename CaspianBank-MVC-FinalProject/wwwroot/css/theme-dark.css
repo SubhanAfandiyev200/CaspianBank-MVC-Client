@@ -169,10 +169,12 @@
 
 /* ---------- Loqo zolağı: şəklin ağ fonu görünməsin ---------- */
 .brand-img { mix-blend-mode: multiply; }
-:root[data-theme="dark"] .brand-img { filter: grayscale(1) invert(1); mix-blend-mode: screen; }
+:root[data-theme="dark"] .brand-img { filter: invert(1) hue-rotate(180deg); mix-blend-mode: screen; }
 
 /* ---------- Etibar göstəriciləri: rəqəmlər qaranlıqda oxunsun ---------- */
 :root[data-theme="dark"] .ring-face { fill: #0c2a1f; }
 :root[data-theme="dark"] .stat .ring-figure,
 :root[data-theme="dark"] .stats .ring-figure,
 :root[data-theme="dark"] .ring-figure { color: #e8f3c4; }
+/* Hərəkət edən zolaq öz qatını yaradır, ona görə blend yalnız zolağın öz fonu ilə işləyir: fon partners ilə eyni olmalıdır */
+.logo-track { background: var(--white); }
