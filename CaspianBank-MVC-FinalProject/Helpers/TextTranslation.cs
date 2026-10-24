@@ -95,14 +95,14 @@ namespace CaspianBank_MVC_FinalProject.Helpers
             {
                 return label ?? string.Empty;
             }
-            if (!DateTime.TryParseExact(label, "MMM yyyy", System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var date))
+            if (!DateTime.TryParseExact(label, new[] { "MMM yyyy", "MMMM yyyy" }, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.None, out var date))
             {
                 return label;
             }
             try
             {
                 var culture = new System.Globalization.CultureInfo(t.Lang == "az" ? "az-Latn-AZ" : "ru-RU");
-                return date.ToString("MMM yyyy", culture);
+                return date.ToString(label.Length > 8 && char.IsLetter(label[3]) && label.IndexOf(" ") > 3 ? "MMMM yyyy" : "MMM yyyy", culture);
             }
             catch (System.Globalization.CultureNotFoundException)
             {
