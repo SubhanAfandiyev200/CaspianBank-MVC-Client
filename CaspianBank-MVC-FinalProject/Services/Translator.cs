@@ -182,7 +182,7 @@ namespace CaspianBank_MVC_FinalProject.Services
             });
         }
 
-        private string? MatchTemplate(IReadOnlyDictionary<string, string> dictionary, string text)
+        private string? MatchTemplate(IReadOnlyDictionary<string, string> dictionary, string text, int depth = 0)
         {
             foreach (var template in TemplatesOf(dictionary))
             {
@@ -200,11 +200,22 @@ namespace CaspianBank_MVC_FinalProject.Services
                         continue;
                     }
 
-                    // Uzun cümlə olan dəyərlər (məs. xəta səbəbi) də tərcümə olunur
+                    // Uzun cümlə olan dəyərlər (məs. xəta səbəbi, təhlükəsizlik siqnalının təsviri) də tərcümə olunur: əvvəl tam uyğunluq, sonra şablon
                     var value = group.Value;
-                    if (value.Length > 12 && value.Contains(' ') && dictionary.TryGetValue(value.Trim(), out var inner) && !string.IsNullOrEmpty(inner))
+                    if (value.Length > 12 && value.Contains(' '))
                     {
-                        value = inner;
+                        if (dictionary.TryGetValue(value.Trim(), out var inner) && !string.IsNullOrEmpty(inner))
+                        {
+                            value = inner;
+                        }
+                        else if (depth < 2)
+                        {
+                            var nested = MatchTemplate(dictionary, value.Trim(), depth + 1);
+                            if (nested is not null)
+                            {
+                                value = nested;
+                            }
+                        }
                     }
                     result = result.Replace("{" + index + "}", value);
                 }
