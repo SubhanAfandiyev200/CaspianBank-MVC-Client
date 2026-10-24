@@ -15,6 +15,7 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.LoanReviews
         public int TermMonths { get; set; }
         public DateTime CreatedAt { get; set; }
         public string Status { get; set; } = string.Empty;
+        public bool RequiresSuperAdmin { get; set; }
     }
 
     public class LoanReviewPageVM
@@ -24,6 +25,7 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.LoanReviews
         public int Page { get; set; }
         public int PageSize { get; set; }
         public int PendingCount { get; set; }
+        public int AwaitingSuperAdminCount { get; set; }
 
         // Süzgəc (səhifə yenilənəndə formada qalır)
         public string? Status { get; set; }
@@ -145,6 +147,13 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.LoanReviews
         public DateTime? ReviewedAt { get; set; }
         public string? RejectReason { get; set; }
         public bool CanDecide { get; set; }
+
+        // Qara siyahı: iki təsdiq. Stage: Normal, FirstApproval (kredit şöbəsi), FinalApproval (Super Admin)
+        public bool RequiresSuperAdminApproval { get; set; }
+        public string Stage { get; set; } = "Normal";
+        public string? FirstApprovedBy { get; set; }
+        public DateTime? FirstApprovedAt { get; set; }
+        public decimal? FirstApprovedAmount { get; set; }
 
         // Formada qalan dəyərlər (xətadan sonra yenidən göstərmək üçün)
         public string? ApprovedAmountText { get; set; }
