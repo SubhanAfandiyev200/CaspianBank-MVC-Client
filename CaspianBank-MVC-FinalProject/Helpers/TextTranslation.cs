@@ -26,6 +26,8 @@ namespace CaspianBank_MVC_FinalProject.Helpers
         // Sıra vacibdir: daha dəqiq qaydalar əvvəldə. Arqumentin true olması həmin hissənin (məs. "Gold") ayrıca tərcümə olunması deməkdir
         private static readonly Rule[] Rules =
         {
+            new Rule(@"^Top up from card •••• (\d{4})$", "Top up from card •••• {0}", false),
+            new Rule(@"^Top up of card •••• (\d{4})$", "Top up of card •••• {0}", false),
             new Rule(@"^Transfer to your (\w+) card •••• (\d{4})$", "Transfer to your {0} card •••• {1}", true, false),
             new Rule(@"^Transfer from your (\w+) card •••• (\d{4})$", "Transfer from your {0} card •••• {1}", true, false),
             new Rule(@"^Transfer to •••• (\d{4})$", "Transfer to •••• {0}", false),
