@@ -4,7 +4,7 @@
     var back = Context.Request.Path + Context.Request.QueryString;
     var languages = new[] { ("en", "English"), ("az", "Azərbaycanca"), ("ru", "Русский") };
     // Admin paneli yalnız ingilis dilindədir, orada dil seçimi mənasızdır (tema düyməsi qalır)
-    var inAdmin = string.Equals(Context.Request.RouteValues["area"] as string, "Admin", StringComparison.OrdinalIgnoreCase);
+    var inAdmin = false;   // admin paneli də üç dildədir: dil seçimi hər yerdə göstərilir
 }
 <div class="site-controls @(ViewData["Floating"] is true ? "site-controls-floating" : "")">
     @if (!inAdmin)
