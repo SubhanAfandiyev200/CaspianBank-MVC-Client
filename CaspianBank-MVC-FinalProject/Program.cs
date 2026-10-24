@@ -17,7 +17,11 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
         outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}"));
 
 // Add services to the container.
-builder.Services.AddControllersWithViews(options => options.Filters.Add<CaspianBank_MVC_FinalProject.Helpers.TranslateModelErrorsFilter>());
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<CaspianBank_MVC_FinalProject.Helpers.TranslateModelErrorsFilter>();
+    options.Filters.Add<CaspianBank_MVC_FinalProject.Helpers.SaveTranslationsFilter>();
+});
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<BearerTokenHandler>();
