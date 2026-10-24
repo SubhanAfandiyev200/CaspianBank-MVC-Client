@@ -16,10 +16,11 @@
     var isLoanStaff = User.IsInRole("Admin") || User.IsInRole("Accountant");
     var twoStep = Model.RequiresSuperAdminApproval;
     var canApprove = !twoStep
-                     || (Model.Stage == "FirstApproval" && isLoanStaff)
+                     || (Model.Stage == "FirstApproval" && (isLoanStaff || isSuperAdmin))
                      || (Model.Stage == "FinalApproval" && isSuperAdmin);
     var canReject = Model.Stage != "FinalApproval" || isSuperAdmin;
     var finalAmount = Model.FirstApprovedAmount ?? loan.RequestedAmount;
+    var sendsOn = twoStep && !isSuperAdmin;   // kredit şöbəsinin təsdiqi Super Admin-ə gedir; Super Admin-in təsdiqi son təsdiqdir
 }
 <main id="content" class="page">
     <a class="back" asp-area="Admin" asp-controller="Loans" asp-action="Index">All loans</a>
@@ -65,7 +66,7 @@
             else if (Model.Stage == "FirstApproval")
             {
                 <strong>Customer on the blacklist: two approvals are needed</strong>
-                <span>The loan staff approves first, then the Super Admin. The money is sent only after both approve.</span>
+                <span>@(isSuperAdmin ? "As the Super Admin your approval is final: you can approve it directly. If the loan staff approves first, it comes to you for the final approval." : "The loan staff approves first, then the Super Admin. The money is sent only after both approve.")</span>
             }
             else
             {
@@ -184,16 +185,16 @@
                 else if (canApprove)
                 {
                 <form asp-area="Admin" asp-controller="Loans" asp-action="Approve" asp-route-id="@loan.Id" method="post" class="surface form-stack form-card">
-                    <h2>@(twoStep ? "Approve and send to the Super Admin" : "Approve")</h2>
+                    <h2>@(sendsOn ? "Approve and send to the Super Admin" : "Approve")</h2>
                     <div class="field">
                         <label for="approved-amount">Amount to approve (AZN)</label>
                         <input class="input" id="approved-amount" name="approvedAmount" inputmode="decimal" autocomplete="off" value="@approveValue" />
-                        <p class="hint">@(twoStep ? "This customer is on the blacklist: the money is not sent yet. The Super Admin gets a request and decides at the end." : "Same as requested: the money goes to the customer's card right away. A smaller amount becomes an offer the customer has to accept.")</p>
+                        <p class="hint">@(sendsOn ? "This customer is on the blacklist: the money is not sent yet. The Super Admin gets a request and decides at the end." : twoStep ? "This customer is on the blacklist. As the Super Admin your approval is the final one: the money is sent right away if the amount is the same as requested." : "Same as requested: the money goes to the customer's card right away. A smaller amount becomes an offer the customer has to accept.")</p>
                     </div>
                     <div class="row-actions">
                         <button type="submit" class="btn btn-primary"
-                                data-confirm-title="@(twoStep ? "Send to the Super Admin?" : "Approve this loan?")"
-                                data-confirm-text="@(twoStep ? "You approve the amount in the field. The Super Admin must approve it too before any money is sent." : "The amount in the field will be approved for " + who.Name + " " + who.Surname + ".")"
+                                data-confirm-title="@(sendsOn ? "Send to the Super Admin?" : "Approve this loan?")"
+                                data-confirm-text="@(sendsOn ? "You approve the amount in the field. The Super Admin must approve it too before any money is sent." : "The amount in the field will be approved for " + who.Name + " " + who.Surname + ".")"
                                 data-confirm-yes="Approve">Approve</button>
                         <button type="button" class="btn btn-secondary"
                                 onclick="document.getElementById('approved-amount').value=this.dataset.value"
