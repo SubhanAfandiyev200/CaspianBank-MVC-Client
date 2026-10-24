@@ -1,7 +1,7 @@
 @model LoanReviewPageVM
 @{
     ViewData["Title"] = "Loans";
-    var statuses = new[] { "Pending", "Offered", "Active", "Court", "Closed", "Rejected", "Declined" };
+    var statuses = new[] { "Pending", "AwaitingSuperAdmin", "Offered", "Active", "Court", "Closed", "Rejected", "Declined" };
 
     string PageUrl(int page)
     {
@@ -13,7 +13,7 @@
         <div>
             <p class="eyebrow">Credit</p>
             <h1>Loan approvals</h1>
-            <p class="lede">Review applications, open the applicant's file and approve or reject. @Model.PendingCount waiting for a decision.</p>
+            <p class="lede">Review applications, open the applicant's file and approve or reject. @Model.PendingCount waiting for a decision@(Model.AwaitingSuperAdminCount > 0 ? ", " + Model.AwaitingSuperAdminCount + " waiting for the Super Admin" : "").</p>
         </div>
     </header>
 
@@ -86,10 +86,10 @@
                             <td>@LoanUi.PurposeText(item.Purpose)</td>
                             <td>@item.TermMonths months</td>
                             <td>@LoanUi.Date(item.CreatedAt.ToLocalTime())</td>
-                            <td><span class="badge @LoanUi.StatusBadge(item.Status)">@LoanUi.StaffStatusText(item.Status)</span></td>
+                            <td><span class="badge @LoanUi.StatusBadge(item.Status)">@LoanUi.StaffStatusText(item.Status)</span>@if (item.RequiresSuperAdmin) {<span class="badge badge-blacklist" title="Blacklisted customer: the loan staff and the Super Admin must both approve">Blacklisted</span>}</td>
                             <td class="actions">
                                 <span class="row-actions">
-                                    <a class="btn @(item.Status == "Pending" ? "btn-primary" : "btn-detail") btn-sm" asp-area="Admin" asp-controller="Loans" asp-action="Detail" asp-route-id="@item.Id">@(item.Status == "Pending" ? "Review" : "Detail")</a>
+                                    <a class="btn @(item.Status == "Pending" || item.Status == "AwaitingSuperAdmin" ? "btn-primary" : "btn-detail") btn-sm" asp-area="Admin" asp-controller="Loans" asp-action="Detail" asp-route-id="@item.Id">@(item.Status == "Pending" || item.Status == "AwaitingSuperAdmin" ? "Review" : "Detail")</a>
                                 </span>
                             </td>
                         </tr>
