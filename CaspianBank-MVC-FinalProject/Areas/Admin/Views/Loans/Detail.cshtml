@@ -12,6 +12,14 @@
     ViewData["Title"] = "Loan " + loan.ContractNumber;
     var inv = CultureInfo.InvariantCulture;
     var approveValue = Model.ApprovedAmountText ?? rules.SuggestedApproval.ToString("0.00", inv);
+    var isSuperAdmin = User.IsInRole("SuperAdmin");
+    var isLoanStaff = User.IsInRole("Admin") || User.IsInRole("Accountant");
+    var twoStep = Model.RequiresSuperAdminApproval;
+    var canApprove = !twoStep
+                     || (Model.Stage == "FirstApproval" && isLoanStaff)
+                     || (Model.Stage == "FinalApproval" && isSuperAdmin);
+    var canReject = Model.Stage != "FinalApproval" || isSuperAdmin;
+    var finalAmount = Model.FirstApprovedAmount ?? loan.RequestedAmount;
 }
 <main id="content" class="page">
     <a class="back" asp-area="Admin" asp-controller="Loans" asp-action="Index">All loans</a>
@@ -41,6 +49,34 @@
     @if (!string.IsNullOrEmpty(Model.Error))
     {
         <p class="flash flash-error" role="alert">@Model.Error</p>
+    }
+
+    @* ---------- Qara siyahı: iki təsdiq ---------- *@
+    @if (twoStep)
+    {
+        var step1Done = !string.IsNullOrEmpty(Model.FirstApprovedBy);
+        var step2Done = loan.Status != "Pending" && loan.Status != "AwaitingSuperAdmin" && loan.Status != "Rejected";
+        <section class="approval-banner @(Model.Stage == "FinalApproval" ? "is-final" : "")" role="status">
+            @if (Model.Stage == "FinalApproval")
+            {
+                <strong>Waiting for the Super Admin's approval</strong>
+                <span>@Model.FirstApprovedBy approved @LoanUi.Money(Model.FirstApprovedAmount ?? loan.RequestedAmount) on @LoanUi.Date(Model.FirstApprovedAt?.ToLocalTime()) for @who.Name @who.Surname, who is on the blacklist.@(isSuperAdmin ? " Do you approve it too?" : " The money is sent only after the Super Admin approves it too.")</span>
+            }
+            else if (Model.Stage == "FirstApproval")
+            {
+                <strong>Customer on the blacklist: two approvals are needed</strong>
+                <span>The loan staff approves first, then the Super Admin. The money is sent only after both approve.</span>
+            }
+            else
+            {
+                <strong>Customer on the blacklist: two approvals were needed</strong>
+                <span>@(step1Done ? "Approved by " + Model.FirstApprovedBy + " (loan staff)" : "Decided at the first step")@(step2Done ? " and then by " + (Model.ReviewedBy ?? "the Super Admin") + "." : ".")</span>
+            }
+            <ul class="approval-steps">
+                <li class="@(step1Done ? "is-done" : (Model.Stage == "FirstApproval" ? "is-current" : ""))">1. Loan staff @(step1Done ? "approved" : "")</li>
+                <li class="@(step2Done ? "is-done" : (Model.Stage == "FinalApproval" ? "is-current" : ""))">2. Super Admin @(step2Done ? "approved" : "")</li>
+            </ul>
+        </section>
     }
 
     <div class="stack-lg">
@@ -129,24 +165,52 @@
         @if (Model.CanDecide)
         {
             <div class="layout-2">
+                @if (canApprove && Model.Stage == "FinalApproval")
+                {
+                    @* Super Admin-in son təsdiqi: məbləği kredit şöbəsi təyin edib, burada dəyişmir *@
+                    <form asp-area="Admin" asp-controller="Loans" asp-action="Approve" asp-route-id="@loan.Id" method="post" class="surface form-stack form-card">
+                        <h2>Final approval</h2>
+                        <input type="hidden" name="approvedAmount" value="@finalAmount.ToString("0.00", inv)" />
+                        <p>@Model.FirstApprovedBy approved <strong>@LoanUi.Money(finalAmount)</strong> for a customer on the blacklist. Do you approve it too?</p>
+                        <p class="hint">@(finalAmount == loan.RequestedAmount ? "The money goes to the customer's card right away." : "The amount is smaller than requested, so it becomes an offer the customer has to accept.")</p>
+                        <div class="row-actions">
+                            <button type="submit" class="btn btn-primary"
+                                    data-confirm-title="Give the final approval?"
+                                    data-confirm-text="@(LoanUi.Money(finalAmount)) will be approved for @who.Name @who.Surname, who is on the blacklist."
+                                    data-confirm-yes="Approve">Approve</button>
+                        </div>
+                    </form>
+                }
+                else if (canApprove)
+                {
                 <form asp-area="Admin" asp-controller="Loans" asp-action="Approve" asp-route-id="@loan.Id" method="post" class="surface form-stack form-card">
-                    <h2>Approve</h2>
+                    <h2>@(twoStep ? "Approve and send to the Super Admin" : "Approve")</h2>
                     <div class="field">
                         <label for="approved-amount">Amount to approve (AZN)</label>
                         <input class="input" id="approved-amount" name="approvedAmount" inputmode="decimal" autocomplete="off" value="@approveValue" />
-                        <p class="hint">Same as requested: the money goes to the customer's card right away. A smaller amount becomes an offer the customer has to accept.</p>
+                        <p class="hint">@(twoStep ? "This customer is on the blacklist: the money is not sent yet. The Super Admin gets a request and decides at the end." : "Same as requested: the money goes to the customer's card right away. A smaller amount becomes an offer the customer has to accept.")</p>
                     </div>
                     <div class="row-actions">
                         <button type="submit" class="btn btn-primary"
-                                data-confirm-title="Approve this loan?"
-                                data-confirm-text="The amount in the field will be approved for @who.Name @who.Surname."
+                                data-confirm-title="@(twoStep ? "Send to the Super Admin?" : "Approve this loan?")"
+                                data-confirm-text="@(twoStep ? "You approve the amount in the field. The Super Admin must approve it too before any money is sent." : "The amount in the field will be approved for " + who.Name + " " + who.Surname + ".")"
                                 data-confirm-yes="Approve">Approve</button>
                         <button type="button" class="btn btn-secondary"
                                 onclick="document.getElementById('approved-amount').value=this.dataset.value"
                                 data-value="@rules.SuggestedApproval.ToString("0.00", inv)">Use suggested (@LoanUi.Money(rules.SuggestedApproval))</button>
                     </div>
                 </form>
+                }
+                else
+                {
+                    <section class="surface form-card">
+                        <h2>Approve</h2>
+                        <p class="hint">@(Model.Stage == "FirstApproval" ? "This customer is on the blacklist. The loan staff must approve first, then the Super Admin gives the final approval." : "Only the Super Admin can give the final approval for this customer.")</p>
+                    </section>
+                }
 
+                @if (canReject)
+                {
                 <form asp-area="Admin" asp-controller="Loans" asp-action="Reject" asp-route-id="@loan.Id" method="post" class="surface form-stack form-card">
                     <h2>Reject</h2>
                     <div class="field">
@@ -161,6 +225,7 @@
                                 data-confirm-yes="Reject" data-confirm-danger="true">Reject</button>
                     </div>
                 </form>
+                }
             </div>
         }
 
