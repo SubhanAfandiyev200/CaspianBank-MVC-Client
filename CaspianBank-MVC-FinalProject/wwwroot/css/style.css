@@ -3593,3 +3593,17 @@ a.header-user:focus-visible { outline: 2px solid var(--color-lime); outline-offs
 .spend-row .limit-meter-bar span.cat-4 { background: var(--cat-4); }
 .spend-row .limit-meter-bar span.cat-5 { background: var(--cat-5); }
 @media (max-width: 600px) { .spend-chart { gap: 5px; } .spend-label { font-size: 10px; } }
+
+/* Qara siyahı: iki təsdiq. Super Admin-in gözlədiyi kreditlər və qara siyahı işarəsi diqqəti çəkməlidir */
+.badge-awaiting { background: #fde7b0; color: #6b4300; border: 1px solid #e9b949; }
+.badge-blacklist { background: #b3261e; color: #ffffff; }
+.approval-banner {
+  display: grid; gap: 4px; margin: 0 0 16px; padding: 14px 16px; border-radius: 12px;
+  border: 1px solid #e9b949; background: #fff4d6; color: #5a3b00;
+}
+.approval-banner strong { font-size: 15px; }
+.approval-banner.is-final { border-color: #b3261e; background: #fdeceb; color: #7a1712; }
+.approval-steps { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 0; padding: 0; list-style: none; font-size: 13px; }
+.approval-steps li { padding: 3px 10px; border-radius: 999px; background: rgba(0, 0, 0, 0.07); }
+.approval-steps li.is-done { background: #1b7a4c; color: #ffffff; }
+.approval-steps li.is-current { background: #b3261e; color: #ffffff; }

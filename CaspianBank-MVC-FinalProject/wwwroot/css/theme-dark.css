@@ -178,3 +178,18 @@
 :root[data-theme="dark"] .ring-figure { color: #e8f3c4; }
 /* Hərəkət edən zolaq öz qatını yaradır, ona görə blend yalnız zolağın öz fonu ilə işləyir: fon partners ilə eyni olmalıdır */
 .logo-track { background: var(--white); }
+
+/* ---------- Kredit müraciəti: aylıq ödəniş qutusu ---------- */
+:root[data-theme="dark"] .loan-quote {
+  background: radial-gradient(180px 80px at 100% 0%, rgba(197, 216, 109, 0.14), transparent 70%), #164431;
+  border: 1px solid var(--color-border);
+}
+:root[data-theme="dark"] .loan-quote strong { color: var(--color-text); }
+:root[data-theme="dark"] .loan-quote span { color: var(--color-text-secondary); }
+:root[data-theme="dark"] .loan-quote small { color: var(--color-text-secondary); }
+
+/* ---------- Qara siyahı: iki təsdiq ---------- */
+:root[data-theme="dark"] .badge-awaiting { background: #4a3708; color: #ffd978; border-color: #8a6a1a; }
+:root[data-theme="dark"] .approval-banner { background: #3b2f0d; color: #ffe29a; border-color: #8a6a1a; }
+:root[data-theme="dark"] .approval-banner.is-final { background: #3d1a18; color: #ffb4ab; border-color: #8c2a24; }
+:root[data-theme="dark"] .approval-steps li { background: rgba(255, 255, 255, 0.1); }
