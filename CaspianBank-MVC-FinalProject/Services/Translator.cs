@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Caching.Memory;
 using System.Net.Http.Json;
+using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 
 namespace CaspianBank_MVC_FinalProject.Services
 {
@@ -121,9 +123,94 @@ namespace CaspianBank_MVC_FinalProject.Services
                     {
                         return translated;
                     }
+
+                    // Tam uyğunluq yoxdursa dəyişənli şablonlara baxılır ("Your card •••• 1234 was blocked.")
+                    var fromTemplate = MatchTemplate(dictionary, text.Trim());
+                    if (fromTemplate is not null)
+                    {
+                        return fromTemplate;
+                    }
                 }
                 return text;
             }
+        }
+
+        // ---- Dəyişənli cümlələr (bildirişlər, xəta mətnləri) ----
+        // Bazada açar şablon kimi yazılıb: "Your card •••• {0} was blocked." Gələn real mətn ("Your card •••• 1234 was blocked.") şablona uyğunlaşdırılır,
+        // tərcümədəki {0} yerinə tapılan dəyər qoyulur. Lüğət dəyişəndə (5 dəqiqədən bir) şablon siyahısı yenidən qurulur
+        private sealed class Template
+        {
+            public Template(Regex pattern, string value)
+            {
+                Pattern = pattern;
+                Value = value;
+            }
+
+            public Regex Pattern { get; }
+            public string Value { get; }
+        }
+
+        private static readonly ConditionalWeakTable<IReadOnlyDictionary<string, string>, List<Template>> Templates = new ConditionalWeakTable<IReadOnlyDictionary<string, string>, List<Template>>();
+        private static readonly Regex Placeholder = new Regex(@"\\{(\d+)\}", RegexOptions.Compiled);
+
+        private static List<Template> TemplatesOf(IReadOnlyDictionary<string, string> dictionary)
+        {
+            return Templates.GetValue(dictionary, key =>
+            {
+                var list = new List<Template>();
+                foreach (var pair in key)
+                {
+                    if (pair.Key.StartsWith("js:", StringComparison.Ordinal) || string.IsNullOrEmpty(pair.Value) || !Regex.IsMatch(pair.Key, @"\{\d+\}"))
+                    {
+                        continue;
+                    }
+
+                    var escaped = Regex.Escape(pair.Key);
+                    var pattern = "^" + Placeholder.Replace(escaped, m => "(?<g" + m.Groups[1].Value + ">.+?)") + "$";
+                    try
+                    {
+                        list.Add(new Template(new Regex(pattern, RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline), pair.Value));
+                    }
+                    catch (ArgumentException)
+                    {
+                        // Boş yerləri təkrarlanan və ya pozulmuş şablon atlanır
+                    }
+                }
+
+                // Daha uzun (daha dəqiq) şablonlar əvvəldə yoxlanılır
+                return list.OrderByDescending(t => t.Pattern.ToString().Length).ToList();
+            });
+        }
+
+        private string? MatchTemplate(IReadOnlyDictionary<string, string> dictionary, string text)
+        {
+            foreach (var template in TemplatesOf(dictionary))
+            {
+                var match = template.Pattern.Match(text);
+                if (!match.Success)
+                {
+                    continue;
+                }
+
+                var result = template.Value;
+                foreach (Group group in match.Groups)
+                {
+                    if (!group.Name.StartsWith("g", StringComparison.Ordinal) || !int.TryParse(group.Name.AsSpan(1), out var index))
+                    {
+                        continue;
+                    }
+
+                    // Uzun cümlə olan dəyərlər (məs. xəta səbəbi) də tərcümə olunur
+                    var value = group.Value;
+                    if (value.Length > 12 && value.Contains(' ') && dictionary.TryGetValue(value.Trim(), out var inner) && !string.IsNullOrEmpty(inner))
+                    {
+                        value = inner;
+                    }
+                    result = result.Replace("{" + index + "}", value);
+                }
+                return result;
+            }
+            return null;
         }
 
         public string this[string text, params object[] args]
