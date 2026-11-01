@@ -7,7 +7,7 @@ using System.Net;
 namespace CaspianBank_MVC_FinalProject.Controllers
 {
     // Müştərinin profili: şəkil, ad, soyad, FİN, telefon, email (header-dəki istifadəçi adına basanda açılır)
-    [Authorize]
+    [Authorize(Roles = AppRoles.Customer)]
     [Route("App/Profile")]
     public class ProfileController : ApiControllerBase
     {

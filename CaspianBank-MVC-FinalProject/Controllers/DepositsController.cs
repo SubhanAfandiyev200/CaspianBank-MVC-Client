@@ -1,3 +1,4 @@
+using CaspianBank_MVC_FinalProject.Helpers;
 using CaspianBank_MVC_FinalProject.ViewModels.Cards;
 using CaspianBank_MVC_FinalProject.ViewModels.Deposits;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +10,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
 {
     // Müddətli depozitlər: variant seç, məbləğ yaz, kart seç. Faiz müddət bitəndə ödənir, müddətdən əvvəl çıxarmaq olmur.
     // Bütün qaydalar (hədlər, kartlar, faiz) API-dədir; burada yalnız forma və siyahı var. Açma adi form + PRG: yeniləmə depoziti təkrar açmasın
-    [Authorize]
+    [Authorize(Roles = AppRoles.Customer)]
     [Route("App/Deposits")]
     public class DepositsController : ApiControllerBase
     {

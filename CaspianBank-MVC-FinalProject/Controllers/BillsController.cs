@@ -15,7 +15,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
     // Ödənişlər: mobil, işıq, qaz, su, internet və Caspian krediti. Dizayn: CaspianBank-Frontend/bill-payment.html.
     // Bütün qaydalar (operator, abunəçi, məbləğ, cashback) API-dədir; burada yalnız forma, axtarış cavabı və qəbz var.
     // Axtarış JS ilə (POST App/Bills/Lookup, JSON), ödəniş isə adi form + PRG: yeniləmə ödənişi təkrar etməsin
-    [Authorize]
+    [Authorize(Roles = AppRoles.Customer)]
     [Route("App/Bills")]
     public class BillsController : ApiControllerBase
     {

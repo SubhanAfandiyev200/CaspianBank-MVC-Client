@@ -1,3 +1,4 @@
+using CaspianBank_MVC_FinalProject.Helpers;
 using CaspianBank_MVC_FinalProject.ViewModels.Cards;
 using CaspianBank_MVC_FinalProject.ViewModels.Transfers;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +9,7 @@ using System.Net;
 namespace CaspianBank_MVC_FinalProject.Controllers
 {
     // Aylıq təkrarlanan köçürmələr: hər ayın seçilmiş günü kartdan eyni məbləğ köçürülür. Qaydaları (alıcı, kart, limit, komissiya) API yoxlayır
-    [Authorize]
+    [Authorize(Roles = AppRoles.Customer)]
     [Route("App/Recurring")]
     public class RecurringController : ApiControllerBase
     {

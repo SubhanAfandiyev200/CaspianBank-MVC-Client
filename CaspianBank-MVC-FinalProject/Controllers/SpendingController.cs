@@ -1,3 +1,4 @@
+using CaspianBank_MVC_FinalProject.Helpers;
 using CaspianBank_MVC_FinalProject.ViewModels.Analytics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -6,7 +7,7 @@ using System.Net;
 namespace CaspianBank_MVC_FinalProject.Controllers
 {
     // Xərc analitikası: son aylarda kartlardan çıxan pul kateqoriyalar üzrə (öz kartları arasında köçürmə sayılmır). Rəqəmləri API hesablayır
-    [Authorize]
+    [Authorize(Roles = AppRoles.Customer)]
     [Route("App/Spending")]
     public class SpendingController : ApiControllerBase
     {

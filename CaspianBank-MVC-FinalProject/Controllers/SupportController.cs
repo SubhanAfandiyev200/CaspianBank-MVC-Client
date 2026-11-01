@@ -9,7 +9,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
     // Müştərinin "Contact us" səhifəsi (dizayn: CaspianBank-Frontend/contact-us.html). Üstdə köməkçi (AI) söhbət paneli (hələ önizləmə),
     // altda müştərinin dəstəyə yazdığı mesajlar: yeni mesaj, cavabı oxumaq, davam etmək, bağlamaq. Bütün qaydalar API-dədir (api/support/tickets).
     // Şirkətin adı, ünvanı və telefonu footer ilə eyni yerdən (api/settings) gəlir
-    [Authorize]
+    [Authorize(Roles = AppRoles.Customer)]
     [Route("App/Support")]
     public class SupportController : ApiControllerBase
     {

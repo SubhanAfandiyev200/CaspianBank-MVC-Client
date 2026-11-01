@@ -1,3 +1,4 @@
+using CaspianBank_MVC_FinalProject.Helpers;
 using CaspianBank_MVC_FinalProject.ViewModels.Reports;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
 {
     // Şübhəli əməliyyatı bildirmək (dizayn: CaspianBank-Frontend/report-transaction.html). History cədvəlindəki "Report" düyməsi bura gətirir.
     // Qaydalar (öz əməliyyatı, bir dəfə bildirmək, səbəbin uzunluğu) API-dədir; burada yalnız forma, uğur mesajı və öz bildirişlərinin siyahısı var
-    [Authorize]
+    [Authorize(Roles = AppRoles.Customer)]
     [Route("App/Report")]
     public class ReportController : ApiControllerBase
     {

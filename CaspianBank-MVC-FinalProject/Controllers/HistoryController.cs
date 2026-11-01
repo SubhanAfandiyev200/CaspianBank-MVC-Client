@@ -1,3 +1,4 @@
+using CaspianBank_MVC_FinalProject.Helpers;
 using CaspianBank_MVC_FinalProject.ViewModels.Cards;
 using CaspianBank_MVC_FinalProject.ViewModels.History;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +10,7 @@ using System.Net;
 namespace CaspianBank_MVC_FinalProject.Controllers
 {
     // Müştərinin əməliyyat tarixçəsi (bütün kartlar) və kart çıxarışı. Məlumat API-dən gəlir: api/history
-    [Authorize]
+    [Authorize(Roles = AppRoles.Customer)]
     [Route("App/History")]
     public class HistoryController : ApiControllerBase
     {
