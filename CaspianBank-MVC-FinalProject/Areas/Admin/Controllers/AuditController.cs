@@ -10,7 +10,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
 {
     // BANK bölməsi: audit log (kim nə etdi). Həssasdır: yalnız SuperAdmin, Admin və Security. Qeydləri API yazır, burada yalnız oxunur
     [Area("Admin")]
-    [Authorize(Roles = AppRoles.SuperAdmin + "," + AppRoles.Admin + "," + AppRoles.Security)]
+    [Authorize(Roles = AppRoles.SuperAdmin + "," + AppRoles.Admin + "," + AppRoles.CustomerService)]
     public class AuditController : ApiControllerBase
     {
         private const int PageSize = 25;

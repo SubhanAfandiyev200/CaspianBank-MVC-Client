@@ -14,7 +14,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
     public class UsersController : ApiControllerBase
     {
         private const int PageSize = 20;
-        private const string RestrictRoles = AppRoles.SuperAdmin + "," + AppRoles.Admin + "," + AppRoles.Security;
+        private const string RestrictRoles = AppRoles.SuperAdmin + "," + AppRoles.Admin + "," + AppRoles.CustomerService;
 
         public UsersController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
             : base(httpClientFactory, configuration)

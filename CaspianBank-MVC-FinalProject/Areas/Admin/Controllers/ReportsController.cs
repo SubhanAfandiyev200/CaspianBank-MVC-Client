@@ -65,7 +65,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = AppRoles.SuperAdmin + "," + AppRoles.Admin + "," + AppRoles.Security)]
+        [Authorize(Roles = AppRoles.SuperAdmin + "," + AppRoles.Admin + "," + AppRoles.CustomerService)]
         public async Task<IActionResult> Resolve(int id, string outcome, string? note, string? returnStatus)
         {
             var (success, errors, code) = await PostAsync($"api/admin/reports/{id}/resolve", new { outcome, note });

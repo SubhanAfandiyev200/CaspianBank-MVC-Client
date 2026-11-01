@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = Model.FullName;
     var inv = CultureInfo.InvariantCulture;
-    var canRestrict = User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Security);
+    var canRestrict = User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.CustomerService);
 
     string Money(decimal value) { return value.ToString("N2", inv) + " AZN"; }
 }

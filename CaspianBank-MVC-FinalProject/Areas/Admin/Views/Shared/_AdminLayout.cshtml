@@ -15,8 +15,7 @@
         { AppRoles.SuperAdmin, "Super admin" },
         { AppRoles.Admin, "Administrator" },
         { AppRoles.Accountant, "Accountant" },
-        { AppRoles.CustomerSupport, "Customer support" },
-        { AppRoles.Security, "Security" }
+        { AppRoles.CustomerService, "Customer service" }
     };
     var roleLabel = roles.Where(role => roleLabels.ContainsKey(role)).Select(role => roleLabels[role]).FirstOrDefault() ?? "Staff";
 
@@ -116,11 +115,11 @@
                 <a class="@On("BillProviders")" asp-area="Admin" asp-controller="BillProviders" asp-action="Index">@T["Bill providers"]</a>
             }
             <a class="@On("Reports")" asp-area="Admin" asp-controller="Reports" asp-action="Index">@T["Reports"]</a>
-            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.CustomerSupport) || User.IsInRole(AppRoles.Accountant) || User.IsInRole(AppRoles.Security))
+            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.CustomerService) || User.IsInRole(AppRoles.Accountant))
             {
                 <a class="@On("Tickets")" asp-area="Admin" asp-controller="Tickets" asp-action="Index">@T["Contact Tickets"]</a>
             }
-            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Security))
+            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.CustomerService))
             {
                 <a class="@On("Security")" asp-area="Admin" asp-controller="Security" asp-action="Index">@T["Suspicious activity"]</a>
                 <a class="@On("Audit")" asp-area="Admin" asp-controller="Audit" asp-action="Index">@T["Audit Log"]</a>
