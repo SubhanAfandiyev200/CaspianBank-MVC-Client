@@ -36,10 +36,10 @@
                     <span>@Model.CompanyName</span>
                 </a>
                 <p>@T["Personal and business banking from one desk at {0}.", Model.Address]</p>
-                @if (!signedIn)
-                {
+                @* @if (signedIn)
+                { *@
                     @* Email yazıb davam et: email sistemdə varsa Login, yenidirsə qeydiyyat (Account/Start) *@
-                    <form class="footer-form" asp-controller="Account" asp-action="Start" method="post">
+                    @* <form class="footer-form" asp-controller="Account" asp-action="Start" method="post">
                         <label class="sr-only" for="footer-email">@T["Your email"]</label>
                         <input id="footer-email" name="Email" type="email" autocomplete="email" placeholder="@T["Enter your email to get started"]" required />
                         <button class="foot-go" type="submit" aria-label="@T["Continue"]">
@@ -48,8 +48,8 @@
                                       stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                         </button>
-                    </form>
-                }
+                    </form> *@
+                @* } *@
             </div>
             <div class="footer-links">
                 <div class="footer-col">
