@@ -117,6 +117,45 @@
             </div>
         </section>
 
+        @if (User.IsInRole(AppRoles.Accountant) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.SuperAdmin))
+        {
+        @* ---------- İş yeri və maaş (dövlət reyestrindən, FİN ilə) ---------- *@
+        <section class="surface surface-tight">
+            <div class="toolbar"><h2>@T["Employment"]</h2></div>
+            <div class="table-wrap">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>@T["Workplace"]</th>
+                            <th>@T["Position"]</th>
+                            <th class="num">@T["Salary"]</th>
+                            <th>@T["From"]</th>
+                            <th>@T["To"]</th>
+                            <th>@T["Left because"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var job in Model.Employments)
+                        {
+                            <tr>
+                                <td>@job.Workplace @if (job.IsCurrent){<span class="badge badge-success">@T["Current"]</span>}</td>
+                                <td>@job.Position</td>
+                                <td class="num">@Money(job.MonthlySalary)</td>
+                                <td>@job.StartDate.ToString("dd MMM yyyy", inv)</td>
+                                <td>@(job.EndDate.HasValue ? job.EndDate.Value.ToString("dd MMM yyyy", inv) : "—")</td>
+                                <td>@(string.IsNullOrEmpty(job.LeaveReason) ? "—" : job.LeaveReason)</td>
+                            </tr>
+                        }
+                        @if (Model.Employments.Count == 0)
+                        {
+                            <tr><td colspan="6">@T["No employment on record."]</td></tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        }
+
         <section class="surface surface-tight">
             <div class="toolbar"><h2>@T["Recent activity"]</h2></div>
             <div class="table-wrap">

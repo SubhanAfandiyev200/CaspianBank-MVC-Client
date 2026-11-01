@@ -85,6 +85,7 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.Users
         public List<UserCardVM> Cards { get; set; } = new();
         public List<UserLoanVM> Loans { get; set; } = new();
         public List<UserActivityVM> RecentActivity { get; set; } = new();
+        public List<CaspianBank_MVC_FinalProject.ViewModels.LoanReviews.ApplicantEmploymentVM> Employments { get; set; } = new();
 
         // Dondurma formasında xəta olanda yazılan səbəb saxlanır (API qaytarmır, controller doldurur)
         public string? Error { get; set; }
