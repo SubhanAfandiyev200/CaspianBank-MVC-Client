@@ -3658,3 +3658,7 @@ form.is-translating .form-stack > .field:not(.has-translatable) { display: none;
 /* Contact us: mesaj formu dar, "Mesajlarınız" cədvəli geniş (sütunlar kəsilmir) */
 .layout-support { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); }
 .chat-bubble.is-error { background: var(--tint-danger, #fdecea); color: var(--color-danger, #8a1c13); border-color: transparent; }
+
+/* Edge parol sahəsinə öz "göstər" gözünü əlavə edir; saytın öz düyməsi var, ona görə brauzerinki gizlədilir */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear { display: none; }
