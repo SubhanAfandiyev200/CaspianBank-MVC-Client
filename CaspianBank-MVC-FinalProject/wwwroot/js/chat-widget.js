@@ -44,7 +44,7 @@
     ai: { log: aiLog, entries: [], history: [], busy: false, draft: "" },
     team: { log: teamLog, entries: [], history: [], busy: false, draft: "" }
   };
-  let mode = signedIn ? "ai" : "team";
+  let mode = "ai";
   // Daxil olmuş müştəridə "Komandaya yaz" söhbəti serverdən gəlir (işçinin cavabları da orada): 10 saniyədən bir yenilənir
   const serverTeam = signedIn && tabs.length > 0;
   let lastTeamSnapshot = "";
@@ -115,6 +115,11 @@
   }
 
   function showMode() {
+    const sub = root.querySelector("[data-cw-sub]");
+    if (sub) {
+      const text = sub.querySelector("[data-cw-sub-text]");
+      if (text) text.textContent = mode === "ai" ? sub.dataset.subAi : sub.dataset.subTeam;
+    }
     tabs.forEach((tab) => tab.classList.toggle("is-on", tab.dataset.cwMode === mode));
     teamOnly.forEach((node) => { node.hidden = mode !== "team"; });
     if (aiNote) aiNote.hidden = mode !== "ai";

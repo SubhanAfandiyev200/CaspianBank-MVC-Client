@@ -6,8 +6,8 @@ using System.Text.Json;
 
 namespace CaspianBank_MVC_FinalProject.Controllers
 {
-    // AI köməkçi (sağ aşağıdakı pəncərənin "AI" bölməsi). Yalnız daxil olmuş müştəri və işçi üçün; açar API-dədir, brauzerə çatmır
-    [Authorize]
+    // AI köməkçi (sağ aşağıdakı pəncərənin "AI" bölməsi): qonaq, müştəri və işçi üçün. Kim olduğunu və nə görə biləcəyini API tokendən təyin edir; açar API-dədir, brauzerə çatmır
+    [AllowAnonymous]
     [Route("Assistant")]
     public class AssistantController : ApiControllerBase
     {
