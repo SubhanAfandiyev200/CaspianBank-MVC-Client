@@ -1,3 +1,4 @@
+using CaspianBank_MVC_FinalProject.Helpers;
 using CaspianBank_MVC_FinalProject.Handlers;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Serilog;
@@ -17,7 +18,11 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
         outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}"));
 
 // Add services to the container.
-builder.Services.AddControllersWithViews(options => options.Filters.Add<CaspianBank_MVC_FinalProject.Helpers.TranslateModelErrorsFilter>());
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add<CaspianBank_MVC_FinalProject.Helpers.TranslateModelErrorsFilter>();
+    options.Filters.Add<CaspianBank_MVC_FinalProject.Helpers.SaveTranslationsFilter>();
+});
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<BearerTokenHandler>();
@@ -54,6 +59,12 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     {
         options.LoginPath = "/Account/Login"; // giriş tələb edən səhifə
         options.AccessDeniedPath = "/Home/AccessDenied";
+        // İşçi müştəri səhifəsinə (kartlar, köçürmə və s.) girməyə çalışsa 403 yox, öz admin panelinə aparılır; müştəri admin səhifəsinə girsə 403
+        options.Events.OnRedirectToAccessDenied = context =>
+        {
+            context.Response.Redirect(AppRoles.IsStaff(context.HttpContext.User) && !context.Request.Path.StartsWithSegments("/Admin") ? RoleRedirect.AdminHome : options.AccessDeniedPath);
+            return Task.CompletedTask;
+        };
         options.Cookie.Name = "Caspian.Auth";
         options.Cookie.HttpOnly = true;
         // Production-da yalnız HTTPS; lokal işləmədə HTTP profili ilə də giriş işləsin

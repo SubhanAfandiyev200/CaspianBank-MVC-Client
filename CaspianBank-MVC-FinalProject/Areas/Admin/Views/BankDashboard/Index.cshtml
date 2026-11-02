@@ -70,7 +70,7 @@
             <article class="stat">
                 <p class="stat-label">@T["Term deposits"]</p>
                 <p class="stat-value">@Money(Model.TermDeposits)</p>
-                <p class="hint">@T["Locked until the term ends. Interest still to pay {0}. All customer money {1} (on cards {2})", Money(Model.TermDepositInterestOwed), Money(Model.CustomerDeposits + Model.TermDeposits), Money(Model.CustomerDeposits)]</p>
+                <p class="hint">@T["Locked until the term ends. Interest still to pay {0}.", Money(Model.TermDepositInterestOwed)]</p>
                 <a asp-area="Admin" asp-controller="Deposits" asp-action="Index">@T["View deposits"]</a>
             </article>
             <article class="stat">
@@ -78,6 +78,26 @@
                 <p class="stat-value">@Money(Model.LoansOutstanding)</p>
                 <p class="hint">@T["Issued and not yet repaid"]</p>
                 <a asp-area="Admin" asp-controller="Loans" asp-action="Index">@T["View loans"]</a>
+            </article>
+        </div>
+
+        @* ===== Xəzinə bankın öz pulu, kartlardakı pul müştərilərindir: ayrı göstərilir ===== *@
+        <div class="stat-grid cols-3">
+            <article class="stat is-strong">
+                <p class="stat-label">@T["Treasury (own funds)"]</p>
+                <p class="stat-value">@Money(Model.OwnFunds)</p>
+                <p class="hint">@T["The bank's own money: card fees, commissions, loan interest and penalties, minus what it paid out (loans, cashback, deposit interest, costs)."]</p>
+                <a asp-area="Admin" asp-controller="Treasury" asp-action="Index">@T["Treasury history"]</a>
+            </article>
+            <article class="stat">
+                <p class="stat-label">@T["Money on customer cards"]</p>
+                <p class="stat-value">@Money(Model.CustomerDeposits)</p>
+                <p class="hint">@T["This money belongs to the customers. It is not part of the treasury."]</p>
+            </article>
+            <article class="stat">
+                <p class="stat-label">@T["All customer money"]</p>
+                <p class="stat-value">@Money(Model.CustomerDeposits + Model.TermDeposits)</p>
+                <p class="hint">@T["On cards plus locked term deposits."]</p>
             </article>
         </div>
 

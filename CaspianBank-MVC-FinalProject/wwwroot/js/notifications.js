@@ -115,6 +115,8 @@
   }
 
   async function onNotification(payload) {
+    // Digər skriptlər (söhbət pəncərəsi, açıq yazışma səhifəsi) bildirişi dərhal bilsin: ayrıca sorğu və 10 saniyə gözləmə lazım olmasın
+    document.dispatchEvent(new CustomEvent("caspian:notification", { detail: payload.notification }));
     const n = await translated(payload.notification);
     setCount(payload.unreadCount);
     prependTo(list, emptyEl, noteHtml(n), MAX_IN_BELL);

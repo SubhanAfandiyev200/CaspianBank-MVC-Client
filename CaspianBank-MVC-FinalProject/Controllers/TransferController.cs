@@ -10,7 +10,7 @@ using System.Text.Json;
 namespace CaspianBank_MVC_FinalProject.Controllers
 {
     // Köçürmə: forma → yoxla (pul hələ köçmür) → təsdiq et → qəbz
-    [Authorize]
+    [Authorize(Roles = AppRoles.Customer)]
     [Route("App/Transfer")]
     public class TransferController : ApiControllerBase
     {

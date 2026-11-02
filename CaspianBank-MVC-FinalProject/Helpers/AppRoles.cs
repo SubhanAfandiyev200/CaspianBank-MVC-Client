@@ -9,15 +9,14 @@ namespace CaspianBank_MVC_FinalProject.Helpers
         public const string SuperAdmin = "SuperAdmin";
         public const string Admin = "Admin";
         public const string Accountant = "Accountant";
-        public const string CustomerSupport = "CustomerSupport";
-        public const string Security = "Security";
+        public const string CustomerService = "CustomerService";
 
         // [Authorize(Roles = AppRoles.Staff)]: Customer-dən başqa hər rol (işçilər)
-        public const string Staff = SuperAdmin + "," + Admin + "," + Accountant + "," + CustomerSupport + "," + Security;
+        public const string Staff = SuperAdmin + "," + Admin + "," + Accountant + "," + CustomerService;
 
         public static readonly string[] StaffRoles =
         {
-            SuperAdmin, Admin, Accountant, CustomerSupport, Security
+            SuperAdmin, Admin, Accountant, CustomerService
         };
 
         public static bool IsStaff(IEnumerable<string> roles)

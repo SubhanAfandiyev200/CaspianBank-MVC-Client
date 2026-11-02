@@ -11,12 +11,14 @@
         <p class="lede">@T["A new card face. Up to 3 designs can be shown on Home, the smallest order comes first."]</p>
     </header>
 
+    <partial name="_LangTabs" />
+
     <form method="post" asp-area="Admin" asp-controller="CardDesign" asp-action="Create" enctype="multipart/form-data" class="narrow stack-lg" novalidate>
         <section class="surface form-stack">
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
             <div class="field">
                 <label asp-for="Title">@T["Title"]</label>
-                <input class="input" asp-for="Title" maxlength="50" placeholder="@T["Design name, for example Platinum"]" autocomplete="off" />
+                <input data-translatable class="input" asp-for="Title" maxlength="50" placeholder="@T["Design name, for example Platinum"]" autocomplete="off" />
                 <span asp-validation-for="Title" class="field-error"></span>
             </div>
             <div class="field">

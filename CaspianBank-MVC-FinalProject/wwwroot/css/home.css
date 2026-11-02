@@ -1422,3 +1422,11 @@ a.header-user:focus-visible { outline: 2px solid var(--lime); outline-offset: 3p
 /* Başlığın sağ qrupu: dil, tema və hesab düymələri bir sətirdə */
 .header-right { justify-self: end; display: flex; align-items: center; gap: 10px; min-width: 0; }
 .header-right .header-auth { justify-self: auto; }
+
+/* Footerin üstündəki "Başla" düyməsi tək qalanda daha böyük görünsün */
+.footer-hero .cta-actions .btn {
+  padding: 20px 40px;
+  font-size: 18px;
+  border-radius: 10px;
+}
+.footer-hero .cta-actions .btn-go-arrow { font-size: 20px; }

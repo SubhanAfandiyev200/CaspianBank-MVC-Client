@@ -44,6 +44,7 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.Support
         public string AuthorName { get; set; } = string.Empty;
         public bool IsStaff { get; set; }
         public string Body { get; set; } = string.Empty;
+        public string? ImageUrl { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 
@@ -54,6 +55,7 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.Support
         public string Status { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
         public string CustomerId { get; set; } = string.Empty;
+        public bool IsGuest { get; set; }
         public string CustomerName { get; set; } = string.Empty;
         public string CustomerEmail { get; set; } = string.Empty;
         public List<TicketMessageVM> Messages { get; set; } = new();

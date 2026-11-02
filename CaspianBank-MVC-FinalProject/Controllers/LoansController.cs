@@ -11,7 +11,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
 {
     // Müştərinin kreditləri: müraciət, təklifə cavab, ödəniş. Bütün qaydalar API-dədir, burada yalnız forma və göstəriş var.
     // Dizayn: CaspianBank-Frontend/loan-application.html. Ödəniş uğurlu olanda PRG: qəbz ayrıca səhifədə (yeniləmə ödənişi təkrar etməsin)
-    [Authorize]
+    [Authorize(Roles = AppRoles.Customer)]
     [Route("App/Loans")]
     public class LoansController : ApiControllerBase
     {

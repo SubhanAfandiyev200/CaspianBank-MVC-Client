@@ -15,8 +15,7 @@
         { AppRoles.SuperAdmin, "Super admin" },
         { AppRoles.Admin, "Administrator" },
         { AppRoles.Accountant, "Accountant" },
-        { AppRoles.CustomerSupport, "Customer support" },
-        { AppRoles.Security, "Security" }
+        { AppRoles.CustomerService, "Customer service" }
     };
     var roleLabel = roles.Where(role => roleLabels.ContainsKey(role)).Select(role => roleLabels[role]).FirstOrDefault() ?? "Staff";
 
@@ -39,6 +38,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/theme-dark.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/chat-widget.css" asp-append-version="true" />
 </head>
 <body class="body-admin">
     <a class="skip" href="#content">@T["Skip to content"]</a>
@@ -116,11 +116,11 @@
                 <a class="@On("BillProviders")" asp-area="Admin" asp-controller="BillProviders" asp-action="Index">@T["Bill providers"]</a>
             }
             <a class="@On("Reports")" asp-area="Admin" asp-controller="Reports" asp-action="Index">@T["Reports"]</a>
-            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.CustomerSupport))
+            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.CustomerService) || User.IsInRole(AppRoles.Accountant))
             {
                 <a class="@On("Tickets")" asp-area="Admin" asp-controller="Tickets" asp-action="Index">@T["Contact Tickets"]</a>
             }
-            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Security))
+            @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.CustomerService))
             {
                 <a class="@On("Security")" asp-area="Admin" asp-controller="Security" asp-action="Index">@T["Suspicious activity"]</a>
                 <a class="@On("Audit")" asp-area="Admin" asp-controller="Audit" asp-action="Index">@T["Audit Log"]</a>
@@ -151,5 +151,9 @@
     <script src="~/js/lang-edit.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/@@microsoft/signalr@@8.0.7/dist/browser/signalr.min.js"></script>
     <script src="~/js/notifications.js" asp-append-version="true"></script>
+    <script src="~/js/live-chat.js" asp-append-version="true"></script>
+    @* AI köməkçi (işçi üçün: yalnız AI bölməsi, məlumat alətləri yoxdur) *@
+    <partial name="_ChatWidget" />
+    <script src="~/js/chat-widget.js" asp-append-version="true"></script>
 </body>
 </html>

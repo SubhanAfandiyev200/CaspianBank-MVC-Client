@@ -10,7 +10,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
     // BANK bölməsi: şübhəli fəaliyyət. Siqnalları sistem yaradır, burada Security (və Admin, SuperAdmin) baxır:
     // "təhlükəsizdir" və ya "şübhəlidir, hesabı dondur". Qaydalar və yoxlamalar API-dədir
     [Area("Admin")]
-    [Authorize(Roles = AppRoles.SuperAdmin + "," + AppRoles.Admin + "," + AppRoles.Security)]
+    [Authorize(Roles = AppRoles.SuperAdmin + "," + AppRoles.Admin + "," + AppRoles.CustomerService)]
     public class SecurityController : ApiControllerBase
     {
         private const int PageSize = 20;

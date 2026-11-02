@@ -8,7 +8,7 @@ using System.Security.Claims;
 namespace CaspianBank_MVC_FinalProject.Controllers
 {
     // Giriş tələb edir: login olmayan /App açsa cookie ayarındakı LoginPath-ə yönləndirilir
-    [Authorize]
+    [Authorize(Roles = AppRoles.Customer)]
     public class AppController : ApiControllerBase
     {
         public AppController(IHttpClientFactory httpClientFactory, IConfiguration configuration)

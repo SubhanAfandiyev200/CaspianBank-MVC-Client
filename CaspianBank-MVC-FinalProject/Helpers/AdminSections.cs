@@ -30,13 +30,13 @@ namespace CaspianBank_MVC_FinalProject.Helpers
             {
                 Title = "Users",
                 Description = "Customer list and details",
-                Roles = new[] { AppRoles.CustomerSupport, AppRoles.Security, AppRoles.Admin, AppRoles.SuperAdmin }
+                Roles = new[] { AppRoles.CustomerService, AppRoles.Admin, AppRoles.SuperAdmin }
             },
             new AdminSection
             {
                 Title = "Freeze accounts",
                 Description = "Restrict or restore a customer account",
-                Roles = new[] { AppRoles.Security, AppRoles.Admin, AppRoles.SuperAdmin }
+                Roles = new[] { AppRoles.CustomerService, AppRoles.Admin, AppRoles.SuperAdmin }
             },
             new AdminSection
             {
@@ -54,7 +54,7 @@ namespace CaspianBank_MVC_FinalProject.Helpers
             {
                 Title = "Audit log",
                 Description = "Who did what and when",
-                Roles = new[] { AppRoles.Security, AppRoles.Admin, AppRoles.SuperAdmin }
+                Roles = new[] { AppRoles.CustomerService, AppRoles.Admin, AppRoles.SuperAdmin }
             },
             new AdminSection
             {

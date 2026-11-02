@@ -11,17 +11,19 @@
         <p class="lede">@T["A new column for the About block: a small image, a title and a short text."]</p>
     </header>
 
+    <partial name="_LangTabs" />
+
     <form method="post" asp-area="Admin" asp-controller="AboutPillar" asp-action="Create" enctype="multipart/form-data" class="narrow stack-lg" novalidate>
         <section class="surface form-stack">
             <div asp-validation-summary="ModelOnly" class="field-error"></div>
             <div class="field">
                 <label asp-for="Title">@T["Title"]</label>
-                <input class="input" asp-for="Title" maxlength="100" placeholder="@T["Pillar title"]" autocomplete="off" />
+                <input data-translatable class="input" asp-for="Title" maxlength="100" placeholder="@T["Pillar title"]" autocomplete="off" />
                 <span asp-validation-for="Title" class="field-error"></span>
             </div>
             <div class="field">
                 <label asp-for="Description">@T["Description"]</label>
-                <textarea class="textarea" asp-for="Description" maxlength="300" rows="3" placeholder="@T["One or two sentences."]"></textarea>
+                <textarea data-translatable class="textarea" asp-for="Description" maxlength="300" rows="3" placeholder="@T["One or two sentences."]"></textarea>
                 <span asp-validation-for="Description" class="field-error"></span>
             </div>
             <div class="field">

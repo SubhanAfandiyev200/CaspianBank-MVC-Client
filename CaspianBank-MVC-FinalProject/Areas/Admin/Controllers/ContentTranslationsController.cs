@@ -7,18 +7,17 @@ using System.Net;
 
 namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
 {
-    // Admin redaktə səhifələrindəki dil seçimi (EN | AZ | RU) bu iki əməliyyatı çağırır (wwwroot/js/lang-edit.js).
+    // Admin yaratma/redaktə səhifələrindəki dil seçimi (EN | AZ | RU) redaktədə mövcud tərcümələri bu əməliyyatla gətirir (wwwroot/js/lang-edit.js).
+    // Tərcümələrin yazılması forma ilə birlikdə gedir: Helpers/SaveTranslationsFilter.cs
     // Tərcümə ingilis mətnə bağlıdır: açar səhifədə saxlanmış ingilis mətnin özüdür. Yalnız SuperAdmin və Admin
     [Area("Admin")]
     [Authorize(Roles = AppRoles.SuperAdmin + "," + AppRoles.Admin)]
     public class ContentTranslationsController : ApiControllerBase
     {
-        private readonly ITranslationStore _store;
 
-        public ContentTranslationsController(IHttpClientFactory httpClientFactory, IConfiguration configuration, ITranslationStore store)
+        public ContentTranslationsController(IHttpClientFactory httpClientFactory, IConfiguration configuration)
             : base(httpClientFactory, configuration)
         {
-            _store = store;
         }
 
         // Seçilən dilin tərcümələri: { "ingilis mətn": "tərcümə" }
@@ -38,25 +37,6 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
             return Json(data);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save(string language, string[] keys, string[] values)
-        {
-            var items = keys.Select((key, index) => new { key, value = index < values.Length ? values[index] : string.Empty }).ToList();
-            var (success, errors, status) = await PutAsync("api/admin/translations/content", new { language, items });
-            if (status == HttpStatusCode.Unauthorized)
-            {
-                return Unauthorized();
-            }
-            if (!success)
-            {
-                return BadRequest(new { errors = Translate(errors) });
-            }
-
-            // Saxlanandan sonra saytın yaddaşındakı lüğət təzələnir: dəyişiklik dərhal görünür
-            _store.Invalidate();
-            return Json(new { message = HttpContext.RequestServices.GetRequiredService<ITranslator>()["The translation was saved."] });
-        }
 
         private string[] Translate(string[] errors)
         {

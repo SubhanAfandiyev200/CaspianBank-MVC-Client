@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Reports";
     var inv = CultureInfo.InvariantCulture;
-    var canResolve = User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Security);
+    var canResolve = User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.CustomerService);
 
     string StatusLabel(string status)
     {

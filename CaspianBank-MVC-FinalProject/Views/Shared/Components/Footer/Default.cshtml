@@ -10,12 +10,12 @@
                 <p>@T[Model.FooterDescription]</p>
             </div>
             <div class="cta-actions">
-                <a class="btn btn-lime btn-go" href="@NavLinks.OpenAccount(signedIn)">
+                <a class="btn btn-lime btn-go" href="@NavLinks.OpenAccount(signedIn, isStaff)">
                     <span class="btn-go-label">@T["Get started"]</span><span class="btn-go-arrow" aria-hidden="true">→</span>
                 </a>
-                <a class="btn btn-ghost btn-go" href="@NavLinks.SupportLink(signedIn)">
+                @* <a class="btn btn-ghost btn-go" href="@NavLinks.SupportLink(signedIn, isStaff)">
                     <span class="btn-go-label">@T["Contact the desk"]</span><span class="btn-go-arrow" aria-hidden="true">→</span>
-                </a>
+                </a> *@
             </div>
         </div>
         <div class="footer-grid">
@@ -36,10 +36,10 @@
                     <span>@Model.CompanyName</span>
                 </a>
                 <p>@T["Personal and business banking from one desk at {0}.", Model.Address]</p>
-                @if (!signedIn)
-                {
+                @* @if (signedIn)
+                { *@
                     @* Email yazıb davam et: email sistemdə varsa Login, yenidirsə qeydiyyat (Account/Start) *@
-                    <form class="footer-form" asp-controller="Account" asp-action="Start" method="post">
+                    @* <form class="footer-form" asp-controller="Account" asp-action="Start" method="post">
                         <label class="sr-only" for="footer-email">@T["Your email"]</label>
                         <input id="footer-email" name="Email" type="email" autocomplete="email" placeholder="@T["Enter your email to get started"]" required />
                         <button class="foot-go" type="submit" aria-label="@T["Continue"]">
@@ -48,8 +48,8 @@
                                       stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
                         </button>
-                    </form>
-                }
+                    </form> *@
+                @* } *@
             </div>
             <div class="footer-links">
                 <div class="footer-col">
@@ -57,19 +57,19 @@
                     <a href="#top">@T["Home"]</a>
                     <a href="#about">@T["About Us"]</a>
                     <a href="#services">@T["Services"]</a>
-                    <a href="@NavLinks.SupportLink(signedIn)">@T["Contact"]</a>
-                    <a href="@(signedIn ? NavLinks.Support : NavLinks.Register)">@(signedIn ? T["Support"] : T["Get Started"])</a>
+                    <a href="@NavLinks.SupportLink(signedIn, isStaff)">@T["Contact"]</a>
+                    <a href="@(signedIn ? NavLinks.SupportLink(signedIn, isStaff) : NavLinks.Register)">@(isStaff ? T["Customer messages"] : signedIn ? T["Support"] : T["Get Started"])</a>
                 </div>
                 <div class="footer-col">
                     <p class="footer-label">@T["Account"]</p>
-                    <a href="@NavLinks.Page(signedIn, NavLinks.AppHome(isStaff))">@(signedIn ? (isStaff ? T["Admin panel"] : T["My cards"]) : T["Log in"])</a>
-                    <a href="@NavLinks.OpenAccount(signedIn)">@(signedIn ? T["Add a card"] : T["Open an account"])</a>
-                    <a href="@NavLinks.Page(signedIn, NavLinks.Transfer)">@T["Transfers"]</a>
-                    <a href="@NavLinks.Page(signedIn, NavLinks.Loan)">@T["Loans"]</a>
+                    <a href="@NavLinks.Page(signedIn, NavLinks.AppHome(isStaff), isStaff)">@(signedIn ? (isStaff ? T["Admin panel"] : T["My cards"]) : T["Log in"])</a>
+                    <a href="@NavLinks.OpenAccount(signedIn, isStaff)">@(isStaff ? T["Admin panel"] : signedIn ? T["Add a card"] : T["Open an account"])</a>
+                    <a href="@NavLinks.Page(signedIn, NavLinks.Transfer, isStaff)">@T["Transfers"]</a>
+                    <a href="@NavLinks.Page(signedIn, NavLinks.Loan, isStaff)">@T["Loans"]</a>
                 </div>
                 <div class="footer-col">
                     <p class="footer-label">@T["Contact"]</p>
-                    <a href="@NavLinks.SupportLink(signedIn)">
+                    <a href="@NavLinks.SupportLink(signedIn, isStaff)">
                         <svg class="foot-ico" viewBox="0 0 24 24" aria-hidden="true">
                             <path d="M12 21s7-6.2 7-11a7 7 0 1 0-14 0c0 4.8 7 11 7 11z" fill="none" stroke="currentColor"
                                   stroke-width="1.6" />

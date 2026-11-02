@@ -11,7 +11,8 @@
         ("RapidTransfers", "Many transfers in a short time"),
         ("DailyVolume", "High amount in one day"),
         ("NewAccountOutflow", "New account sending money"),
-        ("AccountLockout", "Locked after wrong passwords")
+        ("AccountLockout", "Locked after wrong passwords"),
+        ("DeceasedIdentity", "Registration with a deceased citizen's ID")
     };
 
     string KindLabel(string code)
@@ -129,7 +130,7 @@
             </div>
         </form>
 
-        <div class="table-wrap">
+        <div class="table-wrap table-flow">
             <table class="data-table">
                 <thead>
                     <tr><th>@T["When"]</th><th>@T["Customer"]</th><th>@T["Alert"]</th><th>@T["Status"]</th><th class="actions"></th></tr>
@@ -140,15 +141,23 @@
                         <tr>
                             <td>@alert.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)</td>
                             <td>
+                                @if (string.IsNullOrEmpty(alert.CustomerId))
+                                {
+                                    <strong>@T["No account"]</strong>
+                                    <div class="hint">@T["A visitor, not a customer"]</div>
+                                }
+                                else
+                                {
                                 <a asp-area="Admin" asp-controller="Users" asp-action="Detail" asp-route-id="@alert.CustomerId"><strong>@alert.CustomerName</strong></a>
                                 <div class="hint">@alert.Email</div>
+                                }
                                 @if (alert.AccountRestricted)
                                 {
                                     <span class="badge badge-danger">@T["Account frozen"]</span>
                                 }
                             </td>
                             <td>
-                                <span class="badge @(alert.Severity == "High" ? "badge-danger" : "badge-neutral")">@(alert.Severity == "High" ? "High" : "Medium")</span>
+                                <span class="badge @(alert.Severity == "High" ? "badge-danger" : "badge-neutral")">@T[alert.Severity == "High" ? "High" : "Medium"]</span>
                                 <strong>@T[KindLabel(alert.Kind)]</strong>
                                 <div>@T[alert.Description]</div>
                                 @if (alert.Amount.HasValue)
@@ -175,19 +184,19 @@
                                             <input type="hidden" name="id" value="@alert.Id" />
                                             <input type="hidden" name="outcome" value="Dismiss" />
                                             <input type="hidden" name="returnStatus" value="@Model.Status" />
-                                            <input class="input input-sm" name="note" maxlength="300" placeholder="@T["Note (optional)"]" aria-label="Note for alert @alert.Id" />
+                                            <input class="input input-sm" name="note" maxlength="300" placeholder="@T["Note (optional)"]" aria-label="@T["Note for alert {0}", alert.Id]" />
                                             <button type="submit" class="btn btn-secondary btn-sm">@T["Mark safe"]</button>
                                         </form>
-                                        @if (!alert.AccountRestricted)
+                                        @if (!alert.AccountRestricted && !string.IsNullOrEmpty(alert.CustomerId))
                                         {
                                             <form method="post" asp-area="Admin" asp-controller="Security" asp-action="Resolve" class="inline-form">
                                                 <input type="hidden" name="id" value="@alert.Id" />
                                                 <input type="hidden" name="outcome" value="Freeze" />
                                                 <input type="hidden" name="returnStatus" value="@Model.Status" />
-                                                <input class="input input-sm" name="note" maxlength="300" placeholder="@T["Why freeze? (required)"]" aria-label="Reason to freeze for alert @alert.Id" />
+                                                <input class="input input-sm" name="note" maxlength="300" placeholder="@T["Why freeze? (required)"]" aria-label="@T["Reason to freeze for alert {0}", alert.Id]" />
                                                 <button type="submit" class="btn btn-danger btn-sm"
                                                         data-confirm-title="@T["Freeze this account?"]"
-                                                        data-confirm-text="@alert.CustomerName will not be able to sign in or move money until the account is restored."
+                                                        data-confirm-text="@T["{0} will not be able to sign in or move money until the account is restored.", alert.CustomerName]"
                                                         data-confirm-yes="@T["Freeze account"]"
                                                         data-confirm-no="@T["Cancel"]">@T["Freeze"]</button>
                                             </form>
@@ -210,10 +219,11 @@
         <h2>@T["What the system watches"]</h2>
         <ul class="dep-notes">
             <li><strong>@T["Large transfer:"]</strong> @T["one transfer of 3,000 AZN or more (8,000 AZN or more is high). Transfers between a customer's own cards are not counted."]</li>
-            <li><strong>@T["Many transfers in a short time:"]</strong> 5 transfers to other people in 10 minutes.</li>
-            <li><strong>@T["High amount in one day:"]</strong> 15,000 AZN or more sent to other people in one day (high).</li>
+            <li><strong>@T["Many transfers in a short time:"]</strong> @T["5 transfers to other people in 10 minutes."]</li>
+            <li><strong>@T["High amount in one day:"]</strong> @T["15,000 AZN or more sent to other people in one day (high)."]</li>
             <li><strong>@T["New account sending money:"]</strong> @T["an account younger than 7 days sending 1,000 AZN or more."]</li>
             <li><strong>@T["Locked after wrong passwords:"]</strong> @T["a customer account locked for a few minutes after repeated wrong passwords."]</li>
+            <li><strong>@T["Registration with a deceased citizen's ID:"]</strong> @T["someone tries to open an account with the ID of a deceased citizen (high). There is no account to freeze."]</li>
         </ul>
     </section>
 

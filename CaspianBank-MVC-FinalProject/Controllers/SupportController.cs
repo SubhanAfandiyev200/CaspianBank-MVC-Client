@@ -9,7 +9,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
     // Müştərinin "Contact us" səhifəsi (dizayn: CaspianBank-Frontend/contact-us.html). Üstdə köməkçi (AI) söhbət paneli (hələ önizləmə),
     // altda müştərinin dəstəyə yazdığı mesajlar: yeni mesaj, cavabı oxumaq, davam etmək, bağlamaq. Bütün qaydalar API-dədir (api/support/tickets).
     // Şirkətin adı, ünvanı və telefonu footer ilə eyni yerdən (api/settings) gəlir
-    [Authorize]
+    [Authorize(Roles = AppRoles.Customer)]
     [Route("App/Support")]
     public class SupportController : ApiControllerBase
     {
@@ -72,7 +72,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
                 TempData["Error"] = status == HttpStatusCode.NotFound ? "This message was not found." : "We can't load this message right now. Please try again.";
                 return RedirectToAction(nameof(Index));
             }
-            return View(ticket);
+            return View(WithImages(ticket));
         }
 
         [HttpPost("Ticket/{id:int}/Reply")]
@@ -95,7 +95,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
                 }
                 current.Error = string.Join(" ", errors);
                 current.Draft = message;
-                return View("Ticket", current);
+                return View("Ticket", WithImages(current));
             }
 
             TempData["Success"] = "Your message was sent.";
