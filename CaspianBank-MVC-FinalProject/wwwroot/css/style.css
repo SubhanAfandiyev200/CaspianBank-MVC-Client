@@ -3654,3 +3654,7 @@ form.is-translating .form-stack > .field:not(.has-translatable) { display: none;
 @media (max-width: 560px) {
   .table-wrap { overflow-x: auto; }
 }
+
+/* Contact us: mesaj formu dar, "Mesajlarınız" cədvəli geniş (sütunlar kəsilmir) */
+.layout-support { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); }
+.chat-bubble.is-error { background: var(--tint-danger, #fdecea); color: var(--color-danger, #8a1c13); border-color: transparent; }
