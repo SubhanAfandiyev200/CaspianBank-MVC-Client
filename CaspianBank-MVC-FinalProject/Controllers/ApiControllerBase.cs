@@ -156,6 +156,13 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             return ticket;
         }
 
+        // JSON cavablarında (pəncərə) xətalar brauzerə tərcümə olunmuş getməlidir: səhifə mətnləri kimi serverdə çevrilir
+        protected string[] TranslateErrors(IEnumerable<string> errors)
+        {
+            var translator = HttpContext.RequestServices.GetRequiredService<CaspianBank_MVC_FinalProject.Services.ITranslator>();
+            return errors.Select(error => translator[error]).ToArray();
+        }
+
         // POST (multipart/form-data), cavabın gövdəsi qayıdır
         protected async Task<(T? Data, string[] Errors, HttpStatusCode? Status)> PostFormAsync<T>(string url, MultipartFormDataContent content) where T : class
         {

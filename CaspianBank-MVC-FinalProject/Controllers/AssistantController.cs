@@ -29,7 +29,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
                 }
                 catch (JsonException)
                 {
-                    return BadRequest(new { errors = new[] { "The conversation is not valid. Start a new chat." } });
+                    return BadRequest(new { errors = TranslateErrors(new[] { "The conversation is not valid. Start a new chat." }) });
                 }
             }
 
@@ -40,9 +40,9 @@ namespace CaspianBank_MVC_FinalProject.Controllers
                 {
                     return Unauthorized();
                 }
-                return BadRequest(new { errors = errors.Length > 0 ? errors : new[] { UnavailableMessage } });
+                return BadRequest(new { errors = TranslateErrors(errors.Length > 0 ? errors : new[] { UnavailableMessage }) });
             }
-            return Ok(new { reply = data.Reply, isConfigured = data.IsConfigured });
+            return Ok(new { reply = TranslateErrors(new[] { data.Reply })[0], isConfigured = data.IsConfigured });
         }
 
         private sealed class Turn

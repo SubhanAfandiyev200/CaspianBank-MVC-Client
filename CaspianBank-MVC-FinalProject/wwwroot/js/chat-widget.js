@@ -45,6 +45,9 @@
     team: { log: teamLog, entries: [], history: [], busy: false, draft: "" }
   };
   let mode = signedIn ? "ai" : "team";
+  // Daxil olmuş müştəridə "Komandaya yaz" söhbəti serverdən gəlir (işçinin cavabları da orada): 10 saniyədən bir yenilənir
+  const serverTeam = signedIn && tabs.length > 0;
+  let lastTeamSnapshot = "";
 
   function save(name) {
     try {
@@ -67,12 +70,24 @@
     }
   }
 
-  function draw(name, text, isUser, isError) {
+  function draw(name, text, isUser, isError, imageUrl) {
     const row = document.createElement("div");
     row.className = "cw-msg" + (isUser ? " is-user" : "");
     const bubble = document.createElement("div");
     bubble.className = "cw-bubble" + (isError ? " is-error" : "");
     bubble.textContent = text;
+    if (imageUrl) {
+      const link = document.createElement("a");
+      link.href = imageUrl;
+      link.target = "_blank";
+      link.rel = "noopener";
+      const picture = document.createElement("img");
+      picture.src = imageUrl;
+      picture.alt = "";
+      picture.className = "cw-image";
+      link.appendChild(picture);
+      bubble.appendChild(link);
+    }
     row.appendChild(bubble);
     state[name].log.appendChild(row);
     state[name].log.scrollTop = state[name].log.scrollHeight;
@@ -113,7 +128,7 @@
 
   function render(name) {
     state[name].log.innerHTML = "";
-    state[name].entries.forEach((entry) => draw(name, entry.text, entry.isUser, entry.isError));
+    state[name].entries.forEach((entry) => draw(name, entry.text, entry.isUser, entry.isError, entry.imageUrl));
   }
 
   // Seçilmiş rejimin söhbətini təmizləyir (digərinə toxunmur)
@@ -127,6 +142,21 @@
     addMessage(mode, greetings[mode], false);
     resetImage();
     showMode();
+  }
+
+  async function syncTeam() {
+    if (!serverTeam || state.team.busy) return;
+    try {
+      const response = await fetch("/Help/Conversation", { credentials: "same-origin", cache: "no-store" });
+      if (!response.ok) return;
+      const messages = await response.json();
+      const snapshot = JSON.stringify(messages);
+      if (snapshot === lastTeamSnapshot) return;
+      lastTeamSnapshot = snapshot;
+      state.team.entries = [{ text: greetings.team, isUser: false, isError: false }].concat(messages.map((m) => ({ text: m.body, isUser: !m.isStaff, isError: false, imageUrl: m.imageUrl || null })));
+      render("team");
+      state.team.log.scrollTop = state.team.log.scrollHeight;
+    } catch (error) { /* şəbəkə yoxdursa növbəti yoxlamada */ }
   }
 
   function csrf() {
@@ -204,6 +234,10 @@
     addMessage(name, result.text, false, !result.ok);
     if (result.ok && name === "team") resetImage();
     s.busy = false;
+    if (name === "team" && serverTeam) {
+      lastTeamSnapshot = "";
+      syncTeam();
+    }
     if (mode === name) {
       sendButton.disabled = false;
       input.focus();
@@ -224,6 +258,7 @@
     // Panelin keçid animasiyası bitəndən sonra yazı sahəsinə fokus
     setTimeout(() => (mode === "team" && email && email.value === "" ? email : input).focus(), 300);
     state[mode].log.scrollTop = state[mode].log.scrollHeight;
+    syncTeam();
   }
 
   function close() {
@@ -250,6 +285,7 @@
       mode = next;
       showMode();
       state[mode].log.scrollTop = state[mode].log.scrollHeight;
+      if (mode === "team") syncTeam();
       input.focus();
     });
   });
@@ -281,11 +317,13 @@
 
   // Başlanğıc: saxlanmış söhbət varsa o, yoxdursa salamlama
   ["ai", "team"].forEach((name) => {
-    if (load(name)) {
+    if (!(name === "team" && serverTeam) && load(name)) {
       render(name);
     } else {
       addMessage(name, greetings[name], false);
     }
   });
   showMode();
+  syncTeam();
+  setInterval(() => { if (root.classList.contains("is-open")) syncTeam(); }, 10000);
 })();
