@@ -1,16 +1,18 @@
 "use strict";
 
-// Sağ aşağıdakı pəncərə. İki rejim:
-//  - "ai": daxil olmuş istifadəçi AI köməkçiyə (Gemini) sual verir, /Assistant/Ask -> api/assistant. Söhbət yalnız brauzerdə (yaddaşda) saxlanır.
-//  - "team": mesaj (istəsə bir şəkillə) işçilərə gedir, /Help/Send -> api/help. Qeydiyyatsız ziyarətçi yalnız bu rejimi görür və email yazır;
+// Sağ aşağıdakı pəncərə. İki rejim, hər birinin öz söhbəti var (biri digərinə keçəndə itmir):
+//  - "ai": daxil olmuş istifadəçi AI köməkçiyə (Gemini) sual verir, /Assistant/Ask -> api/assistant.
+//  - "team": mesaj (istəsə bir şəkillə) işçilərə gedir, /Help/Send -> api/help. Qeydiyyatsız ziyarətçi yalnız bunu görür və email yazır;
 //    cavab emailə, daxil olmuş müştəriyə isə bildirişlərinə gəlir.
+// Söhbətlər brauzerin sessiya yaddaşında (sessionStorage) saxlanır: səhifələr arasında keçəndə qalır, tab bağlananda silinir.
+// AI cavab verərkən belə rejimlər arasında keçmək olar: hər rejimin öz "gözləyir" vəziyyəti var.
 (function () {
   const root = document.querySelector("[data-chat-widget]");
   if (!root) return;
 
   const fab = root.querySelector("[data-cw-open]");
   const panel = root.querySelector(".cw-panel");
-  const log = root.querySelector("[data-cw-log]");
+  const aiLog = root.querySelector("[data-cw-log]");
   const form = root.querySelector("[data-cw-form]");
   const input = root.querySelector("[data-cw-input]");
   const email = root.querySelector("[data-cw-email]");
@@ -21,34 +23,74 @@
   const teamOnly = Array.from(root.querySelectorAll("[data-cw-team-only]"));
   const sendButton = form.querySelector(".cw-send");
   const signedIn = root.getAttribute("data-signed-in") === "true";
-  const greetingTeam = root.getAttribute("data-greeting") || "Hi! How can we help?";
-  const greetingAi = root.getAttribute("data-greeting-ai") || greetingTeam;
+  const greetings = {
+    ai: root.getAttribute("data-greeting-ai") || root.getAttribute("data-greeting") || "Hi! How can I help?",
+    team: root.getAttribute("data-greeting") || "Hi! How can we help?"
+  };
   const defaultNote = fileNote.textContent;
   const maxImageBytes = 5 * 1024 * 1024;
   const maxHistory = 10;
+  const maxEntries = 40;
+  const storagePrefix = "cw:" + (signedIn ? "in:" : "out:");
 
+  // Hər rejimin öz söhbət sahəsi: AI üçün səhifədəki, komanda üçün yanına əlavə olunan
+  const teamLog = document.createElement("div");
+  teamLog.className = aiLog.className;
+  teamLog.setAttribute("role", "log");
+  teamLog.setAttribute("aria-live", "polite");
+  aiLog.after(teamLog);
+
+  const state = {
+    ai: { log: aiLog, entries: [], history: [], busy: false, draft: "" },
+    team: { log: teamLog, entries: [], history: [], busy: false, draft: "" }
+  };
   let mode = signedIn ? "ai" : "team";
-  let history = [];
-  let busy = false;
 
-  function addMessage(text, isUser, isError) {
+  function save(name) {
+    try {
+      const s = state[name];
+      sessionStorage.setItem(storagePrefix + name, JSON.stringify({ entries: s.entries.slice(-maxEntries), history: s.history.slice(-maxHistory) }));
+    } catch (error) { /* saxlama bağlıdırsa vacib deyil */ }
+  }
+
+  function load(name) {
+    try {
+      const raw = sessionStorage.getItem(storagePrefix + name);
+      if (!raw) return false;
+      const saved = JSON.parse(raw);
+      if (!Array.isArray(saved.entries) || saved.entries.length === 0) return false;
+      state[name].entries = saved.entries;
+      state[name].history = Array.isArray(saved.history) ? saved.history : [];
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function draw(name, text, isUser, isError) {
     const row = document.createElement("div");
     row.className = "cw-msg" + (isUser ? " is-user" : "");
     const bubble = document.createElement("div");
     bubble.className = "cw-bubble" + (isError ? " is-error" : "");
     bubble.textContent = text;
     row.appendChild(bubble);
-    log.appendChild(row);
-    log.scrollTop = log.scrollHeight;
+    state[name].log.appendChild(row);
+    state[name].log.scrollTop = state[name].log.scrollHeight;
     return row;
   }
 
-  function addTyping() {
+  function addMessage(name, text, isUser, isError) {
+    state[name].entries.push({ text: text, isUser: !!isUser, isError: !!isError });
+    save(name);
+    return draw(name, text, isUser, isError);
+  }
+
+  function addTyping(name) {
     const row = document.createElement("div");
     row.className = "cw-msg";
     row.innerHTML = '<div class="cw-bubble"><span class="cw-typing" aria-label="Sending"><span></span><span></span><span></span></span></div>';
-    log.appendChild(row);
-    log.scrollTop = log.scrollHeight;
+    state[name].log.appendChild(row);
+    state[name].log.scrollTop = state[name].log.scrollHeight;
     return row;
   }
 
@@ -57,23 +99,34 @@
     fileNote.textContent = defaultNote;
   }
 
-  function applyMode() {
+  function showMode() {
     tabs.forEach((tab) => tab.classList.toggle("is-on", tab.dataset.cwMode === mode));
     teamOnly.forEach((node) => { node.hidden = mode !== "team"; });
     if (aiNote) aiNote.hidden = mode !== "ai";
     if (email) email.hidden = mode !== "team";
+    state.ai.log.hidden = mode !== "ai";
+    state.team.log.hidden = mode !== "team";
+    input.value = state[mode].draft;
+    sendButton.disabled = state[mode].busy;
+    autosize();
   }
 
+  function render(name) {
+    state[name].log.innerHTML = "";
+    state[name].entries.forEach((entry) => draw(name, entry.text, entry.isUser, entry.isError));
+  }
+
+  // Seçilmiş rejimin söhbətini təmizləyir (digərinə toxunmur)
   function resetChat() {
-    log.innerHTML = "";
-    history = [];
-    addMessage(mode === "ai" ? greetingAi : greetingTeam, false);
-    input.value = "";
+    const s = state[mode];
+    s.entries = [];
+    s.history = [];
+    s.draft = "";
+    s.log.innerHTML = "";
+    try { sessionStorage.removeItem(storagePrefix + mode); } catch (error) { /* vacib deyil */ }
+    addMessage(mode, greetings[mode], false);
     resetImage();
-    applyMode();
-    autosize();
-    busy = false;
-    sendButton.disabled = false;
+    showMode();
   }
 
   function csrf() {
@@ -94,24 +147,24 @@
     const data = new FormData();
     data.append("__RequestVerificationToken", csrf());
     data.append("message", text);
-    data.append("history", JSON.stringify(history.slice(-maxHistory)));
+    data.append("history", JSON.stringify(state.ai.history.slice(-maxHistory)));
 
     const response = await fetch("/Assistant/Ask", { method: "POST", credentials: "same-origin", body: data });
     const body = await readJson(response);
     if (!response.ok) return { ok: false, text: errorText(body) };
 
-    history.push({ role: "user", text: text });
-    history.push({ role: "model", text: body.reply });
+    state.ai.history.push({ role: "user", text: text });
+    state.ai.history.push({ role: "model", text: body.reply });
     return { ok: true, text: body.reply };
   }
 
   // Komanda rejimi: mesaj (və şəkil) işçilərə gedir
-  async function writeToTeam(text) {
+  async function writeToTeam(text, file) {
     const data = new FormData();
     data.append("__RequestVerificationToken", csrf());
     if (email) data.append("email", email.value.trim());
     data.append("message", text);
-    if (image.files.length > 0) data.append("image", image.files[0]);
+    if (file) data.append("image", file);
 
     const response = await fetch("/Help/Send", { method: "POST", credentials: "same-origin", body: data });
     const body = await readJson(response);
@@ -122,32 +175,39 @@
   }
 
   async function send(text) {
+    const name = mode;
+    const s = state[name];
     const question = text.trim();
-    if (!question || busy) return;
-    if (mode === "team" && email && email.value.trim() === "") {
-      addMessage(cbt("Please write your email so we can reply."), false, true);
+    if (!question || s.busy) return;
+    if (name === "team" && email && email.value.trim() === "") {
+      addMessage(name, cbt("Please write your email so we can reply."), false, true);
       email.focus();
       return;
     }
-    busy = true;
+
+    const file = name === "team" && image.files.length > 0 ? image.files[0] : null;
+    s.busy = true;
     sendButton.disabled = true;
-    addMessage(question, true);
+    addMessage(name, question, true);
+    s.draft = "";
     input.value = "";
     autosize();
 
-    const typing = addTyping();
+    const typing = addTyping(name);
     let result;
     try {
-      result = mode === "ai" ? await askAi(question) : await writeToTeam(question);
+      result = name === "ai" ? await askAi(question) : await writeToTeam(question, file);
     } catch (error) {
       result = { ok: false, text: cbt("Something went wrong. Please try again.") };
     }
     typing.remove();
-    addMessage(result.text, false, !result.ok);
-    if (result.ok && mode === "team") resetImage();
-    busy = false;
-    sendButton.disabled = false;
-    input.focus();
+    addMessage(name, result.text, false, !result.ok);
+    if (result.ok && name === "team") resetImage();
+    s.busy = false;
+    if (mode === name) {
+      sendButton.disabled = false;
+      input.focus();
+    }
   }
 
   function autosize() {
@@ -163,6 +223,7 @@
     panel.setAttribute("aria-hidden", "false");
     // Panelin keçid animasiyası bitəndən sonra yazı sahəsinə fokus
     setTimeout(() => (mode === "team" && email && email.value === "" ? email : input).focus(), 300);
+    state[mode].log.scrollTop = state[mode].log.scrollHeight;
   }
 
   function close() {
@@ -180,13 +241,20 @@
     if (event.key === "Escape") close();
   });
 
+  // Rejimlər arasında keçid: AI cavab verərkən də mümkündür, hər rejimin söhbəti saxlanır
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
-      if (tab.dataset.cwMode === mode || busy) return;
-      mode = tab.dataset.cwMode;
-      resetChat();
+      const next = tab.dataset.cwMode;
+      if (next === mode) return;
+      state[mode].draft = input.value;
+      mode = next;
+      showMode();
+      state[mode].log.scrollTop = state[mode].log.scrollHeight;
+      input.focus();
     });
   });
+
+  input.addEventListener("input", () => { state[mode].draft = input.value; autosize(); });
 
   image.addEventListener("change", () => {
     const file = image.files[0];
@@ -210,7 +278,14 @@
       send(input.value);
     }
   });
-  input.addEventListener("input", autosize);
 
-  resetChat();
+  // Başlanğıc: saxlanmış söhbət varsa o, yoxdursa salamlama
+  ["ai", "team"].forEach((name) => {
+    if (load(name)) {
+      render(name);
+    } else {
+      addMessage(name, greetings[name], false);
+    }
+  });
+  showMode();
 })();
