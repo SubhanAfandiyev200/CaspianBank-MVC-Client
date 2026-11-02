@@ -1,8 +1,9 @@
 "use strict";
 
-// "Help" paneli (hər səhifədə sağ aşağıdakı düymə). Yazılan mesaj (istəsə bir şəkillə) /Help/Send ilə API-yə gedir və işçilərə bildiriş düşür.
-// Qeydiyyatsız ziyarətçi email yazır (cavab ora gedir); daxil olmuş müştəridə email sahəsi yoxdur (cavab bildirişlərinə düşür).
-// AI köməkçi qoşulanda yalnız send() içindəki göndərmə hissəsi dəyişəcək.
+// Sağ aşağıdakı pəncərə. İki rejim:
+//  - "ai": daxil olmuş istifadəçi AI köməkçiyə (Gemini) sual verir, /Assistant/Ask -> api/assistant. Söhbət yalnız brauzerdə (yaddaşda) saxlanır.
+//  - "team": mesaj (istəsə bir şəkillə) işçilərə gedir, /Help/Send -> api/help. Qeydiyyatsız ziyarətçi yalnız bu rejimi görür və email yazır;
+//    cavab emailə, daxil olmuş müştəriyə isə bildirişlərinə gəlir.
 (function () {
   const root = document.querySelector("[data-chat-widget]");
   if (!root) return;
@@ -15,11 +16,19 @@
   const email = root.querySelector("[data-cw-email]");
   const image = root.querySelector("[data-cw-image]");
   const fileNote = root.querySelector("[data-cw-file]");
+  const aiNote = root.querySelector("[data-cw-ai-note]");
+  const tabs = Array.from(root.querySelectorAll("[data-cw-mode]"));
+  const teamOnly = Array.from(root.querySelectorAll("[data-cw-team-only]"));
   const sendButton = form.querySelector(".cw-send");
-  const greeting = root.getAttribute("data-greeting") || "Hi! How can we help?";
+  const signedIn = root.getAttribute("data-signed-in") === "true";
+  const greetingTeam = root.getAttribute("data-greeting") || "Hi! How can we help?";
+  const greetingAi = root.getAttribute("data-greeting-ai") || greetingTeam;
   const defaultNote = fileNote.textContent;
   const maxImageBytes = 5 * 1024 * 1024;
+  const maxHistory = 10;
 
+  let mode = signedIn ? "ai" : "team";
+  let history = [];
   let busy = false;
 
   function addMessage(text, isUser, isError) {
@@ -48,32 +57,65 @@
     fileNote.textContent = defaultNote;
   }
 
+  function applyMode() {
+    tabs.forEach((tab) => tab.classList.toggle("is-on", tab.dataset.cwMode === mode));
+    teamOnly.forEach((node) => { node.hidden = mode !== "team"; });
+    if (aiNote) aiNote.hidden = mode !== "ai";
+    if (email) email.hidden = mode !== "team";
+  }
+
   function resetChat() {
     log.innerHTML = "";
-    addMessage(greeting, false);
+    history = [];
+    addMessage(mode === "ai" ? greetingAi : greetingTeam, false);
     input.value = "";
     resetImage();
+    applyMode();
     autosize();
     busy = false;
     sendButton.disabled = false;
   }
 
-  // Mesajı API-yə göndərir; uğurlu olanda təsdiq mətnini, olmayanda xətanı qaytarır
-  async function deliver(text) {
-    const data = new FormData();
+  function csrf() {
     const token = form.querySelector("input[name='__RequestVerificationToken']");
-    if (token) data.append("__RequestVerificationToken", token.value);
+    return token ? token.value : "";
+  }
+
+  async function readJson(response) {
+    try { return await response.json(); } catch (error) { return null; }
+  }
+
+  function errorText(body) {
+    return body && Array.isArray(body.errors) && body.errors.length ? body.errors.join(" ") : cbt("Something went wrong. Please try again.");
+  }
+
+  // AI rejimi: sual API-yə gedir, cavab gəlir; söhbət tarixçəsi (son 10 mesaj) kontekst üçün göndərilir
+  async function askAi(text) {
+    const data = new FormData();
+    data.append("__RequestVerificationToken", csrf());
+    data.append("message", text);
+    data.append("history", JSON.stringify(history.slice(-maxHistory)));
+
+    const response = await fetch("/Assistant/Ask", { method: "POST", credentials: "same-origin", body: data });
+    const body = await readJson(response);
+    if (!response.ok) return { ok: false, text: errorText(body) };
+
+    history.push({ role: "user", text: text });
+    history.push({ role: "model", text: body.reply });
+    return { ok: true, text: body.reply };
+  }
+
+  // Komanda rejimi: mesaj (və şəkil) işçilərə gedir
+  async function writeToTeam(text) {
+    const data = new FormData();
+    data.append("__RequestVerificationToken", csrf());
     if (email) data.append("email", email.value.trim());
     data.append("message", text);
     if (image.files.length > 0) data.append("image", image.files[0]);
 
     const response = await fetch("/Help/Send", { method: "POST", credentials: "same-origin", body: data });
-    let body = null;
-    try { body = await response.json(); } catch (error) { /* gövdə yoxdur */ }
-    if (!response.ok) {
-      const errors = body && Array.isArray(body.errors) && body.errors.length ? body.errors.join(" ") : cbt("Something went wrong. Please try again.");
-      return { ok: false, text: errors };
-    }
+    const body = await readJson(response);
+    if (!response.ok) return { ok: false, text: errorText(body) };
     return { ok: true, text: body && body.isGuest
       ? cbt("Thanks! Your message was sent. Our team will reply to your email.")
       : cbt("Thanks! Your message was sent. You will get the answer in your notifications.") };
@@ -82,7 +124,7 @@
   async function send(text) {
     const question = text.trim();
     if (!question || busy) return;
-    if (email && email.value.trim() === "") {
+    if (mode === "team" && email && email.value.trim() === "") {
       addMessage(cbt("Please write your email so we can reply."), false, true);
       email.focus();
       return;
@@ -90,21 +132,19 @@
     busy = true;
     sendButton.disabled = true;
     addMessage(question, true);
+    input.value = "";
+    autosize();
 
     const typing = addTyping();
     let result;
     try {
-      result = await deliver(question);
+      result = mode === "ai" ? await askAi(question) : await writeToTeam(question);
     } catch (error) {
       result = { ok: false, text: cbt("Something went wrong. Please try again.") };
     }
     typing.remove();
     addMessage(result.text, false, !result.ok);
-    if (result.ok) {
-      input.value = "";
-      resetImage();
-      autosize();
-    }
+    if (result.ok && mode === "team") resetImage();
     busy = false;
     sendButton.disabled = false;
     input.focus();
@@ -122,7 +162,7 @@
     fab.setAttribute("aria-expanded", "true");
     panel.setAttribute("aria-hidden", "false");
     // Panelin keçid animasiyası bitəndən sonra yazı sahəsinə fokus
-    setTimeout(() => (email && email.value === "" ? email : input).focus(), 300);
+    setTimeout(() => (mode === "team" && email && email.value === "" ? email : input).focus(), 300);
   }
 
   function close() {
@@ -138,6 +178,14 @@
   root.querySelector("[data-cw-reset]").addEventListener("click", resetChat);
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") close();
+  });
+
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      if (tab.dataset.cwMode === mode || busy) return;
+      mode = tab.dataset.cwMode;
+      resetChat();
+    });
   });
 
   image.addEventListener("change", () => {
