@@ -27,3 +27,19 @@
     }
   });
 })();
+
+// Yazışma səhifəsindəki cavab sahəsində Enter göndərir, Shift+Enter yeni sətir yazır (söhbət pəncərəsi kimi)
+(function () {
+  document.querySelectorAll("textarea[data-enter-submit]").forEach((area) => {
+    area.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" || event.shiftKey || event.isComposing) return;
+      event.preventDefault();
+      if (area.value.trim() === "") return;
+      const form = area.closest("form");
+      if (form) {
+        const button = form.querySelector("[type=submit]");
+        if (form.requestSubmit) form.requestSubmit(button); else form.submit();
+      }
+    });
+  });
+})();

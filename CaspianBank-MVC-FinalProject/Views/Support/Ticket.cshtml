@@ -68,7 +68,7 @@
             <form method="post" asp-action="Reply" asp-route-id="@Model.Id" class="form-stack" novalidate>
                 <div class="field">
                     <label for="reply">@T["Your reply"]</label>
-                    <textarea class="input" id="reply" name="message" rows="3" maxlength="2000" placeholder="@T["Write a message"]">@Model.Draft</textarea>
+                    <textarea class="input" id="reply" name="message" data-enter-submit rows="3" maxlength="2000" placeholder="@T["Write a message"]">@Model.Draft</textarea>
                 </div>
                 <button class="btn btn-primary" type="submit" data-once>@T["Send"]</button>
             </form>
