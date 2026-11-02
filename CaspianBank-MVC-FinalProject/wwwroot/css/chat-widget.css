@@ -131,3 +131,9 @@
 .cw-attach:hover { border-color: var(--cw-primary); color: var(--cw-primary); }
 .cw-bubble.is-error { background: #fdecea; color: #8a1c13; }
 .cw-note { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Sağ aşağıdakı "Caspian-dan soruş" düyməsi footerin sosial ikonlarının üstünə düşməsin: onlara yer qoyulur */
+.site-footer .footer-bottom { padding-right: 250px; }
+@media (max-width: 720px) {
+  .site-footer .footer-bottom { padding-right: 0; padding-bottom: 84px; }
+}
