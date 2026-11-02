@@ -3327,7 +3327,7 @@ body.body-admin .site-footer-inner {
 .chat-head small { color: var(--color-text-tertiary); font-size: var(--fs-xs); }
 .chat-log {
   display: grid; align-content: start; gap: 12px;
-  padding: 18px; min-height: 320px; max-height: 460px; overflow-y: auto;
+  padding: 18px; min-height: 120px;   /* söhbət uzandıqca səhifə ilə birlikdə aşağı axır: daxili scroll yoxdur, mesajlar kəsilmir */
   background: var(--color-bg);
 }
 .chat-msg { display: flex; }
@@ -3347,7 +3347,7 @@ body.body-admin .site-footer-inner {
 .chat-composer .input { flex: 1; min-width: 0; }
 @media (max-width: 560px) {
   .chat-bubble { max-width: 92%; }
-  .chat-log { min-height: 260px; }
+  .chat-log { min-height: 120px; }
 }
 
 /* "Bu sizsiniz?" kartı (qeydiyyat) və vətəndaş şəkli: şəkil rəngli olsa da ağ-qara göstərilir */

@@ -137,3 +137,17 @@
 @media (max-width: 720px) {
   .site-footer .footer-bottom { padding-right: 0; padding-bottom: 84px; }
 }
+
+/* AI / Komanda rejim düymələri */
+.cw [hidden] { display: none !important; }
+.cw-tabs { display: flex; gap: 6px; padding: 8px 14px 0; background: var(--cw-surface); }
+.cw-tabs button {
+  flex: 1; padding: 8px 10px; border: 1px solid var(--cw-border); border-radius: 10px; cursor: pointer;
+  background: var(--cw-bg); color: var(--cw-muted); font-family: inherit; font-size: 13px; font-weight: 600;
+}
+.cw-tabs button.is-on { background: var(--cw-primary); border-color: var(--cw-primary); color: #fff; }
+.cw-bubble { white-space: pre-wrap; }
+
+/* Admin panelin alt zolağı: düymənin altına düşməsin */
+body.body-admin .site-footer-inner { padding-right: 250px; }
+@media (max-width: 720px) { body.body-admin .site-footer-inner { padding-right: 0; padding-bottom: 84px; } }
