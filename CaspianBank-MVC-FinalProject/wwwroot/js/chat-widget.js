@@ -253,6 +253,7 @@
 
   function open() {
     root.classList.add("is-open");
+    root.classList.remove("has-new");
     fab.setAttribute("aria-expanded", "true");
     panel.setAttribute("aria-hidden", "false");
     // Panelin keçid animasiyası bitəndən sonra yazı sahəsinə fokus
@@ -268,6 +269,15 @@
     panel.setAttribute("aria-hidden", "true");
     fab.focus();
   }
+
+  // Canlı bildiriş (SignalR): işçi cavab yazan kimi söhbət dərhal yenilənir. Pəncərə bağlıdırsa düymədə nöqtə görünür
+  document.addEventListener("caspian:notification", (event) => {
+    const note = event.detail || {};
+    if (!serverTeam || !String(note.linkUrl || "").startsWith("/App/Support/Ticket/")) return;
+    lastTeamSnapshot = "";
+    syncTeam();
+    if (!root.classList.contains("is-open")) root.classList.add("has-new");
+  });
 
   fab.addEventListener("click", open);
   root.querySelectorAll("[data-cw-close]").forEach((node) => node.addEventListener("click", close));

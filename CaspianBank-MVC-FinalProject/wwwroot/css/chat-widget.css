@@ -154,3 +154,10 @@ body.body-admin .site-footer-inner { padding-right: 250px; }
 
 /* Söhbətdəki şəkil (işçinin və ya müştərinin əlavəsi) */
 .cw-image { display: block; max-width: 100%; max-height: 180px; margin-top: 8px; border-radius: 10px; }
+
+/* Yeni cavab gələndə düymədə nöqtə */
+.cw.has-new .cw-fab { position: relative; }
+.cw.has-new .cw-fab::after {
+  content: ""; position: absolute; top: 4px; right: 4px; width: 12px; height: 12px; border-radius: 50%;
+  background: #e5484d; border: 2px solid #fff;
+}
