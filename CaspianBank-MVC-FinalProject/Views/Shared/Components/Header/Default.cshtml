@@ -28,7 +28,7 @@
                 </div>
                 <a href="#about">@T["About Us"]</a>
                 <a href="#services">@T["Services"]</a>
-                <a href="@NavLinks.SupportLink(signedIn)">@T["Contact Us"]</a>
+                <a href="@NavLinks.SupportLink(signedIn, isStaff)">@T["Contact Us"]</a>
             </nav>
             <div class="header-right">
             <partial name="_SiteControls" />
@@ -60,7 +60,7 @@
             }
             else
             {
-                <a class="btn btn-lime btn-go" href="@NavLinks.OpenAccount(signedIn)"><span class="btn-go-label">@T["Open account"]</span></a>
+                <a class="btn btn-lime btn-go" href="@NavLinks.OpenAccount(signedIn, isStaff)"><span class="btn-go-label">@T["Open account"]</span></a>
             }
             </div>
         </div>
@@ -82,17 +82,17 @@
                         <span>@T["Current accounts for personal and salary clients."]</span>
                     </a>
                 }
-                <a class="mega-card" href="@NavLinks.Page(signedIn, NavLinks.App)">
+                <a class="mega-card" href="@NavLinks.Page(signedIn, NavLinks.App, isStaff)">
                     <span class="mega-swatch mega-swatch-b" aria-hidden="true"><partial name="_MegaArt" model='"cards"' /></span>
                     <strong>@T["Cards"]</strong>
                     <span>@T["Debit and cashback cards, issued in AZN."]</span>
                 </a>
-                <a class="mega-card" href="@NavLinks.Page(signedIn, NavLinks.Transfer)">
+                <a class="mega-card" href="@NavLinks.Page(signedIn, NavLinks.Transfer, isStaff)">
                     <span class="mega-swatch mega-swatch-c" aria-hidden="true"><partial name="_MegaArt" model='"payments"' /></span>
                     <strong>@T["Payments"]</strong>
                     <span>@T["Transfers between cards and utility bills."]</span>
                 </a>
-                <a class="mega-card" href="@NavLinks.Page(signedIn, NavLinks.Loan)">
+                <a class="mega-card" href="@NavLinks.Page(signedIn, NavLinks.Loan, isStaff)">
                     <span class="mega-swatch mega-swatch-d" aria-hidden="true"><partial name="_MegaArt" model='"credit"' /></span>
                     <strong>@T["Credit"]</strong>
                     <span>@T["Personal loans, reviewed by the bank."]</span>

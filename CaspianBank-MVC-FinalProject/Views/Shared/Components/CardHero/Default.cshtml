@@ -16,7 +16,7 @@
         <p class="eyebrow"><span aria-hidden="true">✱ </span><span>@T[label]</span></p>
         <h1>@T[title]</h1>
         <p class="lede">@T[description]</p>
-        <a class="btn btn-lime btn-go" id="hero-form" href="@NavLinks.OpenAccount(User.Identity?.IsAuthenticated == true)">
+        <a class="btn btn-lime btn-go" id="hero-form" href="@NavLinks.OpenAccount(User.Identity?.IsAuthenticated == true, AppRoles.IsStaff(User))">
             <span class="btn-go-label">@T["Get your card"]</span>
         </a>
     </div>

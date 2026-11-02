@@ -37,18 +37,45 @@ namespace CaspianBank_MVC_FinalProject.Helpers
 
         // Qeydiyyatdan keçmək / kart açmaq düymələri
         // Login olmayanlar üçün: birbaşa kimlik formu. Login olanın artıq hesabı var, ona kart əlavə etmək təklif olunur
-        public static string OpenAccount(bool signedIn) => signedIn ? AddCard : Register;
+        public static string OpenAccount(bool signedIn, bool isStaff = false)
+        {
+            if (isStaff)
+            {
+                return RoleRedirect.AdminHome;
+            }
+            return signedIn ? AddCard : Register;
+        }
 
         // Giriş tələb edən səhifələr: login olmayıbsa giriş səhifəsi
-        public static string Page(bool signedIn, string appUrl) => signedIn ? appUrl : Login;
+        public static string Page(bool signedIn, string appUrl, bool isStaff = false)
+        {
+            if (isStaff)
+            {
+                return RoleRedirect.AdminHome;      // işçinin müştəri tətbiqi yoxdur: bütün "mənim səhifəm" düymələri admin panelinə aparır
+            }
+            return signedIn ? appUrl : Login;
+        }
 
         // Dəstək: login olmayıbsa footer-dakı əlaqə hissəsi, olubsa tətbiqin dəstək səhifəsi
-        public static string SupportLink(bool signedIn) => signedIn ? Support : Contact;
+        public static string SupportLink(bool signedIn, bool isStaff = false)
+        {
+            if (isStaff)
+            {
+                return RoleRedirect.AdminHome + "/Tickets";      // işçi üçün müştəri mesajları
+            }
+            return signedIn ? Support : Contact;
+        }
 
         // Bazadan gələn ButtonUrl (/Account/Welcome (köhnə ad) və /#contact) login vəziyyətinə görə dəyişir
-        public static string FromDb(string? url, bool signedIn)
+        public static string FromDb(string? url, bool signedIn, bool isStaff = false)
         {
             if (string.IsNullOrWhiteSpace(url)) return url ?? string.Empty;
+
+            // İşçi üçün müştəri ünvanları (/App..., əlaqə, hesab aç) admin panelinə çevrilir
+            if (isStaff && (url.StartsWith("/App", StringComparison.OrdinalIgnoreCase) || url.Equals(Contact, StringComparison.OrdinalIgnoreCase) || url.Equals(LegacyWelcome, StringComparison.OrdinalIgnoreCase) || url.Equals(Register, StringComparison.OrdinalIgnoreCase)))
+            {
+                return RoleRedirect.AdminHome;
+            }
 
             // Bazadakı "/Account/Welcome" düymələri "hesab aç" mənasındadır: login olmayan birbaşa kimlik formuna düşür
             if (url.Equals(LegacyWelcome, StringComparison.OrdinalIgnoreCase)) return OpenAccount(signedIn);
@@ -57,14 +84,16 @@ namespace CaspianBank_MVC_FinalProject.Helpers
         }
 
         // Service kartları (Number bazadakı sıra nömrəsidir: 1 Cards ... 6 24/7 Support)
-        public static string ForService(int number, bool signedIn) => number switch
+        public static string ForService(int number, bool signedIn, bool isStaff = false)
         {
-            1 or 4 => Page(signedIn, App),        // Cards, Cashback Rewards
-            2 => Page(signedIn, Transfer),        // Transfers
-            3 => Page(signedIn, Loan),            // Loans
-            5 => Page(signedIn, Bills),           // Bill Payments
-            6 => SupportLink(signedIn),           // 24/7 Support
-            _ => Page(signedIn, App)
-        };
+            switch (number)
+            {
+                case 2: return Page(signedIn, Transfer, isStaff);        // Transfers
+                case 3: return Page(signedIn, Loan, isStaff);            // Loans
+                case 5: return Page(signedIn, Bills, isStaff);           // Bill Payments
+                case 6: return SupportLink(signedIn, isStaff);           // 24/7 Support
+                default: return Page(signedIn, App, isStaff);            // 1 Cards, 4 Cashback Rewards
+            }
+        }
     }
 }

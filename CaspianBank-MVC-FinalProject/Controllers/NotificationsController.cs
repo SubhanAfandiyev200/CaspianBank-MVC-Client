@@ -1,3 +1,4 @@
+using CaspianBank_MVC_FinalProject.Helpers;
 using CaspianBank_MVC_FinalProject.ViewModels.Notifications;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -47,6 +48,11 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             if (!string.IsNullOrEmpty(to) && Url.IsLocalUrl(to))
             {
                 return LocalRedirect(to);
+            }
+            // Hədəfsiz bildiriş: işçi öz admin bildirişlər səhifəsinə, müştəri öz səhifəsinə düşür
+            if (AppRoles.IsStaff(User))
+            {
+                return LocalRedirect("/Admin/Notifications");
             }
             return RedirectToAction(nameof(Index));
         }
