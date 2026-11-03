@@ -1,0 +1,128 @@
+@model CaspianBank_MVC_FinalProject.ViewModels.Cards.AdminCardPageVM
+@{
+    ViewData["Title"] = "Cards";
+
+    string PageUrl(int page)
+    {
+        return Url.Action("Index", "Cards", new { area = "Admin", search = Model.Search, tier = Model.Tier, status = Model.Status, page }) ?? "#";
+    }
+}
+<main id="content" class="page">
+    <header class="page-head">
+        <p class="eyebrow">@T["Operations"]</p>
+        <h1>@T["Cards"]</h1>
+        <p class="lede">@T["Every card is an account of its owner: Current for Standard, Silver and Gold, Savings for the Cashback card. Open the owner to freeze the account."]</p>
+    </header>
+
+    @if (Model.Unavailable)
+    {
+        <p class="flash flash-error" role="alert">@T["The cards can't be loaded right now. Please try again in a moment."]</p>
+    }
+
+    <div class="stat-grid cols-3">
+        <article class="stat">
+            <p class="stat-label">@T["All cards"]</p>
+            <p class="stat-value">@Model.AllCount.ToString("N0")</p>
+        </article>
+        <article class="stat">
+            <p class="stat-label">@T["Blocked"]</p>
+            <p class="stat-value">@Model.BlockedCount.ToString("N0")</p>
+        </article>
+        <article class="stat">
+            <p class="stat-label">@T["Expired"]</p>
+            <p class="stat-value">@Model.ExpiredCount.ToString("N0")</p>
+        </article>
+    </div>
+
+    <section class="surface surface-tight">
+        <form method="get" asp-area="Admin" asp-controller="Cards" asp-action="Index" class="toolbar filters">
+            <div class="field grow">
+                <label for="search">@T["Search"]</label>
+                <input class="input" id="search" name="search" type="search" placeholder="@T["Card number, owner name, email or FIN"]" value="@Model.Search" autocomplete="off" />
+            </div>
+            <div class="field">
+                <label for="tier">@T["Card type"]</label>
+                <select class="select" data-wheel id="tier" name="tier">
+                    <option value="" selected="@string.IsNullOrEmpty(Model.Tier)">@T["All"]</option>
+                    <option value="Standard" selected="@(Model.Tier == "Standard")">@T["Standard"]</option>
+                    <option value="Silver" selected="@(Model.Tier == "Silver")">@T["Silver"]</option>
+                    <option value="Gold" selected="@(Model.Tier == "Gold")">@T["Gold"]</option>
+                    <option value="Cashback" selected="@(Model.Tier == "Cashback")">@T["Cashback"]</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="status">@T["Status"]</label>
+                <select class="select" data-wheel id="status" name="status">
+                    <option value="" selected="@string.IsNullOrEmpty(Model.Status)">@T["All"]</option>
+                    <option value="Active" selected="@(Model.Status == "Active")">@T["Active"]</option>
+                    <option value="Blocked" selected="@(Model.Status == "Blocked")">@T["Blocked"]</option>
+                    <option value="Expired" selected="@(Model.Status == "Expired")">@T["Expired"]</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" type="submit">@T["Filter"]</button>
+            </div>
+        </form>
+
+        <p class="hint">@T["{0} cards found, {1} on them in total.", Model.TotalCount, LoanUi.Money(Model.FilteredBalance)]</p>
+
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>@T["Owner"]</th>
+                        <th>@T["Card"]</th>
+                        <th>@T["Account type"]</th>
+                        <th>@T["Valid until"]</th>
+                        <th class="num">@T["Balance"]</th>
+                        <th>@T["Status"]</th>
+                        <th class="actions"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                <strong>@item.OwnerName</strong>
+                                <div class="hint">@item.OwnerEmail</div>
+                            </td>
+                            <td>@T[item.Tier] •••• @item.Last4</td>
+                            <td>@T[item.AccountType]</td>
+                            <td>@item.Expiry</td>
+                            <td class="num">@LoanUi.Money(item.Balance)</td>
+                            <td>
+                                @if (item.IsBlocked)
+                                {
+                                    <span class="badge badge-danger">@T["Blocked"]</span>
+                                }
+                                else if (item.IsExpired)
+                                {
+                                    <span class="badge badge-neutral">@T["Expired"]</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-success">@T["Active"]</span>
+                                }
+                            </td>
+                            <td class="actions">
+                                <span class="row-actions">
+                                    <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Users" asp-action="Detail" asp-route-id="@item.OwnerId">@T["Open owner"]</a>
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Items.Any())
+                    {
+                        <tr>
+                            <td colspan="7">@T["No cards found."]</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <partial name="_Pager" model="new CaspianBank_MVC_FinalProject.ViewModels.Common.PagerVM { Page = Model.Page, PageSize = Model.PageSize, TotalCount = Model.TotalCount, TotalPages = Model.TotalPages, Url = PageUrl }" />
+</main>

@@ -104,6 +104,7 @@
             <p class="eyebrow">@T["Bank"]</p>
             <a class="@On("BankDashboard")" asp-area="Admin" asp-controller="BankDashboard" asp-action="Index">@T["Dashboard"]</a>
             <a class="@On("Users")" asp-area="Admin" asp-controller="Users" asp-action="Index">@T["Users"]</a>
+            <a class="@On("Cards")" asp-area="Admin" asp-controller="Cards" asp-action="Index">@T["Cards"]</a>
             <a class="@On("Loans")" asp-area="Admin" asp-controller="Loans" asp-action="Index">@T["Loans"]</a>
             <a class="@On("Deposits")" asp-area="Admin" asp-controller="Deposits" asp-action="Index">@T["Deposits"]</a>
             @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Accountant))
