@@ -51,5 +51,22 @@
                 </dl>
             </div>
         </section>
+
+        @* Balans xəbərdarlığı: kartın qalığı bu məbləğdən aşağı düşəndə bildiriş gedir. Hədd müştərinin öz seçimidir, 0 = söndürülür *@
+        <section class="surface mt-5">
+            <h2>@T["Low balance alert"]</h2>
+            <p class="hint">@T["We notify you once when a card balance falls below this amount. Write 0 to turn the alert off."]</p>
+            @if (!string.IsNullOrEmpty(Model.Error))
+            {
+                <p class="flash flash-error" role="alert">@T[Model.Error]</p>
+            }
+            <form method="post" asp-action="AlertSettings" class="form-stack" novalidate>
+                <div class="field">
+                    <label for="threshold">@T["Alert amount (AZN)"]</label>
+                    <input class="input" id="threshold" name="threshold" inputmode="decimal" maxlength="12" autocomplete="off" value="@(Model.ThresholdDraft ?? p.LowBalanceThreshold.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))" />
+                </div>
+                <button class="btn btn-primary" type="submit" data-once>@T["Save"]</button>
+            </form>
+        </section>
     }
 </main>

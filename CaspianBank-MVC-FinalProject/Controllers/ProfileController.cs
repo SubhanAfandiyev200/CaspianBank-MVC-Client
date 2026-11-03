@@ -29,6 +29,45 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             return Redirect(ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], profile.PhotoUrl) + "?v=" + DateTimeOffset.UtcNow.ToUnixTimeSeconds() / 60);
         }
 
+        // Balans xəbərdarlığı həddi: kartın qalığı bu məbləğdən aşağı düşəndə bildiriş gedir (0 = söndürülür). Qaydalar API-dədir
+        [HttpPost("AlertSettings")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AlertSettings(string? threshold)
+        {
+            var text = (threshold ?? string.Empty).Trim().Replace(',', '.');
+            if (!decimal.TryParse(text, System.Globalization.NumberStyles.Number, System.Globalization.CultureInfo.InvariantCulture, out var value))
+            {
+                return await ShowAsync(threshold, "Enter the amount as a number, for example 25 or 25.50. Use 0 to turn the alert off.");
+            }
+
+            var (success, errors, status) = await PutAsync("api/account/alert-settings", new { lowBalanceThreshold = value });
+            if (status == HttpStatusCode.Unauthorized)
+            {
+                return await SessionExpiredAsync();
+            }
+            if (!success)
+            {
+                return await ShowAsync(threshold, errors.Length > 0 ? string.Join(" ", errors) : UnavailableMessage);
+            }
+
+            TempData["Success"] = value <= 0m ? "The low balance alert is turned off." : "We will notify you when a card balance falls below the amount you set.";
+            return RedirectToAction(nameof(Index));
+        }
+
+        private async Task<IActionResult> ShowAsync(string? draft, string error)
+        {
+            var (profile, status) = await GetAsync<ProfileUIVM>("api/account/profile");
+            if (status == HttpStatusCode.Unauthorized)
+            {
+                return await SessionExpiredAsync();
+            }
+            if (profile is not null)
+            {
+                profile.PhotoUrl = ApiUrl.ToAbsolute(Configuration["ApiSettings:BaseUrl"], profile.PhotoUrl);
+            }
+            return View("Index", new ProfilePageVM { Profile = profile, Unavailable = profile is null, Error = error, ThresholdDraft = draft });
+        }
+
         [HttpGet("")]
         public async Task<IActionResult> Index()
         {

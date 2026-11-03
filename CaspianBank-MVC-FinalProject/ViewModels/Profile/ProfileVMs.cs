@@ -9,11 +9,14 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.Profile
         public string? PhoneNumber { get; set; }
         public string? Email { get; set; }
         public string? PhotoUrl { get; set; }       // controller tam ünvana çevirir
+        public decimal LowBalanceThreshold { get; set; }      // balans xəbərdarlığı həddi (AZN), 0 = söndürülüb
     }
 
     public class ProfilePageVM
     {
         public ProfileUIVM? Profile { get; set; }
         public bool Unavailable { get; set; }
+        public string? Error { get; set; }                    // xəbərdarlıq həddi formasında xəta
+        public string? ThresholdDraft { get; set; }           // xəta olanda yazılan dəyər qalır
     }
 }
