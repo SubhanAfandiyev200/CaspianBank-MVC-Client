@@ -61,7 +61,7 @@
             @if (Model.Stage == "FinalApproval")
             {
                 <strong>@T["Waiting for the Super Admin's approval"]</strong>
-                <span>@T["{0} approved {1} on {2} for {3} {4}, who is on the blacklist.", Model.FirstApprovedBy, LoanUi.Money(Model.FirstApprovedAmount ?? loan.RequestedAmount), LoanUi.Date(Model.FirstApprovedAt?.ToLocalTime()), who.Name, who.Surname] @T[isSuperAdmin ? "Do you approve it too?" : "The money is sent only after the Super Admin approves it too."]</span>
+                <span>@T["{0} approved {1} on {2} for {3} {4}, who is on the blacklist.", Model.FirstApprovedBy ?? string.Empty, LoanUi.Money(Model.FirstApprovedAmount ?? loan.RequestedAmount), LoanUi.Date(Model.FirstApprovedAt?.ToLocalTime()), who.Name, who.Surname] @T[isSuperAdmin ? "Do you approve it too?" : "The money is sent only after the Super Admin approves it too."]</span>
             }
             else if (Model.Stage == "FirstApproval")
             {
@@ -71,7 +71,7 @@
             else
             {
                 <strong>@T["Customer on the blacklist: two approvals were needed"]</strong>
-                <span>@(step1Done ? T["Approved by {0} (loan staff)", Model.FirstApprovedBy] : T["Decided at the first step"])@(step2Done ? " " + T["and then by {0}.", Model.ReviewedBy ?? T["the Super Admin"]] : ".")</span>
+                <span>@(step1Done ? T["Approved by {0} (loan staff)", Model.FirstApprovedBy ?? string.Empty] : T["Decided at the first step"])@(step2Done ? " " + T["and then by {0}.", Model.ReviewedBy ?? T["the Super Admin"]] : ".")</span>
             }
             <ul class="approval-steps">
                 <li class="@(step1Done ? "is-done" : (Model.Stage == "FirstApproval" ? "is-current" : ""))">1. @T["Loan staff"] @(step1Done ? T["approved"] : "")</li>
@@ -172,7 +172,7 @@
                     <form asp-area="Admin" asp-controller="Loans" asp-action="Approve" asp-route-id="@loan.Id" method="post" class="surface form-stack form-card">
                         <h2>@T["Final approval"]</h2>
                         <input type="hidden" name="approvedAmount" value="@finalAmount.ToString("0.00", inv)" />
-                        <p>@T["{0} approved", Model.FirstApprovedBy] <strong>@LoanUi.Money(finalAmount)</strong> @T["for a customer on the blacklist. Do you approve it too?"]</p>
+                        <p>@T["{0} approved", Model.FirstApprovedBy ?? string.Empty] <strong>@LoanUi.Money(finalAmount)</strong> @T["for a customer on the blacklist. Do you approve it too?"]</p>
                         <p class="hint">@(finalAmount == loan.RequestedAmount ? "The money goes to the customer's card right away." : "The amount is smaller than requested, so it becomes an offer the customer has to accept.")</p>
                         <div class="row-actions">
                             <button type="submit" class="btn btn-primary"
