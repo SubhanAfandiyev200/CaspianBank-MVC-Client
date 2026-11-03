@@ -161,3 +161,9 @@ body.body-admin .site-footer-inner { padding-right: 250px; }
   content: ""; position: absolute; top: 4px; right: 4px; width: 12px; height: 12px; border-radius: 50%;
   background: #e5484d; border: 2px solid #fff;
 }
+
+/* Dar telefon ekranında "Ask Caspian" düyməsi yalnız ikon olur: mətnin üstünə düşmür */
+@media (max-width: 480px) {
+  .cw-fab { padding: 0 8px; }
+  .cw-fab-label { display: none; }
+}

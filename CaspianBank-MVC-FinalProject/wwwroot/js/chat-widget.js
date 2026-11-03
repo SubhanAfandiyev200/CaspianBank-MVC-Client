@@ -28,7 +28,7 @@
     team: root.getAttribute("data-greeting") || "Hi! How can we help?"
   };
   const defaultNote = fileNote.textContent;
-  const maxImageBytes = 5 * 1024 * 1024;
+  const maxImageBytes = 2 * 1024 * 1024;   // API-nin şəkil limiti ilə eynidir
   const maxHistory = 10;
   const maxEntries = 40;
   const storagePrefix = "cw:" + (signedIn ? "in:" : "out:");
@@ -312,7 +312,7 @@
     if (!file) { fileNote.textContent = defaultNote; return; }
     if (file.size > maxImageBytes) {
       image.value = "";
-      fileNote.textContent = cbt("The image must be 5 MB or smaller.");
+      fileNote.textContent = cbt("The image must be 2 MB or smaller.");
       return;
     }
     fileNote.textContent = file.name;
