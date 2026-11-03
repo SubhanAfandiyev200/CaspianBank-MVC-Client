@@ -3662,3 +3662,41 @@ form.is-translating .form-stack > .field:not(.has-translatable) { display: none;
 /* Edge parol sahəsinə öz "göstər" gözünü əlavə edir; saytın öz düyməsi var, ona görə brauzerinki gizlədilir */
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear { display: none; }
+
+/* ---------- Yüngül animasiyalar (müştəri, giriş və admin səhifələri) ----------
+   Hamısı çox qısadır və yalnız "hərəkəti azalt" seçilməyibsə işləyir. Home səhifəsi öz animasiyalarını (home.css, GSAP) saxlayır */
+@keyframes cb-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes cb-pop { 0% { transform: scale(0.6); opacity: 0; } 70% { transform: scale(1.12); opacity: 1; } 100% { transform: scale(1); } }
+@keyframes cb-slide-in { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
+@keyframes cb-fade { from { opacity: 0; } to { opacity: 1; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Səhifənin hissələri yuxarıdan aşağı ardıcıl yüngülcə yuxarı qalxaraq görünür */
+  main.page > * { animation: cb-rise 0.5s cubic-bezier(0.22, 0.8, 0.3, 1) both; }
+  main.page > :nth-child(2) { animation-delay: 0.05s; }
+  main.page > :nth-child(3) { animation-delay: 0.1s; }
+  main.page > :nth-child(4) { animation-delay: 0.15s; }
+  main.page > :nth-child(5) { animation-delay: 0.2s; }
+  main.page > :nth-child(n+6) { animation-delay: 0.25s; }
+
+  .auth-card { animation: cb-rise 0.55s cubic-bezier(0.22, 0.8, 0.3, 1) both; }
+  .flash { animation: cb-slide-in 0.35s ease both; }
+  .chat-msg { animation: cb-rise 0.3s ease both; }
+  .data-table tbody tr { animation: cb-fade 0.4s ease both; }
+
+  /* Kartlar və qutular üzərinə gələndə yüngül qalxır */
+  .surface, .stat, .tier, .tier-card, .starter-pair > * { transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
+  .stat:hover, .tier:hover, .tier-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(8, 40, 24, 0.18); }
+
+  /* Düymələr: üzərinə gələndə yüngül qalxır, basanda sıxılır */
+  .btn { transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease, color 0.2s ease; }
+  .btn:hover:not(:disabled) { transform: translateY(-1px); }
+  .btn:active:not(:disabled) { transform: scale(0.97); }
+
+  /* Bildiriş sayğacı yeni bildiriş gələndə "pop" edir (notifications.js .is-bump əlavə edir) */
+  [data-bell-count].is-bump, .bell-count.is-bump { animation: cb-pop 0.45s ease both; }
+
+  /* Söhbət düyməsində yeni cavab nöqtəsi nəbz vurur */
+  .cw.has-new .cw-fab::after { animation: cb-pulse 1.6s ease-in-out infinite; }
+}
+@keyframes cb-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(229, 72, 77, 0.55); } 50% { box-shadow: 0 0 0 8px rgba(229, 72, 77, 0); } }

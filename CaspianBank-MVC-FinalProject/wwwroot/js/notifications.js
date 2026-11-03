@@ -64,8 +64,15 @@
 
   function setCount(count) {
     if (!countEl) return;
+    const changed = countEl.textContent !== (count > 99 ? "99+" : String(count));
     countEl.textContent = count > 99 ? "99+" : String(count);
     countEl.hidden = count <= 0;
+    if (changed && count > 0) {
+      // Yeni bildiriş: sayğac "pop" edir (animasiya style.css-dədir)
+      countEl.classList.remove("is-bump");
+      void countEl.offsetWidth;
+      countEl.classList.add("is-bump");
+    }
   }
 
   function prependTo(container, emptyNode, html, limit) {

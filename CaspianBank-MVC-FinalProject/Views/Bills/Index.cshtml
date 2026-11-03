@@ -226,7 +226,7 @@
                                         else if (item.Status == "Failed")
                                         {
                                             <span class="badge badge-danger">@T["Failed"]</span>
-                                            <small class="hint">@T[item.LastError] @T["We will try again tomorrow."]</small>
+                                            <small class="hint">@T[item.LastError ?? string.Empty] @T["We will try again tomorrow."]</small>
                                         }
                                         else
                                         {
