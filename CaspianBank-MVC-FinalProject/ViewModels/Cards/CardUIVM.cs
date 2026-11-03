@@ -9,6 +9,7 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.Cards
         public string Expiry { get; set; } = string.Empty;
         public decimal Balance { get; set; }
         public bool IsBlocked { get; set; }
+        public string AccountType { get; set; } = string.Empty;  // Savings (Cashback kartı) və ya Current
         public string HolderName { get; set; } = string.Empty;
         public string DesignImage { get; set; } = string.Empty; // controller tam ünvana çevirir
     }
