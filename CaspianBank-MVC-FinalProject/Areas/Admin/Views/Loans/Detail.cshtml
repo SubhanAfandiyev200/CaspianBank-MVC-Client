@@ -11,16 +11,18 @@
     var totals = Model.ExternalTotals;
     ViewData["Title"] = "Loan " + loan.ContractNumber;
     var inv = CultureInfo.InvariantCulture;
-    var approveValue = Model.ApprovedAmountText ?? rules.SuggestedApproval.ToString("0.00", inv);
+    var approveValue = Model.ApprovedAmountText ?? (rules.SuggestedApproval > 0 ? rules.SuggestedApproval.ToString("0.00", inv) : string.Empty);
     var isSuperAdmin = User.IsInRole("SuperAdmin");
-    var isLoanStaff = User.IsInRole("Admin") || User.IsInRole("Accountant");
+    var isAdmin = User.IsInRole("Admin");
+    var isLoanStaff = isAdmin || User.IsInRole("Accountant");
+    var canFinalize = isSuperAdmin || isAdmin;
     var twoStep = Model.RequiresSuperAdminApproval;
     var canApprove = !twoStep
                      || (Model.Stage == "FirstApproval" && (isLoanStaff || isSuperAdmin))
-                     || (Model.Stage == "FinalApproval" && isSuperAdmin);
-    var canReject = Model.Stage != "FinalApproval" || isSuperAdmin;
+                     || (Model.Stage == "FinalApproval" && canFinalize);
+    var canReject = Model.Stage != "FinalApproval" || canFinalize;
     var finalAmount = Model.FirstApprovedAmount ?? loan.RequestedAmount;
-    var sendsOn = twoStep && !isSuperAdmin;   // kredit şöbəsinin təsdiqi Super Admin-ə gedir; Super Admin-in təsdiqi son təsdiqdir
+    var sendsOn = twoStep && !isSuperAdmin;   // kredit şöbəsinin təsdiqi ikinci təsdiqə gedir; Super Admin-in təsdiqi son təsdiqdir
 }
 <main id="content" class="page">
     <a class="back" asp-area="Admin" asp-controller="Loans" asp-action="Index">@T["All loans"]</a>
@@ -60,13 +62,13 @@
         <section class="approval-banner @(Model.Stage == "FinalApproval" ? "is-final" : "")" role="status">
             @if (Model.Stage == "FinalApproval")
             {
-                <strong>@T["Waiting for the Super Admin's approval"]</strong>
-                <span>@T["{0} approved {1} on {2} for {3} {4}, who is on the blacklist.", Model.FirstApprovedBy ?? string.Empty, LoanUi.Money(Model.FirstApprovedAmount ?? loan.RequestedAmount), LoanUi.Date(Model.FirstApprovedAt?.ToLocalTime()), who.Name, who.Surname] @T[isSuperAdmin ? "Do you approve it too?" : "The money is sent only after the Super Admin approves it too."]</span>
+                <strong>@T["Waiting for the final approval"]</strong>
+                <span>@T["{0} approved {1} on {2} for {3} {4}, who is on the blacklist.", Model.FirstApprovedBy ?? string.Empty, LoanUi.Money(Model.FirstApprovedAmount ?? loan.RequestedAmount), LoanUi.Date(Model.FirstApprovedAt?.ToLocalTime()), who.Name, who.Surname] @T[canFinalize ? "Do you approve it too?" : "The money is sent only after the Super Admin or an Administrator approves it too."]</span>
             }
             else if (Model.Stage == "FirstApproval")
             {
                 <strong>@T["Customer on the blacklist: two approvals are needed"]</strong>
-                <span>@(isSuperAdmin ? "As the Super Admin your approval is final: you can approve it directly. If the loan staff approves first, it comes to you for the final approval." : "The loan staff approves first, then the Super Admin. The money is sent only after both approve.")</span>
+                <span>@T[isSuperAdmin ? "As the Super Admin your approval is final: you can approve it directly. If the loan staff approves first, it comes to you for the final approval." : "The loan staff approves first, then the Super Admin or an Administrator. The money is sent only after both approve."]</span>
             }
             else
             {
@@ -75,7 +77,7 @@
             }
             <ul class="approval-steps">
                 <li class="@(step1Done ? "is-done" : (Model.Stage == "FirstApproval" ? "is-current" : ""))">1. @T["Loan staff"] @(step1Done ? T["approved"] : "")</li>
-                <li class="@(step2Done ? "is-done" : (Model.Stage == "FinalApproval" ? "is-current" : ""))">2. @T["Super Admin"] @(step2Done ? T["approved"] : "")</li>
+                <li class="@(step2Done ? "is-done" : (Model.Stage == "FinalApproval" ? "is-current" : ""))">2. @T["Super Admin or Administrator"] @(step2Done ? T["approved"] : "")</li>
             </ul>
         </section>
     }
@@ -102,7 +104,7 @@
                 <div class="citizen-info">
                     <strong>@who.Name @who.Surname@(string.IsNullOrEmpty(who.FatherName) ? "" : " " + who.FatherName)</strong>
                     <span>@T["FIN"] @(who.Fin ?? "—") · @T["born {0} ({1} years old)", LoanUi.Date(who.BirthDate), who.Age]</span>
-                    <span>@(string.IsNullOrEmpty(who.ResidenceAddress) ? "No address on record" : who.ResidenceAddress)</span>
+                    <span>@(string.IsNullOrEmpty(who.ResidenceAddress) ? T["No address on record"] : who.ResidenceAddress)</span>
                     <span>@(who.PhoneNumber ?? T["No phone"]) · @(who.Email ?? T["No email"])</span>
                 </div>
             </div>
@@ -129,7 +131,7 @@
                 }
                 @if (!string.IsNullOrEmpty(Model.RejectReason))
                 {
-                    <div><dt>@T["Reject reason"]</dt><dd>@Model.RejectReason <span class="hint">(internal, the customer does not see it)</span></dd></div>
+                    <div><dt>@T["Reject reason"]</dt><dd>@Model.RejectReason <span class="hint">(@T["internal, the customer does not see it"])</span></dd></div>
                 }
             </dl>
         </section>
@@ -144,7 +146,7 @@
                 <ul class="note-list">
                     @foreach (var warning in rules.Warnings)
                     {
-                        <li class="flash flash-error">@warning</li>
+                        <li class="flash flash-error">@T[warning]</li>
                     }
                 </ul>
             }
@@ -173,11 +175,11 @@
                         <h2>@T["Final approval"]</h2>
                         <input type="hidden" name="approvedAmount" value="@finalAmount.ToString("0.00", inv)" />
                         <p>@T["{0} approved", Model.FirstApprovedBy ?? string.Empty] <strong>@LoanUi.Money(finalAmount)</strong> @T["for a customer on the blacklist. Do you approve it too?"]</p>
-                        <p class="hint">@(finalAmount == loan.RequestedAmount ? "The money goes to the customer's card right away." : "The amount is smaller than requested, so it becomes an offer the customer has to accept.")</p>
+                        <p class="hint">@T[finalAmount == loan.RequestedAmount ? "The money goes to the customer's card right away." : "The amount is smaller than requested, so it becomes an offer the customer has to accept."]</p>
                         <div class="row-actions">
                             <button type="submit" class="btn btn-primary"
                                     data-confirm-title="@T["Give the final approval?"]"
-                                    data-confirm-text="@(LoanUi.Money(finalAmount)) will be approved for @who.Name @who.Surname, who is on the blacklist."
+                                    data-confirm-text="@T["{0} will be approved for {1} {2}, who is on the blacklist.", LoanUi.Money(finalAmount), who.Name, who.Surname]"
                                     data-confirm-yes="@T["Approve"]">@T["Approve"]</button>
                         </div>
                     </form>
@@ -185,20 +187,23 @@
                 else if (canApprove)
                 {
                 <form asp-area="Admin" asp-controller="Loans" asp-action="Approve" asp-route-id="@loan.Id" method="post" class="surface form-stack form-card">
-                    <h2>@(sendsOn ? "Approve and send to the Super Admin" : "Approve")</h2>
+                    <h2>@T[sendsOn ? "Approve and send for the final approval" : "Approve"]</h2>
                     <div class="field">
                         <label for="approved-amount">@T["Amount to approve (AZN)"]</label>
                         <input class="input" id="approved-amount" name="approvedAmount" inputmode="decimal" autocomplete="off" value="@approveValue" />
-                        <p class="hint">@(sendsOn ? "This customer is on the blacklist: the money is not sent yet. The Super Admin gets a request and decides at the end." : twoStep ? "This customer is on the blacklist. As the Super Admin your approval is the final one: the money is sent right away if the amount is the same as requested." : "Same as requested: the money goes to the customer's card right away. A smaller amount becomes an offer the customer has to accept.")</p>
+                        <p class="hint">@T[sendsOn ? "This customer is on the blacklist: the money is not sent yet. The Super Admin or an Administrator gets a request and decides at the end." : twoStep ? "This customer is on the blacklist. As the Super Admin your approval is the final one: the money is sent right away if the amount is the same as requested." : "Same as requested: the money goes to the customer's card right away. A smaller amount becomes an offer the customer has to accept."]</p>
                     </div>
                     <div class="row-actions">
                         <button type="submit" class="btn btn-primary"
-                                data-confirm-title="@(sendsOn ? "Send to the Super Admin?" : "Approve this loan?")"
-                                data-confirm-text="@(sendsOn ? "You approve the amount in the field. The Super Admin must approve it too before any money is sent." : "The amount in the field will be approved for " + who.Name + " " + who.Surname + ".")"
+                                data-confirm-title="@T[sendsOn ? "Send for the final approval?" : "Approve this loan?"]"
+                                data-confirm-text="@(sendsOn ? T["You approve the amount in the field. The Super Admin or an Administrator must approve it too before any money is sent."] : T["The amount in the field will be approved for {0} {1}.", who.Name, who.Surname])"
                                 data-confirm-yes="@T["Approve"]">@T["Approve"]</button>
-                        <button type="button" class="btn btn-secondary"
-                                onclick="document.getElementById('approved-amount').value=this.dataset.value"
-                                data-value="@rules.SuggestedApproval.ToString("0.00", inv)">@T["Use suggested ({0})", LoanUi.Money(rules.SuggestedApproval)]</button>
+                        @if (rules.SuggestedApproval > 0)
+                        {
+                            <button type="button" class="btn btn-secondary"
+                                    onclick="document.getElementById('approved-amount').value=this.dataset.value"
+                                    data-value="@rules.SuggestedApproval.ToString("0.00", inv)">@T["Use suggested ({0})", LoanUi.Money(rules.SuggestedApproval)]</button>
+                        }
                     </div>
                 </form>
                 }
@@ -206,7 +211,7 @@
                 {
                     <section class="surface form-card">
                         <h2>@T["Approve"]</h2>
-                        <p class="hint">@(Model.Stage == "FirstApproval" ? "This customer is on the blacklist. The loan staff must approve first, then the Super Admin gives the final approval." : "Only the Super Admin can give the final approval for this customer.")</p>
+                        <p class="hint">@T[Model.Stage == "FirstApproval" ? "This customer is on the blacklist. The loan staff must approve first, then the Super Admin or an Administrator gives the final approval." : "Only the Super Admin or an Administrator can give the final approval for this customer."]</p>
                     </section>
                 }
 
@@ -217,7 +222,7 @@
                     <div class="field">
                         <label for="reject-reason">@T["Reason (internal)"]</label>
                         <textarea class="textarea" id="reject-reason" name="reason" rows="4" maxlength="500">@Model.RejectReasonText</textarea>
-                        <p class="hint">The customer only sees "We can't approve this application right now".</p>
+                        <p class="hint">@T["The customer only sees \"We can't approve this application right now\"."]</p>
                     </div>
                     <div class="row-actions">
                         <button type="submit" class="btn btn-danger"

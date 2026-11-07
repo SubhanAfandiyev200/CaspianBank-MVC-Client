@@ -84,7 +84,7 @@ namespace CaspianBank_MVC_FinalProject.Helpers
                 case "Pending":
                     return "Pending";
                 case "AwaitingSuperAdmin":
-                    return "Awaiting Super Admin";
+                    return "Awaiting final approval";
                 case "Offered":
                     return "Offered";
                 case "Active":
