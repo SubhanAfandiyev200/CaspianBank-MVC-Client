@@ -74,7 +74,12 @@
             }
         </div>
 
-        @if (!closed)
+        @if (!closed && Model.IsGuest)
+        {
+            <p class="hint">@T["This visitor has no account, so there is no reply here. Write to the email address of the visitor, then close this conversation."]</p>
+            <p><a class="btn btn-primary" href="mailto:@Model.CustomerEmail?subject=@Uri.EscapeDataString("Re: " + Model.Subject)">@T["Write to {0}", Model.CustomerEmail]</a></p>
+        }
+        else if (!closed)
         {
             @if (!string.IsNullOrEmpty(Model.Error))
             {
