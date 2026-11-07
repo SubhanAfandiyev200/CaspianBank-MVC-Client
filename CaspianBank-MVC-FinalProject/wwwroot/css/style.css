@@ -3013,6 +3013,7 @@ body.body-admin .site-footer-inner {
    ========================================================= */
 
 .stat-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.stat-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
 .stat-grid + .stat-grid { margin-top: 12px; }
 .stat .stat-delta { margin-top: 6px; font-size: 13px; font-weight: 600; color: var(--color-primary); }
 .stat .stat-delta.is-down { color: var(--color-out); }
@@ -3054,7 +3055,7 @@ body.body-admin .site-footer-inner {
 .data-table .actions .row-actions .btn { margin-left: 0; }
 
 @media (max-width: 860px) {
-  .stat-grid.cols-3 { grid-template-columns: 1fr; }
+  .stat-grid.cols-3, .stat-grid.cols-4 { grid-template-columns: 1fr; }
   .fin-grid { grid-template-columns: 1fr; }
   .detail-list div { grid-template-columns: 1fr; gap: 2px; }
 }
@@ -3741,3 +3742,8 @@ input[type="password"]::-ms-clear { display: none; }
 .add-text[open] > summary { margin-bottom: 12px; }
 .tr-key { font-weight: 600; overflow-wrap: anywhere; display: block; }
 .data-table td textarea.input { min-width: 230px; width: 100%; }
+
+/* Dövlət reyestri */
+.citizen-cell { display: inline-flex; align-items: center; gap: 12px; }
+.citizen-photo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex: none; }
+.citizen-cell small { display: block; }

@@ -109,9 +109,13 @@
         else
         {
             <p class="eyebrow">@T["Bank"]</p>
-            <a class="@On("BankDashboard")" asp-area="Admin" asp-controller="BankDashboard" asp-action="Index">@T["Dashboard"]</a>
+            @if (canMoney)
+            {
+                <a class="@On("BankDashboard")" asp-area="Admin" asp-controller="BankDashboard" asp-action="Index">@T["Dashboard"]</a>
+            }
             <a class="@On("Users")" asp-area="Admin" asp-controller="Users" asp-action="Index">@T["Users"]</a>
             <a class="@On("Cards")" asp-area="Admin" asp-controller="Cards" asp-action="Index">@T["Cards"]</a>
+            <a class="@On("Registry")" asp-area="Admin" asp-controller="Registry" asp-action="Index">@T["State registry"]</a>
             @if (canMoney)
             {
                 <a class="@On("Loans")" asp-area="Admin" asp-controller="Loans" asp-action="Index">@T["Loans"]</a>

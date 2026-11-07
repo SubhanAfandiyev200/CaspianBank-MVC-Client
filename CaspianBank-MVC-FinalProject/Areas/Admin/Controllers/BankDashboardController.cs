@@ -20,6 +20,12 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(string? month)
         {
+            // Maliyyə rəqəmləri (xəzinə, gəlir, xərc) CustomerService üçün deyil: onun iş yeri müştəri mesajlarıdır
+            if (!(User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Accountant)))
+            {
+                return RedirectToAction("Index", "Tickets", new { area = "Admin" });
+            }
+
             var url = "api/admin/dashboard";
             if (!string.IsNullOrWhiteSpace(month))
             {
