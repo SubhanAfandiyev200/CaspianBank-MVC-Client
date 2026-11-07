@@ -1430,3 +1430,8 @@ a.header-user:focus-visible { outline: 2px solid var(--lime); outline-offset: 3p
   border-radius: 10px;
 }
 .footer-hero .cta-actions .btn-go-arrow { font-size: 20px; }
+
+/* Geniş ekranda sosial ikonlar mərkəzdəki sütundan çıxıb səhifənin sağ kənarına yaxın dayanır ("Ask Caspian" düyməsi ilə eyni xətt) */
+@media (min-width: 1280px) {
+  .footer-bottom .footer-social { margin-right: calc((100% - 100vw) / 2 + 40px); }
+}

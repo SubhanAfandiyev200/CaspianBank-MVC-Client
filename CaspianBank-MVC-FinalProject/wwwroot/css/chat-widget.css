@@ -132,11 +132,9 @@
 .cw-bubble.is-error { background: #fdecea; color: #8a1c13; }
 .cw-note { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-/* Sağ aşağıdakı "Caspian-dan soruş" düyməsi footerin sosial ikonlarının üstünə düşməsin: onlara yer qoyulur */
-.site-footer .footer-bottom { padding-right: 250px; }
-@media (max-width: 720px) {
-  .site-footer .footer-bottom { padding-right: 0; padding-bottom: 84px; }
-}
+/* Səhifənin ən aşağısında footerin alt zolağı (sosial ikonlar sağda) görünəndə "Ask Caspian" düyməsi yuxarı qalxır: ikonların üstünə düşmür (chat-widget.js .cw-lift əlavə edir) */
+.cw-fab { transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.2s ease, bottom 0.3s ease; }
+.cw.cw-lift .cw-fab { bottom: 92px; }
 
 /* AI / Komanda rejim düymələri */
 .cw [hidden] { display: none !important; }
@@ -147,10 +145,6 @@
 }
 .cw-tabs button.is-on { background: var(--cw-primary); border-color: var(--cw-primary); color: #fff; }
 .cw-bubble { white-space: pre-wrap; }
-
-/* Admin panelin alt zolağı: düymənin altına düşməsin */
-body.body-admin .site-footer-inner { padding-right: 250px; }
-@media (max-width: 720px) { body.body-admin .site-footer-inner { padding-right: 0; padding-bottom: 84px; } }
 
 /* Söhbətdəki şəkil (işçinin və ya müştərinin əlavəsi) */
 .cw-image { display: block; max-width: 100%; max-height: 180px; margin-top: 8px; border-radius: 10px; }
