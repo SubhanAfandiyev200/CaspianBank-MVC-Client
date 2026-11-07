@@ -76,7 +76,7 @@
                                         <span class="row-actions">
                                             <form method="post" asp-area="Admin" asp-controller="Staff" asp-action="ChangeRole" class="inline-form">
                                                 <input type="hidden" name="id" value="@person.Id" />
-                                                <select class="select select-sm" name="role" aria-label="Role of @person.Name @person.Surname">
+                                                <select class="select select-sm" name="role" aria-label="@T["Role of {0}", person.Name + " " + person.Surname]">
                                                     @foreach (var role in roles)
                                                     {
                                                         <option value="@role" selected="@(role == person.Role)">@RoleLabel(role)</option>
@@ -90,7 +90,7 @@
                                                     <input type="hidden" name="id" value="@person.Id" />
                                                     <button type="submit" class="btn btn-danger btn-sm"
                                                             data-confirm-title="@T["Deactivate this account?"]"
-                                                            data-confirm-text="@person.Name @person.Surname will be signed out and will not be able to sign in until you switch the account on again."
+                                                            data-confirm-text="@T["{0} will be signed out and will not be able to sign in until you switch the account on again.", person.Name + " " + person.Surname]"
                                                             data-confirm-yes="@T["Deactivate"]"
                                                             data-confirm-no="@T["Cancel"]">@T["Deactivate"]</button>
                                                 </form>
@@ -142,7 +142,7 @@
                 </select>
                 <p class="hint">@T["Administrators can do everything except give or remove roles. Accountants decide loans and card rules, customer service helps customers and handles suspicious reports and freezes."]</p>
             </div>
-            <p class="hint">The new person gets an email with a link to choose their own password. The link works for 30 minutes; after that they can use "Forgot password" on the login page.</p>
+            <p class="hint">@T["The new person gets an email with a link to choose their own password. The link works for 30 minutes; after that they can use \"Forgot password\" on the login page."]</p>
             <button class="btn btn-primary" type="submit">@T["Add staff member"]</button>
         </form>
     </div>

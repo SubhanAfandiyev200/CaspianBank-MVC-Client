@@ -73,7 +73,13 @@
                                 <td><input class="input" form="@formId" name="rate" value="@Num(plan.AnnualRate)" inputmode="decimal" size="5" aria-label="Yearly rate for @plan.TermMonths months" /></td>
                                 <td><input class="input" form="@formId" name="min" value="@Num(plan.MinAmount)" inputmode="decimal" size="8" aria-label="Smallest amount for @plan.TermMonths months" /></td>
                                 <td><input class="input" form="@formId" name="max" value="@Num(plan.MaxAmount)" inputmode="decimal" size="9" aria-label="Largest amount for @plan.TermMonths months" /></td>
-                                <td><label><input type="checkbox" form="@formId" name="active" value="true" checked="@plan.IsActive" /> @T["Yes"]</label></td>
+                                <td>
+                                    <label class="switch" title="@T["Open to customers"]">
+                                        <input type="checkbox" form="@formId" name="active" value="true" checked="@plan.IsActive" role="switch" />
+                                        <span class="switch-track" aria-hidden="true"></span>
+                                        <span class="switch-text"><span class="on">@T["Open"]</span><span class="off">@T["Closed"]</span></span>
+                                    </label>
+                                </td>
                                 <td>
                                     <form id="@formId" method="post" asp-area="Admin" asp-controller="Deposits" asp-action="UpdatePlan" asp-route-id="@plan.Id">
                                         <button class="btn btn-primary btn-sm" type="submit">@T["Save"]</button>
@@ -85,7 +91,7 @@
                                 <td>@Num(plan.AnnualRate)</td>
                                 <td>@Num(plan.MinAmount)</td>
                                 <td>@Num(plan.MaxAmount)</td>
-                                <td>@(plan.IsActive ? "Yes" : "No")</td>
+                                <td>@T[plan.IsActive ? "Open" : "Closed"]</td>
                             }
                         </tr>
                     }
@@ -130,7 +136,7 @@
                             <td class="num">@Money(item.ExpectedInterest)</td>
                             <td>@item.StartedAt.ToLocalTime().ToString("dd MMM yyyy", inv)</td>
                             <td>@item.MaturesAt.ToLocalTime().ToString("dd MMM yyyy", inv)</td>
-                            <td><span class="badge @(item.Status == "Paid" ? "badge-success" : "badge-info")">@(item.Status == "Paid" ? "Paid out" : "Locked")</span></td>
+                            <td><span class="badge @(item.Status == "Paid" ? "badge-success" : "badge-info")">@T[item.Status == "Paid" ? "Paid out" : "Locked"]</span></td>
                             <td class="num">@item.Reference</td>
                         </tr>
                     }

@@ -33,7 +33,7 @@
             <h1>@loan.ContractNumber</h1>
             <p class="lede">
                 <span class="badge @LoanUi.StatusBadge(loan.Status)">@T[LoanUi.StaffStatusText(loan.Status)]</span>
-                @who.Name @who.Surname asked for <strong>@LoanUi.Money(loan.RequestedAmount)</strong> over @loan.TermMonths months.
+                @T["{0} {1} asked for {2} over {3} months.", who.Name, who.Surname, LoanUi.Money(loan.RequestedAmount), loan.TermMonths]
             </p>
         </div>
         <span class="row-actions">

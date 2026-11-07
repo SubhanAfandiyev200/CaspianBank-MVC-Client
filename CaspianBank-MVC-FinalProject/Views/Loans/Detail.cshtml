@@ -208,8 +208,8 @@
                                 <span class="amount-cur">@T["AZN"]</span>
                             </div>
                             <p class="hint" id="pay-partial-note">
-                                At least @LoanUi.Money(loan.MinEarlyPayment). The term stays the same and your monthly payment goes down.
-                                Pay @LoanUi.Percent(loan.EarlyRepaymentMinPercent) or more of what is left (@LoanUi.Money(loan.OutstandingPrincipal * loan.EarlyRepaymentMinPercent / 100m)) and the rate drops by @loan.EarlyRepaymentRateReduction.ToString("0.##", inv) point.
+                                @T["At least {0}. The term stays the same and your monthly payment goes down.", LoanUi.Money(loan.MinEarlyPayment)]
+                                @T["Pay {0} or more of what is left ({1}) and the rate drops by {2} point.", LoanUi.Percent(loan.EarlyRepaymentMinPercent), LoanUi.Money(loan.OutstandingPrincipal * loan.EarlyRepaymentMinPercent / 100m), loan.EarlyRepaymentRateReduction.ToString("0.##", inv)]
                             </p>
                         </div>
                     </div>

@@ -12,8 +12,8 @@
 <div class="modal" id="@Model.Id" hidden data-open-on-load="@(open ? "true" : "false")">
     <div class="modal-backdrop" data-close-modal></div>
     <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="@(Model.Id)-title">
-        <h2 id="@(Model.Id)-title">@Model.Title</h2>
-        <p class="lede">@Model.Lede</p>
+        <h2 id="@(Model.Id)-title">@T[Model.Title]</h2>
+        <p class="lede">@T[Model.Lede]</p>
 
         @if (Model.Error is not null)
         {
@@ -45,7 +45,7 @@
                 </div>
                 <div class="modal-actions">
                     <button class="btn btn-secondary" type="button" data-close-modal>@T["Cancel"]</button>
-                    <button class="btn @Model.ConfirmClass" type="submit">@Model.ConfirmLabel</button>
+                    <button class="btn @Model.ConfirmClass" type="submit">@T[Model.ConfirmLabel]</button>
                 </div>
             </form>
             <form asp-action="@Model.SendAction" asp-route-id="@Model.CardId" method="post" novalidate>
