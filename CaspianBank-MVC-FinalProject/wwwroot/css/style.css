@@ -3745,5 +3745,11 @@ input[type="password"]::-ms-clear { display: none; }
 
 /* Dövlət reyestri */
 .citizen-cell { display: inline-flex; align-items: center; gap: 12px; }
-.citizen-photo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex: none; }
+.registry-photo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex: none; }
 .citizen-cell small { display: block; }
+
+/* İşçi profili: başlıqdakı şəkil baş hərflərin üstündə, profil səhifəsində rəngli şəkil */
+a.profile-btn { text-decoration: none; color: inherit; }
+.avatar { position: relative; overflow: hidden; }
+.avatar-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.staff-photo img { filter: none; }

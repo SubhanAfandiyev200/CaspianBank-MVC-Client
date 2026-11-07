@@ -62,13 +62,13 @@
                     <partial name="_SiteControls" />
                     @* Bildiriş zəngi: son bildirişlər API-dən gəlir, yenilər SignalR ilə canlı əlavə olunur (wwwroot/js/notifications.js) *@
                     @await Component.InvokeAsync("NotificationBell", new { area = "Admin" })
-                    <span class="profile-btn" title="@string.Join(", ", roles)">
-                        <span class="avatar">@initials</span>
+                    <a class="profile-btn" asp-area="Admin" asp-controller="Profile" asp-action="Index" title="@T["Open your profile"]">
+                        <span class="avatar">@initials<img class="avatar-img" src="@Url.Action("Avatar", "Profile", new { area = "Admin" })" alt="" onerror="this.remove()" /></span>
                         <span>
                             <span class="profile-name">@name</span>
                             <span class="profile-role">@T[roleLabel]</span>
                         </span>
-                    </span>
+                    </a>
                     <form class="header-auth" asp-area="" asp-controller="Account" asp-action="Logout" method="post">
                         <button class="btn-logout" type="submit" data-confirm-title="@T["Log out?"]" data-confirm-text="@T["You will need to log in again to open your account."]" data-confirm-yes="@T["Log out"]" aria-label="@T["Log out"]">
                             <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
