@@ -115,9 +115,12 @@
                         <tr>
                             <td>
                                 <span class="tr-key">@row.Key</span>
-                                @if (row.Key.Contains("{"))
+                                @{
+                                    var hints = TranslationHints.Describe(row.Key);
+                                }
+                                @if (hints.Count > 0)
                                 {
-                                    <small class="hint">@T["has variables, keep {0}, {1}... as they are"]</small>
+                                    <small class="hint tr-vars">@T["Variables (the page fills them in, keep them):"] @string.Join("; ", hints.Select(h => "{" + h.Index + "} = " + T[h.Meaning]))</small>
                                 }
                                 @if (string.IsNullOrWhiteSpace(row.Az) || string.IsNullOrWhiteSpace(row.Ru))
                                 {
