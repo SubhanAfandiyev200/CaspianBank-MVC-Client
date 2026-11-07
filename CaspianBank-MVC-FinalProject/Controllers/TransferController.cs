@@ -60,7 +60,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
             if (data is null)
-                return await ShowFormAsync(form, amountError ?? string.Join(" ", errors));
+                return await ShowFormAsync(form, amountError ?? string.Join(" ", TranslateErrors(errors)));
 
             // Yoxlama səhifəsi kartları göstərmir: forma sahələri gizli saxlanılır
             return View("Review", new TransferReviewVM { Preview = data, Form = form });
@@ -81,7 +81,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             if (status == HttpStatusCode.Unauthorized) return await SessionExpiredAsync();
 
             if (data is null)
-                return await ShowFormAsync(form, amountError ?? string.Join(" ", errors));
+                return await ShowFormAsync(form, amountError ?? string.Join(" ", TranslateErrors(errors)));
 
             // PRG: səhifəni yeniləmək köçürməni təkrar göndərməsin
             TempData[ReceiptKey] = JsonSerializer.Serialize(data);

@@ -47,7 +47,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
             if (!success)
             {
-                return await ShowAsync(threshold, errors.Length > 0 ? string.Join(" ", errors) : UnavailableMessage);
+                return await ShowAsync(threshold, errors.Length > 0 ? string.Join(" ", TranslateErrors(errors)) : UnavailableMessage);
             }
 
             TempData["Success"] = value <= 0m ? "The low balance alert is turned off." : "We will notify you when a card balance falls below the amount you set.";

@@ -160,7 +160,16 @@ namespace CaspianBank_MVC_FinalProject.Controllers
         protected string[] TranslateErrors(IEnumerable<string> errors)
         {
             var translator = HttpContext.RequestServices.GetRequiredService<CaspianBank_MVC_FinalProject.Services.ITranslator>();
-            return errors.Select(error => translator[error]).ToArray();
+            return errors.Select(error =>
+            {
+                // ASP.NET-in hazır "The Name field is required." mətni: sahənin adı da tərcümə olunur
+                var required = System.Text.RegularExpressions.Regex.Match(error, @"^The (\w+) field is required\.$");
+                if (required.Success)
+                {
+                    return translator["The {0} field is required.", translator[required.Groups[1].Value]];
+                }
+                return translator[error];
+            }).ToArray();
         }
 
         // POST (multipart/form-data), cavabın gövdəsi qayıdır

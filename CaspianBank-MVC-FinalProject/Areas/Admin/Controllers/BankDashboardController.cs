@@ -40,7 +40,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
                     var (fallback, _, _) = await GetWithErrorsAsync<BankDashboardVM>("api/admin/dashboard");
                     if (fallback is not null)
                     {
-                        fallback.Error = string.Join(" ", errors);
+                        fallback.Error = string.Join(" ", TranslateErrors(errors));
                         return View(fallback);
                     }
                 }

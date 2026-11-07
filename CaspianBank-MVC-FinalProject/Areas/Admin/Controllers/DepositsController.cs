@@ -45,7 +45,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
             {
                 if (code == HttpStatusCode.BadRequest)
                 {
-                    model.Error = string.Join(" ", errors);
+                    model.Error = string.Join(" ", TranslateErrors(errors));
                 }
                 else
                 {
@@ -81,7 +81,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
                 {
                     return await SessionExpiredAsync();
                 }
-                TempData["Error"] = string.Join(" ", errors);
+                TempData["Error"] = string.Join(" ", TranslateErrors(errors));
                 return RedirectToAction(nameof(Index));
             }
 

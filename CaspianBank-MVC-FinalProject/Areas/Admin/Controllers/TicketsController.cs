@@ -79,10 +79,10 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
                 var (current, _) = await GetAsync<TicketDetailVM>($"api/admin/tickets/{id}");
                 if (current is null)
                 {
-                    TempData["Error"] = string.Join(" ", errors);
+                    TempData["Error"] = string.Join(" ", TranslateErrors(errors));
                     return RedirectToAction(nameof(Index));
                 }
-                current.Error = string.Join(" ", errors);
+                current.Error = string.Join(" ", TranslateErrors(errors));
                 current.Draft = message;
                 return View("Detail", WithImages(current));
             }
@@ -103,7 +103,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
 
             if (ticket is null)
             {
-                TempData["Error"] = string.Join(" ", errors);
+                TempData["Error"] = string.Join(" ", TranslateErrors(errors));
             }
             else
             {

@@ -84,7 +84,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
             }
             if (summary is null)
             {
-                return await ShowDetailAsync(id, approvedAmount, null, string.Join(" ", errors));
+                return await ShowDetailAsync(id, approvedAmount, null, string.Join(" ", TranslateErrors(errors)));
             }
 
             TempData["Success"] = summary.Status == "AwaitingSuperAdmin"
@@ -110,7 +110,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
             }
             if (summary is null)
             {
-                return await ShowDetailAsync(id, null, reason, string.Join(" ", errors));
+                return await ShowDetailAsync(id, null, reason, string.Join(" ", TranslateErrors(errors)));
             }
 
             TempData["Success"] = "The application was rejected.";

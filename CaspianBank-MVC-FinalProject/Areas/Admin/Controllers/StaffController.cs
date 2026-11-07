@@ -43,7 +43,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
             }
             if (staff is null)
             {
-                var (model, unauthorized) = await LoadAsync(new StaffPageVM { Form = form, Error = string.Join(" ", errors) });
+                var (model, unauthorized) = await LoadAsync(new StaffPageVM { Form = form, Error = string.Join(" ", TranslateErrors(errors)) });
                 return unauthorized ? await SessionExpiredAsync() : View("Index", model);
             }
 
@@ -92,7 +92,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
             }
             else
             {
-                TempData["Error"] = status == HttpStatusCode.NotFound ? "This staff member no longer exists." : string.Join(" ", errors);
+                TempData["Error"] = status == HttpStatusCode.NotFound ? "This staff member no longer exists." : string.Join(" ", TranslateErrors(errors));
             }
             return RedirectToAction(nameof(Index));
         }

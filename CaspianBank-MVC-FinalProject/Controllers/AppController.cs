@@ -83,7 +83,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
 
             if (!success)
             {
-                TempData["CardError"] = string.Join(" ", errors);
+                TempData["CardError"] = string.Join(" ", TranslateErrors(errors));
                 return RedirectToAction(nameof(AddCard));
             }
 
@@ -101,7 +101,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
 
             if (!success)
             {
-                TempData["CardError"] = string.Join(" ", errors);
+                TempData["CardError"] = string.Join(" ", TranslateErrors(errors));
                 return RedirectToAction(nameof(AddCard));
             }
 
@@ -166,7 +166,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             if (success)
                 TempData["Success"] = $"{value.ToString("N2", System.Globalization.CultureInfo.InvariantCulture)} AZN added to your card.";
             else
-                TempData["TopUpError"] = string.Join(" ", errors);   // pəncərə xəta ilə yenidən açılır
+                TempData["TopUpError"] = string.Join(" ", TranslateErrors(errors));   // pəncərə xəta ilə yenidən açılır
 
             return RedirectToAction(nameof(Card), new
             {
@@ -202,7 +202,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
             else
             {
-                TempData["BlockError"] = string.Join(" ", errors);   // pəncərə xəta ilə yenidən açılır
+                TempData["BlockError"] = string.Join(" ", TranslateErrors(errors));   // pəncərə xəta ilə yenidən açılır
                 KeepCodeStep("Block", sentTo);                        // və kod yazma addımında qalır
             }
 
@@ -236,7 +236,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
             else
             {
-                TempData["UnblockError"] = string.Join(" ", errors);
+                TempData["UnblockError"] = string.Join(" ", TranslateErrors(errors));
                 KeepCodeStep("Unblock", sentTo);
             }
 
@@ -255,7 +255,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             if (sent is null)
             {
                 // Məs. "yenidən göndərmək üçün 40 saniyə gözləyin": kod artıq göndərilibsə o addımda qalırıq
-                TempData[prefix + "Error"] = string.Join(" ", errors);
+                TempData[prefix + "Error"] = string.Join(" ", TranslateErrors(errors));
                 KeepCodeStep(prefix, sentTo);
 
                 // "Please wait N seconds...": kod az əvvəl göndərilib və hələ etibarlıdır. Pəncərəni bağlayıb yenidən açan istifadəçi
