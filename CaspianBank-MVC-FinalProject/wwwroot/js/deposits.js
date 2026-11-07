@@ -41,6 +41,10 @@
     if (value !== amountInput.value) amountInput.value = value;
   }
 
+  function dateText(date) {
+    return date.toLocaleDateString(document.documentElement.lang || "en", { day: "2-digit", month: "short", year: "numeric" });
+  }
+
   function addMonths(date, months) {
     const result = new Date(date.getTime());
     const day = result.getDate();
@@ -66,7 +70,7 @@
     document.getElementById("dep-interest").textContent = money(interest);
     document.getElementById("dep-total").textContent = money(amount === null ? 0 : round2(amount + interest));
     const end = addMonths(new Date(), months);
-    document.getElementById("dep-date").textContent = end.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+    document.getElementById("dep-date").textContent = dateText(end);
 
     let problem = "";
     if (amount !== null && amount < min) problem = cbt("The smallest deposit for this term is {0}.", money(min));
@@ -79,9 +83,8 @@
     submit.disabled = amount === null || !!problem;
     submit.textContent = amount === null ? cbt("Open deposit") : cbt("Open deposit · {0}", money(amount));
     submit.setAttribute("data-confirm-text",
-      money(amount === null ? 0 : amount) + " will leave your card and stay locked for " + months + " months. "
-      + "You will get " + money(amount === null ? 0 : round2(amount + interest)) + " on " + end.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
-      + ". You can't take it out earlier.");
+      cbt("{0} will leave your card and stay locked for {1}. You will get {2} on {3}. You can't take it out earlier.",
+        money(amount === null ? 0 : amount), cbt("{0} months", months), money(amount === null ? 0 : round2(amount + interest)), dateText(end)));
     delete submit.dataset.confirmed;
   }
 

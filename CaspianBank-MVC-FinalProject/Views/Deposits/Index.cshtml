@@ -11,9 +11,9 @@
     var plans = Model.Overview.Plans;
     var form = Model.Form;
 
-    // Pul çıxacaq kart: bloklanmamış istənilən kart. Pul qayıdacaq kart: Cashback olmayan
-    var payers = Model.Cards.Where(c => !c.IsBlocked).ToList();
-    var receivers = payers.Where(c => !c.Tier.Equals("Cashback", StringComparison.OrdinalIgnoreCase)).ToList();
+    // Pul çıxacaq və qayıdacaq kart: bloklanmamış və Cashback olmayan (Cashback kartı yalnız cashback yığır)
+    var payers = Model.Cards.Where(c => !c.IsBlocked && !c.Tier.Equals("Cashback", StringComparison.OrdinalIgnoreCase)).ToList();
+    var receivers = payers;
 
     var chosenPlan = plans.FirstOrDefault(p => p.Id == form.PlanId) ?? plans.OrderByDescending(p => p.TermMonths).FirstOrDefault(p => p.TermMonths <= 12) ?? plans.FirstOrDefault();
     var payCard = payers.FirstOrDefault(c => c.Id == form.SourceCardId) ?? payers.OrderByDescending(c => c.Balance).FirstOrDefault();
@@ -24,8 +24,8 @@
     var next = active.OrderBy(d => d.MaturesAt).FirstOrDefault();
 
     string Money(decimal value) { return value.ToString("N2", inv) + " AZN"; }
-    string Rate(decimal value) { return value.ToString("0.##", inv) + "%"; }
-    string Term(int months) { return months % 12 == 0 ? (months / 12) + (months == 12 ? " year" : " years") : months + " months"; }
+    string Rate(decimal value) { return T["{0} a year", value.ToString("0.##", inv) + "%"]; }
+    string Term(int months) { return months % 12 == 0 ? (months == 12 ? T["1 year"] : T["{0} years", months / 12]) : T["{0} months", months]; }
 }
 <main id="content" class="page page-activity">
     <header class="page-head">
@@ -96,7 +96,7 @@
                                         data-plan="@plan.Id" data-months="@plan.TermMonths" data-rate="@plan.AnnualRate.ToString(inv)"
                                         data-min="@plan.MinAmount.ToString(inv)" data-max="@plan.MaxAmount.ToString(inv)">
                                     <strong>@Term(plan.TermMonths)</strong>
-                                    <span>@Rate(plan.AnnualRate) a year</span>
+                                    <span>@Rate(plan.AnnualRate)</span>
                                 </button>
                             }
                         </div>
@@ -181,7 +181,7 @@
                             <div class="dep-top">
                                 <div>
                                     <strong class="num">@Money(deposit.Principal)</strong>
-                                    <span class="hint">@Term(deposit.TermMonths) · @Rate(deposit.AnnualRate) a year</span>
+                                    <span class="hint">@Term(deposit.TermMonths) · @Rate(deposit.AnnualRate)</span>
                                 </div>
                                 <span class="badge-pill @(isActive ? "" : "is-ok")">@(isActive ? T["Locked"] : T["Paid out"])</span>
                             </div>
