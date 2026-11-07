@@ -25,9 +25,11 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index(string? search, bool onlyMissing, int page = 1)
+        public async Task<IActionResult> Index(string? search, bool onlyMissing, string? kind, int page = 1)
         {
-            var url = "api/admin/translations?page=" + Math.Max(1, page) + "&pageSize=" + PageSize + "&onlyMissing=" + (onlyMissing ? "true" : "false");
+            // Standart görünüş: adi səhifə mətnləri. Cümlə parçaları ({0} olanlar) və JavaScript mətnləri ayrıca seçilir
+            kind = string.IsNullOrEmpty(kind) ? "page" : kind;
+            var url = "api/admin/translations?page=" + Math.Max(1, page) + "&pageSize=" + PageSize + "&onlyMissing=" + (onlyMissing ? "true" : "false") + "&kind=" + Uri.EscapeDataString(kind);
             if (!string.IsNullOrWhiteSpace(search))
             {
                 url += "&search=" + Uri.EscapeDataString(search.Trim());
@@ -44,7 +46,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
             {
                 if (code == HttpStatusCode.BadRequest)
                 {
-                    model.Error = string.Join(" ", errors);
+                    model.Error = string.Join(" ", TranslateErrors(errors));
                 }
                 else
                 {
@@ -53,12 +55,13 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
             }
             model.Search = search;
             model.OnlyMissing = onlyMissing;
+            model.Kind = kind;
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save(string key, string? az, string? ru, string? search, bool onlyMissing, int page = 1)
+        public async Task<IActionResult> Save(string key, string? az, string? ru, string? search, bool onlyMissing, string? kind, int page = 1)
         {
             var (success, errors, code) = await PutAsync("api/admin/translations", new { key, az, ru });
             if (code == HttpStatusCode.Unauthorized)
@@ -73,9 +76,9 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
             }
             else
             {
-                TempData["Error"] = string.Join(" ", errors);
+                TempData["Error"] = string.Join(" ", TranslateErrors(errors));
             }
-            return RedirectToAction(nameof(Index), new { search, onlyMissing, page });
+            return RedirectToAction(nameof(Index), new { search, onlyMissing, kind, page });
         }
     }
 }

@@ -3717,3 +3717,27 @@ input[type="password"]::-ms-clear { display: none; }
 .loan-card-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
 .loan-card-amount { font-size: 20px; font-weight: 700; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; text-align: left; }
 .loan-card-note { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; overflow-wrap: anywhere; }
+
+/* Açar (switch): "Bəli" yazılı qutu əvəzinə. Qutu özü gizlədilir, klaviatura ilə də işləyir */
+.switch { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+.switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.switch-track { position: relative; width: 42px; height: 24px; border-radius: 999px; background: var(--color-border-strong, #8a948e); transition: background 0.2s ease; flex: none; }
+.switch-track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35); transition: transform 0.2s ease; }
+.switch input:checked + .switch-track { background: var(--color-primary, #0f5c3f); }
+.switch input:checked + .switch-track::after { transform: translateX(18px); }
+.switch input:focus-visible + .switch-track { outline: 3px solid var(--color-primary, #0f5c3f); outline-offset: 2px; }
+.switch-text .off { display: inline; }
+.switch-text .on { display: none; }
+.switch input:checked ~ .switch-text .on { display: inline; }
+.switch input:checked ~ .switch-text .off { display: none; }
+
+/* İstifadəçi siyahısında "Bax" düyməsi iki sətrə bölünməsin */
+.data-table td.actions .btn, .data-table td.actions a.btn { white-space: nowrap; }
+
+/* Tərcümələr səhifəsi */
+.help-box { margin-bottom: 16px; }
+.help-box h2 { margin-bottom: 8px; }
+.add-text > summary { cursor: pointer; padding: 4px 0; }
+.add-text[open] > summary { margin-bottom: 12px; }
+.tr-key { font-weight: 600; overflow-wrap: anywhere; display: block; }
+.data-table td textarea.input { min-width: 230px; width: 100%; }
