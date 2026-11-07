@@ -238,6 +238,12 @@
     typing.remove();
     addMessage(name, result.text, false, !result.ok);
     if (result.ok && name === "team") resetImage();
+    if (!result.ok && mode === name && input.value === "") {
+      // GÃ¶ndÉrilmÉdi: yazÄ±lan mÉtn silinmÉsin, dÃ¼zÉldib yenidÉn gÃ¶ndÉrmÉk olsun
+      input.value = question;
+      s.draft = question;
+      autosize();
+    }
     s.busy = false;
     if (name === "team" && serverTeam) {
       lastTeamSnapshot = "";
