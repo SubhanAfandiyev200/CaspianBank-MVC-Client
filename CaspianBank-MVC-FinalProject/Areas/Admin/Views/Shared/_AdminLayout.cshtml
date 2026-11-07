@@ -3,7 +3,11 @@
     var controller = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
     // İki bölmə: UI (saytın görünüşü) və Bank (maliyyə və əməliyyatlar). Yeni UI controller əlavə edəndə adını bura yaz.
     var uiControllers = new[] { "UiDashboard", "CardHero", "Brand", "Ticker", "BenefitSection", "BenefitItem", "ServiceSection", "ServiceItem", "About", "AboutPillar", "CardDesign", "CardTier", "Setting" };
-    var isUi = uiControllers.Contains(controller);
+    // Hər rol yalnız girə bildiyi bölmələrin keçidini görür (icazələr controller-lərdədir, burada yalnız menyu süzülür)
+    var canUi = User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin);
+    var canMoney = canUi || User.IsInRole(AppRoles.Accountant);
+    // Kart növləri mühasibə də açıqdır: onun üçün Bank bölməsində göstərilir
+    var isUi = uiControllers.Contains(controller) && canUi;
 
     var name = User.Identity?.Name ?? "Admin";
     var initials = string.Concat(name.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(part => char.ToUpperInvariant(part[0])));
@@ -48,7 +52,10 @@
             <button class="nav-toggle" type="button" data-nav-toggle aria-expanded="false" aria-label="@T["Open menu"]"><span></span><span></span><span></span></button>
             <div class="topnav-panel">
                 <nav class="main-nav admin-areas" aria-label="@T["Administration"]">
-                    <a class="nav-link @(isUi ? "is-active" : "")" asp-area="Admin" asp-controller="UiDashboard" asp-action="Index">@T["UI"]</a>
+                    @if (canUi)
+                    {
+                        <a class="nav-link @(isUi ? "is-active" : "")" asp-area="Admin" asp-controller="UiDashboard" asp-action="Index">@T["UI"]</a>
+                    }
                     <a class="nav-link @(isUi ? "" : "is-active")" asp-area="Admin" asp-controller="BankDashboard" asp-action="Index">@T["Bank"]</a>
                 </nav>
                 <div class="nav-tools">
@@ -105,12 +112,16 @@
             <a class="@On("BankDashboard")" asp-area="Admin" asp-controller="BankDashboard" asp-action="Index">@T["Dashboard"]</a>
             <a class="@On("Users")" asp-area="Admin" asp-controller="Users" asp-action="Index">@T["Users"]</a>
             <a class="@On("Cards")" asp-area="Admin" asp-controller="Cards" asp-action="Index">@T["Cards"]</a>
-            <a class="@On("Loans")" asp-area="Admin" asp-controller="Loans" asp-action="Index">@T["Loans"]</a>
+            @if (canMoney)
+            {
+                <a class="@On("Loans")" asp-area="Admin" asp-controller="Loans" asp-action="Index">@T["Loans"]</a>
+            }
             <a class="@On("Deposits")" asp-area="Admin" asp-controller="Deposits" asp-action="Index">@T["Deposits"]</a>
             @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin) || User.IsInRole(AppRoles.Accountant))
             {
                 <a class="@On("Treasury")" asp-area="Admin" asp-controller="Treasury" asp-action="Index">@T["Treasury"]</a>
                 <a class="@On("BankRules")" asp-area="Admin" asp-controller="BankRules" asp-action="Index">@T["Bank rules"]</a>
+                <a class="@On("CardTier")" asp-area="Admin" asp-controller="CardTier" asp-action="Index">@T["Card types"]</a>
             }
             @if (User.IsInRole(AppRoles.SuperAdmin) || User.IsInRole(AppRoles.Admin))
             {

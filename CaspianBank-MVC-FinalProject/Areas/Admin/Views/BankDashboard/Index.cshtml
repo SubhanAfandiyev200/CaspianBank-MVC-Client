@@ -4,6 +4,9 @@
     ViewData["Title"] = "Bank dashboard";
     var inv = CultureInfo.InvariantCulture;
 
+    // Kredit və xəzinə səhifələrinə CustomerService girə bilmir: ona keçid göstərilməsin
+    var canSeeMoneyPages = User.IsInRole("SuperAdmin") || User.IsInRole("Admin") || User.IsInRole("Accountant");
+
     string Money(decimal value) { return value.ToString("N2", inv) + " AZN"; }
 
     // Zolağın uzunluğu: hissənin cəmə nisbəti (cəm 0-dırsa boş)
@@ -77,7 +80,7 @@
                 <p class="stat-label">@T["Loans outstanding"]</p>
                 <p class="stat-value">@Money(Model.LoansOutstanding)</p>
                 <p class="hint">@T["Issued and not yet repaid"]</p>
-                <a asp-area="Admin" asp-controller="Loans" asp-action="Index">@T["View loans"]</a>
+                @if (canSeeMoneyPages) {<a asp-area="Admin" asp-controller="Loans" asp-action="Index">@T["View loans"]</a>}
             </article>
         </div>
 
@@ -87,7 +90,7 @@
                 <p class="stat-label">@T["Treasury (own funds)"]</p>
                 <p class="stat-value">@Money(Model.OwnFunds)</p>
                 <p class="hint">@T["The bank's own money: card fees, commissions, loan interest and penalties, minus what it paid out (loans, cashback, deposit interest, costs)."]</p>
-                <a asp-area="Admin" asp-controller="Treasury" asp-action="Index">@T["Treasury history"]</a>
+                @if (canSeeMoneyPages) {<a asp-area="Admin" asp-controller="Treasury" asp-action="Index">@T["Treasury history"]</a>}
             </article>
             <article class="stat">
                 <p class="stat-label">@T["Money on customer cards"]</p>
@@ -181,7 +184,7 @@
                     <div><dt>@T["Tax accrued this month"]</dt><dd>@Money(Model.ProfitTax)</dd></div>
                     <div><dt>@T["Tax accrued this quarter so far"]</dt><dd>@Money(Model.QuarterTaxAccrued)</dd></div>
                     <div><dt>@T["Required reserve ({0}% of deposits)", Model.ReservePercent.ToString("0.##", inv)]</dt><dd>@Money(Model.RequiredReserve)</dd></div>
-                    <div><dt>@T["Treasury (own funds)"]</dt><dd>@Money(Model.OwnFunds) <a asp-area="Admin" asp-controller="Treasury" asp-action="Index">@T["history"]</a></dd></div>
+                    <div><dt>@T["Treasury (own funds)"]</dt><dd>@Money(Model.OwnFunds) @if (canSeeMoneyPages) {<a asp-area="Admin" asp-controller="Treasury" asp-action="Index">@T["history"]</a>}</dd></div>
                     <div><dt>@T["Reserve after paying the quarter's tax"]</dt><dd>@Money(Model.ReserveAfterTax)</dd></div>
                 </dl>
 
@@ -215,7 +218,7 @@
                 <p class="hint">@T["Queues waiting on the bank"]</p>
 
                 <div class="fin-row">
-                    <div class="fin-row-top"><span><a asp-area="Admin" asp-controller="Loans" asp-action="Index" asp-route-status="Pending">@T["Loans waiting for a decision"]</a></span><span>@Model.PendingLoans</span></div>
+                    <div class="fin-row-top"><span>@if (canSeeMoneyPages) {<a asp-area="Admin" asp-controller="Loans" asp-action="Index" asp-route-status="Pending">@T["Loans waiting for a decision"]</a>} else {@T["Loans waiting for a decision"]}</span><span>@Model.PendingLoans</span></div>
                 </div>
                 <div class="fin-row">
                     <div class="fin-row-top"><span><a asp-area="Admin" asp-controller="Tickets" asp-action="Index" asp-route-status="Pending">@T["Contact tickets waiting for an answer"]</a></span><span>@Model.PendingTickets</span></div>
