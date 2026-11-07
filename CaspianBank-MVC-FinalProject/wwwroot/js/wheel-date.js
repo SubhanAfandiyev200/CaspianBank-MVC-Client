@@ -93,7 +93,7 @@
     pop.className = "wheel-pop";
     pop.hidden = true;
     pop.setAttribute("role", "dialog");
-    pop.setAttribute("aria-label", "Choose a date");
+    pop.setAttribute("aria-label", cbt("Choose a date"));
     pop.innerHTML = `
       <div class="wheel-frame">
         <div class="wheel-highlight" aria-hidden="true"></div>

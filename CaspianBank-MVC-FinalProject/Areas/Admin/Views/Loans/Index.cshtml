@@ -86,7 +86,7 @@
                             <td>@T[LoanUi.PurposeText(item.Purpose)]</td>
                             <td>@T["{0} months", item.TermMonths]</td>
                             <td>@LoanUi.Date(item.CreatedAt.ToLocalTime())</td>
-                            <td><span class="badge @LoanUi.StatusBadge(item.Status)">@T[LoanUi.StaffStatusText(item.Status)]</span>@if (item.RequiresSuperAdmin) {<span class="badge badge-blacklist" title="@T["Blacklisted customer: the loan staff and the Super Admin must both approve"]">@T["Blacklisted"]</span>}</td>
+                            <td><span class="badge @LoanUi.StatusBadge(item.Status)">@T[LoanUi.StaffStatusText(item.Status)]</span>@if (item.RequiresSuperAdmin) {<span class="badge badge-blacklist" title="@T["Blacklisted customer: the loan staff and the Super Admin or an Administrator must both approve"]">@T["Blacklisted"]</span>}</td>
                             <td class="actions">
                                 <span class="row-actions">
                                     <a class="btn @(item.Status == "Pending" || item.Status == "AwaitingSuperAdmin" ? "btn-primary" : "btn-detail") btn-sm" asp-area="Admin" asp-controller="Loans" asp-action="Detail" asp-route-id="@item.Id">@(item.Status == "Pending" || item.Status == "AwaitingSuperAdmin" ? "Review" : "Detail")</a>

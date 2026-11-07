@@ -8,8 +8,8 @@
     <header class="page-head crud-head">
         <div>
             <p class="eyebrow">@T["UI · Site"]</p>
-            <h1>@SettingLabels.For(Model.Key)</h1>
-            <p class="lede">@SettingLabels.Hint(Model.Key)</p>
+            <h1>@T[SettingLabels.For(Model.Key)]</h1>
+            <p class="lede">@T[SettingLabels.Hint(Model.Key)]</p>
         </div>
         <span class="row-actions">
             <a class="btn btn-secondary" asp-area="Admin" asp-controller="Setting" asp-action="Edit" asp-route-id="@Model.Id">@T["Edit"]</a>
@@ -21,7 +21,7 @@
         <section class="surface">
             <dl class="detail-list">
                 <div><dt>@T["Id"]</dt><dd>@Model.Id</dd></div>
-                <div><dt>@T["Setting"]</dt><dd>@SettingLabels.For(Model.Key)</dd></div>
+                <div><dt>@T["Setting"]</dt><dd>@T[SettingLabels.For(Model.Key)]</dd></div>
                 <div><dt>@T["Key"]</dt><dd>@Model.Key</dd></div>
                 @if (SettingLabels.IsLogo(Model.Key))
                 {

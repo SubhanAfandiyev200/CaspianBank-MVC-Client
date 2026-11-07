@@ -1,0 +1,140 @@
+@model CaspianBank_MVC_FinalProject.ViewModels.Registry.RegistryPageVM
+@using System.Globalization
+@{
+    ViewData["Title"] = "Registry";
+    var inv = CultureInfo.InvariantCulture;
+
+    string PageUrl(int page)
+    {
+        return Url.Action("Index", "Registry", new { area = "Admin", search = Model.Search, status = Model.Status, page }) ?? "#";
+    }
+}
+<main id="content" class="page">
+    <header class="page-head">
+        <p class="eyebrow">@T["Operations"]</p>
+        <h1>@T["Registered customers"]</h1>
+        <p class="lede">@T["The citizens who registered at Caspian Bank, with their state registry details. See who is on the blacklist and why. Read only."]</p>
+    </header>
+
+    @if (Model.Unavailable)
+    {
+        <p class="flash flash-error" role="alert">@T["The registry can't be loaded right now. Please try again in a moment."]</p>
+    }
+    @if (!string.IsNullOrEmpty(Model.Error))
+    {
+        <p class="flash flash-error" role="alert">@T[Model.Error]</p>
+    }
+
+    <div class="stat-grid cols-3">
+        <article class="stat">
+            <p class="stat-label">@T["Registered customers"]</p>
+            <p class="stat-value">@Model.AllCount.ToString("N0", inv)</p>
+        </article>
+        <article class="stat">
+            <p class="stat-label">@T["On the blacklist"]</p>
+            <p class="stat-value">@Model.BlacklistedCount.ToString("N0", inv)</p>
+        </article>
+        <article class="stat">
+            <p class="stat-label">@T["Deceased"]</p>
+            <p class="stat-value">@Model.DeceasedCount.ToString("N0", inv)</p>
+        </article>
+    </div>
+
+    <section class="surface surface-tight">
+        <form method="get" asp-area="Admin" asp-controller="Registry" asp-action="Index" class="toolbar filters">
+            <div class="field grow">
+                <label for="search">@T["Search"]</label>
+                <input class="input" id="search" name="search" type="search" placeholder="@T["FIN, ID card number or name"]" value="@Model.Search" autocomplete="off" />
+            </div>
+            <div class="field">
+                <label for="status">@T["Status"]</label>
+                <select class="select" data-wheel id="status" name="status">
+                    <option value="" selected="@string.IsNullOrEmpty(Model.Status)">@T["All"]</option>
+                    <option value="Blacklisted" selected="@(Model.Status == "Blacklisted")">@T["On the blacklist"]</option>
+                    <option value="Deceased" selected="@(Model.Status == "Deceased")">@T["Deceased"]</option>
+                </select>
+            </div>
+            <div class="field">
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" type="submit">@T["Filter"]</button>
+            </div>
+        </form>
+
+        <p class="hint">@T["{0} customers found.", Model.TotalCount.ToString("N0", inv)]</p>
+
+        <div class="table-wrap">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>@T["Citizen"]</th>
+                        <th>@T["FIN"]</th>
+                        <th>@T["ID card"]</th>
+                        <th>@T["Born"]</th>
+                        <th>@T["Status"]</th>
+                        <th class="actions"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                <span class="citizen-cell">
+                                    @if (!string.IsNullOrEmpty(item.PhotoUrl))
+                                    {
+                                        <img class="registry-photo" src="@item.PhotoUrl" alt="" width="40" height="40" loading="lazy" />
+                                    }
+                                    <span>
+                                        <strong>@item.Name @item.Surname</strong>
+                                        <small class="hint">@item.FatherName</small>
+                                    </span>
+                                </span>
+                            </td>
+                            <td class="num">@item.Fin</td>
+                            <td class="num">@item.IdCardNumber</td>
+                            <td>@item.BirthDate.ToString("dd MMM yyyy", inv) <small class="hint">@T["{0} years old", item.Age]</small></td>
+                            <td>
+                                @if (item.IsBlacklisted)
+                                {
+                                    <span class="badge badge-danger">@T["On the blacklist"]</span>
+                                    @if (!string.IsNullOrEmpty(item.BlacklistReason))
+                                    {
+                                        <small class="hint">@item.BlacklistReason</small>
+                                    }
+                                }
+                                @if (item.IsDeceased)
+                                {
+                                    <span class="badge badge-neutral">@T["Deceased"]</span>
+                                    @if (item.DeathDate.HasValue)
+                                    {
+                                        <small class="hint">@item.DeathDate.Value.ToString("dd MMM yyyy", inv)</small>
+                                    }
+                                }
+                                @if (!item.IsBlacklisted && !item.IsDeceased)
+                                {
+                                    <span class="badge badge-success">@T["Active"]</span>
+                                }
+                            </td>
+                            <td class="actions">
+                                @if (!string.IsNullOrEmpty(item.AccountUserId))
+                                {
+                                    <span class="row-actions">
+                                        <a class="btn btn-detail btn-sm" asp-area="Admin" asp-controller="Users" asp-action="Detail" asp-route-id="@item.AccountUserId">@T["Open account"]</a>
+                                    </span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    @if (!Model.Items.Any())
+                    {
+                        <tr>
+                            <td colspan="6">@T["No customers found."]</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <partial name="_Pager" model="new CaspianBank_MVC_FinalProject.ViewModels.Common.PagerVM { Page = Model.Page, PageSize = Model.PageSize, TotalCount = Model.TotalCount, TotalPages = Model.TotalPages, Url = PageUrl }" />
+</main>

@@ -57,7 +57,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
             if (summary is null)
             {
-                return await ShowIndexAsync(form, string.Join(" ", errors));
+                return await ShowIndexAsync(form, string.Join(" ", TranslateErrors(errors)));
             }
 
             // Qara siyahıdakı vətəndaşın müraciəti dərhal rədd olunur: müştəri ümumi mətn görür, səbəb gizli qalır
@@ -115,7 +115,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
             if (summary is null)
             {
-                TempData["LoanError"] = string.Join(" ", errors);
+                TempData["LoanError"] = string.Join(" ", TranslateErrors(errors));
                 return RedirectToAction(nameof(Detail), new { id });
             }
 
@@ -134,7 +134,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
             if (summary is null)
             {
-                TempData["LoanError"] = string.Join(" ", errors);
+                TempData["LoanError"] = string.Join(" ", TranslateErrors(errors));
                 return RedirectToAction(nameof(Detail), new { id });
             }
 
@@ -171,7 +171,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
             if (receipt is null)
             {
-                return await ShowDetailAsync(id, string.Join(" ", errors), requestId);
+                return await ShowDetailAsync(id, string.Join(" ", TranslateErrors(errors)), requestId);
             }
 
             receipt.LoanId = id;

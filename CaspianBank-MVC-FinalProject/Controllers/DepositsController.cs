@@ -51,7 +51,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
             if (deposit is null)
             {
-                return await ShowAsync(form, string.Join(" ", errors));
+                return await ShowAsync(form, string.Join(" ", TranslateErrors(errors)));
             }
 
             TempData["Success"] = "Your deposit is open. You will get "

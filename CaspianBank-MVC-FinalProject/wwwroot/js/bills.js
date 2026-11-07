@@ -46,8 +46,9 @@
   function periodText(period) {
     const parts = String(period || "").split("-");
     if (parts.length !== 2) return period || "";
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    return (months[parseInt(parts[1], 10) - 1] || parts[1]) + " " + parts[0];
+    const month = parseInt(parts[1], 10);
+    if (!(month >= 1 && month <= 12)) return period;
+    return cbDate(new Date(Number(parts[0]), month - 1, 1), false);
   }
 
   function el(tag, className, text) {
@@ -75,7 +76,8 @@
     });
     providerInput.value = tile.dataset.provider;
     identifierLabel.textContent = tile.dataset.label || "Number";
-    identifier.placeholder = tile.dataset.hint || "";
+    const placeholderDigits = (tile.dataset.hint || "").match(/^(\d+)\s*digits?$/i);
+    identifier.placeholder = placeholderDigits ? cbt("{0} digits", placeholderDigits[1]) : (tile.dataset.hint || "");
     identifier.setAttribute("inputmode", tile.dataset.category === LOAN ? "text" : "numeric");
 
     if (recurringText) {
@@ -85,13 +87,15 @@
     }
 
     if (tile.dataset.category === "Mobile") {
-      identifierHint.textContent = tile.dataset.name + " numbers start with " + (tile.dataset.prefixes || "") + ". Example: " + tile.dataset.hint;
+      identifierHint.textContent = cbt("{0} numbers start with {1}. Example: {2}", tile.dataset.name, (tile.dataset.prefixes || "").replace(" or ", " " + cbt("or") + " "), tile.dataset.hint);
     } else if (tile.dataset.category === LOAN) {
       identifierHint.textContent = cbt("The payment code is on the loan page. Example: {0}", tile.dataset.hint);
     } else {
       // "10 digits" -> "10-digit"
-      const digits = (tile.dataset.hint || "").replace(/(\d+)\s*digits?/i, "$1-digit");
-      identifierHint.textContent = cbt("Enter the {0} subscriber code.", digits);
+      const digitMatch = (tile.dataset.hint || "").match(/(\d+)\s*digits?/i);
+      identifierHint.textContent = digitMatch
+        ? cbt("Enter the {0}-digit subscriber code.", digitMatch[1])
+        : cbt("Enter the {0} subscriber code.", tile.dataset.hint || "");
     }
   }
 
@@ -120,7 +124,7 @@
     }
 
     checkButton.disabled = true;
-    checkButton.textContent = "Checking…";
+    checkButton.textContent = cbt("Checking…");
     try {
       const body = new URLSearchParams();
       body.set("__RequestVerificationToken", token ? token.value : "");
@@ -152,7 +156,7 @@
       showError(cbt("We can't reach the service. Please try again."));
     } finally {
       checkButton.disabled = false;
-      checkButton.textContent = "Check";
+      checkButton.textContent = cbt("Check");
     }
   }
 
@@ -201,7 +205,7 @@
 
     const list = el("dl", "detail-list");
     if (data.packageName) {
-      row(list, "Package", data.packageName);
+      row(list, cbt("Package"), data.packageName);
     }
     if (data.monthlyFee) {
       row(list, cbt("Monthly fee"), money(data.monthlyFee), "num");
@@ -233,7 +237,7 @@
     chipsBox.textContent = "";
     if (!fixed) {
       const amounts = [];
-      if (data.debt > 0) amounts.push({ value: data.debt, label: (isLoan() ? "All due " : "Debt ") + plain(data.debt) });
+      if (data.debt > 0) amounts.push({ value: data.debt, label: cbt(isLoan() ? "All due {0}" : "Debt {0}", plain(data.debt)) });
       [5, 10, 20, 50].forEach((value) => {
         if (value >= data.minPayment && value <= data.maxPayment && !amounts.some((item) => Math.abs(item.value - value) < 0.005)) {
           amounts.push({ value, label: String(value) });
@@ -242,6 +246,7 @@
       amounts.forEach((item) => {
         const chip = el("button", "chip", item.label);
         chip.type = "button";
+        chip.dataset.value = String(item.value);
         chip.addEventListener("click", () => {
           amountInput.value = item.value.toFixed(2);
           paintPay();
@@ -276,29 +281,29 @@
 
     // Seçilmiş məbləğə uyğun chip işıqlanır
     [...chipsBox.children].forEach((chip) => {
-      const chipValue = toNumber(chip.textContent.replace("Debt ", "").replace("All due ", ""));
+      const chipValue = toNumber(chip.dataset.value);
       chip.classList.toggle("is-active", valid && Math.abs(chipValue - value) < 0.005);
     });
 
     if (!valid) {
-      submit.textContent = "Pay";
+      submit.textContent = cbt("Pay");
       submit.setAttribute("data-confirm-text", "");
       return;
     }
 
     submit.textContent = cbt("Pay {0}", money(value));
-    let text = money(value) + " will be taken from your card";
+    let text;
     if (current.category === LOAN) {
-      text += " and paid to loan " + current.identifier + ".";
+      text = cbt("{0} will be taken from your card and paid to loan {1}.", money(value), current.identifier);
     } else if (current.category === "Mobile") {
-      text += " and added to the balance of " + current.identifier + ".";
+      text = cbt("{0} will be taken from your card and added to the balance of {1}.", money(value), current.identifier);
     } else if (current.debt > 0) {
-      text += " and paid to " + current.providerName + " for " + current.subscriberName + ".";
+      text = cbt("{0} will be taken from your card and paid to {1} for {2}.", money(value), current.providerName, current.subscriberName);
     } else {
-      text += " and added to the balance of " + current.subscriberName + " at " + current.providerName + ".";
+      text = cbt("{0} will be taken from your card and added to the balance of {1} at {2}.", money(value), current.subscriberName, current.providerName);
     }
     if (recurringBox && recurringBox.checked) {
-      text += current.category === LOAN ? " It will repeat on the last day of every month, when the installment is due." : " It will repeat every month on the 1st.";
+      text += " " + (current.category === LOAN ? cbt("It will repeat on the last day of every month, when the installment is due.") : cbt("It will repeat every month on the 1st."));
     }
     submit.setAttribute("data-confirm-text", text);
     submit.removeAttribute("data-confirmed");

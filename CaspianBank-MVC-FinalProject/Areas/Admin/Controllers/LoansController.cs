@@ -84,11 +84,11 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
             }
             if (summary is null)
             {
-                return await ShowDetailAsync(id, approvedAmount, null, string.Join(" ", errors));
+                return await ShowDetailAsync(id, approvedAmount, null, string.Join(" ", TranslateErrors(errors)));
             }
 
             TempData["Success"] = summary.Status == "AwaitingSuperAdmin"
-                ? "Your approval was saved. The customer is on the blacklist, so the Super Admin has to approve it too before any money is sent."
+                ? "Your approval was saved. The customer is on the blacklist, so the Super Admin or an Administrator has to approve it too before any money is sent."
                 : summary.Status == "Offered"
                 ? "A smaller amount was offered. The customer must accept it before the money is sent."
                 : "The loan was approved and the money was sent to the customer's card.";
@@ -110,7 +110,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
             }
             if (summary is null)
             {
-                return await ShowDetailAsync(id, null, reason, string.Join(" ", errors));
+                return await ShowDetailAsync(id, null, reason, string.Join(" ", TranslateErrors(errors)));
             }
 
             TempData["Success"] = "The application was rejected.";

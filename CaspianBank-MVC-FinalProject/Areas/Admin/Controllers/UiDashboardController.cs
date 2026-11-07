@@ -6,7 +6,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
 {
     // UI bölməsi: saytın görünüşünü idarə edən səhifələrin ümumi paneli
     [Area("Admin")]
-    [Authorize(Roles = AppRoles.Staff)]
+    [Authorize(Roles = AppRoles.SuperAdmin + "," + AppRoles.Admin)]
     public class UiDashboardController : Controller
     {
         public IActionResult Index()

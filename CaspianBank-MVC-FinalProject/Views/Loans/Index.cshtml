@@ -80,7 +80,7 @@
                     <div class="empty-inline">
                         <div class="empty-inline-copy">
                             <strong>@T["You can't apply right now"]</strong>
-                            <p>@(options.CannotApplyReason ?? T["Please try again later."])</p>
+                            <p>@T[options.CannotApplyReason ?? "Please try again later."]</p>
                         </div>
                     </div>
                 }
@@ -162,63 +162,48 @@
 
             <section class="surface surface-tight form-card">
                 <div class="toolbar"><h2>@T["Your loans and applications"]</h2></div>
-                <div class="table-wrap">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>@T["Loan"]</th>
-                                <th class="num">@T["Amount"]</th>
-                                <th>@T["Status"]</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var loan in Model.Loans)
-                            {
-                                var shown = loan.ApprovedAmount ?? loan.RequestedAmount;
-                                <tr>
-                                    <td>
-                                        <a class="loan-link" asp-action="Detail" asp-route-id="@loan.Id"><strong>@loan.ContractNumber</strong></a>
-                                        <div class="hint">@T[LoanUi.PurposeText(loan.Purpose)] · @T["{0} months", loan.TermMonths]</div>
-                                        <div class="hint">@LoanUi.Date(loan.CreatedAt.ToLocalTime())</div>
-                                    </td>
-                                    <td class="num">
-                                        @LoanUi.Money(shown)
-                                        @if (loan.ApprovedAmount.HasValue && loan.ApprovedAmount.Value != loan.RequestedAmount)
-                                        {
-                                            <div class="hint">@T["asked {0}", LoanUi.Money(loan.RequestedAmount)]</div>
-                                        }
-                                    </td>
-                                    <td>
-                                        <span class="badge @LoanUi.StatusBadge(loan.Status)">@T[LoanUi.StatusText(loan.Status)]</span>
-                                        @if (loan.HasOverdue)
-                                        {
-                                            <span class="badge badge-danger">@T["Overdue"]</span>
-                                        }
-                                        @if (loan.NextDueDate.HasValue && (loan.Status == "Active" || loan.Status == "Court"))
-                                        {
-                                            <div class="hint">@T["Next: {0} on {1}", LoanUi.Money(loan.NextDueAmount), LoanUi.Date(loan.NextDueDate)]</div>
-                                        }
-                                        @if (!string.IsNullOrEmpty(loan.Message))
-                                        {
-                                            <div class="hint">@T[loan.Message]</div>
-                                        }
-                                    </td>
-                                </tr>
-                            }
-                            @if (Model.Loans.Count == 0)
-                            {
-                                <tr class="empty-row">
-                                    <td colspan="3">
-                                        <div class="empty">
-                                            <h3>@T["No applications yet"]</h3>
-                                            <p>@T["When you apply, the decision will appear here."]</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
+                @if (Model.Loans.Count == 0)
+                {
+                    <div class="empty">
+                        <h3>@T["No applications yet"]</h3>
+                        <p>@T["When you apply, the decision will appear here."]</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="loan-cards">
+                        @foreach (var loan in Model.Loans)
+                        {
+                            var shown = loan.ApprovedAmount ?? loan.RequestedAmount;
+                            <article class="loan-card">
+                                <div class="loan-card-top">
+                                    <a class="loan-link" asp-action="Detail" asp-route-id="@loan.Id"><strong>@loan.ContractNumber</strong></a>
+                                    <span class="badge @LoanUi.StatusBadge(loan.Status)">@T[LoanUi.StatusText(loan.Status)]</span>
+                                </div>
+                                <div class="loan-card-amount num">
+                                    @LoanUi.Money(shown)
+                                    @if (loan.ApprovedAmount.HasValue && loan.ApprovedAmount.Value != loan.RequestedAmount)
+                                    {
+                                        <small class="hint">@T["asked {0}", LoanUi.Money(loan.RequestedAmount)]</small>
+                                    }
+                                </div>
+                                <p class="hint">@T[LoanUi.PurposeText(loan.Purpose)] · @T["{0} months", loan.TermMonths] · @LoanUi.Date(loan.CreatedAt.ToLocalTime())</p>
+                                @if (loan.HasOverdue)
+                                {
+                                    <p><span class="badge badge-danger">@T["Overdue"]</span></p>
+                                }
+                                @if (loan.NextDueDate.HasValue && (loan.Status == "Active" || loan.Status == "Court"))
+                                {
+                                    <p class="loan-card-note">@T["Next: {0} on {1}", LoanUi.Money(loan.NextDueAmount), LoanUi.Date(loan.NextDueDate)]</p>
+                                }
+                                @if (!string.IsNullOrEmpty(loan.Message))
+                                {
+                                    <p class="loan-card-note">@T[loan.Message]</p>
+                                }
+                            </article>
+                        }
+                    </div>
+                }
             </section>
         </div>
     }

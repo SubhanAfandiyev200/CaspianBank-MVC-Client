@@ -54,7 +54,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
                 // 400 (məs. başlanğıc tarix sondan böyükdür) istifadəçiyə deyilir, qalanı "yüklənmədi"dir
                 if (status == HttpStatusCode.BadRequest)
                 {
-                    model.Error = string.Join(" ", errors);
+                    model.Error = string.Join(" ", TranslateErrors(errors));
                 }
                 else
                 {

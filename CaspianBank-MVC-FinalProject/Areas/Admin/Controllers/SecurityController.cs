@@ -59,7 +59,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
             {
                 if (code == HttpStatusCode.BadRequest)
                 {
-                    model.Error = string.Join(" ", errors);
+                    model.Error = string.Join(" ", TranslateErrors(errors));
                 }
                 else
                 {
@@ -91,7 +91,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
             }
             else
             {
-                TempData["Error"] = status == HttpStatusCode.NotFound ? "This alert no longer exists." : string.Join(" ", errors);
+                TempData["Error"] = status == HttpStatusCode.NotFound ? "This alert no longer exists." : string.Join(" ", TranslateErrors(errors));
             }
             return RedirectToAction(nameof(Index), new { status = returnStatus });
         }

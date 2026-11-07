@@ -68,7 +68,7 @@
                 }
             </article>
             <article class="pulse"><span>@T["Average per month"]</span><strong class="num">@Money(data.AverageMonthly)</strong></article>
-            <article class="pulse"><span>@T["Biggest this month"]</span><strong>@(data.TopCategory ?? "—")</strong></article>
+            <article class="pulse"><span>@T["Biggest this month"]</span><strong>@(data.TopCategory is null ? "—" : T[data.TopCategory])</strong></article>
         </div>
 
         <section class="surface form-card">

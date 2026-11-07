@@ -49,7 +49,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
             {
                 if (status == HttpStatusCode.BadRequest)
                 {
-                    model.Error = string.Join(" ", errors);
+                    model.Error = string.Join(" ", TranslateErrors(errors));
                 }
                 else
                 {

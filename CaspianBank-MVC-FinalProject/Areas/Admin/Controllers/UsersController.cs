@@ -83,10 +83,10 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
                 var (current, _) = await GetAsync<UserDetailVM>("api/admin/users/" + Uri.EscapeDataString(id));
                 if (current is null)
                 {
-                    TempData["Error"] = string.Join(" ", errors);
+                    TempData["Error"] = string.Join(" ", TranslateErrors(errors));
                     return RedirectToAction(nameof(Index));
                 }
-                current.Error = string.Join(" ", errors);
+                current.Error = string.Join(" ", TranslateErrors(errors));
                 current.ReasonDraft = reason;
                 return View("Detail", current);
             }
@@ -108,7 +108,7 @@ namespace CaspianBank_MVC_FinalProject.Areas.Admin.Controllers
 
             if (user is null)
             {
-                TempData["Error"] = string.Join(" ", errors);
+                TempData["Error"] = string.Join(" ", TranslateErrors(errors));
                 return RedirectToAction(nameof(Detail), new { id });
             }
 

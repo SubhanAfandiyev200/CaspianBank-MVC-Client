@@ -51,7 +51,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
                 {
                     return await SessionExpiredAsync();
                 }
-                model.Error = string.Join(" ", errors);
+                model.Error = string.Join(" ", TranslateErrors(errors));
                 return View("Index", model);
             }
 
@@ -90,10 +90,10 @@ namespace CaspianBank_MVC_FinalProject.Controllers
                 var (current, _) = await GetAsync<TicketDetailVM>($"api/support/tickets/{id}");
                 if (current is null)
                 {
-                    TempData["Error"] = string.Join(" ", errors);
+                    TempData["Error"] = string.Join(" ", TranslateErrors(errors));
                     return RedirectToAction(nameof(Index));
                 }
-                current.Error = string.Join(" ", errors);
+                current.Error = string.Join(" ", TranslateErrors(errors));
                 current.Draft = message;
                 return View("Ticket", WithImages(current));
             }
@@ -114,7 +114,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
 
             if (ticket is null)
             {
-                TempData["Error"] = string.Join(" ", errors);
+                TempData["Error"] = string.Join(" ", TranslateErrors(errors));
             }
             else
             {

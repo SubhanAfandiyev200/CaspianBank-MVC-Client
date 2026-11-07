@@ -40,7 +40,7 @@
                 <div><dt>@T["Cashback"]</dt><dd>@T["{0}% of payments", Model.CashbackPercent.ToString("0.##", inv)]</dd></div>
                 <div><dt>@T["Free transfer limit"]</dt><dd>@T["{0} AZN", Model.TransferLimit.ToString("N2", inv)]</dd></div>
                 <div><dt>@T["Commission"]</dt><dd>@T["{0}% on the part above the limit", Model.CommissionPercent.ToString("0.##", inv)]</dd></div>
-                <div><dt>@T["Design"]</dt><dd>@Model.DesignTitle (<a asp-area="Admin" asp-controller="CardDesign" asp-action="Detail" asp-route-id="@Model.CardDesignId">@T["open"]</a>)</dd></div>
+                <div><dt>@T["Design"]</dt><dd>@Model.DesignTitle@if (User.IsInRole("SuperAdmin") || User.IsInRole("Admin")) { <text> (<a asp-area="Admin" asp-controller="CardDesign" asp-action="Detail" asp-route-id="@Model.CardDesignId">@T["open"]</a>)</text> }</dd></div>
             </dl>
         </section>
     </div>

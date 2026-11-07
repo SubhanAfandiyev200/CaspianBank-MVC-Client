@@ -18,6 +18,7 @@ namespace CaspianBank_MVC_FinalProject.ViewModels.Translations
 
         public string? Search { get; set; }
         public bool OnlyMissing { get; set; }
+        public string? Kind { get; set; }
         public bool Unavailable { get; set; }
         public string? Error { get; set; }
     }

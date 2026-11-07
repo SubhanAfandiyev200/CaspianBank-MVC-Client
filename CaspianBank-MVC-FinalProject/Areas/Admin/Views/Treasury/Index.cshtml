@@ -29,7 +29,7 @@
     string KindLabel(string code)
     {
         var found = kinds.FirstOrDefault(k => k.Code == code);
-        return found.Label ?? code;
+        return found.Label is null ? code : T[found.Label];
     }
 
     string PageUrl(int page)
@@ -85,17 +85,17 @@
 
     <div class="stat-grid cols-3">
         <article class="stat">
-            <p class="stat-label">@T["Came in ({0})", Model.MonthLabel]</p>
+            <p class="stat-label">@T["Came in ({0})", T.Month(Model.MonthLabel)]</p>
             <p class="stat-value">@Money(Model.MonthIn)</p>
             <p class="hint">@T["Fees, commissions, loan repayments, deposits"]</p>
         </article>
         <article class="stat">
-            <p class="stat-label">@T["Went out ({0})", Model.MonthLabel]</p>
+            <p class="stat-label">@T["Went out ({0})", T.Month(Model.MonthLabel)]</p>
             <p class="stat-value">@Money(Model.MonthOut)</p>
             <p class="hint">@T["Loans, deposit returns and interest, cashback"]</p>
         </article>
         <article class="stat">
-            <p class="stat-label">@T["Net ({0})", Model.MonthLabel]</p>
+            <p class="stat-label">@T["Net ({0})", T.Month(Model.MonthLabel)]</p>
             <p class="stat-value">@Signed(Model.MonthIn - Model.MonthOut)</p>
             <p class="hint">@T["Operating costs and tax are on the dashboard"]</p>
         </article>
@@ -109,7 +109,7 @@
                     <option value="" selected="@string.IsNullOrEmpty(Model.Kind)">@T["All types"]</option>
                     @foreach (var item in kinds)
                     {
-                        <option value="@item.Code" selected="@(Model.Kind == item.Code)">@item.Label</option>
+                        <option value="@item.Code" selected="@(Model.Kind == item.Code)">@T[item.Label]</option>
                     }
                 </select>
             </div>
@@ -138,7 +138,7 @@
                         <tr>
                             <td>@item.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)</td>
                             <td><span class="badge @(item.Amount >= 0 ? "badge-success" : "badge-neutral")">@KindLabel(item.Kind)</span></td>
-                            <td>@item.Description</td>
+                            <td>@T.Describe(item.Description)</td>
                             <td class="num @(item.Amount >= 0 ? "amount-in" : "amount-out")">@Signed(item.Amount)</td>
                             <td class="num">@Money(item.BalanceAfter)</td>
                             <td class="num">@item.Reference</td>

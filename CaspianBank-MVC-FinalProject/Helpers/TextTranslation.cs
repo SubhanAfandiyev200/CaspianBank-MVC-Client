@@ -42,6 +42,9 @@ namespace CaspianBank_MVC_FinalProject.Helpers
             new Rule(@"^Early payment on loan (\S+)$", "Early payment on loan {0}", false),
             new Rule(@"^Loan (\S+) repaid in full$", "Loan {0} repaid in full", false),
             new Rule(@"^Payment on loan (\S+)$", "Payment on loan {0}", false),
+            new Rule(@"^Operating costs for (\S+)$", "Operating costs for {0}", false),
+            new Rule(@"^Profit tax for (\S+)$", "Profit tax for {0}", false),
+            new Rule(@"^Nothing to pay for (\S+)$", "Nothing to pay for {0}", false),
         };
 
         public static string Describe(this ITranslator t, string? description)

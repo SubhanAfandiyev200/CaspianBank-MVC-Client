@@ -1430,3 +1430,18 @@ a.header-user:focus-visible { outline: 2px solid var(--lime); outline-offset: 3p
   border-radius: 10px;
 }
 .footer-hero .cta-actions .btn-go-arrow { font-size: 20px; }
+
+/* Geniş ekranda sosial ikonlar mərkəzdəki sütundan çıxıb səhifənin sağ kənarına yaxın dayanır ("Ask Caspian" düyməsi ilə eyni xətt) */
+@media (min-width: 1280px) {
+  .footer-bottom .footer-social { margin-right: calc((100% - 100vw) / 2 + 40px); }
+}
+
+/* Başlıq: sağ qrup (dil, tema, ad, çıxış) geniş olanda menyu ilə üst-üstə düşməsin */
+@media (min-width: 981px) {
+  .header-bar { grid-template-columns: auto minmax(0, 1fr) auto; }
+  .header-bar .site-nav { justify-self: center; gap: 22px; min-width: 0; }
+  .header-bar .header-right { justify-self: end; }
+}
+@media (min-width: 981px) and (max-width: 1240px) {
+  .header-bar .header-user-name { display: none; }
+}

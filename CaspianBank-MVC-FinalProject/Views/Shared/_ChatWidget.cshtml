@@ -15,7 +15,7 @@
             : T["Hi! I am the Caspian AI assistant. Ask me about our cards, fees, cashback, loans and deposits, or how to open an account."];
     var greeting = signedIn && !string.IsNullOrEmpty(firstName)
         ? T["Hi {0}! Write your question and our team will answer you in your notifications.", firstName]
-        : T["Hi! Write your question and our team will answer by email."];
+        : T["Please describe your problem."];
 }
 <div class="cw" data-chat-widget data-signed-in="@(signedIn ? "true" : "false")" data-greeting="@greeting" data-greeting-ai="@greetingAi">
     <button class="cw-fab" type="button" data-cw-open aria-haspopup="dialog" aria-expanded="false" aria-controls="cw-panel">
@@ -32,7 +32,7 @@
             <span class="cw-avatar" aria-hidden="true">C</span>
             <div class="cw-head-copy">
                 <strong>@T["Caspian help"]</strong>
-                <small data-cw-sub data-sub-ai="@T["AI assistant"]" data-sub-team="@T["Our team replies to you"]"><span class="cw-dot" aria-hidden="true"></span><span data-cw-sub-text>@T["AI assistant"]</span></small>
+                <small data-cw-sub data-sub-ai="@T["AI assistant"]" data-sub-team="@(signedIn ? T["Our team replies to you"] : T["Tell our team your problem"])"><span class="cw-dot" aria-hidden="true"></span><span data-cw-sub-text>@T["AI assistant"]</span></small>
             </div>
             <button class="cw-icon" type="button" data-cw-reset aria-label="@T["Start a new chat"]" title="@T["New chat"]">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>

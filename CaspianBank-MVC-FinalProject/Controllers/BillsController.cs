@@ -21,6 +21,11 @@ namespace CaspianBank_MVC_FinalProject.Controllers
     {
         private const string ReceiptKey = "BillReceipt";
 
+        private CaspianBank_MVC_FinalProject.Services.ITranslator Translator
+        {
+            get { return HttpContext.RequestServices.GetRequiredService<CaspianBank_MVC_FinalProject.Services.ITranslator>(); }
+        }
+
         // API-də kredit təchizatçı deyil (api/loans/lookup və pay-by-code), ona görə siyahıya -1 nömrəli xüsusi seçim kimi əlavə olunur
         // (0 formada "heç nə seçilməyib" deməkdir)
         private const int LoanProviderId = -1;
@@ -55,7 +60,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
             if (lookup is null)
             {
-                return Json(new { ok = false, error = string.Join(" ", errors) });
+                return Json(new { ok = false, error = string.Join(" ", TranslateErrors(errors)) });
             }
             return Json(new { ok = true, lookup });
         }
@@ -121,7 +126,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
             if (receipt is null)
             {
-                return await ShowPageAsync(form, string.Join(" ", errors));
+                return await ShowPageAsync(form, string.Join(" ", TranslateErrors(errors)));
             }
 
             // "Hər ay təkrarla": ödəniş artıq keçib, təkrar qeydi alınmasa da pul geri qayıtmır, qəbzdə səbəb yazılır
@@ -165,7 +170,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
             else
             {
-                TempData["BillError"] = status == HttpStatusCode.NotFound ? "This monthly payment no longer exists." : string.Join(" ", errors);
+                TempData["BillError"] = status == HttpStatusCode.NotFound ? "This monthly payment no longer exists." : string.Join(" ", TranslateErrors(errors));
             }
             return RedirectToAction(nameof(Index));
         }
@@ -202,7 +207,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
             else
             {
-                TempData["BillError"] = status == HttpStatusCode.NotFound ? "This monthly payment no longer exists." : string.Join(" ", errors);
+                TempData["BillError"] = status == HttpStatusCode.NotFound ? "This monthly payment no longer exists." : string.Join(" ", TranslateErrors(errors));
             }
             return RedirectToAction(nameof(Index));
         }
@@ -220,13 +225,12 @@ namespace CaspianBank_MVC_FinalProject.Controllers
 
             if (saved is not null)
             {
-                receipt.RecurringNote = "Saved as a monthly payment. The next one is on "
-                    + saved.NextRunDate.ToString("d MMM yyyy", CultureInfo.InvariantCulture) + ".";
+                receipt.RecurringNote = Translator["Saved as a monthly payment. The next one is on {0}.", saved.NextRunDate.ToString("d MMM yyyy", CultureInfo.InvariantCulture)];
             }
             else
             {
                 receipt.RecurringFailed = true;
-                receipt.RecurringNote = "The payment went through, but we could not save it as a monthly payment. " + string.Join(" ", errors);
+                receipt.RecurringNote = Translator["The payment went through, but we could not save it as a monthly payment."] + " " + string.Join(" ", TranslateErrors(errors));
             }
         }
 
@@ -332,7 +336,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
                     // API açıq olmayan kredit üçün boş "tapılmadı" qaytarır: kodun varlığı bilinməsin
                     var message = loanStatus == HttpStatusCode.NotFound
                         ? "We couldn't find an active loan with this code."
-                        : string.Join(" ", loanErrors);
+                        : string.Join(" ", TranslateErrors(loanErrors));
                     return (null, new[] { message }, loanStatus);
                 }
                 if (!loan.CanPay)

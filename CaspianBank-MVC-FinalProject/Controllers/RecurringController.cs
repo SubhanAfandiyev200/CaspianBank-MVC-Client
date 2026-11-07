@@ -51,7 +51,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
             if (item is null)
             {
-                return await ShowAsync(form, string.Join(" ", errors));
+                return await ShowAsync(form, string.Join(" ", TranslateErrors(errors)));
             }
 
             TempData["Success"] = "Done. " + item.Amount.ToString("N2", CultureInfo.InvariantCulture) + " AZN will go to " + item.ToLabel
@@ -82,7 +82,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             {
                 return await SessionExpiredAsync();
             }
-            TempData[success ? "Success" : "CardError"] = success ? "The monthly transfer was deleted." : string.Join(" ", errors);
+            TempData[success ? "Success" : "CardError"] = success ? "The monthly transfer was deleted." : string.Join(" ", TranslateErrors(errors));
             return RedirectToAction(nameof(Index));
         }
 
@@ -93,7 +93,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             {
                 return await SessionExpiredAsync();
             }
-            TempData[success ? "Success" : "CardError"] = success ? message : string.Join(" ", errors);
+            TempData[success ? "Success" : "CardError"] = success ? message : string.Join(" ", TranslateErrors(errors));
             return RedirectToAction(nameof(Index));
         }
 

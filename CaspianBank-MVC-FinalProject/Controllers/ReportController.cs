@@ -51,7 +51,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
             if (report is null)
             {
-                form.Error = string.Join(" ", errors);
+                form.Error = string.Join(" ", TranslateErrors(errors));
                 return View("Index", form);
             }
 

@@ -9,7 +9,7 @@
   toggle?.addEventListener("click", () => {
     const open = bar.classList.toggle("is-open");
     toggle.setAttribute("aria-expanded", String(open));
-    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    toggle.setAttribute("aria-label", open ? cbt("Close menu") : cbt("Open menu"));
   });
 
   // ---------- pəncərələr ----------
@@ -85,7 +85,7 @@
       });
       if (dots) {
         dots.innerHTML = cards.map((_, i) =>
-          '<button type="button" class="deck-dot' + (i === index ? " is-active" : "") + '" data-deck-go="' + i + '" aria-label="Card ' + (i + 1) + '"></button>'
+          '<button type="button" class="deck-dot' + (i === index ? " is-active" : "") + '" data-deck-go="' + i + '" aria-label="' + cbt("Card {0}", i + 1) + '"></button>'
         ).join("");
       }
     }
@@ -190,14 +190,14 @@
         const tier = option.getAttribute("data-tier") || option.text;
         const last4 = option.getAttribute("data-last4");
         return thumb(option)
-          + '<span class="card-pick-copy"><strong>' + esc(tier) + '</strong>' + (last4 ? '<span>•••• ' + esc(last4) + '</span>' : "") + '</span>'
+          + '<span class="card-pick-copy"><strong>' + esc(cbt(tier)) + '</strong>' + (last4 ? '<span>•••• ' + esc(last4) + '</span>' : "") + '</span>'
           + '<span class="card-pick-bal">' + esc(option.getAttribute("data-money") || "") + '</span>'
           + (withChevron ? chevron : "");
       }
 
       function sync() {
         const current = select.options[select.selectedIndex] || null;
-        button.innerHTML = current ? row(current, true) : '<span class="card-pick-copy"><strong>Choose a card</strong></span>' + chevron;
+        button.innerHTML = current ? row(current, true) : '<span class="card-pick-copy"><strong>' + esc(cbt("Choose a card")) + '</strong></span>' + chevron;
         menu.innerHTML = [...select.options].map((option) =>
           '<button type="button" class="card-pick-option' + (option === current ? " is-selected" : "") + '" data-value="' + esc(option.value) + '" role="option" aria-selected="' + (option === current) + '">' + row(option, false) + '</button>'
         ).join("");
@@ -614,17 +614,17 @@
         payCard.style.backgroundImage = design ? "url('" + design + "')" : "";
         payCard.style.backgroundSize = "cover";
         payCard.style.backgroundPosition = "center";
-        byId("live-tier").textContent = tier;
+        byId("live-tier").textContent = cbt(tier);
       }
 
       const ownTargets = toSel.options.length;
       let digits = "";
-      let holder = "Recipient";
+      let holder = cbt("Recipient");
       if (mode === "own") {
         const dest = toSel.options[toSel.selectedIndex];
         const last4 = dest ? dest.getAttribute("data-last4") : "";
         digits = last4 ? "••••••••••••" + last4 : "";
-        holder = dest ? "Your " + dest.getAttribute("data-tier") + " card" : "Your card";
+        holder = dest ? cbt("Your {0} card", cbt(dest.getAttribute("data-tier"))) : cbt("Your card");
       } else {
         digits = numberInput.value.replace(/\D/g, "").slice(0, 16);
       }

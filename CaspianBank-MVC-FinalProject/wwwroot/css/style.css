@@ -3013,6 +3013,7 @@ body.body-admin .site-footer-inner {
    ========================================================= */
 
 .stat-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.stat-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
 .stat-grid + .stat-grid { margin-top: 12px; }
 .stat .stat-delta { margin-top: 6px; font-size: 13px; font-weight: 600; color: var(--color-primary); }
 .stat .stat-delta.is-down { color: var(--color-out); }
@@ -3054,7 +3055,7 @@ body.body-admin .site-footer-inner {
 .data-table .actions .row-actions .btn { margin-left: 0; }
 
 @media (max-width: 860px) {
-  .stat-grid.cols-3 { grid-template-columns: 1fr; }
+  .stat-grid.cols-3, .stat-grid.cols-4 { grid-template-columns: 1fr; }
   .fin-grid { grid-template-columns: 1fr; }
   .detail-list div { grid-template-columns: 1fr; gap: 2px; }
 }
@@ -3700,3 +3701,54 @@ input[type="password"]::-ms-clear { display: none; }
   .cw.has-new .cw-fab::after { animation: cb-pulse 1.6s ease-in-out infinite; }
 }
 @keyframes cb-pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(229, 72, 77, 0.55); } 50% { box-shadow: 0 0 0 8px rgba(229, 72, 77, 0); } }
+
+/* Kartın üstündə hesab növü (Current / Savings): tier yazısının altında kiçik */
+.plastic-kind { display: block; margin-top: 2px; font-size: 0.68em; font-weight: 500; letter-spacing: 0.1em; opacity: 0.72; text-align: right; }
+
+/* Ödənişlər: dar kartdakı cədvəlin hərəkət sütunu 230px tutmasın, boş vəziyyət yazısı kəsilməsin */
+.page-activity .data-table td.actions { min-width: 0; }
+.page-activity .data-table .row-actions { flex-wrap: wrap; justify-content: flex-end; }
+.data-table .empty-row td { padding: 0; }
+.data-table .empty-row .empty { padding: 32px 16px; white-space: normal; }
+
+/* Kredit siyahısı: dar sağ sütunda cədvəl əvəzinə kartlar (yazılar kəsilmir) */
+.loan-cards { display: grid; gap: 12px; padding: 4px 0; }
+.loan-card { border: 1px solid var(--color-border); border-radius: 14px; padding: 14px 16px; display: grid; gap: 6px; background: var(--tint-neutral); }
+.loan-card p { margin: 0; }
+.loan-card-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.loan-card-amount { font-size: 20px; font-weight: 700; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; text-align: left; }
+.loan-card-note { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; overflow-wrap: anywhere; }
+
+/* Açar (switch): "Bəli" yazılı qutu əvəzinə. Qutu özü gizlədilir, klaviatura ilə də işləyir */
+.switch { display: inline-flex; align-items: center; gap: 10px; cursor: pointer; user-select: none; }
+.switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.switch-track { position: relative; width: 42px; height: 24px; border-radius: 999px; background: var(--color-border-strong, #8a948e); transition: background 0.2s ease; flex: none; }
+.switch-track::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35); transition: transform 0.2s ease; }
+.switch input:checked + .switch-track { background: var(--color-primary, #0f5c3f); }
+.switch input:checked + .switch-track::after { transform: translateX(18px); }
+.switch input:focus-visible + .switch-track { outline: 3px solid var(--color-primary, #0f5c3f); outline-offset: 2px; }
+.switch-text .off { display: inline; }
+.switch-text .on { display: none; }
+.switch input:checked ~ .switch-text .on { display: inline; }
+.switch input:checked ~ .switch-text .off { display: none; }
+
+/* İstifadəçi siyahısında "Bax" düyməsi iki sətrə bölünməsin */
+.data-table td.actions .btn, .data-table td.actions a.btn { white-space: nowrap; }
+
+/* Tərcümələr səhifəsi */
+.help-box { margin-bottom: 16px; }
+.help-box h2 { margin-bottom: 8px; }
+.add-text > summary { cursor: pointer; padding: 4px 0; }
+.add-text[open] > summary { margin-bottom: 12px; }
+.tr-key { font-weight: 600; overflow-wrap: anywhere; display: block; }
+.data-table td textarea.input { min-width: 230px; width: 100%; }
+
+/* Dövlət reyestri */
+.citizen-cell { display: inline-flex; align-items: center; gap: 12px; }
+.registry-photo { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex: none; }
+.citizen-cell small { display: block; }
+
+/* İşçi profili: başlıqdakı şəkil baş hərflərin üstündə, profil səhifəsində rəngli şəkil */
+a.profile-btn { text-decoration: none; color: inherit; }
+.avatar { position: relative; overflow: hidden; }
+.avatar-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1) contrast(1.05); }

@@ -238,6 +238,12 @@
     typing.remove();
     addMessage(name, result.text, false, !result.ok);
     if (result.ok && name === "team") resetImage();
+    if (!result.ok && mode === name && input.value === "") {
+      // GÃ¶ndÉrilmÉdi: yazÄ±lan mÉtn silinmÉsin, dÃ¼zÉldib yenidÉn gÃ¶ndÉrmÉk olsun
+      input.value = question;
+      s.draft = question;
+      autosize();
+    }
     s.busy = false;
     if (name === "team" && serverTeam) {
       lastTeamSnapshot = "";
@@ -329,6 +335,14 @@
       send(input.value);
     }
   });
+
+  // Səhifənin ən aşağısında footerin alt zolağı görünəndə düymə yuxarı qalxır: sosial ikonlar sağda öz yerində qalır, düymə onların üstündə dayanır
+  const footerBar = document.querySelector(".footer-bottom, .site-footer-inner");
+  if (footerBar && "IntersectionObserver" in window) {
+    new IntersectionObserver((items) => {
+      items.forEach((item) => root.classList.toggle("cw-lift", item.isIntersecting));
+    }, { threshold: 0 }).observe(footerBar);
+  }
 
   // Başlanğıc: saxlanmış söhbət varsa o, yoxdursa salamlama
   ["ai", "team"].forEach((name) => {

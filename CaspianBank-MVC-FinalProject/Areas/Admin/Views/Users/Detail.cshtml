@@ -41,14 +41,14 @@
         {
             <p class="flash flash-error" role="status">
                 <strong>@T["This account is restricted."]</strong>
-                @(string.IsNullOrEmpty(Model.RestrictionReason) ? "" : "Reason: " + Model.RestrictionReason + ".")
-                @(Model.RestrictedBy is null ? "" : " By " + Model.RestrictedBy)@(Model.RestrictedAt.HasValue ? " on " + Model.RestrictedAt.Value.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv) + "." : "")
-                The customer can't sign in, send money, pay bills or take a loan.
+                @(string.IsNullOrEmpty(Model.RestrictionReason) ? "" : T["Reason: {0}.", Model.RestrictionReason])
+                @(Model.RestrictedBy is null ? "" : " " + T["By {0}", Model.RestrictedBy])@(Model.RestrictedAt.HasValue ? " " + T["on {0}", Model.RestrictedAt.Value.ToLocalTime().ToString("dd MMM yyyy, HH:mm", inv)] + "." : "")
+                @T["The customer can't sign in, send money, pay bills or take a loan."]
             </p>
         }
 
         <div class="meta-grid">
-            <div class="meta-item"><span>@T["Status"]</span><strong>@(Model.IsRestricted ? "Restricted" : "Active")</strong></div>
+            <div class="meta-item"><span>@T["Status"]</span><strong>@T[Model.IsRestricted ? "Restricted" : "Active"]</strong></div>
             <div class="meta-item"><span>@T["Registered"]</span><strong>@LoanUi.Date(Model.RegisteredAt.ToLocalTime())</strong></div>
             <div class="meta-item"><span>@T["FIN"]</span><strong>@(Model.Fin ?? "—")</strong></div>
             <div class="meta-item"><span>@T["Date of birth"]</span><strong>@LoanUi.Date(Model.BirthDate)</strong></div>
@@ -196,7 +196,7 @@
                     </div>
                     <button type="submit" class="btn btn-danger"
                             data-confirm-title="@T["Restrict this account?"]"
-                            data-confirm-text="@Model.FullName will be unable to sign in or move money until the account is restored."
+                            data-confirm-text="@T["{0} will be unable to sign in or move money until the account is restored.", Model.FullName]"
                             data-confirm-yes="@T["Restrict account"]" data-confirm-danger="true">@T["Restrict account"]</button>
                 </form>
             </section>

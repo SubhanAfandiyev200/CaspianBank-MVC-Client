@@ -8,8 +8,8 @@
 
     <header class="page-head">
         <p class="eyebrow">@T["UI · Site"]</p>
-        <h1>@T["Edit {0}", SettingLabels.For(Model.Key).ToLowerInvariant()]</h1>
-        <p class="lede">@SettingLabels.Hint(Model.Key)</p>
+        <h1>@T["Edit {0}", T[SettingLabels.For(Model.Key)].ToLowerInvariant()]</h1>
+        <p class="lede">@T[SettingLabels.Hint(Model.Key)]</p>
     </header>
 
     @if (isLogo)
@@ -58,7 +58,7 @@
             <section class="surface form-stack">
                 <div asp-validation-summary="ModelOnly" class="field-error"></div>
                 <div class="field">
-                    <label asp-for="Value">@SettingLabels.For(Model.Key)</label>
+                    <label asp-for="Value">@T[SettingLabels.For(Model.Key)]</label>
                     @if (SettingLabels.IsLong(Model.Key))
                     {
                         <textarea class="textarea" asp-for="Value" maxlength="500" rows="4" data-translatable="@(SettingLabels.IsTranslatable(Model.Key) ? "true" : null)"></textarea>
