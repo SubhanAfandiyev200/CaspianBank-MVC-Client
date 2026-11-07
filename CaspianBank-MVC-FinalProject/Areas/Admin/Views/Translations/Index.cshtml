@@ -13,7 +13,7 @@
     <header class="page-head">
         <p class="eyebrow">@T["Languages"]</p>
         <h1>@T["Translations"]</h1>
-        <p class="lede">Every text on the customer site is stored in English. Write the Azerbaijani and Russian version next to it; an empty field shows the English text. Words in {0}, {1} are filled in by the page (amounts, dates, names) and must be kept as they are.</p>
+        <p class="lede">@T["Every text on the customer site is stored in English. Write the Azerbaijani and Russian version next to it; an empty field shows the English text. Parts in curly brackets are filled in by the page (amounts, dates, names) and must be kept as they are."]</p>
     </header>
 
     @if (TempData["Success"] is string success)
@@ -51,7 +51,7 @@
                 <button class="btn btn-primary" type="submit">@T["Filter"]</button>
             </div>
         </form>
-        <p class="hint">@Model.Total.ToString("N0", inv) text(s) in this list. JavaScript texts start with "js:".</p>
+        <p class="hint">@T["{0} texts in this list. JavaScript texts start with \"js:\".", Model.Total.ToString("N0", inv)]</p>
     </section>
 
     <section class="surface">

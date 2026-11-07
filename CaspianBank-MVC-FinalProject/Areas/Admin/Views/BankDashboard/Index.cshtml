@@ -49,7 +49,7 @@
                 <select class="select" data-wheel id="month" name="month">
                     @foreach (var item in Model.Months)
                     {
-                        <option value="@item.Value" selected="@(item.Value == Model.Period)">@item.Label</option>
+                        <option value="@item.Value" selected="@(item.Value == Model.Period)">@T.Month(item.Label)</option>
                     }
                 </select>
             </div>

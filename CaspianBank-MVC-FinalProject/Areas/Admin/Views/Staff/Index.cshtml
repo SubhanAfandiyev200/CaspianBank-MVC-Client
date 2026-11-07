@@ -7,10 +7,10 @@
     {
         switch (role)
         {
-            case "SuperAdmin": return "Super admin";
-            case "Admin": return "Administrator";
-            case "Accountant": return "Accountant";
-            case "CustomerService": return "Customer service";
+            case "SuperAdmin": return T["Super admin"];
+            case "Admin": return T["Administrator"];
+            case "Accountant": return T["Accountant"];
+            case "CustomerService": return T["Customer service"];
             default: return role;
         }
     }
@@ -140,7 +140,7 @@
                         <option value="@role" selected="@(role == form.Role)">@RoleLabel(role)</option>
                     }
                 </select>
-                <p class="hint">@T["Administrators can do everything except give or remove roles. Accountants decide loans and card rules, customer support helps customers, security handles suspicious reports and freezes."]</p>
+                <p class="hint">@T["Administrators can do everything except give or remove roles. Accountants decide loans and card rules, customer service helps customers and handles suspicious reports and freezes."]</p>
             </div>
             <p class="hint">The new person gets an email with a link to choose their own password. The link works for 30 minutes; after that they can use "Forgot password" on the login page.</p>
             <button class="btn btn-primary" type="submit">@T["Add staff member"]</button>
