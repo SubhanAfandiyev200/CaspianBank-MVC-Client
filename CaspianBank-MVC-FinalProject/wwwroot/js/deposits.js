@@ -42,7 +42,7 @@
   }
 
   function dateText(date) {
-    return date.toLocaleDateString(document.documentElement.lang || "en", { day: "2-digit", month: "short", year: "numeric" });
+    return cbDate(date);
   }
 
   function addMonths(date, months) {

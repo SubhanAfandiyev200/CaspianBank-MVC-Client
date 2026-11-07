@@ -8,7 +8,7 @@
   toggle?.addEventListener("click", () => {
     const open = bar.classList.toggle("is-open");
     toggle.setAttribute("aria-expanded", String(open));
-    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    toggle.setAttribute("aria-label", open ? cbt("Close menu") : cbt("Open menu"));
   });
 
   // ---------- açılan panellər (bildirişlər) ----------

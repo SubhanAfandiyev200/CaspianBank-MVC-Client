@@ -79,7 +79,7 @@
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "icon-btn pw-eye";
-      btn.setAttribute("aria-label", "Show password");
+      btn.setAttribute("aria-label", cbt("Show password"));
       btn.setAttribute("aria-pressed", "false");
       btn.innerHTML = EYE_SVG;
       wrap.appendChild(btn);
@@ -91,7 +91,7 @@
         const show = input.type === "password";
         input.type = show ? "text" : "password";
         btn.classList.toggle("is-on", show);
-        btn.setAttribute("aria-label", show ? "Hide password" : "Show password");
+        btn.setAttribute("aria-label", show ? cbt("Hide password") : cbt("Show password"));
         btn.setAttribute("aria-pressed", show ? "true" : "false");
         svg.classList.remove("is-blinking");
         void svg.getBoundingClientRect(); // animasiyanı yenidən başlatmaq üçün

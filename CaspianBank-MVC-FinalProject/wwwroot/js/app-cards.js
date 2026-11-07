@@ -85,7 +85,7 @@
       });
       if (dots) {
         dots.innerHTML = cards.map((_, i) =>
-          '<button type="button" class="deck-dot' + (i === index ? " is-active" : "") + '" data-deck-go="' + i + '" aria-label="Card ' + (i + 1) + '"></button>'
+          '<button type="button" class="deck-dot' + (i === index ? " is-active" : "") + '" data-deck-go="' + i + '" aria-label="' + cbt("Card {0}", i + 1) + '"></button>'
         ).join("");
       }
     }
@@ -614,17 +614,17 @@
         payCard.style.backgroundImage = design ? "url('" + design + "')" : "";
         payCard.style.backgroundSize = "cover";
         payCard.style.backgroundPosition = "center";
-        byId("live-tier").textContent = tier;
+        byId("live-tier").textContent = cbt(tier);
       }
 
       const ownTargets = toSel.options.length;
       let digits = "";
-      let holder = "Recipient";
+      let holder = cbt("Recipient");
       if (mode === "own") {
         const dest = toSel.options[toSel.selectedIndex];
         const last4 = dest ? dest.getAttribute("data-last4") : "";
         digits = last4 ? "••••••••••••" + last4 : "";
-        holder = dest ? "Your " + dest.getAttribute("data-tier") + " card" : "Your card";
+        holder = dest ? cbt("Your {0} card", cbt(dest.getAttribute("data-tier"))) : cbt("Your card");
       } else {
         digits = numberInput.value.replace(/\D/g, "").slice(0, 16);
       }

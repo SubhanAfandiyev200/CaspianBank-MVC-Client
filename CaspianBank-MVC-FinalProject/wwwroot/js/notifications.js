@@ -41,7 +41,7 @@
     if (seconds < 45) return cbt("just now");
     if (seconds < 3600) return cbt("{0} min ago", Math.max(1, Math.round(seconds / 60)));
     if (seconds < 86400) return cbt("{0} h ago", Math.floor(seconds / 3600));
-    return then.toLocaleString("en-GB", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+    return cbDate(then).slice(0, -5) + ", " + String(then.getHours()).padStart(2, "0") + ":" + String(then.getMinutes()).padStart(2, "0");
   }
 
   function openUrl(n) {

@@ -48,7 +48,7 @@
     if (parts.length !== 2) return period || "";
     const month = parseInt(parts[1], 10);
     if (!(month >= 1 && month <= 12)) return period;
-    return new Date(Number(parts[0]), month - 1, 1).toLocaleDateString(document.documentElement.lang || "en", { month: "short", year: "numeric" });
+    return cbDate(new Date(Number(parts[0]), month - 1, 1), false);
   }
 
   function el(tag, className, text) {
@@ -87,7 +87,7 @@
     }
 
     if (tile.dataset.category === "Mobile") {
-      identifierHint.textContent = cbt("{0} numbers start with {1}. Example: {2}", tile.dataset.name, tile.dataset.prefixes || "", tile.dataset.hint);
+      identifierHint.textContent = cbt("{0} numbers start with {1}. Example: {2}", tile.dataset.name, (tile.dataset.prefixes || "").replace(" or ", " " + cbt("or") + " "), tile.dataset.hint);
     } else if (tile.dataset.category === LOAN) {
       identifierHint.textContent = cbt("The payment code is on the loan page. Example: {0}", tile.dataset.hint);
     } else {
