@@ -9,7 +9,7 @@
   toggle?.addEventListener("click", () => {
     const open = bar.classList.toggle("is-open");
     toggle.setAttribute("aria-expanded", String(open));
-    toggle.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    toggle.setAttribute("aria-label", open ? cbt("Close menu") : cbt("Open menu"));
   });
 
   // ---------- pəncərələr ----------
@@ -190,14 +190,14 @@
         const tier = option.getAttribute("data-tier") || option.text;
         const last4 = option.getAttribute("data-last4");
         return thumb(option)
-          + '<span class="card-pick-copy"><strong>' + esc(tier) + '</strong>' + (last4 ? '<span>•••• ' + esc(last4) + '</span>' : "") + '</span>'
+          + '<span class="card-pick-copy"><strong>' + esc(cbt(tier)) + '</strong>' + (last4 ? '<span>•••• ' + esc(last4) + '</span>' : "") + '</span>'
           + '<span class="card-pick-bal">' + esc(option.getAttribute("data-money") || "") + '</span>'
           + (withChevron ? chevron : "");
       }
 
       function sync() {
         const current = select.options[select.selectedIndex] || null;
-        button.innerHTML = current ? row(current, true) : '<span class="card-pick-copy"><strong>Choose a card</strong></span>' + chevron;
+        button.innerHTML = current ? row(current, true) : '<span class="card-pick-copy"><strong>' + esc(cbt("Choose a card")) + '</strong></span>' + chevron;
         menu.innerHTML = [...select.options].map((option) =>
           '<button type="button" class="card-pick-option' + (option === current ? " is-selected" : "") + '" data-value="' + esc(option.value) + '" role="option" aria-selected="' + (option === current) + '">' + row(option, false) + '</button>'
         ).join("");

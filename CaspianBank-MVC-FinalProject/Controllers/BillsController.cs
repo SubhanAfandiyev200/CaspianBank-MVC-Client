@@ -55,7 +55,7 @@ namespace CaspianBank_MVC_FinalProject.Controllers
             }
             if (lookup is null)
             {
-                return Json(new { ok = false, error = string.Join(" ", errors) });
+                return Json(new { ok = false, error = string.Join(" ", TranslateErrors(errors)) });
             }
             return Json(new { ok = true, lookup });
         }
