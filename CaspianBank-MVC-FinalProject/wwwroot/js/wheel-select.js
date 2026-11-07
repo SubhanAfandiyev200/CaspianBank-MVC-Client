@@ -50,6 +50,7 @@
     let draft = 0;
     let syncing = false;
     let timer = 0;
+    let target = null;   // kliklÉ seÃ§ilmiÅ sÄ±ra: hamar sÃ¼rÃ¼ÅmÉ bitmÉmiÅ "Done" basÄ±lsa seÃ§im itmÉsin
 
     function options() {
       return [...select.options];
@@ -85,6 +86,7 @@
     function open() {
       if (select.disabled) return;
       closeAll(wrap);
+      target = null;
       paint();
       pop.hidden = false;
       place();
@@ -111,6 +113,10 @@
     }
 
     function readScroll() {
+      if (target !== null) {
+        draft = target;
+        return;
+      }
       const index = Math.min(options().length - 1, Math.max(0, Math.round(wheel.scrollTop / ITEM)));
       draft = index;
       wheel.querySelectorAll(".wheel-item").forEach((el, i) => el.classList.toggle("is-active", i === index));
@@ -119,13 +125,19 @@
     wheel.addEventListener("scroll", () => {
       if (syncing) return;
       window.clearTimeout(timer);
-      timer = window.setTimeout(readScroll, 60);
+      timer = window.setTimeout(() => {
+        if (target !== null && Math.abs(wheel.scrollTop - target * ITEM) < 2) target = null;
+        readScroll();
+      }, 60);
     });
+    wheel.addEventListener("wheel", () => { target = null; }, { passive: true });
+    wheel.addEventListener("touchstart", () => { target = null; }, { passive: true });
     wheel.addEventListener("click", (event) => {
       const item = event.target.closest(".wheel-item");
       if (!item) return;
-      wheel.scrollTo({ top: Number(item.dataset.i) * ITEM, behavior: "smooth" });
-      draft = Number(item.dataset.i);
+      target = Number(item.dataset.i);
+      wheel.scrollTo({ top: target * ITEM, behavior: "smooth" });
+      draft = target;
       wheel.querySelectorAll(".wheel-item").forEach((el, i) => el.classList.toggle("is-active", i === draft));
     });
     wheel.addEventListener("dblclick", (event) => {
@@ -134,6 +146,7 @@
     wheel.addEventListener("keydown", (event) => {
       if (event.key === "ArrowUp" || event.key === "ArrowDown") {
         event.preventDefault();
+        target = null;
         wheel.scrollTo({ top: wheel.scrollTop + (event.key === "ArrowDown" ? ITEM : -ITEM), behavior: "smooth" });
       } else if (event.key === "Enter") {
         event.preventDefault();
