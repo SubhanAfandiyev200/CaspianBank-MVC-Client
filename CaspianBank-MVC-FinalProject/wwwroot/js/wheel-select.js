@@ -16,9 +16,117 @@
     });
   }
 
+  // Az seçimi olan siyahı (12 və az): təkər əvəzinə adi açılan siyahı, seçimə bir klik kifayətdir (Done yoxdur)
+  const LIST_LIMIT = 12;
+
+  function bindList(select) {
+    const wrap = document.createElement("div");
+    wrap.className = "wheel-date wheel-select";
+    select.parentNode.insertBefore(wrap, select);
+    wrap.appendChild(select);
+    select.classList.add("wheel-native");
+    select.tabIndex = -1;
+    select.setAttribute("aria-hidden", "true");
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "input wheel-date-btn wheel-select-btn";
+    button.setAttribute("aria-haspopup", "listbox");
+    button.setAttribute("aria-expanded", "false");
+    button.disabled = select.disabled;
+    wrap.appendChild(button);
+
+    const pop = document.createElement("div");
+    pop.className = "wheel-pop wheel-select-pop pick-pop";
+    pop.hidden = true;
+    pop.innerHTML = '<div class="pick-list" role="listbox"></div>';
+    document.body.appendChild(pop);
+    const list = pop.querySelector(".pick-list");
+
+    function syncButton() {
+      const current = select.options[select.selectedIndex];
+      button.innerHTML = '<span class="pick-label">' + esc(current ? current.text : "") + "</span>" + chevron;
+    }
+
+    function paint() {
+      list.innerHTML = [...select.options].map((option, i) =>
+        '<button type="button" class="pick-item' + (i === select.selectedIndex ? " is-selected" : "") + '" role="option" aria-selected="' + (i === select.selectedIndex) + '" data-i="' + i + '">' + esc(option.text) + "</button>"
+      ).join("");
+    }
+
+    function place() {
+      const rect = button.getBoundingClientRect();
+      const width = Math.max(rect.width, 200);
+      const height = pop.offsetHeight || 200;
+      let top = rect.bottom + 6;
+      if (top + height > window.innerHeight - 8 && rect.top - height - 6 > 8) top = rect.top - height - 6;
+      pop.style.width = width + "px";
+      pop.style.left = Math.min(Math.max(8, rect.left), window.innerWidth - width - 8) + "px";
+      pop.style.top = top + "px";
+    }
+
+    function open() {
+      if (select.disabled) return;
+      closeAll(wrap);
+      paint();
+      pop.hidden = false;
+      place();
+      wrap.classList.add("is-open");
+      button.setAttribute("aria-expanded", "true");
+      (list.querySelector(".is-selected") || list.firstElementChild)?.focus({ preventScroll: true });
+    }
+
+    function close() {
+      pop.hidden = true;
+      wrap.classList.remove("is-open");
+      button.setAttribute("aria-expanded", "false");
+    }
+    wrap._closeWheel = close;
+
+    function choose(index) {
+      if (index !== select.selectedIndex) {
+        select.selectedIndex = index;
+        select.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+      syncButton();
+      close();
+      button.focus({ preventScroll: true });
+    }
+
+    list.addEventListener("click", (event) => {
+      const item = event.target.closest(".pick-item");
+      if (item) choose(Number(item.dataset.i));
+    });
+    list.addEventListener("keydown", (event) => {
+      const items = [...list.querySelectorAll(".pick-item")];
+      const at = items.indexOf(document.activeElement);
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        items[Math.min(items.length - 1, at + 1)]?.focus();
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        items[Math.max(0, at - 1)]?.focus();
+      }
+    });
+    button.addEventListener("click", () => (pop.hidden ? open() : close()));
+    document.addEventListener("click", (event) => {
+      if (!pop.hidden && !pop.contains(event.target) && !wrap.contains(event.target)) close();
+    });
+    document.addEventListener("keydown", (event) => { if (event.key === "Escape" && !pop.hidden) close(); });
+    window.addEventListener("resize", () => { if (!pop.hidden) place(); });
+    window.addEventListener("scroll", (event) => { if (!pop.hidden && !pop.contains(event.target)) place(); }, true);
+
+    select.addEventListener("change", syncButton);
+    syncButton();
+  }
+
   function bind(select) {
     if (select.dataset.wheelBound || select.closest(".wheel-date")) return;
     select.dataset.wheelBound = "1";
+    if (select.options.length <= LIST_LIMIT) {
+      bindList(select);
+      return;
+    }
 
     const wrap = document.createElement("div");
     wrap.className = "wheel-date wheel-select";
