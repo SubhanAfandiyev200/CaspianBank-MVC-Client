@@ -21,7 +21,7 @@
             <form method="post" asp-area="Admin" asp-controller="Users" asp-action="Unrestrict" asp-route-id="@Model.Id">
                 <button type="submit" class="btn btn-primary"
                         data-confirm-title="@T["Restore this account?"]"
-                        data-confirm-text="@Model.FullName will be able to sign in and move money again."
+                        data-confirm-text="@T["{0} will be able to sign in and move money again.", Model.FullName]"
                         data-confirm-yes="@T["Unfreeze"]">@T["Unfreeze account"]</button>
             </form>
         }
