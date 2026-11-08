@@ -100,6 +100,8 @@
 :root[data-theme="dark"] .service-card h3,
 :root[data-theme="dark"] .service-icon,
 :root[data-theme="dark"] .benefit-arrows button:hover { color: #6fd3a6; }
+:root[data-theme="dark"] .service-no { color: rgba(111, 211, 166, 0.32); }
+:root[data-theme="dark"] .service-card:hover .service-no { color: rgba(231, 243, 200, 0.4); }
 :root[data-theme="dark"] .stat .ring-figure,
 :root[data-theme="dark"] .stats .ring-figure { color: #e8f3c4; }
 :root[data-theme="dark"] .logo-track li { color: #d5dfd9; }

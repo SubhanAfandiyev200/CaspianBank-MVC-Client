@@ -680,7 +680,7 @@ h2 {
   font-size: 96px;
   font-weight: 600;
   letter-spacing: -0.04em;
-  color: rgba(15, 92, 63, 0.08);
+  color: rgba(15, 92, 63, 0.14);
   transition: color 0.3s ease;
   pointer-events: none;
 }
