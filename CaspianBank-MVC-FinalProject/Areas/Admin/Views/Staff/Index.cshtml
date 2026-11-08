@@ -44,71 +44,66 @@
         <p class="flash flash-error" role="alert">@T["The staff list can't be loaded right now. Please try again in a moment."]</p>
     }
 
-    <div class="layout-2">
+    <div class="stack-lg">
         <section class="surface surface-tight">
             <div class="toolbar"><h2>@T["Team"]</h2></div>
-            <div class="table-wrap">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>@T["Name"]</th>
-                            <th>@T["Role"]</th>
-                            <th>@T["Status"]</th>
-                            <th class="actions"></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var person in Model.List.Items)
-                        {
-                            var isYou = person.Id == Model.CurrentUserId;
-                            var locked = person.IsSuperAdmin || isYou;
-                            <tr>
-                                <td><strong>@person.Name @person.Surname</strong><div class="hint">@person.Email</div></td>
-                                <td><span class="badge @(person.IsSuperAdmin ? "badge-info" : "badge-neutral")">@RoleLabel(person.Role)</span></td>
-                                <td><span class="badge @(person.IsActive ? "badge-success" : "badge-pending")">@(person.IsActive ? "Active" : "Deactivated")</span></td>
-                                <td class="actions">
-                                    @if (locked)
-                                    {
-                                        <span class="hint">@(isYou ? "You" : "Can't be changed")</span>
-                                    }
-                                    else
-                                    {
-                                        <span class="row-actions">
-                                            <form method="post" asp-area="Admin" asp-controller="Staff" asp-action="ChangeRole" class="inline-form">
-                                                <input type="hidden" name="id" value="@person.Id" />
-                                                <select class="select select-sm" name="role" aria-label="@T["Role of {0}", person.Name + " " + person.Surname]">
-                                                    @foreach (var role in roles)
-                                                    {
-                                                        <option value="@role" selected="@(role == person.Role)">@RoleLabel(role)</option>
-                                                    }
-                                                </select>
-                                                <button type="submit" class="btn btn-secondary btn-sm">@T["Change role"]</button>
-                                            </form>
-                                            @if (person.IsActive)
-                                            {
-                                                <form method="post" asp-area="Admin" asp-controller="Staff" asp-action="Deactivate" class="inline-form">
-                                                    <input type="hidden" name="id" value="@person.Id" />
-                                                    <button type="submit" class="btn btn-danger btn-sm"
-                                                            data-confirm-title="@T["Deactivate this account?"]"
-                                                            data-confirm-text="@T["{0} will be signed out and will not be able to sign in until you switch the account on again.", person.Name + " " + person.Surname]"
-                                                            data-confirm-yes="@T["Deactivate"]"
-                                                            data-confirm-no="@T["Cancel"]">@T["Deactivate"]</button>
-                                                </form>
-                                            }
-                                            else
-                                            {
-                                                <form method="post" asp-area="Admin" asp-controller="Staff" asp-action="Activate" class="inline-form">
-                                                    <input type="hidden" name="id" value="@person.Id" />
-                                                    <button type="submit" class="btn btn-secondary btn-sm">@T["Activate"]</button>
-                                                </form>
-                                            }
-                                        </span>
-                                    }
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+            <div class="staff-list">
+                @foreach (var person in Model.List.Items)
+                {
+                    var isYou = person.Id == Model.CurrentUserId;
+                    var locked = person.IsSuperAdmin || isYou;
+                    var initials = string.Concat(new[] { person.Name, person.Surname }.Where(part => !string.IsNullOrEmpty(part)).Select(part => char.ToUpperInvariant(part[0])));
+                    <article class="staff-card @(person.IsActive ? "" : "is-off")">
+                        <div class="staff-who">
+                            <span class="staff-initials" aria-hidden="true">@initials</span>
+                            <div class="staff-name">
+                                <strong>@person.Name @person.Surname</strong>
+                                <span class="hint">@person.Email</span>
+                            </div>
+                            <div class="staff-badges">
+                                <span class="badge @(person.IsSuperAdmin ? "badge-info" : "badge-neutral")">@RoleLabel(person.Role)</span>
+                                <span class="badge @(person.IsActive ? "badge-success" : "badge-pending")">@T[person.IsActive ? "Active" : "Deactivated"]</span>
+                            </div>
+                        </div>
+                        <div class="staff-actions">
+                            @if (locked)
+                            {
+                                <span class="hint">@T[isYou ? "You" : "Can't be changed"]</span>
+                            }
+                            else
+                            {
+                                <form method="post" asp-area="Admin" asp-controller="Staff" asp-action="ChangeRole" class="inline-form">
+                                    <input type="hidden" name="id" value="@person.Id" />
+                                    <select class="select select-sm" name="role" aria-label="@T["Role of {0}", person.Name + " " + person.Surname]">
+                                        @foreach (var role in roles)
+                                        {
+                                            <option value="@role" selected="@(role == person.Role)">@RoleLabel(role)</option>
+                                        }
+                                    </select>
+                                    <button type="submit" class="btn btn-secondary btn-sm">@T["Change role"]</button>
+                                </form>
+                                @if (person.IsActive)
+                                {
+                                    <form method="post" asp-area="Admin" asp-controller="Staff" asp-action="Deactivate" class="inline-form">
+                                        <input type="hidden" name="id" value="@person.Id" />
+                                        <button type="submit" class="btn btn-danger btn-sm"
+                                                data-confirm-title="@T["Deactivate this account?"]"
+                                                data-confirm-text="@T["{0} will be signed out and will not be able to sign in until you switch the account on again.", person.Name + " " + person.Surname]"
+                                                data-confirm-yes="@T["Deactivate"]"
+                                                data-confirm-no="@T["Cancel"]">@T["Deactivate"]</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form method="post" asp-area="Admin" asp-controller="Staff" asp-action="Activate" class="inline-form">
+                                        <input type="hidden" name="id" value="@person.Id" />
+                                        <button type="submit" class="btn btn-secondary btn-sm">@T["Activate"]</button>
+                                    </form>
+                                }
+                            }
+                        </div>
+                    </article>
+                }
             </div>
         </section>
 
