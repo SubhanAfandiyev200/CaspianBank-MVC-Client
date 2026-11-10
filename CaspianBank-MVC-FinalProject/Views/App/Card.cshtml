@@ -89,6 +89,10 @@
                             </dd>
                         </div>
                         <div><dt>@T["Expires"]</dt><dd>@card.Expiry</dd></div>
+                        @if (!string.IsNullOrEmpty(card.Cvv))
+                        {
+                            <div><dt>@T["CVV"]</dt><dd class="num">@card.Cvv</dd></div>
+                        }
                     </dl>
                 </div>
 
