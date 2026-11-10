@@ -1217,8 +1217,8 @@ h2 {
   .hero-form .btn { width: 100%; }
   .footer-links { grid-template-columns: 1fr; }
   .footer-bottom { flex-direction: column; align-items: flex-start; }
-  .fan { height: 300px; }
-  .fan-card { width: 200px; height: 128px; margin-left: -100px; }
+  .fan { height: 300px; transform: translateX(20px) scale(0.86); }   /* kartlar telefonda ortalanır və ekran kənarından çıxmır */
+  .fan-card { width: 200px; height: 128px; left: 50%; margin-left: -100px; }
   .fan-art { font-size: 78px; }
   .drag-hint { display: none; }
 }
@@ -1444,4 +1444,62 @@ a.header-user:focus-visible { outline: 2px solid var(--lime); outline-offset: 3p
 }
 @media (min-width: 981px) and (max-width: 1240px) {
   .header-bar .header-user-name { display: none; }
+}
+
+/* ---------- Telefon/planşet başlığı: menyu açılanda hər şey üst-üstə düşmür, ardıcıl düzülür ---------- */
+@media (max-width: 980px) {
+  /* Naviqasiya və "Home" açılan siyahısı artıq üzən yox, sıra ilə (başlığın altında) düzülür */
+  .site-nav {
+    position: static;
+    grid-column: 1 / -1;
+    order: 9;
+    width: 100%;
+    margin: 2px 0 8px;
+    padding: 4px 16px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+  .site-nav a,
+  .nav-home > a { padding: 10px 0; }
+  .site-nav .nav-home { width: 100%; }
+  .mega {
+    position: static;
+    padding-top: 0;
+    pointer-events: none;
+  }
+  .site-header.is-menu .mega,
+  .site-header.is-mega .mega {
+    max-height: none;
+    padding: 0 0 14px;
+  }
+  .mega-inner {
+    width: min(1180px, calc(100% - 40px));
+    gap: 8px;
+    padding: 10px;
+    box-shadow: none;
+    border: 1px solid var(--line);
+  }
+  .mega-card { grid-template-columns: 1fr; padding: 10px 12px; }
+  .mega-swatch { display: none; }
+}
+
+/* Dar telefon: logo mətni gizlənir, düymələr sıxılır ki, bir sətirə sığsın (giriş edəndə də) */
+@media (max-width: 600px) {
+  .header-bar { gap: 8px; width: calc(100% - 24px); }
+  .logo span { display: none; }
+  .header-right { gap: 6px; }
+  .site-controls { gap: 6px; }
+  .header-auth { gap: 6px; }
+  .nav-toggle { padding: 8px 10px; flex: none; }
+  .mega-inner { width: calc(100% - 24px); }
+  .btn-logout { width: 38px; padding: 0; justify-content: center; }
+  .btn-logout-label { display: none; }
+}
+
+/* Çıxış düyməsinin işarəsi həmişə görünsün (tünd temada da) */
+.btn-logout svg { display: block; }
+
+/* Menyu açıq olanda başlıq ekrandan hündürdürsə, özü sürüşür (aşağıdakı siyahı kəsilməsin) */
+@media (max-width: 980px) {
+  .site-header.is-open { max-height: 100vh; overflow-y: auto; }
 }

@@ -195,3 +195,11 @@
 :root[data-theme="dark"] .approval-banner { background: #3b2f0d; color: #ffe29a; border-color: #8a6a1a; }
 :root[data-theme="dark"] .approval-banner.is-final { background: #3d1a18; color: #ffb4ab; border-color: #8c2a24; }
 :root[data-theme="dark"] .approval-steps li { background: rgba(255, 255, 255, 0.1); }
+
+/* Telefonda açılan menyu açıq temada ağ fonludur: dil və tema düymələri orada görünsün */
+@media (max-width: 1100px) {
+  :root:not([data-theme="dark"]) .topnav .topnav-panel .theme-toggle,
+  :root:not([data-theme="dark"]) .topnav .topnav-panel .lang-switch summary {
+    background: var(--color-bg, #f3f6f3); border-color: var(--color-border, #dfe5e0); color: var(--color-text, #141816);
+  }
+}

@@ -314,9 +314,10 @@ a { color: var(--color-primary-ink); }
 
 .nav-toggle span {
   display: block;
-  height: 1.5px;
+  height: 2px;
   margin: 5px 2px;
-  background: var(--color-surface);
+  border-radius: 2px;
+  background: #f4f7f2;   /* tünd temada da görünsün: başlıq həmişə tünd yaşıldır */
 }
 
 .icon-btn {
@@ -1972,6 +1973,14 @@ body.body-public {
   }
   .notes-panel { position: static; width: 100%; margin-top: 8px; }
   .stat-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Telefonda dil/tema/zəng bir sətirdə, ad + Log out ayrı sətirdə: heç nə sağdan kəsilmir */
+  .nav-tools { flex-wrap: wrap; justify-content: flex-start; gap: 8px; }
+  .nav-tools .header-auth { flex: 1 1 100%; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 0; }
+  .nav-tools .header-user { flex: 1 1 auto; min-width: 0; color: var(--color-text); }
+  .nav-tools .header-user-name { max-width: none; }
+  .nav-tools .btn-logout { flex: none; color: var(--color-text); background: var(--color-bg); border-color: var(--color-border); }
+  .nav-tools .btn-logout:hover { color: #fff; border-color: #d94a4a; }
 }
 
 button.nav-link {
@@ -3771,3 +3780,24 @@ a.profile-btn { text-decoration: none; color: inherit; }
 .pick-item { appearance: none; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; padding: 10px 12px; border-radius: 8px; cursor: pointer; }
 .pick-item:hover, .pick-item:focus-visible { background: var(--tint-neutral); outline: none; }
 .pick-item.is-selected { background: var(--color-primary); color: #fff; font-weight: 600; }
+
+/* ---------- Telefon: admin bölmələri bir sətirdə yana sürüşür, çox sütunlu cədvəllər sıxılmır ---------- */
+@media (max-width: 860px) {
+  .admin-side {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+    padding: 8px 14px;
+    gap: 6px;
+  }
+  .admin-side .eyebrow { width: auto; flex: none; margin: 0 6px 0 0; align-self: center; }
+  .admin-side a,
+  .admin-side button { flex: none; white-space: nowrap; padding: 8px 12px; scroll-snap-align: start; }
+}
+@media (max-width: 560px) {
+  .table-wrap { overflow-x: auto; }
+  /* 5 və daha çox sütunu olan cədvəl telefonda yana sürüşür: yazılar bir sözlük sütunlara sıxılmır */
+  .data-table:has(th:nth-child(5)) { min-width: 640px; }
+}
