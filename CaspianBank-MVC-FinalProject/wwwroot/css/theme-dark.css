@@ -203,3 +203,8 @@
     background: var(--color-bg, #f3f6f3); border-color: var(--color-border, #dfe5e0); color: var(--color-text, #141816);
   }
 }
+
+/* Link kimi düymələr ("Send to another customer" və s.): tünd temada həm adi halda, həm üzərinə gələndə oxunur */
+:root[data-theme="dark"] .link-btn { color: #6fd3a6; }
+:root[data-theme="dark"] .link-btn:hover,
+:root[data-theme="dark"] .link-btn:focus-visible { color: #e7f3c8; }
