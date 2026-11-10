@@ -412,11 +412,9 @@
 
   // Demo kart (test rejimi): müəllim/istifadəçi doğru nömrə tapmaq məcburiyyətində qalmasın
   document.querySelector("[data-demo-card]")?.addEventListener("click", () => {
-    const next = new Date();
-    const year = String((next.getFullYear() + 3) % 100).padStart(2, "0");
     numberInput.value = "4111 1111 1111 1111";
     numberInput.dispatchEvent(new Event("input"));
-    expiryInput.value = "12/" + year;
+    expiryInput.value = "12/29";   // bazadakı demo kartın bitmə tarixi və CVV-si (topup-cards.sql)
     cvvInput.value = "123";
     if (!amountInput.value) amountInput.value = "100";
   });
